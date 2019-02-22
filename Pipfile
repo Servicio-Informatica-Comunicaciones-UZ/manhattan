@@ -10,4 +10,4 @@ pylint = "*"
 django = "==2.1"
 
 [requires]
-python_version = "3.5"
+python_version = "3.7"
