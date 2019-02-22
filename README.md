@@ -1,7 +1,8 @@
 Proyecto Manhattan
 ==================
 
-Manhattan es una aplicación web para gestionar los proyectos de Innovación Docente.  Está desarrollada con [Django](https://www.djangoproject.com/) 2 y mucho cariño.
+Manhattan es una aplicación web para gestionar los proyectos de Innovación Docente.
+Está desarrollada con [Django](https://www.djangoproject.com/) 2 y mucho cariño ♥.
 
 
 Requisitos
