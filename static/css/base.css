@@ -1,0 +1,163 @@
+html {
+    min-height: 100%;
+    position: relative;
+}
+
+body {
+    background: url("img/bg-pattern_nuevo1.png") #88a repeat scroll center 0;
+    font-family: 'LatoLatinWeb', sans-serif;
+    margin-bottom: 460px;  /* Margin bottom by footer height */
+    margin-top: 56px;
+}
+
+
+/*** Navbar ***/
+.bg-azul {
+    background-color: #213C71;
+}
+
+.navbar-dark .navbar-brand {
+    color: #d2d2d2;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: #d2d2d2;
+}
+
+.navbar-dark .navbar-nav .nav-link:focus, .navbar-dark .navbar-nav .nav-link:hover {
+    color: #ffffff;
+}
+
+.navbar .fas {
+    font-size: 200%;
+    line-height: 0;
+    margin-top: 11px;
+    vertical-align: top;
+}
+
+.dropdown-item .fas {
+    font-size: 100%;
+}
+
+.navbar .icon-logoUZ {
+    font-size: 250%;
+    line-height: 0;
+    position: absolute;
+}
+
+.screen-reader {
+    position: absolute;
+    left: -10000px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+
+/*** Jumbotron ***/
+.jumbotron {
+    background-color: transparent;
+    color: white;
+    text-align: center;
+}
+
+.jumbotron h1 {
+    font-family: 'LatoLatinWebLight', sans-serif;
+    font-size: 3rem;
+}
+
+.jumbotron .fas {
+    font-size: 150%;
+}
+
+/*** Container ***/
+.container-blanco {
+    background-color: white;
+    padding: 56px;
+}
+
+/*** Cabecera azul de las tablas ***/
+.cabecera-azul table {
+    border: 0px;
+}
+
+.cabecera-azul thead {
+    background: #6595C0;
+    margin: 0;
+    padding: 0;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+.cabecera-azul thead tr {
+    border-bottom: 1px solid #167F92;
+}
+
+.cabecera-azul thead tr th {
+    border: 0px;
+    color: white;
+    padding: 0.375em 0.5em;
+    border-bottom: 0.1875em solid #C0C0C0;
+    font-weight: bold;
+}
+
+.cabecera-azul thead tr th a {
+    color: white;
+}
+
+.cabecera-azul .filters {
+    background: #B2CADF;
+}
+
+.cabecera-azul tfoot {
+    background: #B2CADF;
+}
+
+.cabecera-azul tbody tr td {
+    border: 0px;
+}
+
+/*** Mensaje de alerta ***/
+.alert .fas {
+    float: left;
+    font-size: 200%;
+    margin-right: 9px;
+}
+
+
+/*** Footer ***/
+.footer {
+    background-color: #212121;
+    bottom: 0;
+    color: rgb(151, 151, 151);
+    position: absolute;
+    width: 100%;
+}
+.footer .p-md-5 {
+    padding-bottom: 0px !important;
+}
+
+.footer .icon-logoUZ {
+    font-size: 400%;
+}
+
+.footer a {
+    font-weight: 500;
+    color:#d2d2d2;
+}
+.footer a:focus, .footer a:hover {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.footer-links {
+    font-size: 85%;
+    padding-left: 0;
+}
+.footer-links li {
+    display: inline-block;
+}
+.footer-links li+li {
+    margin-left: 2rem;
+}

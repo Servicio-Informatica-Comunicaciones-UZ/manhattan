@@ -1,0 +1,194 @@
+@font-face {
+    font-family: 'Universidad-de-Zaragoza';
+    src: url('fonts/Universidad-de-Zaragoza.eot?jwp46z');
+    src: url('fonts/Universidad-de-Zaragoza.eot?jwp46z#iefix') format('embedded-opentype'),
+        url('fonts/Universidad-de-Zaragoza.ttf?jwp46z') format('truetype'),
+        url('fonts/Universidad-de-Zaragoza.woff?jwp46z') format('woff'),
+        url('fonts/Universidad-de-Zaragoza.svg?jwp46z#Universidad-de-Zaragoza') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+    /* use !important to prevent issues with browser extensions that change fonts */
+    font-family: 'Universidad-de-Zaragoza' !important;
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+  
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-logoUZ:before {
+    content: "\e600";
+}
+.icon-unizar-nombre:before {
+    content: "\e90d";
+}
+.icon-books:before {
+    content: "\e602";
+}
+.icon-library:before {
+    content: "\e667";
+}
+.icon-mail:before {
+    content: "\e603";
+}
+.icon-book:before {
+    content: "\e666";
+}
+.icon-unizar_es:before {
+    content: "\e60d";
+    font-size: 2.4rem;
+}
+.icon-users:before {
+    content: "\e663";
+}
+.icon-facebook-with-circle:before {
+    content: "\e606";
+}
+.icon-graduation:before {
+    content: "\e668";
+}
+.icon-facebook:before {
+    content: "\e60b";
+    font-size: 2.4rem;
+}
+.icon-briefcase:before {
+    content: "\e60c";
+}
+.icon-rss:before {
+    content: "\e609";
+}
+.icon-twitter-with-circle:before {
+    content: "\e60e";
+}
+.icon-plus:before {
+    content: "\e60f";
+}
+.icon-twitter:before {
+    content: "\e60a";
+    font-size: 2.4rem;
+}
+.icon-facebook2:before {
+    content: "\e607";
+}
+.icon-campusiberus-01:before {
+    content: "\e610";
+}
+.icon-uz_edificio:before {
+    content: "\e613";
+}
+.icon-check-alt:before {
+    content: "\e614";
+}
+.icon-file:before {
+    content: "\e615";
+}
+.icon-search:before {
+    content: "\e616";
+}
+.icon-newspaper:before {
+    content: "\e617";
+}
+.icon-x-altx-alt:before {
+    content: "\e618";
+}
+.icon-check:before {
+    content: "\e619";
+}
+.icon-mobile:before {
+    content: "\e601";
+}
+.icon-cross:before {
+    content: "\e61b";
+}
+.icon-plus2:before {
+    content: "\e61c";
+}
+.icon-chevron-small-right:before {
+    content: "\e61d";
+}
+.icon-info-with-circle:before {
+    content: "\e61e";
+}
+.icon-eye:before {
+    content: "\e61f";
+}
+.icon-info:before {
+    content: "\e620";
+}
+.icon-alert:before {
+    content: "\e621";
+}
+.icon-location:before {
+    content: "\e604";
+}
+.icon-user-md:before {
+    content: "\e901";
+}
+.icon-book3:before {
+    content: "\e902";
+}
+.icon-location2:before {
+    content: "\e903";
+}
+.icon-group:before {
+    content: "\e904";
+}
+.icon-info2:before {
+    content: "\e559";
+}
+.icon-cogs:before {
+    content: "\e917";
+}
+.icon-emoji-happy:before {
+    content: "\e661";
+}
+.icon-emoji-sad:before {
+    content: "\e662";
+}
+.icon-flask:before {
+    content: "\e918";
+}
+.icon-info-large:before {
+    content: "\e660";
+}
+.icon-stars:before {
+    content: "\e905";
+}
+.icon-r-book:before {
+    content: "\e906";
+}
+.icon-r-cogs:before {
+    content: "\e907";
+}
+.icon-r-flask:before {
+    content: "\e908";
+}
+.icon-r-group:before {
+    content: "\e909";
+}
+.icon-r-user-md:before {
+    content: "\e90a";
+}
+.icon-graduation-cap:before {
+    content: "\e90c";
+}
+.icon-graduation-cap2:before {
+    content: "\e912";
+}
+.icon-check2:before {
+    content: "\f00c";
+}
+.icon-close:before {
+    content: "\f00d";
+}
+.icon-exclamation:before {
+    content: "\f12a";
+}
