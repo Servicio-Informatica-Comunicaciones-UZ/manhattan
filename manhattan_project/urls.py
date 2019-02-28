@@ -21,6 +21,8 @@ from django.views.generic.base import RedirectView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("accounts/", include("accounts.urls")),
+    path("accounts/", include("django.contrib.auth.urls")),
     path(
         "browserconfig.xml",
         RedirectView.as_view(url=staticfiles_storage.url("favicons/browserconfig.xml")),
@@ -36,5 +38,6 @@ urlpatterns = [
         TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),
         name="robots_file",
     ),
+    path("", include("social_django.urls", namespace="social")),
     path("", include("indo.urls")),
 ]

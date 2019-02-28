@@ -25,7 +25,7 @@ SECRET_KEY = "xk6ujnt_zj7xlnt@c&$jc9f_=u3io5e!87imbqz4)=li*$tu%w"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = []  # ['*']
 
 
 # Application definition
@@ -39,6 +39,9 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # Local
     "indo.apps.IndoConfig",
+    "accounts.apps.AccountsConfig",
+    # 3rd Party
+    "social_django",  # https://github.com/python-social-auth/social-app-django
 ]
 
 MIDDLEWARE = [
@@ -64,6 +67,8 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ]
         },
     }
@@ -77,8 +82,16 @@ WSGI_APPLICATION = "manhattan_project.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+        "ENGINE": "django.db.backends.mysql",  # Database engine
+        "NAME": "manhattan",        # Database name
+        "USER": "albert",           # Database user
+        "PASSWORD": "einstein",     # Database password
+        "HOST": "",                 # Set to empty string for localhost.
+        "PORT": "",                 # Set to empty string for default.
+        # Additional database options
+        "OPTIONS": {
+            'charset': 'utf8mb4',   # Requires `innodb_default_row_format = dynamic`
+        }
     }
 }
 
@@ -115,3 +128,54 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+
+AUTH_USER_MODEL = "accounts.CustomUser"
+LOGIN_REDIRECT_URL = "home"  # TODO
+LOGOUT_REDIRECT_URL = "home"
+
+
+### SAML with Python Social Auth ###
+# https://python-social-auth.readthedocs.io/en/latest/backends/saml.html
+
+AUTHENTICATION_BACKENDS = (
+    "social_core.backends.saml.SAMLAuth",
+    "django.contrib.auth.backends.ModelBackend",
+)
+# When using PostgreSQL, it’s recommended to use the built-in JSONB field to store the extracted extra_data.
+# To enable it define the setting:
+# SOCIAL_AUTH_POSTGRES_JSONFIELD = True
+SOCIAL_AUTH_SAML_SP_ENTITY_ID = (
+    "https://manhattan.local/accounts/metadata"  # Identifier of the SP entity (must be a URI)
+)
+SOCIAL_AUTH_SAML_SP_PUBLIC_CERT = """Spam, ham and eggs"""
+SOCIAL_AUTH_SAML_SP_PRIVATE_KEY = """Spam, sausages and bacon"""
+SOCIAL_AUTH_SAML_ORG_INFO = {
+    "en-US": {
+        "name": "manhattan",
+        "displayname": "Proyectos de Innovación Docente",
+        "url": "http://manhattan.local",
+    }
+}
+SOCIAL_AUTH_SAML_TECHNICAL_CONTACT = {
+    "givenName": "Quique",
+    "emailAddress": "quique@manhattan.local",
+}
+SOCIAL_AUTH_SAML_SUPPORT_CONTACT = {
+    "givenName": "Vicerrectorado de Política Académica",
+    "emailAddress": "innova.docen@manhattan.local",
+}
+SOCIAL_AUTH_SAML_ENABLED_IDPS = {
+    "lord": {
+        "entity_id": 'https://FIXME.idp.com/saml2/idp/metadata.php',
+        "url": 'https://FIXME.idp.com/saml2/idp/SSOService.php',
+        "x509cert": 'Lovely spam, wonderful spam',
+        "attr_user_permanent_id": "uid",
+        'attr_full_name': "cn",             # "urn:oid:2.5.4.3"
+        "attr_first_name": "givenName",     # "urn:oid:2.5.4.42"
+        "attr_last_name": "sn",             # "urn:oid:2.5.4.4"
+        "attr_username": "uid",             # "urn:oid:0.9.2342.19200300.100.1.1"
+        # "attr_email": "email",            # "urn:oid:0.9.2342.19200300.100.1.3"
+    }
+}
+
+SOCIAL_AUTH_URL_NAMESPACE = "social"
