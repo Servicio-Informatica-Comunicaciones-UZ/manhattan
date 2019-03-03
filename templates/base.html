@@ -1,135 +1,167 @@
 {% load static %}{% load custom_tags %}
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
-<head>
-  <!-- Required meta tags -->
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
+      integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="{% static 'css/base.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/iconos.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/latolatinfonts.css' %}" />
+    {% block extracss %}{% endblock extracss %}
 
-  <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
-    integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
-  <link rel="stylesheet" href="{% static 'css/base.css' %}">
-  <link rel="stylesheet" href="{% static 'css/iconos.css' %}">
-  <link rel="stylesheet" href="{% static 'css/latolatinfonts.css' %}">
-  {% block extracss %}{% endblock extracss %}
+    <title>{% block title %}Proyectos de Innovación Docente{% endblock title %}</title>
 
-  <title>{% block title %}Proyectos de Innovación Docente{% endblock title %}</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicons/apple-touch-icon.png' %}" />
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicons/favicon-32x32.png' %}" />
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicons/favicon-16x16.png' %}" />
+    <link rel="manifest" href="{% static 'favicons/site.webmanifest' %}" />
+    <link rel="mask-icon" href="{% static 'favicons/safari-pinned-tab.svg' %}" color="#dd2222" />
+    <meta name="apple-mobile-web-app-title" content="Manhattan" />
+    <meta name="application-name" content="Manhattan" />
+    <meta name="msapplication-TileColor" content="#da532c" />
+    <meta name="theme-color" content="#de3131" />
+    <link rel="shortcut icon" href="{% static 'favicons/favicon.ico' %}" />
+    <meta name="msapplication-config" content="{% static 'favicons/browserconfig.xml' %}" />
 
-  <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicons/apple-touch-icon.png' %}">
-  <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicons/favicon-32x32.png' %}">
-  <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicons/favicon-16x16.png' %}">
-  <link rel="manifest" href="{% static 'favicons/site.webmanifest' %}">
-  <link rel="mask-icon" href="{% static 'favicons/safari-pinned-tab.svg' %}" color="#dd2222">
-  <meta name="apple-mobile-web-app-title" content="Manhattan">
-  <meta name="application-name" content="Manhattan">
-  <meta name="msapplication-TileColor" content="#da532c">
-  <meta name="theme-color" content="#de3131">
-  <link rel="shortcut icon" href="{% static 'favicons/favicon.ico' %}">
-  <meta name="msapplication-config" content="{% static 'favicons/browserconfig.xml' %}">
+    <meta
+      name="description"
+      content="{% block description %}Proyectos de innovación docente{% endblock description %}"
+    />
+    <meta
+      name="author"
+      content="Área de Aplicaciones. Servicio de Informática y Comunicaciones de la Universidad de Zaragoza."
+    />
+  </head>
 
-  <meta name="description" content="{% block description %}Proyectos de innovación docente{% endblock description %}">
-  <meta name="author"
-    content="Área de Aplicaciones. Servicio de Informática y Comunicaciones de la Universidad de Zaragoza.">
-
-</head>
-
-<body>
-  <nav class="navbar fixed-top navbar-expand-md navbar-dark bg-azul mb-4">
-    <a class="navbar-brand" href="http://www.unizar.es">
-      <span class="icon-logoUZ"></span> <span class="screen-reader">Universidad de Zaragoza</span>
-    </a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
-      aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarCollapse">
-      <ul class="navbar-nav ml-auto">
-        <li class="nav-item"><a class='nav-link' href="{% url 'ayuda' %}"><i class="fas fa-question-circle"></i>
-            &nbsp;Ayuda</a>
-        </li>
-        <li class="nav-item">
-          {% if user.is_authenticated %}
-          <a class="nav-link dropdown-toggle" href="#" id="userMenu" data-toggle="dropdown" aria-haspopup="true"
-            aria-expanded="false">
-            <i class="fas fa-user"></i>&nbsp; {{ user.username }}
-          </a>
-          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
-            <a class="dropdown-item" href="{% url 'password_change' %}"><i class="fas fa-key"></i> Cambiar
-              contraseña</a>
-            <div class="dropdown-divider"></div>
-            {# Follow https://github.com/python-social-auth/social-core/issues/199 #}
-            <a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a>
-          </div>
-          {% else %}
-          <a class='nav-link' href={% lord_url %}><i class="fas fa-sign-in-alt"></i> &nbsp;Iniciar sesión</a>
-          {% endif %}
-        </li>
-      </ul>
+  <body>
+    <nav class="navbar fixed-top navbar-expand-md navbar-dark bg-azul mb-4">
+      <a class="navbar-brand" href="http://www.unizar.es">
+        <span class="icon-logoUZ"></span> <span class="screen-reader">Universidad de Zaragoza</span>
+      </a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarCollapse"
+        aria-controls="navbarCollapse"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'ayuda' %}"><i class="fas fa-question-circle"></i> &nbsp;Ayuda</a>
+          </li>
+          <li class="nav-item">
+            {% if user.is_authenticated %}
+            <a
+              class="nav-link dropdown-toggle"
+              href="#"
+              id="userMenu"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <i class="fas fa-user"></i>&nbsp; {{ user.username }}
+            </a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
+              <a class="dropdown-item" href="{% url 'password_change' %}"
+                ><i class="fas fa-key"></i> Cambiar contraseña</a
+              >
+              <div class="dropdown-divider"></div>
+              {# Follow https://github.com/python-social-auth/social-core/issues/199 #}
+              <a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a>
+            </div>
+            {% else %}
+            <a class="nav-link" href="{%" lord_url %}><i class="fas fa-sign-in-alt"></i> &nbsp;Iniciar sesión</a>
+            {% endif %}
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <div class="container">
+      {% block content %} {% endblock content %}
     </div>
-  </nav>
-  <div class="container">
-    {% block content %}
-    {% endblock content %}
-  </div>
 
-  <footer class="footer">
-    <div class="container-fluid p-3 p-md-5">
-      <div class="row">
-        <div class="col-lg-8">
-          &copy; 2019 Universidad de Zaragoza<br>
-          &copy; 2019 Servicio de Informática y Comunicaciones de la Universidad de Zaragoza (<a
-            href="http://sicuz.unizar.es">SICUZ</a>)
-        </div>
+    <footer class="footer">
+      <div class="container-fluid p-3 p-md-5">
+        <div class="row">
+          <div class="col-lg-8">
+            &copy; 2019 Universidad de Zaragoza<br />
+            &copy; 2019 Servicio de Informática y Comunicaciones de la Universidad de Zaragoza (<a
+              href="http://sicuz.unizar.es"
+              >SICUZ</a
+            >)
+          </div>
 
-        <div class="col-lg-2" style="text-align: right;">
-          Universidad de Zaragoza<br>
-          C/ Pedro Cerbuna, 12<br>
-          ES-50009 Zaragoza<br>
-          España / Spain<br>
-          Tel: +34 976761000<br>
-          ciu@unizar.es<br>
-          Q-5018001-G<br>
-          <!-- <br>
+          <div class="col-lg-2" style="text-align: right;">
+            Universidad de Zaragoza<br />
+            C/ Pedro Cerbuna, 12<br />
+            ES-50009 Zaragoza<br />
+            España / Spain<br />
+            Tel: +34 976761000<br />
+            ciu@unizar.es<br />
+            Q-5018001-G<br />
+            <!-- <br>
           <a href="https://www.facebook.com/unizar.es">
             <span class="icon-facebook"></span><span class="screen-reader">Facebook</span>
           </a> &nbsp;
           <a href="https://twitter.com/unizar">
             <span class="icon-twitter"></span><span class="screen-reader">Twitter</span>
           </a> -->
-        </div>
+          </div>
 
-        <div class="col-lg-2">
-          <a href="http://www.unizar.es">
-            <span class="icon-logoUZ"></span><span class="screen-reader">Universidad de Zaragoza</span>
-          </a>
+          <div class="col-lg-2">
+            <a href="http://www.unizar.es">
+              <span class="icon-logoUZ"></span><span class="screen-reader">Universidad de Zaragoza</span>
+            </a>
+          </div>
         </div>
+        <hr style="border-color: #3b3b3b;" />
+
+        <ul class="footer-links">
+          <li><a href="http://www.unizar.es/aviso-legal" target="_blank">Aviso legal</a></li>
+          <li>
+            <a href="http://www.unizar.es/condiciones-generales-de-uso" target="_blank">Condiciones generales de uso</a>
+          </li>
+          <li><a href="http://www.unizar.es/politica-de-privacidad" target="_blank">Política de privacidad</a></li>
+        </ul>
       </div>
-      <hr style="border-color: #3b3b3b;">
+    </footer>
 
-      <ul class="footer-links">
-        <li><a href="http://www.unizar.es/aviso-legal" target="_blank">Aviso legal</a></li>
-        <li><a href="http://www.unizar.es/condiciones-generales-de-uso" target="_blank">Condiciones generales de uso</a>
-        </li>
-        <li><a href="http://www.unizar.es/politica-de-privacidad" target="_blank">Política de privacidad</a></li>
-      </ul>
-    </div>
-  </footer>
-
-  <!-- Optional JavaScript -->
-  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-    crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-    crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-    crossorigin="anonymous"></script>
-</body>
-
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+  </body>
 </html>
