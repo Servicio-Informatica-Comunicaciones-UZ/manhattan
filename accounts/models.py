@@ -35,6 +35,7 @@ class CustomUser(AbstractUser):
     departamento_id_nks = models.CharField(
         _("Cód. departamentos"), max_length=127, blank=True, null=True
     )
+    colectivos = models.CharField(max_length=127, blank=True, null=True)
 
     # Metodos sobrescritos
     def get_full_name(self):
