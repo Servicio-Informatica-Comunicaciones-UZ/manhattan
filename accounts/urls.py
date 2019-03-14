@@ -9,5 +9,8 @@ urlpatterns = [
         auth_views.LoginView.as_view(redirect_authenticated_user=True),
         name="login",
     ),
+    # Muestra los metadatos para el Proveedor de Identidad (IdP) de SAML.
     path("metadata", views.metadataView, name="metadata"),
+    # Muestra los datos del usuario.
+    path("userdata", views.UserdataView.as_view(), name="userdata"),
 ]
