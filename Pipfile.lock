@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "1016a34e3eff9effad91951bda6cc38484050da89650720ba18800ff9557daf0"
+            "sha256": "10726274f0df91f8bc04c1c8f18bd5e615c4cee22a69cd88f4e3d22a5e21e8c0"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -29,6 +29,26 @@
                 "sha256:fc323ffcaeaed0e0a02bf4d117757b98aed530d9ed4531e3e15460124c106691"
             ],
             "version": "==3.0.4"
+        },
+        "cx-oracle": {
+            "hashes": [
+                "sha256:17d760bdf89e364fc7c964c5640c1b38cbb22ab49b53830883f21fda92c59131",
+                "sha256:1c79be40c1413372062e4a09570ff25dde42111369730c81ca6dc3e5dd9857fe",
+                "sha256:1e7e161f9855dfa2cb29fb116d1374de966194976cd5a8d8265911b55a1ec9f9",
+                "sha256:2f4423eb7c652ad7c8352547054784456faed7b61d97a43fcf98f4a61fcc3095",
+                "sha256:4af28f3060ec26c293921e640ce49b834199ce79d41d771990520a0755d8334b",
+                "sha256:4ca456fb1889f8e6c34d66af455ef885d3c0390f4be2ef314a811a03d936641e",
+                "sha256:5895d6db9a7c70e43c48ee53e50a2a6ba647192d881e0689bba5739f9d8e1011",
+                "sha256:79a5b9c831033cde2bff438b9e87e628c30d160ea97f23bc1350f23af7f8607d",
+                "sha256:a77f0f3693acf602e59795f544982e127e819fbc6fbd3dda04748367d3883a69",
+                "sha256:a91f03ab85a8eb5860559c888e6abdba391a119e9bd4fb65c025f689392cc2df",
+                "sha256:b8e296add6386b56fc468b9e60b8981104c5ff9df1f318454c0a486c1800b3e5",
+                "sha256:fbbb92cd85d6c0ea91eeec1e82fa7434f8f9cc6089fc908ea9f66f2a93b2e92c",
+                "sha256:fda68322fe3d2ae77820170059049a0e64efdbb4ed547db96287959b12d975a5",
+                "sha256:ff44d60f50a03389f723bf7875e3eb8105ed4e344235908573313776af329b8b"
+            ],
+            "index": "pypi",
+            "version": "==7.1.1"
         },
         "defusedxml": {
             "hashes": [
@@ -204,17 +224,17 @@
     "develop": {
         "astroid": {
             "hashes": [
-                "sha256:1d5d0e6e408701ae657342645465d08be6fb66cf0ede16a31cc6435bd2e61718",
-                "sha256:8fc40235cd184bff5d7b8e1284a647005cbd36bbc87d0c39f6f6389ae26e17ad"
+                "sha256:39183aecc01d6f74eb54edc6739992e842f3bf3068bdfaaba30b5a1742f44091",
+                "sha256:62bd1d8d2ace3e812b3a22eb3c4b7856536d8cc0cdb37466f6a53cf881dbad1f"
             ],
-            "version": "==2.2.0"
+            "version": "==2.2.4"
         },
         "isort": {
             "hashes": [
-                "sha256:ee5fddfd792e6e1d664ee28f3fbe00dfc26d8d3c6f059ee78f4da4c19718007c",
-                "sha256:f19b23b22fb5a919a081bc31aabcc0991614c244d9215267e11abf2ca7b684ce"
+                "sha256:89041186651a9a6159683098f337eed0994d9d94e006f891c6e8cbeb8e65f1c7",
+                "sha256:ba51a651505242b0b37ad94b281e1154301e221a40c623e62334ed863fc1c98c"
             ],
-            "version": "==4.3.9"
+            "version": "==4.3.12"
         },
         "lazy-object-proxy": {
             "hashes": [
@@ -259,11 +279,11 @@
         },
         "pylint": {
             "hashes": [
-                "sha256:2bf4bd58d6d5d87174fbc9d1d134a9aeee852d4dc29cbd422a7015772770bc63",
-                "sha256:ee80c7af4f127b2a480d83010c9f0e97beb8eaa652b78c2837d3ed30b12e1182"
+                "sha256:5d77031694a5fb97ea95e828c8d10fc770a1df6eb3906067aaed42201a8a6a09",
+                "sha256:723e3db49555abaf9bf79dc474c6b9e2935ad82230b10c1138a71ea41ac0fff1"
             ],
             "index": "pypi",
-            "version": "==2.3.0"
+            "version": "==2.3.1"
         },
         "six": {
             "hashes": [
@@ -294,7 +314,7 @@
                 "sha256:d659517ca116e6750101a1326107d3479028c5191f0ecee3c7203c50f5b915b0",
                 "sha256:eddd3fb1f3e0f82e5915a899285a39ee34ce18fd25d89582bc89fc9fb16cd2c6"
             ],
-            "markers": "python_version >= '3.7' and implementation_name == 'cpython'",
+            "markers": "implementation_name == 'cpython'",
             "version": "==1.3.1"
         },
         "wrapt": {

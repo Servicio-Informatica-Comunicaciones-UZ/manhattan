@@ -92,6 +92,18 @@ DATABASES = {
         "OPTIONS": {
             'charset': 'utf8mb4',   # Requires `innodb_default_row_format = dynamic`
         }
+    },
+    "identidades": {
+        "ENGINE": "django.db.backends.oracle",  # Database engine
+        "NAME": "DELFOS",                       # Database name
+        "USER": "dodona",                       # Database user
+        "PASSWORD": "PopolWuj",                 # Database password
+        "HOST": "oraculo.unizar.es",            # Set to empty string for localhost.
+        "PORT": "1521",                         # Set to empty string for default.
+        # Additional database options
+        # "OPTIONS": {
+        #     'charset': 'WE8ISO8859P1',
+        # }
     }
 }
 
@@ -130,7 +142,7 @@ STATIC_URL = "/static/"
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 AUTH_USER_MODEL = "accounts.CustomUser"
-LOGIN_REDIRECT_URL = "home"  # TODO
+LOGIN_REDIRECT_URL = "userdata"  # CÁMBIAME
 LOGOUT_REDIRECT_URL = "home"
 
 
@@ -177,5 +189,20 @@ SOCIAL_AUTH_SAML_ENABLED_IDPS = {
         # "attr_email": "email",            # "urn:oid:0.9.2342.19200300.100.1.3"
     }
 }
+
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.user.get_username',
+    # 'social_core.pipeline.mail.mail_validation',
+    # 'social_core.pipeline.social_auth.associate_by_email',
+    'social_core.pipeline.user.create_user',
+    'accounts.pipeline.get_identidad',  # Actualizar con los datos de Gestión de Identidades
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
+)
 
 SOCIAL_AUTH_URL_NAMESPACE = "social"
