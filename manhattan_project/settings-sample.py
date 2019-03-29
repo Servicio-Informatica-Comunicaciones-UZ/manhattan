@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "indo.apps.IndoConfig",
     "accounts.apps.AccountsConfig",
     # 3rd Party
+    'crispy_forms',   # https://github.com/django-crispy-forms/django-crispy-forms
     "social_django",  # https://github.com/python-social-auth/social-app-django
 ]
 
@@ -206,3 +207,6 @@ SOCIAL_AUTH_PIPELINE = (
 )
 
 SOCIAL_AUTH_URL_NAMESPACE = "social"
+
+# CRISPY FORMS
+CRISPY_TEMPLATE_PACK = 'bootstrap4'

@@ -1,4 +1,6 @@
+from datetime import date, datetime
 from django.db import models
+from django.db.models.query_utils import Q
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
@@ -69,9 +71,10 @@ class Convocatoria(models.Model):
     fecha_max_visto_buenos = models.DateField()
 
     def __str__(self):
-        return self.id
+        return str(self.id)
 
 
+"""
 class Departamento(models.Model):
     id = models.IntegerField(primary_key=True)
     academico_id_nk = models.IntegerField(
@@ -95,6 +98,7 @@ class Departamento(models.Model):
 
     def __str__(self):
         return f"{self.academico_id_nk} {self.rrhh_id_nk} {self.nombre}"
+"""
 
 
 class Estudio(models.Model):
@@ -121,17 +125,17 @@ class Evento(models.Model):
 
 class Licencia(models.Model):
     """Licencia de publicación de la memoria"""
+
     identificador = models.CharField(
         max_length=255,
-        null=True,
-        unique=True,
+        primary_key=True,
         help_text=_("Ver los identificadores estándar en https://spdx.org/licenses/"),
     )
     nombre = models.CharField(max_length=255)
     url = models.URLField("URL", max_length=255, blank=True, null=True)
 
     def __str__(self):
-        return self.nombre
+        return f"{self.nombre} ({self.identificador})"
 
 
 class Linea(models.Model):
@@ -139,7 +143,7 @@ class Linea(models.Model):
     programa = models.ForeignKey("Programa", on_delete=models.PROTECT)
 
     def __str__(self):
-        return f"{self.programa} {self.nombre}"
+        return f"{self.nombre}"
 
 
 class Plan(models.Model):
@@ -153,7 +157,7 @@ class Plan(models.Model):
     email_coordinador = models.EmailField(
         _("email del coordinador"), blank=True, null=True
     )
-    esta_activo = models.BooleanField("¿Activo?", default=True)
+    esta_activo = models.BooleanField(_("¿Activo?"), default=True)
     centro = models.ForeignKey("Centro", on_delete=models.PROTECT)
     estudio = models.ForeignKey("Estudio", on_delete=models.PROTECT)
 
@@ -173,32 +177,7 @@ class Programa(models.Model):
     convocatoria = models.ForeignKey("Convocatoria", on_delete=models.PROTECT)
 
     def __str__(self):
-        return f"{self.nombre_corto} {self.convocatoria}"
-
-
-class Proyecto(models.Model):
-    id = models.AutoField(primary_key=True)
-    codigo = models.CharField(max_length=31, null=True)
-    titulo = models.CharField(max_length=255)
-    descripcion = models.TextField(_("Descripción"), blank=True, null=True)
-    # publicar_memoria = models.BooleanField("¿Publicar la memoria?", default=True)
-    financiacion = models.TextField(_("Financiación solicitada"), blank=True, null=True)
-    ayuda = models.PositiveIntegerField(_("Ayuda solicitada"), blank=True, null=True)
-    centro = models.ForeignKey("Centro", on_delete=models.PROTECT, null=True)
-    convocatoria = models.ForeignKey("Convocatoria", on_delete=models.PROTECT)
-    departamento = models.ForeignKey(
-        "Departamento", on_delete=models.PROTECT, null=True
-    )
-    estudio = models.ForeignKey("Estudio", on_delete=models.PROTECT, null=True)
-    licencia = models.ForeignKey("Licencia", on_delete=models.PROTECT, null=True)
-    linea = models.ForeignKey("Linea", on_delete=models.PROTECT, null=True)
-    programa = models.ForeignKey("Programa", on_delete=models.PROTECT)
-
-    def get_absolute_url(self):
-        return reverse("proyecto_detail", args=[str(self.id)])
-
-    def __str__(self):
-        return self.codigo
+        return f"{self.nombre_corto}"
 
 
 class ParticipanteProyecto(models.Model):
@@ -208,8 +187,82 @@ class ParticipanteProyecto(models.Model):
     )
     usuario = models.ForeignKey("accounts.CustomUser", on_delete=models.PROTECT)
 
+    def get_cargo(self):
+        if self.tipo_participacion.nombre == "coordinador":
+            return _("Coordinadora") if self.usuario.sexo == "F" else _("Coordinador")
+        if self.tipo_participacion.nombre == "coordinador_principal":
+            if self.usuario.sexo == "F":
+                return _("Coordinadora principal")
+            return _("Coordinador principal")
+        return _("Participante")
 
-""" class Rama(models.Model):
+
+class Proyecto(models.Model):
+    id = models.AutoField(primary_key=True)
+    codigo = models.CharField(max_length=31, null=True)
+    titulo = models.CharField(_("Título"), max_length=255)
+    descripcion = models.TextField(
+        _("Descripción"),
+        null=True,
+        max_length=4095,
+        help_text=_(
+            "Resumen sucinto del proyecto. Máximo recomendable: un párrafo de 10 líneas."
+        ),
+    )
+    # publicar_memoria = models.BooleanField("¿Publicar la memoria?", default=True)
+    financiacion = models.TextField(_("Financiación solicitada"), blank=True, null=True)
+    ayuda = models.PositiveIntegerField(_("Ayuda solicitada"), blank=True, null=True)
+    centro = models.ForeignKey(
+        "Centro",
+        on_delete=models.PROTECT,
+        blank=True,
+        null=True,
+        help_text=_("Sólo obligatorio para PIEC, PRACUZ, PIPOUZ."),
+    )
+    convocatoria = models.ForeignKey("Convocatoria", on_delete=models.PROTECT)
+    # departamento = models.ForeignKey(
+    #    "Departamento", on_delete=models.PROTECT, null=True
+    # )
+    estudio = models.ForeignKey(
+        "Estudio",
+        on_delete=models.PROTECT,
+        blank=True,
+        null=True,
+        help_text=_("Sólo obligatorio para PIET."),
+    )
+    licencia = models.ForeignKey("Licencia", on_delete=models.PROTECT, null=True)
+    linea = models.ForeignKey(
+        "Linea",
+        on_delete=models.PROTECT,
+        blank=True,
+        null=True,
+        limit_choices_to=Q(programa__convocatoria_id=date.today().year),
+        verbose_name=_("Línea"),
+        help_text=_("En su caso."),
+    )
+    programa = models.ForeignKey(
+        "Programa",
+        on_delete=models.PROTECT,
+        limit_choices_to={"convocatoria_id": date.today().year},
+    )
+
+    def get_absolute_url(self):
+        return reverse("proyecto_detail", args=[str(self.id)])
+
+    def get_participante_or_none(self, tipo):
+        try:
+            return ParticipanteProyecto.objects.get(
+                proyecto_id=self.id, tipo_participacion_id=tipo
+            )
+        except ParticipanteProyecto.DoesNotExist:
+            return None
+
+    def __str__(self):
+        return self.codigo
+
+
+"""
+class Rama(models.Model):
     id = models.CharField(primary_key=True, max_length=1)
     nombre = models.CharField(max_length=63)
 """

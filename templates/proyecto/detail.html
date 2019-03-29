@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container-blanco">
+    <h1>{{ proyecto.titulo }}</h1> {# Our context object, proyecto, is made available by DetailView #}
+    <hr><br>
+
+    <p><strong>Convocatoria</strong>: {{ proyecto.convocatoria_id }}</p>
+
+    <p><strong>Programa</strong>: {{ proyecto.programa.nombre_corto }} ({{ proyecto.programa.nombre_largo }})</p>
+
+    {% if proyecto.linea %}
+    <p><strong>Línea</strong>: {{ proyecto.linea.nombre }}</p>
+    {% endif %}
+
+    {% if proyecto.centro %}
+    <p><strong>Centro</strong>: {{ proyecto.centro.nombre }}</p>
+    {% endif %}
+
+    {% if proyecto.estudio %}
+    <p><strong>Estudio</strong>: {{ proyecto.estudio.nombre }}</p>
+    {% endif %}
+
+    {% if coordinador_principal %}
+    <p><strong>{{ coordinador_principal.get_cargo }}</strong>: {{ coordinador_principal.usuario.get_full_name }}</p>
+    {% endif %}
+
+    {% if coordinador %}
+    <p><strong>{{ coordinador.get_cargo }}</strong>: {{ coordinador.usuario.get_full_name }}</p>
+    {% endif %}
+
+    <h3>Descripción</h3>
+    <p>{{ proyecto.descripcion }}</p>
+
+</div>
+{% endblock content %}

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Nueva solicitud de proyecto{% endblock title %}
+{% block description %}Nueva solicitud de proyecto{% endblock description %}
+
+{% block content %}
+<div class="container-blanco">
+    <div class='alert alert-info'>
+        <i class="fas fa-info-circle"></i>
+        <div>Introduzca los datos básicos de su solicitud.</br>
+            En la siguiente página se le solicitará más información.
+        </div>
+    </div>
+
+    <h1>Nueva solicitud de proyecto</h1>
+    <hr><br>
+
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button class="btn btn-success" type="submit">Guardar</button>
+    </form>
+</div>
+{% endblock content %}
