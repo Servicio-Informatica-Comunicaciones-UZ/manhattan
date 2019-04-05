@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Actualizar solicitud de proyecto{% endblock title %}
+{% block description %}Actualizar solicitud de proyecto{% endblock description %}
+{% block extracss %}<style>
+    label {
+        font-size: 1.75rem;
+        font-weight: 500;
+        line-height: 1.2;
+        margin-bottom: 0.5rem;
+        margin-top: 0;
+    }
+
+    .helptext {
+        color: #6c757d !important;
+    }
+</style>{% endblock extracss %}
+
+{% block content %}
+<div class="container-blanco">
+    <h1>Actualizar solicitud de proyecto</h1>
+    <hr><br>
+
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <br style="clear: both;">
+        <button class="btn btn-success" type="submit">Actualizar</button>
+    </form>
+</div>
+{% endblock content %}

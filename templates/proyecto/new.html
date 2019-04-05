@@ -7,8 +7,10 @@
 <div class="container-blanco">
     <div class='alert alert-info'>
         <i class="fas fa-info-circle"></i>
-        <div>Introduzca los datos básicos de su solicitud.</br>
-            En la siguiente página se le solicitará más información.
+        <div>Introduzca los datos básicos de su proyecto.<br>
+            Se creará un <b>borrador</b> de solicitud, en el que posteriormente podrá añadir o modificar la
+            información.<br>
+            Finalmente, podrá presentarla pulsando el botón «Presentar».
         </div>
     </div>
 
@@ -18,7 +20,7 @@
     <form action="" method="post">
         {% csrf_token %}
         {{ form|crispy }}
-        <button class="btn btn-success" type="submit">Guardar</button>
+        <button class="btn btn-success" type="submit">Crear</button>
     </form>
 </div>
 {% endblock content %}

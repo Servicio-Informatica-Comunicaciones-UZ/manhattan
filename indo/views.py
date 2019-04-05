@@ -1,4 +1,6 @@
+import json
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.forms.models import modelform_factory
 from django.http.response import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
@@ -12,6 +14,7 @@ from django.views.generic import (
     FormView,
 )
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django_summernote.widgets import SummernoteWidget
 
 from .models import (
     Convocatoria,
@@ -33,6 +36,10 @@ class HomePageView(TemplateView):
 
 class ProyectoCreateView(LoginRequiredMixin, CreateView):
     """Crea una nueva solicitud de proyecto"""
+
+    # TODO: Comprobar usuario para Proyectos de titulación y POU.
+    # TODO: Comprobar fecha
+    # TODO: Check programa/linea
 
     model = Proyecto
     template_name = "proyecto/new.html"
@@ -72,6 +79,10 @@ class ProyectoCreateView(LoginRequiredMixin, CreateView):
 
 
 class ProyectoDetailView(DetailView):
+    """Muestra una solicitud de proyecto."""
+
+    # TODO: Comprobar permisos
+    #   - Coordinadores, participantes/invitados, evaluadores.  Gestores.
     model = Proyecto
     template_name = "proyecto/detail.html"
 
@@ -86,4 +97,33 @@ class ProyectoDetailView(DetailView):
         coordinador = self.object.get_participante_or_none("coordinador")
         context["coordinador"] = coordinador
 
+        context["campos"] = json.loads(self.object.programa.campos)
+
         return context
+
+
+class ProyectoUpdateFieldView(LoginRequiredMixin, UpdateView):
+    # TODO: Comprobar permisos - coordinadores
+    #       Modificar estado, sólo para gestores
+    #       No permitir modificar convocatoria, etc
+    # TODO: Comprobar estado/fecha
+    model = Proyecto
+    template_name = "proyecto/update.html"
+
+    def get_form_class(self, **kwargs):
+        campo = self.kwargs["campo"]
+        if campo not in (
+            "centro",
+            "convocatoria",
+            "departamento",
+            "licencia",
+            "linea",
+            "programa",
+            "ayuda",
+            "estado",
+        ):
+            return modelform_factory(
+                Proyecto, fields=(campo,), widgets={campo: SummernoteWidget()}
+            )
+        self.fields = (campo,)
+        return super().get_form_class()

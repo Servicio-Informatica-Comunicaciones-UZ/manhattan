@@ -1,7 +1,16 @@
 {% extends 'base.html' %}
+{% load custom_tags %}
 {% block content %}
 <div class="container-blanco">
-    <h1>{{ proyecto.titulo }}</h1> {# Our context object, proyecto, is made available by DetailView #}
+    <div class='alert alert-info'>
+        <i class="fas fa-info-circle"></i>
+        <div>Puede editar su solicitud tantas veces como desee.</br>
+            Cuando esté satisfecho, pulse el botón «Presentar».
+            Una vez haya presentado la solicitud, ya no podrá modificarla.
+        </div>
+    </div>
+
+    <h1>{{ proyecto.titulo }}</h1> {# DetailView proporciona el objeto de contexto `proyecto` #}
     <hr><br>
 
     <p><strong>Convocatoria</strong>: {{ proyecto.convocatoria_id }}</p>
@@ -28,8 +37,23 @@
     <p><strong>{{ coordinador.get_cargo }}</strong>: {{ coordinador.usuario.get_full_name }}</p>
     {% endif %}
 
+    {# TODO: filtro para HTML procedente de procesador de textos #}
     <h3>Descripción</h3>
-    <p>{{ proyecto.descripcion }}</p>
+    <p>{{ proyecto.descripcion|safe }}</p>
+
+    {% for campo in campos %}
+    <h3>{{ proyecto|get_attr_verbose_name:campo }}</h3>
+    <p>{{ proyecto|get_obj_attr:campo|default:""|safe }}</p>
+    <p><a href="edit/{{ campo }}" class="btn btn-info btn-sm">
+            <i class="fas fa-pencil-alt" aria-hidden="true"></i> &nbsp; Editar
+        </a></p>
+    {% endfor %}
+
+    <h3>{{ proyecto|get_attr_verbose_name:"financiacion"}}</h3>
+    <p>{{ proyecto.financiacion|default:""|safe }}</p>
+
+    <h3>{{ proyecto|get_attr_verbose_name:"ayuda"}}</h3>
+    <p>{{ proyecto.ayuda|default:"" }}</p>
 
 </div>
 {% endblock content %}
