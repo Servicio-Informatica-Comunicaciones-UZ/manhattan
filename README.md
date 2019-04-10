@@ -3,7 +3,7 @@
 > First we take Manhattan, then we take Berlin.
 
 Manhattan es una aplicación web para gestionar los proyectos de Innovación Docente.
-Está desarrollada con [Django](https://www.djangoproject.com/) 2 y mucho cariño ♥.
+Está desarrollada con [Django](https://www.djangoproject.com/) 2, mucho ♥, bastante ☕ y un poco de magia 🧙.
 
 ## Requisitos
 
@@ -36,6 +36,7 @@ pipenv --python 3.7 install --dev
    pipenv shell
    ./manage.py migrate
    ./manage.py createsuperuser
+   ./manage.py loaddata seed
    ```
 
 ## Servidor web para desarrollo
