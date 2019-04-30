@@ -20,8 +20,6 @@ class ProyectoForm(forms.ModelForm):
         if lineas_del_programa and not linea:
             self.add_error("linea", _("Este programa requiere seleccionar una línea."))
 
-        return cleaned_data
-
     class Meta:
         fields = ["titulo", "descripcion", "programa", "linea", "centro", "estudio"]
         model = Proyecto
