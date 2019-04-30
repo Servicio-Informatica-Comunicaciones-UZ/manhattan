@@ -1,4 +1,5 @@
 import json
+from datetime import date
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.forms.models import modelform_factory
 from django.http.response import HttpResponse
@@ -16,6 +17,7 @@ from django.views.generic import (
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django_summernote.widgets import SummernoteWidget
 
+from .forms import ProyectoForm
 from .models import (
     Convocatoria,
     Evento,
@@ -39,15 +41,16 @@ class ProyectoCreateView(LoginRequiredMixin, CreateView):
 
     # TODO: Comprobar usuario para Proyectos de titulación y POU.
     # TODO: Comprobar fecha
-    # TODO: Check programa/linea
 
     model = Proyecto
     template_name = "proyecto/new.html"
-    fields = ["titulo", "descripcion", "programa", "linea", "centro", "estudio"]
+    # fields = ["titulo", "descripcion", "programa", "linea", "centro", "estudio"]
+    form_class = ProyectoForm
 
     def form_valid(self, form):
-        # Do custom logic on form data that has already been validated here
-        form.instance.convocatoria = Convocatoria(2019)
+        # This method is called when valid form data has been POSTed, to do custom logic on form data.
+        # It should return an HttpResponse.
+        form.instance.convocatoria = Convocatoria(date.today().year)
         proyecto = form.save()
         self._guardar_coordinador(proyecto)
         self._registrar_creacion(proyecto)

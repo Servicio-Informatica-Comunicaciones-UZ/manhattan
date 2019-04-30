@@ -138,7 +138,9 @@ class Licencia(models.Model):
 
 class Linea(models.Model):
     nombre = models.CharField(max_length=31)
-    programa = models.ForeignKey("Programa", on_delete=models.PROTECT)
+    programa = models.ForeignKey(
+        "Programa", on_delete=models.PROTECT, related_name="lineas"
+    )
 
     def __str__(self):
         return f"{self.nombre}"
@@ -208,10 +210,13 @@ class Proyecto(models.Model):
             "Resumen sucinto del proyecto. Máximo recomendable: un párrafo de 10 líneas."
         ),
     )
-    estado = models.CharField(choices = (
-        ("BORRADOR", "Solicitud en preparación"),
-        ("SOLICITADO", "Solicitud presentada"),
-    ), max_length=63)
+    estado = models.CharField(
+        choices=(
+            ("BORRADOR", "Solicitud en preparación"),
+            ("SOLICITADO", "Solicitud presentada"),
+        ),
+        max_length=63,
+    )
     contexto = models.TextField(
         _("Contexto del proyecto"),
         blank=True,
@@ -249,7 +254,7 @@ class Proyecto(models.Model):
         _("Tipo de proyecto"),
         blank=True,
         null=True,
-        help_text=_("Experiencia, Estudio o Desarrollo")
+        help_text=_("Experiencia, Estudio o Desarrollo"),
     )
     contexto_aplicacion = models.TextField(
         _("Contexto de aplicación/Público objetivo"),
@@ -375,7 +380,7 @@ class Proyecto(models.Model):
         _("Actividades de dinamización previstas"),
         blank=True,
         null=True,
-        help_text=_("Sólo obligatorias para MOOCs.")
+        help_text=_("Sólo obligatorias para MOOCs."),
     )
     # publicar_memoria = models.BooleanField("¿Publicar la memoria?", default=True)
     financiacion = models.TextField(
