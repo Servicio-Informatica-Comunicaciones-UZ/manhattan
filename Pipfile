@@ -7,7 +7,7 @@ verify_ssl = true
 pylint = "*"
 
 [packages]
-django = "==2.1"
+django = "==2.2"
 mysqlclient = "*"
 social-auth-app-django = "*"
 social-auth-core = {extras = ["saml"],version = "*"}
