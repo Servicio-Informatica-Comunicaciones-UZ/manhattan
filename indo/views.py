@@ -50,11 +50,16 @@ class ProyectoCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         # This method is called when valid form data has been POSTed, to do custom logic on form data.
         # It should return an HttpResponse.
-        form.instance.convocatoria = Convocatoria(date.today().year)
         proyecto = form.save()
         self._guardar_coordinador(proyecto)
         self._registrar_creacion(proyecto)
         return redirect("proyecto_detail", proyecto.id)
+
+    def get_form(self, form_class=None):
+        """Devuelve el formulario añadiendo automáticamente el campo Convocatoria, que es requerido."""
+        form = super(ProyectoCreateView, self).get_form(form_class)
+        form.instance.convocatoria = Convocatoria(date.today().year)
+        return form
 
     def _guardar_coordinador(self, proyecto):
         # Los PIET debe solicitarlos uno de los coordinadores del estudio ("coordinador principal")
