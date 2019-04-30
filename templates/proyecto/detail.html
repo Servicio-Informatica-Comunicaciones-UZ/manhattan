@@ -44,7 +44,7 @@
     {% for campo in campos %}
     <h3>{{ proyecto|get_attr_verbose_name:campo }}</h3>
     <p>{{ proyecto|get_obj_attr:campo|default:""|safe }}</p>
-    <p><a href="edit/{{ campo }}" class="btn btn-info btn-sm">
+    <p><a href="{% url 'proyecto_update_field' proyecto.id campo %}" class="btn btn-info btn-sm">
             <i class="fas fa-pencil-alt" aria-hidden="true"></i> &nbsp; Editar
         </a></p>
     {% endfor %}
