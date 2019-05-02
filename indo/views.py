@@ -135,3 +135,20 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, UpdateView):
             )
         self.fields = (campo,)
         return super().get_form_class()
+
+
+class ProyectosUsuarioListView(LoginRequiredMixin, ListView):
+    """Lista los proyectos coordinados por el usuario actual."""
+
+    context_object_name = "proyectos"
+    template_name = "proyecto/list.html"
+
+    def get_queryset(self):
+        # TODO ¿Listar sólo los de la convocatoria actual?
+        usuario = self.request.user
+        return Proyecto.objects.filter(
+            participantes__tipo_participacion__in=[
+                "coordinador",
+                "coordinador_principal",
+            ]
+        ).filter(participantes__usuario=usuario)

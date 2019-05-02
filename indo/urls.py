@@ -9,6 +9,7 @@ from .views import (
     ProyectoCreateView,
     ProyectoDetailView,
     ProyectoUpdateFieldView,
+    ProyectosUsuarioListView,
 )
 
 urlpatterns = [
@@ -21,6 +22,9 @@ urlpatterns = [
         "proyecto/<int:pk>/edit/<campo>",
         ProyectoUpdateFieldView.as_view(),
         name="proyecto_update_field",
+    ),
+    path(
+        "proyecto/", ProyectosUsuarioListView.as_view(), name="proyectos_usuario_list"
     ),
 ]
 

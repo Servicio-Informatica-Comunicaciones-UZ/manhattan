@@ -163,7 +163,9 @@ class Plan(models.Model):
 
 
 class ParticipanteProyecto(models.Model):
-    proyecto = models.ForeignKey("Proyecto", on_delete=models.PROTECT)
+    proyecto = models.ForeignKey(
+        "Proyecto", on_delete=models.PROTECT, related_name="participantes"
+    )
     tipo_participacion = models.ForeignKey(
         "TipoParticipacion", on_delete=models.PROTECT
     )
