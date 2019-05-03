@@ -9,7 +9,7 @@
     <h1>{% trans "Proyectos coordinados" %}</h1>
     <hr><br>
 
-    <ul>
+    <ul class='listado'>
     {% for proyecto in proyectos %}
         <li><a href="{% url 'proyecto_detail' proyecto.id %}">{{ proyecto.titulo }}</a></li>
     {% endfor %}

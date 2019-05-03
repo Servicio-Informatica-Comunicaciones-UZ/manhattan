@@ -5,15 +5,14 @@ html {
 
 body {
     background: url("img/bg-pattern_nuevo1.png") #88a repeat scroll center 0;
-    font-family: 'LatoLatinWeb', sans-serif;
-    margin-bottom: 460px;  /* Margin bottom by footer height */
+    font-family: "LatoLatinWeb", sans-serif;
+    margin-bottom: 460px; /* Margin bottom by footer height */
     margin-top: 56px;
 }
 
-
 /*** Navbar ***/
 .bg-azul {
-    background-color: #213C71;
+    background-color: #213c71;
 }
 
 .navbar-dark .navbar-brand {
@@ -24,7 +23,8 @@ body {
     color: #d2d2d2;
 }
 
-.navbar-dark .navbar-nav .nav-link:focus, .navbar-dark .navbar-nav .nav-link:hover {
+.navbar-dark .navbar-nav .nav-link:focus,
+.navbar-dark .navbar-nav .nav-link:hover {
     color: #ffffff;
 }
 
@@ -54,7 +54,6 @@ body {
     overflow: hidden;
 }
 
-
 /*** Jumbotron ***/
 .jumbotron {
     background-color: transparent;
@@ -63,7 +62,7 @@ body {
 }
 
 .jumbotron h1 {
-    font-family: 'LatoLatinWebLight', sans-serif;
+    font-family: "LatoLatinWebLight", sans-serif;
     font-size: 3rem;
 }
 
@@ -83,7 +82,7 @@ body {
 }
 
 .cabecera-azul thead {
-    background: #6595C0;
+    background: #6595c0;
     margin: 0;
     padding: 0;
     border-collapse: collapse;
@@ -91,14 +90,14 @@ body {
 }
 
 .cabecera-azul thead tr {
-    border-bottom: 1px solid #167F92;
+    border-bottom: 1px solid #167f92;
 }
 
 .cabecera-azul thead tr th {
     border: 0px;
     color: white;
     padding: 0.375em 0.5em;
-    border-bottom: 0.1875em solid #C0C0C0;
+    border-bottom: 0.1875em solid #c0c0c0;
     font-weight: bold;
 }
 
@@ -107,11 +106,11 @@ body {
 }
 
 .cabecera-azul .filters {
-    background: #B2CADF;
+    background: #b2cadf;
 }
 
 .cabecera-azul tfoot {
-    background: #B2CADF;
+    background: #b2cadf;
 }
 
 .cabecera-azul tbody tr td {
@@ -124,7 +123,6 @@ body {
     font-size: 200%;
     margin-right: 9px;
 }
-
 
 /*** Footer ***/
 .footer {
@@ -144,9 +142,10 @@ body {
 
 .footer a {
     font-weight: 500;
-    color:#d2d2d2;
+    color: #d2d2d2;
 }
-.footer a:focus, .footer a:hover {
+.footer a:focus,
+.footer a:hover {
     color: #ffffff;
     text-decoration: none;
 }
@@ -158,6 +157,21 @@ body {
 .footer-links li {
     display: inline-block;
 }
-.footer-links li+li {
+.footer-links li + li {
     margin-left: 2rem;
+}
+
+.listado li {
+    list-style-type: none;
+    position: relative;
+}
+
+.listado li::before {
+    content: ">";
+    color: rgb(33, 102, 164);
+    font-size: 1.4rem;
+    font-weight: bold;
+    left: -1.4rem;
+    position: absolute;
+    top: -0.3rem;
 }
