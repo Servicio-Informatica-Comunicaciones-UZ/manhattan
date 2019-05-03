@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="{% static 'css/latolatinfonts.css' %}" />
     {% block extracss %}{% endblock extracss %}
 
-    <title>{% block title %}Proyectos de Innovación Docente{% endblock title %}</title>
+    <title>{% block title %}{% trans "Proyectos de Innovación Docente" %}{% endblock title %}</title>
 
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicons/apple-touch-icon.png' %}" />
     <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicons/favicon-32x32.png' %}" />
@@ -50,7 +50,7 @@
   <body>
     <nav class="navbar fixed-top navbar-expand-md navbar-dark bg-azul mb-4">
       <a class="navbar-brand" href="http://www.unizar.es">
-        <span class="icon-logoUZ"></span> <span class="screen-reader">Universidad de Zaragoza</span>
+        <span class="icon-logoUZ"></span> <span class="screen-reader">{% trans "Universidad de Zaragoza" %}</span>
       </a>
       <button
         class="navbar-toggler"
@@ -66,33 +66,41 @@
       <div class="collapse navbar-collapse" id="navbarCollapse">
         <ul class="navbar-nav ml-auto">
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'proyectos_usuario_list' %}"><i class="fas fa-project-diagram"></i> &nbsp;{% trans "Proyectos" %}</a>
+            <a class="nav-link" href="{% url 'proyectos_usuario_list' %}"
+              ><i class="fas fa-project-diagram"></i> &nbsp;{% trans "Proyectos" %}</a
+            >
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'ayuda' %}"><i class="fas fa-question-circle"></i> &nbsp;{% trans "Ayuda" %}</a>
+            <a class="nav-link" href="{% url 'ayuda' %}"
+              ><i class="fas fa-question-circle"></i> &nbsp;{% trans "Ayuda" %}</a
+            >
           </li>
           <li class="nav-item">
             {% if user.is_authenticated %}
-              <a
-                class="nav-link dropdown-toggle"
-                href="#"
-                id="userMenu"
-                data-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
+            <a
+              class="nav-link dropdown-toggle"
+              href="#"
+              id="userMenu"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <i class="fas fa-user"></i>&nbsp; {{ user.username }}
+            </a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
+              <a class="dropdown-item" href="{% url 'password_change' %}"
+                ><i class="fas fa-key"></i> {% trans "Cambiar contraseña" %}</a
               >
-                <i class="fas fa-user"></i>&nbsp; {{ user.username }}
-              </a>
-              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
-                <a class="dropdown-item" href="{% url 'password_change' %}"
-                  ><i class="fas fa-key"></i> {% trans "Cambiar contraseña" %}</a
-                >
-                <div class="dropdown-divider"></div>
-                {# Follow https://github.com/python-social-auth/social-core/issues/199 #}
-                <a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> {% trans "Cerrar sesión" %}</a>
-              </div>
+              <div class="dropdown-divider"></div>
+              {# Follow https://github.com/python-social-auth/social-core/issues/199 #}
+              <a class="dropdown-item" href="{% url 'logout' %}"
+                ><i class="fas fa-sign-out-alt"></i> {% trans "Cerrar sesión" %}</a
+              >
+            </div>
             {% else %}
-              <a class="nav-link" href="{% lord_url %}"><i class="fas fa-sign-in-alt"></i> &nbsp;{% trans "Iniciar sesión" %}</a>
+            <a class="nav-link" href="{% lord_url %}"
+              ><i class="fas fa-sign-in-alt"></i> &nbsp;{% trans "Iniciar sesión" %}</a
+            >
             {% endif %}
           </li>
         </ul>
@@ -106,8 +114,8 @@
       <div class="container-fluid p-3 p-md-5">
         <div class="row">
           <div class="col-lg-8">
-            &copy; 2019 Universidad de Zaragoza<br />
-            &copy; 2019 Servicio de Informática y Comunicaciones de la Universidad de Zaragoza (<a
+            &copy; 2019 {% trans "Universidad de Zaragoza" %}<br />
+            &copy; 2019 {% trans "Servicio de Informática y Comunicaciones de la Universidad de Zaragoza" %} (<a
               href="http://sicuz.unizar.es"
               >SICUZ</a
             >)
@@ -132,18 +140,24 @@
 
           <div class="col-lg-2">
             <a href="http://www.unizar.es">
-              <span class="icon-logoUZ"></span><span class="screen-reader">Universidad de Zaragoza</span>
+              <span class="icon-logoUZ"></span><span class="screen-reader">{% trans "Universidad de Zaragoza" %}</span>
             </a>
           </div>
         </div>
         <hr style="border-color: #3b3b3b;" />
 
         <ul class="footer-links">
-          <li><a href="http://www.unizar.es/aviso-legal" target="_blank">Aviso legal</a></li>
+          <li><a href="http://www.unizar.es/aviso-legal" target="_blank">{% trans "Aviso legal" %}</a></li>
           <li>
-            <a href="http://www.unizar.es/condiciones-generales-de-uso" target="_blank">Condiciones generales de uso</a>
+            <a href="http://www.unizar.es/condiciones-generales-de-uso" target="_blank"
+              >{% trans "Condiciones generales de uso" %}</a
+            >
           </li>
-          <li><a href="http://www.unizar.es/politica-de-privacidad" target="_blank">Política de privacidad</a></li>
+          <li>
+            <a href="http://www.unizar.es/politica-de-privacidad" target="_blank"
+              >{% trans "Política de privacidad" %}</a
+            >
+          </li>
         </ul>
       </div>
     </footer>

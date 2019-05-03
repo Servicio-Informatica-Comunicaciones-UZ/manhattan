@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
-{% block title %}Actualizar solicitud de proyecto{% endblock title %}
-{% block description %}Actualizar solicitud de proyecto{% endblock description %}
+{% load i18n %}
+{% block title %}{% trans 'Actualizar solicitud de proyecto' %}{% endblock title %}
+{% block description %}{% trans 'Actualizar solicitud de proyecto' %}{% endblock description %}
 {% block extracss %}<style>
     label {
         font-size: 1.75rem;
@@ -17,14 +18,17 @@
 
 {% block content %}
 <div class="container-blanco">
-    <h1>Actualizar solicitud de proyecto</h1>
+    <h1>{% trans 'Actualizar solicitud de proyecto' %}</h1>
     <hr><br>
 
     <form action="" method="post">
         {% csrf_token %}
         {{ form.as_p }}
         <br style="clear: both;">
-        <button class="btn btn-success" type="submit">Actualizar</button>
+        <div class="btn-group" role="group" aria-label="Botones">
+            <a href="{% url 'proyecto_detail' proyecto.id %}" class="btn btn-info"><i class="fas fa-step-backward"></i> {% trans 'Retroceder' %}</a>
+            <button class="btn btn-warning" type="submit"><i class="fas fa-check"></i> {% trans 'Actualizar' %}</button>
+        </div>
     </form>
 </div>
 {% endblock content %}

@@ -1,10 +1,11 @@
 {% extends 'base.html' %}
-{% block title %}Bienvenida{% endblock title %}
-{% block description %}Datos del usuario{% endblock description %}
+{% load i18n %}
+{% block title %}{% trans "Bienvenida" %}{% endblock title %}
+{% block description %}{% trans "Datos del usuario" %}{% endblock description %}
 {% block content %}
 
 <div class="container-blanco">
-    <h1>¡Bienvenid@!</h1>
+    <h1>{% trans "¡Bienvenid@!" %}</h1>
     <hr />
     <br />
 

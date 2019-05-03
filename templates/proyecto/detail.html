@@ -1,59 +1,68 @@
 {% extends 'base.html' %}
-{% load custom_tags %}
+{% load custom_tags i18n %}
 {% block content %}
 <div class="container-blanco">
-    <div class='alert alert-info'>
-        <i class="fas fa-info-circle"></i>
-        <div>Puede editar su solicitud tantas veces como desee.</br>
-            Cuando esté satisfecho, pulse el botón «Presentar».
-            Una vez haya presentado la solicitud, ya no podrá modificarla.
-        </div>
+  <div class="alert alert-info">
+    <i class="fas fa-info-circle"></i>
+    <div>
+      {% trans 'Puede editar su solicitud tantas veces como desee.' %}<br />
+      {% trans 'Cuando esté satisfecho, pulse el botón «Presentar».' %} {% trans 'Una vez haya presentado la solicitud,
+      ya no podrá modificarla.' %}
     </div>
+  </div>
 
-    <h1>{{ proyecto.titulo }}</h1> {# DetailView proporciona el objeto de contexto `proyecto` #}
-    <hr><br>
+  <h1>{{ proyecto.titulo }}</h1>
+  {# DetailView proporciona el objeto de contexto `proyecto` #}
+  <hr />
+  <br />
 
-    <p><strong>Convocatoria</strong>: {{ proyecto.convocatoria_id }}</p>
+  <p><strong>{% trans 'Convocatoria' %}</strong>: {{ proyecto.convocatoria_id }}</p>
 
-    <p><strong>Programa</strong>: {{ proyecto.programa.nombre_corto }} ({{ proyecto.programa.nombre_largo }})</p>
+  <p>
+    <strong>{% trans 'Programa' %}</strong>: {{ proyecto.programa.nombre_corto }} ({{ proyecto.programa.nombre_largo }})
+  </p>
 
-    {% if proyecto.linea %}
-    <p><strong>Línea</strong>: {{ proyecto.linea.nombre }}</p>
-    {% endif %}
-
-    {% if proyecto.centro %}
-    <p><strong>Centro</strong>: {{ proyecto.centro.nombre }}</p>
-    {% endif %}
-
-    {% if proyecto.estudio %}
-    <p><strong>Estudio</strong>: {{ proyecto.estudio.nombre }}</p>
-    {% endif %}
-
-    {% if coordinador_principal %}
+  {% if proyecto.linea %}
+    <p><strong>{% trans 'Línea' %}</strong>: {{ proyecto.linea.nombre }}</p>
+  {% endif %}
+  {% if proyecto.centro %}
+    <p><strong>{% trans 'Centro' %}</strong>: {{ proyecto.centro.nombre }}</p>
+  {% endif %}
+  {% if proyecto.estudio %}
+    <p><strong>{% trans 'Estudio' %}</strong>: {{ proyecto.estudio.nombre }}</p>
+  {% endif %}
+  {% if coordinador_principal %}
     <p><strong>{{ coordinador_principal.get_cargo }}</strong>: {{ coordinador_principal.usuario.get_full_name }}</p>
-    {% endif %}
-
-    {% if coordinador %}
+  {% endif %}
+  {% if coordinador %}
     <p><strong>{{ coordinador.get_cargo }}</strong>: {{ coordinador.usuario.get_full_name }}</p>
-    {% endif %}
+  {% endif %}
+  {# TODO: filtro para HTML procedente de procesador de textos #}
+  <h3>{% trans 'Descripción' %}</h3>
+  <p>{{ proyecto.descripcion|safe }}</p>
 
-    {# TODO: filtro para HTML procedente de procesador de textos #}
-    <h3>Descripción</h3>
-    <p>{{ proyecto.descripcion|safe }}</p>
-
-    {% for campo in campos %}
+  {% for campo in campos %}
     <h3>{{ proyecto|get_attr_verbose_name:campo }}</h3>
     <p>{{ proyecto|get_obj_attr:campo|default:""|safe }}</p>
-    <p><a href="{% url 'proyecto_update_field' proyecto.id campo %}" class="btn btn-info btn-sm">
-            <i class="fas fa-pencil-alt" aria-hidden="true"></i> &nbsp; Editar
-        </a></p>
-    {% endfor %}
+    <p>
+        <a href="{% url 'proyecto_update_field' proyecto.id campo %}" class="btn btn-info btn-sm">
+        <i class="fas fa-pencil-alt" aria-hidden="true"></i> &nbsp; {% trans 'Editar' %}
+        </a>
+    </p>
+  {% endfor %}
 
-    <h3>{{ proyecto|get_attr_verbose_name:"financiacion"}}</h3>
-    <p>{{ proyecto.financiacion|default:""|safe }}</p>
+  <h3>{{ proyecto|get_attr_verbose_name:"financiacion"}}</h3>
+  <p>{{ proyecto.financiacion|default:""|safe }}</p>
 
-    <h3>{{ proyecto|get_attr_verbose_name:"ayuda"}}</h3>
-    <p>{{ proyecto.ayuda|default:"" }}</p>
+  <h3>{{ proyecto|get_attr_verbose_name:"ayuda"}}</h3>
+  <p>{{ proyecto.ayuda|default:"" }}</p>
 
+  <br style="clear: both;" />
+  <div class="btn-group" role="group" aria-label="Botones">
+    <a href="{% url 'proyectos_usuario_list' %}" class="btn btn-info"
+      ><i class="fas fa-step-backward"></i> {% trans 'Retroceder' %}</a
+    >
+    <button class="btn btn-warning" type="submit"><i class="fas fa-check"></i> {% trans 'Presentar' %}</button>
+  </div>
 </div>
 {% endblock content %}

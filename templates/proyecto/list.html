@@ -5,17 +5,16 @@
 
 {% block content %}
 <div class="container-blanco">
+  <h1>{% trans "Proyectos coordinados" %}</h1>
+  <hr />
+  <br />
 
-    <h1>{% trans "Proyectos coordinados" %}</h1>
-    <hr><br>
-
-    <ul class='listado'>
+  <ul class="listado">
     {% for proyecto in proyectos %}
-        <li><a href="{% url 'proyecto_detail' proyecto.id %}">{{ proyecto.titulo }}</a></li>
+      <li><a href="{% url 'proyecto_detail' proyecto.id %}">{{ proyecto.titulo }}</a></li>
     {% endfor %}
-    </ul>
+  </ul>
 
-    <a href="{%url 'proyecto_new' %}" class="btn btn-info">{% trans "Solicitar nuevo proyecto" %}</a>
-
+  <a href="{% url 'proyecto_new' %}" class="btn btn-info">{% trans "Solicitar nuevo proyecto" %}</a>
 </div>
 {% endblock content %}
