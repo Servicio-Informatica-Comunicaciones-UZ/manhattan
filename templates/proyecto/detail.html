@@ -6,8 +6,8 @@
     <i class="fas fa-info-circle"></i>
     <div>
       {% trans 'Puede editar su solicitud tantas veces como desee.' %}<br />
-      {% trans 'Cuando esté satisfecho, pulse el botón «Presentar».' %} {% trans 'Una vez haya presentado la solicitud,
-      ya no podrá modificarla.' %}
+      {% trans 'Cuando esté satisfecho, pulse el botón «Presentar».' %}
+      {% trans 'Una vez haya presentado la solicitud, ya no podrá modificarla.' %}
     </div>
   </div>
 
@@ -25,37 +25,79 @@
   {% if proyecto.linea %}
     <p><strong>{% trans 'Línea' %}</strong>: {{ proyecto.linea.nombre }}</p>
   {% endif %}
+
   {% if proyecto.centro %}
     <p><strong>{% trans 'Centro' %}</strong>: {{ proyecto.centro.nombre }}</p>
   {% endif %}
+
   {% if proyecto.estudio %}
     <p><strong>{% trans 'Estudio' %}</strong>: {{ proyecto.estudio.nombre }}</p>
   {% endif %}
+
   {% if coordinador_principal %}
-    <p><strong>{{ coordinador_principal.get_cargo }}</strong>: {{ coordinador_principal.usuario.get_full_name }}</p>
+    <p>
+      <strong>{{ coordinador_principal.get_cargo }}</strong>:
+      {{ coordinador_principal.usuario.get_full_name }}
+    </p>
   {% endif %}
+
   {% if coordinador %}
-    <p><strong>{{ coordinador.get_cargo }}</strong>: {{ coordinador.usuario.get_full_name }}</p>
+    <p>
+      <strong>{{ coordinador.get_cargo }}</strong>:
+      {{ coordinador.usuario.get_full_name }}
+    </p>
   {% endif %}
+
+  <p><strong>{% trans 'Invitados' %}</strong>:<br /></p>
+  <div class="table-responsive">
+    <table class="table table-hover table-striped table-sm">
+      {% for invitado in invitados %}
+      <tr>
+        <td>{{ invitado.usuario.get_full_name }}</td>
+        <td><i class="fas fa-trash-alt"></i></td>
+      </tr>
+      <!-- TODO -->
+      {% endfor %}
+    </table>
+  </div>
+  <p>
+    <a href="{% url 'participante_invitar' proyecto.id %}" class="btn btn-info btn-sm" type="submit"
+      ><i class="fas fa-plus" aria-hidden="true"></i>&nbsp; {% trans 'Añadir' %}</a>
+  </p>
+
+  <p><strong>{% trans 'Participantes' %}</strong>:<br /></p>
+  <div class="table-responsive">
+    <table class="table table-hover table-striped table-sm">
+      {% for participante in participantes %}
+      <tr>
+        <td>{{ participante.usuario.get_full_name }}</td>
+        <td><i class="fas fa-trash-alt"></i></td>
+      </tr>
+      <!-- TODO -->
+      {% endfor %}
+    </table>
+  </div>
+  <br />
+
   {# TODO: filtro para HTML procedente de procesador de textos #}
   <h3>{% trans 'Descripción' %}</h3>
-  <p>{{ proyecto.descripcion|safe }}</p>
+  <p>{{ proyecto.descripcion | safe }}</p>
 
   {% for campo in campos %}
     <h3>{{ proyecto|get_attr_verbose_name:campo }}</h3>
-    <p>{{ proyecto|get_obj_attr:campo|default:""|safe }}</p>
+    <p>{{ proyecto | get_obj_attr:campo | default:"" | safe }}</p>
     <p>
-        <a href="{% url 'proyecto_update_field' proyecto.id campo %}" class="btn btn-info btn-sm">
-        <i class="fas fa-pencil-alt" aria-hidden="true"></i> &nbsp; {% trans 'Editar' %}
-        </a>
+      <a href="{% url 'proyecto_update_field' proyecto.id campo %}" class="btn btn-info btn-sm">
+        <i class="fas fa-pencil-alt" aria-hidden="true"></i>&nbsp; {% trans 'Editar' %}
+      </a>
     </p>
   {% endfor %}
 
-  <h3>{{ proyecto|get_attr_verbose_name:"financiacion"}}</h3>
-  <p>{{ proyecto.financiacion|default:""|safe }}</p>
+  <h3>{{ proyecto | get_attr_verbose_name:"financiacion" }}</h3>
+  <p>{{ proyecto.financiacion | default:"" | safe }}</p>
 
-  <h3>{{ proyecto|get_attr_verbose_name:"ayuda"}}</h3>
-  <p>{{ proyecto.ayuda|default:"" }}</p>
+  <h3>{{ proyecto | get_attr_verbose_name:"ayuda" }}</h3>
+  <p>{{ proyecto.ayuda | default:"" }}</p>
 
   <br style="clear: both;" />
   <div class="btn-group" role="group" aria-label="Botones">

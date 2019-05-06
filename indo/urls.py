@@ -6,6 +6,7 @@ from django.urls import include, path
 from .views import (
     AyudaView,
     HomePageView,
+    InvitacionView,
     ProyectoCreateView,
     ProyectoDetailView,
     ProyectoUpdateFieldView,
@@ -16,6 +17,11 @@ urlpatterns = [
     path("", HomePageView.as_view(), name="home"),
     path("summernote/", include("django_summernote.urls")),
     path("ayuda/", AyudaView.as_view(), name="ayuda"),
+    path(
+        "participante-proyecto/invitar/<int:proyecto_id>",
+        InvitacionView.as_view(),
+        name="participante_invitar",
+    ),
     path("proyecto/new/", ProyectoCreateView.as_view(), name="proyecto_new"),
     path("proyecto/<int:pk>/", ProyectoDetailView.as_view(), name="proyecto_detail"),
     path(

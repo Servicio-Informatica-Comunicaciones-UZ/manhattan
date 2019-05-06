@@ -17,7 +17,7 @@ from django.views.generic import (
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django_summernote.widgets import SummernoteWidget
 
-from .forms import ProyectoForm
+from .forms import InvitacionForm, ProyectoForm
 from .models import (
     Convocatoria,
     Evento,
@@ -34,6 +34,42 @@ class AyudaView(TemplateView):
 
 class HomePageView(TemplateView):
     template_name = "home.html"
+
+
+class InvitacionView(LoginRequiredMixin, CreateView):
+    """Formulario para invitar a una persona a un proyecto determinado."""
+
+    # TODO: Comprobar permisos, estado del proyecto, fecha.
+    form_class = InvitacionForm
+    model = ParticipanteProyecto
+    template_name = "participante-proyecto/invitar.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        proyecto_id = self.kwargs["proyecto_id"]
+        context["proyecto"] = Proyecto.objects.get(id=proyecto_id)
+
+        # context["form"] = self.get_form()
+        # This sets the initial value for the field:
+        # context["form"].fields["proyecto_id"].initial = self.kwargs["proyecto_id"]
+
+        return context
+
+    def get_form_kwargs(self, **kwargs):
+        kwargs = super().get_form_kwargs()
+        # Update the kwargs for the form init method with ours
+        kwargs.update(self.kwargs)  # self.kwargs contains all url conf params
+        # We also send a user object to the form
+        kwargs.update({'current_user': self.request.user})
+        return kwargs
+
+    def get_success_url(self, **kwargs):
+        return reverse_lazy('proyecto_detail', kwargs = {'pk': self.kwargs["proyecto_id"]})
+
+    def save():
+        invitado = super.save(commit=False)
+        invitado.tipo_participacion = TipoParticipacion("invitado")
+        invitado.save()
 
 
 class ProyectoCreateView(LoginRequiredMixin, CreateView):
@@ -104,6 +140,20 @@ class ProyectoDetailView(DetailView):
 
         coordinador = self.object.get_participante_or_none("coordinador")
         context["coordinador"] = coordinador
+
+        participantes = (
+            self.object.participantes.filter(tipo_participacion="participante")
+            .order_by("usuario__first_name", "usuario__last_name")
+            .all()
+        )
+        context["participantes"] = participantes
+
+        invitados = (
+            self.object.participantes.filter(tipo_participacion="invitado")
+            .order_by("usuario__first_name", "usuario__last_name")
+            .all()
+        )
+        context["invitados"] = invitados
 
         context["campos"] = json.loads(self.object.programa.campos)
 
