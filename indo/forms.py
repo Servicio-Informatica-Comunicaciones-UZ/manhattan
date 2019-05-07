@@ -12,14 +12,12 @@ class InvitacionForm(forms.ModelForm):
             "Número de Identificación Personal en la Universidad de Zaragoza de la persona a invitar"
         ),
     )
-    # El usuario se rellenará en clean() a partir del NIP.
-    usuario = forms.IntegerField(required=False, widget=forms.HiddenInput())
 
     def __init__(self, *args, **kwargs):
-        proyecto_id = kwargs.pop("proyecto_id")
+        # Override __init__ to make the "self" object have the proyecto instance
+        # designated by the proyecto_id sent by the view, taken from the URL parameter.
+        self.proyecto = Proyecto.objects.get(id=kwargs.pop("proyecto_id"))
         super().__init__(*args, **kwargs)
-        proyecto = Proyecto.objects.get(id=proyecto_id)
-        self.fields["proyecto"].initial = proyecto
 
     def clean(self):
         cleaned_data = super().clean()
@@ -29,13 +27,14 @@ class InvitacionForm(forms.ModelForm):
 
     def save(self, commit=True):
         invitado = super().save(commit=False)
+        invitado.proyecto = self.proyecto
         invitado.tipo_participacion = TipoParticipacion("invitado")
+        invitado.usuario = self.cleaned_data["usuario"]
         return invitado.save()
 
     class Meta:
-        fields = ["proyecto", "usuario", "nip"]
+        fields = ["nip"]
         model = ParticipanteProyecto
-        widgets = {"proyecto": forms.HiddenInput}
 
 
 class ProyectoForm(forms.ModelForm):
