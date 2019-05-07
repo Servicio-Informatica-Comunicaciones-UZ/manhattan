@@ -1,200 +1,205 @@
 [
-{
-    "model": "indo.convocatoria",
-    "pk": 2019,
-    "fields": {
-        "fecha_min_solicitudes": "2019-01-01",
-        "fecha_max_solicitudes": "2019-06-01",
-        "fecha_max_aceptos": "2019-06-06",
-        "fecha_max_visto_buenos": "2019-06-06"
+    {
+        "model": "indo.convocatoria",
+        "pk": 2019,
+        "fields": {
+            "fecha_min_solicitudes": "2019-01-01",
+            "fecha_max_solicitudes": "2019-06-01",
+            "fecha_max_aceptos": "2019-06-06",
+            "fecha_max_visto_buenos": "2019-06-06"
+        }
+    },
+    {
+        "model": "indo.programa",
+        "pk": 1,
+        "fields": {
+            "nombre_corto": "PIIDUZ",
+            "nombre_largo": "Programa de Incentivaci\u00f3n de la Innovaci\u00f3n Docente en la UZ",
+            "max_ayuda": 3000,
+            "max_estudiantes": 2,
+            "campos": "[\"contexto\", \"objetivos\", \"metodos_estudio\", \"mejoras\", \"continuidad\", \"tipo\", \"contexto_aplicacion\", \"metodos\", \"tecnologias\", \"aplicacion\", \"proyectos_anteriores\", \"impacto\", \"innovacion\", \"interes\"]",
+            "convocatoria": 2019
+        }
+    },
+    {
+        "model": "indo.programa",
+        "pk": 2,
+        "fields": {
+            "nombre_corto": "PRAUZ",
+            "nombre_largo": "Programa de Recursos en Abierto",
+            "max_ayuda": 3000,
+            "max_estudiantes": 2,
+            "campos": "[\"seminario\", \"idioma\", \"ramas\", \"ambito\", \"contenidos\", \"formatos\", \"material_previo\"]",
+            "convocatoria": 2019
+        }
+    },
+    {
+        "model": "indo.programa",
+        "pk": 3,
+        "fields": {
+            "nombre_corto": "PIET",
+            "nombre_largo": "Programa de Innovaci\u00f3n Estrat\u00e9gica de Titulaciones",
+            "max_ayuda": 3000,
+            "max_estudiantes": 2,
+            "campos": "[\"contexto\", \"objetivos\", \"metodos_estudio\", \"mejoras\", \"continuidad\", \"enlace\", \"tipo\", \"contexto_aplicacion\", \"metodos\", \"tecnologias\", \"aplicacion\", \"proyectos_anteriores\", \"impacto\", \"innovacion\", \"interes\"]",
+            "convocatoria": 2019
+        }
+    },
+    {
+        "model": "indo.programa",
+        "pk": 4,
+        "fields": {
+            "nombre_corto": "PIEC",
+            "nombre_largo": "Programa de Innovaci\u00f3n Estrat\u00e9gica de Centros",
+            "max_ayuda": 1500,
+            "max_estudiantes": 2,
+            "campos": "[\"contexto\", \"objetivos\", \"metodos_estudio\", \"mejoras\", \"continuidad\", \"tipo\", \"contexto_aplicacion\", \"metodos\", \"tecnologias\", \"aplicacion\", \"proyectos_anteriores\", \"impacto\", \"innovacion\", \"interes\"]",
+            "convocatoria": 2019
+        }
+    },
+    {
+        "model": "indo.programa",
+        "pk": 5,
+        "fields": {
+            "nombre_corto": "PRACUZ",
+            "nombre_largo": "Programa de Recursos en Abierto para Centros",
+            "max_ayuda": 3000,
+            "max_estudiantes": 2,
+            "campos": "[\"justificacion_equipo\", \"objetivos\", \"caracter_estrategico\", \"ramas\", \"afectadas\", \"contenido_modulos\", \"duracion\", \"multimedia\", \"indicadores\", \"actividades\", \"material_previo\"]",
+            "convocatoria": 2019
+        }
+    },
+    {
+        "model": "indo.programa",
+        "pk": 6,
+        "fields": {
+            "nombre_corto": "PIPOUZ",
+            "nombre_largo": "Programa de Incentivaci\u00f3n del Plan de Orientaci\u00f3n Universitaria en la UZ",
+            "max_ayuda": 3000,
+            "max_estudiantes": null,
+            "campos": "[\"contexto\", \"objetivos\", \"metodos_estudio\", \"mejoras\", \"continuidad\", \"tipo\", \"contexto_aplicacion\", \"metodos\", \"tecnologias\", \"aplicacion\", \"proyectos_anteriores\", \"impacto\", \"innovacion\", \"interes\"]",
+            "convocatoria": 2019
+        }
+    },
+    {
+        "model": "indo.linea",
+        "pk": 1,
+        "fields": {
+            "nombre": "PIIDUZ_1",
+            "programa": 1
+        }
+    },
+    {
+        "model": "indo.linea",
+        "pk": 2,
+        "fields": {
+            "nombre": "PIIDUZ_2",
+            "programa": 1
+        }
+    },
+    {
+        "model": "indo.linea",
+        "pk": 3,
+        "fields": {
+            "nombre": "PIIDUZ_3",
+            "programa": 1
+        }
+    },
+    {
+        "model": "indo.linea",
+        "pk": 4,
+        "fields": {
+            "nombre": "Cursos OCW",
+            "programa": 2
+        }
+    },
+    {
+        "model": "indo.linea",
+        "pk": 5,
+        "fields": {
+            "nombre": "ADD en abierto",
+            "programa": 2
+        }
+    },
+    {
+        "model": "indo.linea",
+        "pk": 6,
+        "fields": {
+            "nombre": "PIET_1",
+            "programa": 3
+        }
+    },
+    {
+        "model": "indo.linea",
+        "pk": 7,
+        "fields": {
+            "nombre": "PIET_2",
+            "programa": 3
+        }
+    },
+    {
+        "model": "indo.linea",
+        "pk": 8,
+        "fields": {
+            "nombre": "PRACUZ_1",
+            "programa": 5
+        }
+    },
+    {
+        "model": "indo.linea",
+        "pk": 9,
+        "fields": {
+            "nombre": "PRACUZ_2",
+            "programa": 5
+        }
+    },
+    {
+        "model": "indo.tipoparticipacion",
+        "pk": "coordinador",
+        "fields": {}
+    },
+    {
+        "model": "indo.tipoparticipacion",
+        "pk": "coordinador_principal",
+        "fields": {}
+    },
+    {
+        "model": "indo.tipoparticipacion",
+        "pk": "invitado",
+        "fields": {}
+    },
+    {
+        "model": "indo.tipoparticipacion",
+        "pk": "participante",
+        "fields": {}
+    },
+    {
+        "model": "indo.evento",
+        "pk": "creacion_solicitud",
+        "fields": {}
+    },
+    {
+        "model": "indo.licencia",
+        "pk": "CC-BY-4.0",
+        "fields": {
+            "nombre": "Creative Commons Attribution 4.0 International",
+            "url": "https://spdx.org/licenses/CC-BY-4.0.html#licenseText"
+        }
+    },
+    {
+        "model": "indo.licencia",
+        "pk": "CC-BY-NC-SA-4.0",
+        "fields": {
+            "nombre": "Creative Commons Attribution Non Commercial Share Alike 4.0 International",
+            "url": "https://spdx.org/licenses/CC-BY-NC-SA-4.0.html#licenseText"
+        }
+    },
+    {
+        "model": "indo.licencia",
+        "pk": "CC-BY-SA-4.0",
+        "fields": {
+            "nombre": "Creative Commons Attribution Share Alike 4.0 International",
+            "url": "https://spdx.org/licenses/CC-BY-SA-4.0.html#licenseText"
+        }
     }
-},
-{
-    "model": "indo.programa",
-    "pk": 1,
-    "fields": {
-        "nombre_corto": "PIIDUZ",
-        "nombre_largo": "Programa de Incentivaci\u00f3n de la Innovaci\u00f3n Docente en la UZ",
-        "max_ayuda": 3000,
-        "max_estudiantes": 2,
-        "campos": "[\"contexto\", \"objetivos\", \"metodos_estudio\", \"mejoras\", \"continuidad\", \"tipo\", \"contexto_aplicacion\", \"metodos\", \"tecnologias\", \"aplicacion\", \"proyectos_anteriores\", \"impacto\", \"innovacion\", \"interes\"]",
-        "convocatoria": 2019
-    }
-},
-{
-    "model": "indo.programa",
-    "pk": 2,
-    "fields": {
-        "nombre_corto": "PRAUZ",
-        "nombre_largo": "Programa de Recursos en Abierto",
-        "max_ayuda": 3000,
-        "max_estudiantes": 2,
-        "campos": "[\"seminario\", \"idioma\", \"ramas\", \"ambito\", \"contenidos\", \"formatos\", \"material_previo\"]",
-        "convocatoria": 2019
-    }
-},
-{
-    "model": "indo.programa",
-    "pk": 3,
-    "fields": {
-        "nombre_corto": "PIET",
-        "nombre_largo": "Programa de Innovaci\u00f3n Estrat\u00e9gica de Titulaciones",
-        "max_ayuda": 3000,
-        "max_estudiantes": 2,
-        "campos": "[\"contexto\", \"objetivos\", \"metodos_estudio\", \"mejoras\", \"continuidad\", \"enlace\", \"tipo\", \"contexto_aplicacion\", \"metodos\", \"tecnologias\", \"aplicacion\", \"proyectos_anteriores\", \"impacto\", \"innovacion\", \"interes\"]",
-        "convocatoria": 2019
-    }
-},
-{
-    "model": "indo.programa",
-    "pk": 4,
-    "fields": {
-        "nombre_corto": "PIEC",
-        "nombre_largo": "Programa de Innovaci\u00f3n Estrat\u00e9gica de Centros",
-        "max_ayuda": 1500,
-        "max_estudiantes": 2,
-        "campos": "[\"contexto\", \"objetivos\", \"metodos_estudio\", \"mejoras\", \"continuidad\", \"tipo\", \"contexto_aplicacion\", \"metodos\", \"tecnologias\", \"aplicacion\", \"proyectos_anteriores\", \"impacto\", \"innovacion\", \"interes\"]",
-        "convocatoria": 2019
-    }
-},
-{
-    "model": "indo.programa",
-    "pk": 5,
-    "fields": {
-        "nombre_corto": "PRACUZ",
-        "nombre_largo": "Programa de Recursos en Abierto para Centros",
-        "max_ayuda": 3000,
-        "max_estudiantes": 2,
-        "campos": "[\"justificacion_equipo\", \"objetivos\", \"caracter_estrategico\", \"ramas\", \"afectadas\", \"contenido_modulos\", \"duracion\", \"multimedia\", \"indicadores\", \"actividades\", \"material_previo\"]",
-        "convocatoria": 2019
-    }
-},
-{
-    "model": "indo.programa",
-    "pk": 6,
-    "fields": {
-        "nombre_corto": "PIPOUZ",
-        "nombre_largo": "Programa de Incentivaci\u00f3n del Plan de Orientaci\u00f3n Universitaria en la UZ",
-        "max_ayuda": 3000,
-        "max_estudiantes": null,
-        "campos": "[\"contexto\", \"objetivos\", \"metodos_estudio\", \"mejoras\", \"continuidad\", \"tipo\", \"contexto_aplicacion\", \"metodos\", \"tecnologias\", \"aplicacion\", \"proyectos_anteriores\", \"impacto\", \"innovacion\", \"interes\"]",
-        "convocatoria": 2019
-    }
-},
-{
-    "model": "indo.linea",
-    "pk": 1,
-    "fields": {
-        "nombre": "PIIDUZ_1",
-        "programa": 1
-    }
-},
-{
-    "model": "indo.linea",
-    "pk": 2,
-    "fields": {
-        "nombre": "PIIDUZ_2",
-        "programa": 1
-    }
-},
-{
-    "model": "indo.linea",
-    "pk": 3,
-    "fields": {
-        "nombre": "PIIDUZ_3",
-        "programa": 1
-    }
-},
-{
-    "model": "indo.linea",
-    "pk": 4,
-    "fields": {
-        "nombre": "Cursos OCW",
-        "programa": 2
-    }
-},
-{
-    "model": "indo.linea",
-    "pk": 5,
-    "fields": {
-        "nombre": "ADD en abierto",
-        "programa": 2
-    }
-},
-{
-    "model": "indo.linea",
-    "pk": 6,
-    "fields": {
-        "nombre": "PIET_1",
-        "programa": 3
-    }
-},
-{
-    "model": "indo.linea",
-    "pk": 7,
-    "fields": {
-        "nombre": "PIET_2",
-        "programa": 3
-    }
-},
-{
-    "model": "indo.linea",
-    "pk": 8,
-    "fields": {
-        "nombre": "PRACUZ_1",
-        "programa": 5
-    }
-},
-{
-    "model": "indo.linea",
-    "pk": 9,
-    "fields": {
-        "nombre": "PRACUZ_2",
-        "programa": 5
-    }
-},
-{
-    "model": "indo.tipoparticipacion",
-    "pk": "coordinador",
-    "fields": {}
-},
-{
-    "model": "indo.tipoparticipacion",
-    "pk": "coordinador_principal",
-    "fields": {}
-},
-{
-    "model": "indo.tipoparticipacion",
-    "pk": "participante",
-    "fields": {}
-},
-{
-    "model": "indo.evento",
-    "pk": "creacion_solicitud",
-    "fields": {}
-},
-{
-    "model": "indo.licencia",
-    "pk": "CC-BY-4.0",
-    "fields": {
-        "nombre": "Creative Commons Attribution 4.0 International",
-        "url": "https://spdx.org/licenses/CC-BY-4.0.html#licenseText"
-    }
-},
-{
-    "model": "indo.licencia",
-    "pk": "CC-BY-NC-SA-4.0",
-    "fields": {
-        "nombre": "Creative Commons Attribution Non Commercial Share Alike 4.0 International",
-        "url": "https://spdx.org/licenses/CC-BY-NC-SA-4.0.html#licenseText"
-    }
-},
-{
-    "model": "indo.licencia",
-    "pk": "CC-BY-SA-4.0",
-    "fields": {
-        "nombre": "Creative Commons Attribution Share Alike 4.0 International",
-        "url": "https://spdx.org/licenses/CC-BY-SA-4.0.html#licenseText"
-    }
-}
 ]
