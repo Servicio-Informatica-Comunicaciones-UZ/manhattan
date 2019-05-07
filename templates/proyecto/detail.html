@@ -70,9 +70,8 @@
       {% for participante in participantes %}
         <tr>
           <td>{{ participante.usuario.get_full_name }}</td>
-          <td><i class="fas fa-trash-alt"></i></td>
+          <td><a href={% url 'participante_delete' participante.id %}><i class="fas fa-trash-alt"></i></a></td>
         </tr>
-        <!-- TODO -->
       {% endfor %}
     </table>
   </div>

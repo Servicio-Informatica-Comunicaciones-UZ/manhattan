@@ -12,7 +12,7 @@
     </div>
   </div>
 
-  <h1>Invitar al proyecto {{ proyecto.titulo }}</h1>
+  <h1>{% blocktrans with titulo=proyecto.titulo %}Invitar al proyecto «{{ titulo }}»{% endblocktrans %}</h1>
   <hr />
   <br />
 
