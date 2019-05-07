@@ -4,7 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.forms.models import modelform_factory
 from django.http.response import HttpResponse
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import (
     DetailView,
@@ -60,6 +60,16 @@ class InvitacionView(LoginRequiredMixin, CreateView):
         return reverse_lazy(
             "proyecto_detail", kwargs={"pk": self.kwargs["proyecto_id"]}
         )
+
+
+class ParticipanteDeleteView(LoginRequiredMixin, DeleteView):
+    """Borrar un registro de ParticipanteProyecto"""
+
+    model = ParticipanteProyecto
+    template_name = "participante-proyecto/confirm_delete.html"
+
+    def get_success_url(self):
+        return reverse_lazy("proyecto_detail", args=[self.object.proyecto.id])
 
 
 class ProyectoCreateView(LoginRequiredMixin, CreateView):

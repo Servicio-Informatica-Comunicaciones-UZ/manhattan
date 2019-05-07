@@ -52,16 +52,15 @@
   <div class="table-responsive">
     <table class="table table-hover table-striped table-sm">
       {% for invitado in invitados %}
-      <tr>
-        <td>{{ invitado.usuario.get_full_name }}</td>
-        <td><i class="fas fa-trash-alt"></i></td>
-      </tr>
-      <!-- TODO -->
+        <tr>
+          <td>{{ invitado.usuario.get_full_name }}</td>
+          <td><a href={% url 'participante_delete' invitado.id %}><i class="fas fa-trash-alt"></i></a></td>
+        </tr>
       {% endfor %}
     </table>
   </div>
   <p>
-    <a href="{% url 'participante_invitar' proyecto.id %}" class="btn btn-info btn-sm" type="submit"
+    <a href="{% url 'participante_invitar' proyecto.id %}" class="btn btn-info btn-sm"
       ><i class="fas fa-plus" aria-hidden="true"></i>&nbsp; {% trans 'Añadir' %}</a>
   </p>
 
@@ -69,11 +68,11 @@
   <div class="table-responsive">
     <table class="table table-hover table-striped table-sm">
       {% for participante in participantes %}
-      <tr>
-        <td>{{ participante.usuario.get_full_name }}</td>
-        <td><i class="fas fa-trash-alt"></i></td>
-      </tr>
-      <!-- TODO -->
+        <tr>
+          <td>{{ participante.usuario.get_full_name }}</td>
+          <td><i class="fas fa-trash-alt"></i></td>
+        </tr>
+        <!-- TODO -->
       {% endfor %}
     </table>
   </div>
