@@ -48,28 +48,18 @@ class InvitacionView(LoginRequiredMixin, CreateView):
         context = super().get_context_data(**kwargs)
         proyecto_id = self.kwargs["proyecto_id"]
         context["proyecto"] = Proyecto.objects.get(id=proyecto_id)
-
-        # context["form"] = self.get_form()
-        # This sets the initial value for the field:
-        # context["form"].fields["proyecto_id"].initial = self.kwargs["proyecto_id"]
-
         return context
 
     def get_form_kwargs(self, **kwargs):
         kwargs = super().get_form_kwargs()
         # Update the kwargs for the form init method with ours
-        kwargs.update(self.kwargs)  # self.kwargs contains all url conf params
-        # We also send a user object to the form
-        kwargs.update({'current_user': self.request.user})
+        kwargs.update(self.kwargs)  # self.kwargs contains all URL conf params
         return kwargs
 
     def get_success_url(self, **kwargs):
-        return reverse_lazy('proyecto_detail', kwargs = {'pk': self.kwargs["proyecto_id"]})
-
-    def save():
-        invitado = super.save(commit=False)
-        invitado.tipo_participacion = TipoParticipacion("invitado")
-        invitado.save()
+        return reverse_lazy(
+            "proyecto_detail", kwargs={"pk": self.kwargs["proyecto_id"]}
+        )
 
 
 class ProyectoCreateView(LoginRequiredMixin, CreateView):

@@ -6,35 +6,36 @@ from accounts.models import CustomUser as CustomUser
 
 
 class InvitacionForm(forms.ModelForm):
-    usuario_id = forms.IntegerField(help_text="NIP de la persona a invitar")
+    nip = forms.IntegerField(
+        label=_("NIP"),
+        help_text=_(
+            "Número de Identificación Personal en la Universidad de Zaragoza de la persona a invitar"
+        ),
+    )
+    # El usuario se rellenará en clean() a partir del NIP.
+    usuario = forms.IntegerField(required=False, widget=forms.HiddenInput())
 
     def __init__(self, *args, **kwargs):
-        # To get request.user. Do not use kwargs.pop('user', None) due to potential security hole.
-        current_user = kwargs.pop("current_user")
         proyecto_id = kwargs.pop("proyecto_id")
         super().__init__(*args, **kwargs)
         proyecto = Proyecto.objects.get(id=proyecto_id)
         self.fields["proyecto"].initial = proyecto
-        tipo_participacion = TipoParticipacion.objects.get(nombre="invitado")
-        self.fields["tipo_participacion"].initial = tipo_participacion
-        # Se pone porque es un campo requerido, pero se sobrescribirá en clean().
-        self.fields["usuario"].initial = current_user
 
     def clean(self):
         cleaned_data = super().clean()
+        nip = cleaned_data.get("nip")
+        cleaned_data["usuario"] = CustomUser.objects.get(username=nip)
+        # TODO Si el usuario no existe, crearlo.
 
-        usuario_id = cleaned_data.get("usuario_id")
-        cleaned_data["usuario"] = CustomUser.objects.get(username=usuario_id)
-        # TODO Si el usuario no existe, crearlo
+    def save(self, commit=True):
+        invitado = super().save(commit=False)
+        invitado.tipo_participacion = TipoParticipacion("invitado")
+        return invitado.save()
 
     class Meta:
-        fields = ["proyecto", "tipo_participacion", "usuario", "usuario_id"]
+        fields = ["proyecto", "usuario", "nip"]
         model = ParticipanteProyecto
-        widgets = {
-            "proyecto": forms.HiddenInput,
-            "tipo_participacion": forms.HiddenInput,
-            "usuario": forms.HiddenInput,
-        }
+        widgets = {"proyecto": forms.HiddenInput}
 
 
 class ProyectoForm(forms.ModelForm):
