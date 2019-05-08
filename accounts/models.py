@@ -1,6 +1,15 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, UserManager
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+
+
+class CustomUserManager(UserManager):
+    def get_or_none(self, **kwargs):
+        """Devuelve el usuario con las propiedades indicadas, o `None` si no se encuentra."""
+        try:
+            return self.get(**kwargs)
+        except CustomUser.DoesNotExist:
+            return None
 
 
 class CustomUser(AbstractUser):
@@ -39,12 +48,13 @@ class CustomUser(AbstractUser):
 
     # Metodos sobrescritos
     def get_full_name(self):
-        """
-        Devuelve el nombre completo (nombre y los dos apellidos).
-        """
+        """Devuelve el nombre completo (nombre y los dos apellidos)."""
         full_name = "%s %s %s" % (self.first_name, self.last_name, self.last_name_2)
         return full_name.strip()
 
     # Métodos adicionales
     def __str__(self):
         return self.username
+
+    # Custom Manager
+    objects = CustomUserManager()

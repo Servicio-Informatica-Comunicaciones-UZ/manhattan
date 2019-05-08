@@ -1,8 +1,10 @@
 from datetime import date
 from django import forms
 from django.utils.translation import gettext_lazy as _
+from social_django.utils import load_strategy
 from .models import Linea, Programa, ParticipanteProyecto, Proyecto, TipoParticipacion
 from accounts.models import CustomUser as CustomUser
+from accounts.pipeline import get_identidad, EMailDesconocido, UsuarioNoEncontrado
 
 
 class InvitacionForm(forms.ModelForm):
@@ -17,13 +19,30 @@ class InvitacionForm(forms.ModelForm):
         # Override __init__ to make the "self" object have the proyecto instance
         # designated by the proyecto_id sent by the view, taken from the URL parameter.
         self.proyecto = Proyecto.objects.get(id=kwargs.pop("proyecto_id"))
+        self.request = kwargs.pop("request")
         super().__init__(*args, **kwargs)
 
     def clean(self):
         cleaned_data = super().clean()
         nip = cleaned_data.get("nip")
-        cleaned_data["usuario"] = CustomUser.objects.get(username=nip)
-        # TODO Si el usuario no existe, crearlo.
+        usuario = CustomUser.objects.get_or_none(username=nip)
+        if not usuario:
+            usuario = CustomUser.objects.create_user(username=nip)
+            try:
+                get_identidad(load_strategy(self.request), None, usuario)
+            except UsuarioNoEncontrado:
+                usuario.delete()
+                raise forms.ValidationError(
+                    _(f"¡Usuario desconocido! No se ha encontrado el NIP «{nip}».")
+                )
+            except EMailDesconocido:
+                usuario.delete()
+                raise forms.ValidationError(
+                    _(
+                        f"No fue posible invitar al usuario «{nip}» porque no tiene establecida ninguna dirección de correo electrónico en el sistema de Gestión de Identidades."
+                    )
+                )
+        cleaned_data["usuario"] = usuario
 
     def save(self, commit=True):
         invitado = super().save(commit=False)

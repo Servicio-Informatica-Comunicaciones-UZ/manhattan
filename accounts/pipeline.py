@@ -2,6 +2,21 @@ import json
 from django.db import connections
 
 
+class EMailDesconocido(Exception):
+    """
+    Excepción elevada cuando el usuario no tiene establecida
+    ninguna dirección de correo electrónico en Gestión de Identidades.
+    """
+
+    pass
+
+
+class UsuarioNoEncontrado(Exception):
+    """Excepción elevada cuando no se encuentra al usuario en Gestión de Identidades"""
+
+    pass
+
+
 def dictfetchall(cursor):
     """Return all rows from a cursor as a dict."""
     columns = [col[0] for col in cursor.description]
@@ -11,7 +26,13 @@ def dictfetchall(cursor):
 def dictfetchone(cursor):
     """Return a row from a cursor as a dict."""
     columns = (col[0] for col in cursor.description)
-    return dict(zip(columns, cursor.fetchone()))
+    row = cursor.fetchone()
+    if row:
+        return dict(zip(columns, row))
+    else:
+        raise UsuarioNoEncontrado(
+            "Usuario desconocido. No se ha encontrado en Gestión de Identidades."
+        )
 
 
 def get_identidad(strategy, response, user, *args, **kwargs):
@@ -36,6 +57,9 @@ def get_identidad(strategy, response, user, *args, **kwargs):
     user.last_name = identidad.get("APELLIDO_1")
     user.last_name_2 = identidad.get("APELLIDO_2")
     user.email = identidad.get("CORREO_PERSONAL") or identidad.get("CORREO_PRINCIPAL")
+    # El email es un campo requerido en el modelo.
+    if not user.email:
+        raise EMailDesconocido("Usuario sin dirección de correo establecida.")
     user.nombre_oficial = identidad.get("NOMBRE_ADMIN")
     user.numero_documento = identidad.get("DOC_ID")
     user.sexo = identidad.get("SEXO")
@@ -76,4 +100,3 @@ def get_identidad(strategy, response, user, *args, **kwargs):
 
     # user.save()
     strategy.storage.user.changed(user)
-

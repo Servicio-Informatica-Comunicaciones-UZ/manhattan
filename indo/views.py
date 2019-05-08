@@ -54,6 +54,7 @@ class InvitacionView(LoginRequiredMixin, CreateView):
         kwargs = super().get_form_kwargs()
         # Update the kwargs for the form init method with ours
         kwargs.update(self.kwargs)  # self.kwargs contains all URL conf params
+        kwargs["request"] = self.request
         return kwargs
 
     def get_success_url(self, **kwargs):
