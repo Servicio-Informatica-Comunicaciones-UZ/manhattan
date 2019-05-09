@@ -54,7 +54,7 @@
       {% for invitado in invitados %}
         <tr>
           <td>{{ invitado.usuario.get_full_name }}</td>
-          <td><a href={% url 'participante_delete' invitado.id %}><i class="fas fa-trash-alt"></i></a></td>
+          <td><a href={% url 'participante_delete' invitado.id %} aria-label="{% trans "Eliminar" %}"><i aria-hidden="true" class="fas fa-trash-alt" title="{% trans "Eliminar" %}"></i></a></td>
         </tr>
       {% endfor %}
     </table>
@@ -70,7 +70,7 @@
       {% for participante in participantes %}
         <tr>
           <td>{{ participante.usuario.get_full_name }}</td>
-          <td><a href={% url 'participante_delete' participante.id %}><i class="fas fa-trash-alt"></i></a></td>
+          <td><a href={% url 'participante_delete' participante.id %} aria-label="{% trans "Eliminar" %}"><i aria-hidden="true" class="fas fa-trash-alt" title="{% trans "Eliminar" %}"></i></a></td>
         </tr>
       {% endfor %}
     </table>
@@ -99,9 +99,9 @@
 
   <br style="clear: both;" />
   <div class="btn-group" role="group" aria-label="Botones">
-    <a href="{% url 'proyectos_usuario_list' %}" class="btn btn-info"
-      ><i class="fas fa-step-backward"></i> {% trans 'Retroceder' %}</a
-    >
+    <a href="{% url 'proyectos_usuario_list' %}" class="btn btn-info">
+      <i class="fas fa-step-backward"></i> {% trans 'Retroceder' %}
+    </a>
     <button class="btn btn-warning" type="submit"><i class="fas fa-check"></i> {% trans 'Presentar' %}</button>
   </div>
 </div>
