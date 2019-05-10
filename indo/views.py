@@ -1,5 +1,6 @@
 import json
 from datetime import date
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.forms.models import modelform_factory
@@ -18,6 +19,8 @@ from django.views.generic import (
 )
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django_summernote.widgets import SummernoteWidget
+
+from templated_email import send_templated_mail
 
 from .forms import InvitacionForm, ProyectoForm
 from .models import (
@@ -168,6 +171,7 @@ class ProyectoPresentarView(LoginRequiredMixin, RedirectView):
     Presentar una solicitud de proyecto.
     El proyecto pasa de estado «Borrador» a estado «Solicitado».
     """
+
     # TODO: Comprobar permisos, fecha
 
     def get_redirect_url(self, *args, **kwargs):
@@ -178,10 +182,27 @@ class ProyectoPresentarView(LoginRequiredMixin, RedirectView):
         proyecto = Proyecto.objects.get(pk=proyecto_id)
 
         # TODO ¿Chequear el estado actual del proyecto?
+        # TODO Enviar mensaje a aprobadores
+
+        # Enviar mensaje a los invitados al proyecto
+        for invitado in proyecto.participantes.filter(tipo_participacion="invitado"):
+            send_templated_mail(
+                template_name="invitacion",
+                from_email=None,  # settings.DEFAULT_FROM_EMAIL
+                recipient_list=[invitado.usuario.email],
+                context={
+                    "nombre_coordinador": request.user.get_full_name(),
+                    "nombre_invitado": invitado.usuario.get_full_name(),
+                    "sexo_invitado": invitado.usuario.sexo,
+                    "titulo_proyecto": proyecto.titulo,
+                    "programa_proyecto": f"{proyecto.programa.nombre_corto} ({proyecto.programa.nombre_largo})",
+                    "descripcion_proyecto": proyecto.descripcion,
+                },
+            )
+
         proyecto.estado = "SOLICITADO"
         proyecto.save()
 
-        # TODO Enviar correos a invitados y aprobadores
         # TODO Modificar detail.html para no mostrar botones de edición/presentación
         messages.success(request, _("Su solicitud de proyecto ha sido presentada."))
         return super().post(request, *args, **kwargs)

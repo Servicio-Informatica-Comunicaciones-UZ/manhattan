@@ -1,0 +1,24 @@
+{% block subject %}Invitación al proyecto «{{titulo_proyecto}}»{% endblock %}
+{% block plain %}
+{% if sexo_invitado == 'F' %}
+Estimada {{nombre_invitado}}:
+{% elif sexo_invitado == 'M' %}
+Estimado {{nombre_invitado}}:
+{% else %}
+Invitad@ {{nombre_invitado}}:
+{% endif %}
+
+{{nombre_coordinador}} le ha invitado a participar en el siguiente Proyecto de Innovación Docente:
+
+  Título: {{titulo_proyecto}}
+  Programa: {{programa_proyecto}}
+  Descripción: {{descripcion_proyecto}}
+
+
+Si desea aceptar la invitación, visite la web <http://manhattan.unizar.es>
+e inicie sesión con su NIP y contraseña administrativa.
+
+
+Atentamente,
+    Vicerrectorado de Política Académica
+{% endblock %}
