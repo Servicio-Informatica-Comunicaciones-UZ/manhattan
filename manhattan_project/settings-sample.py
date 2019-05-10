@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 
 import os
 
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -41,8 +42,9 @@ INSTALLED_APPS = [
     "indo.apps.IndoConfig",
     "accounts.apps.AccountsConfig",
     # 3rd Party
-    'crispy_forms',   # https://github.com/django-crispy-forms/django-crispy-forms
-    "social_django",  # https://github.com/python-social-auth/social-app-django
+    "crispy_forms",         # https://github.com/django-crispy-forms/django-crispy-forms
+    "django_summernote",    # https://github.com/summernote/django-summernote
+    "social_django",        # https://github.com/python-social-auth/social-app-django
 ]
 
 MIDDLEWARE = [
@@ -68,8 +70,8 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                'social_django.context_processors.backends',
-                'social_django.context_processors.login_redirect',
+                "social_django.context_processors.backends",
+                "social_django.context_processors.login_redirect",
             ]
         },
     }
@@ -91,7 +93,7 @@ DATABASES = {
         "PORT": "",                 # Set to empty string for default.
         # Additional database options
         "OPTIONS": {
-            'charset': 'utf8mb4',   # Requires `innodb_default_row_format = dynamic`
+            "charset": "utf8mb4",   # Requires `innodb_default_row_format = dynamic`
         }
     },
     "identidades": {
@@ -103,7 +105,7 @@ DATABASES = {
         "PORT": "1521",                         # Set to empty string for default.
         # Additional database options
         # "OPTIONS": {
-        #     'charset': 'WE8ISO8859P1',
+        #     "charset": "WE8ISO8859P1",
         # }
     }
 }
@@ -143,7 +145,7 @@ STATIC_URL = "/static/"
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 AUTH_USER_MODEL = "accounts.CustomUser"
-LOGIN_REDIRECT_URL = "userdata"  # CÁMBIAME
+LOGIN_REDIRECT_URL = "proyectos_usuario_list"
 LOGOUT_REDIRECT_URL = "home"
 
 
@@ -157,9 +159,8 @@ AUTHENTICATION_BACKENDS = (
 # When using PostgreSQL, it’s recommended to use the built-in JSONB field to store the extracted extra_data.
 # To enable it define the setting:
 # SOCIAL_AUTH_POSTGRES_JSONFIELD = True
-SOCIAL_AUTH_SAML_SP_ENTITY_ID = (
-    "https://manhattan.local/accounts/metadata"  # Identifier of the SP entity (must be a URI)
-)
+# Identifier of the SP entity (must be a URI)
+SOCIAL_AUTH_SAML_SP_ENTITY_ID = "https://manhattan.local/accounts/metadata"
 SOCIAL_AUTH_SAML_SP_PUBLIC_CERT = """Spam, ham and eggs"""
 SOCIAL_AUTH_SAML_SP_PRIVATE_KEY = """Spam, sausages and bacon"""
 SOCIAL_AUTH_SAML_ORG_INFO = {
@@ -179,9 +180,9 @@ SOCIAL_AUTH_SAML_SUPPORT_CONTACT = {
 }
 SOCIAL_AUTH_SAML_ENABLED_IDPS = {
     "lord": {
-        "entity_id": 'https://FIXME.idp.com/saml2/idp/metadata.php',
-        "url": 'https://FIXME.idp.com/saml2/idp/SSOService.php',
-        "x509cert": 'Lovely spam, wonderful spam',
+        "entity_id": "https://FIXME.idp.com/saml2/idp/metadata.php",
+        "url": "https://FIXME.idp.com/saml2/idp/SSOService.php",
+        "x509cert": "Lovely spam, wonderful spam",
         "attr_user_permanent_id": "uid",
         'attr_full_name': "cn",             # "urn:oid:2.5.4.3"
         "attr_first_name": "givenName",     # "urn:oid:2.5.4.42"
@@ -192,21 +193,108 @@ SOCIAL_AUTH_SAML_ENABLED_IDPS = {
 }
 
 SOCIAL_AUTH_PIPELINE = (
-    'social_core.pipeline.social_auth.social_details',
-    'social_core.pipeline.social_auth.social_uid',
-    'social_core.pipeline.social_auth.auth_allowed',
-    'social_core.pipeline.social_auth.social_user',
-    'social_core.pipeline.user.get_username',
-    # 'social_core.pipeline.mail.mail_validation',
-    # 'social_core.pipeline.social_auth.associate_by_email',
-    'social_core.pipeline.user.create_user',
-    'accounts.pipeline.get_identidad',  # Actualizar con los datos de Gestión de Identidades
-    'social_core.pipeline.social_auth.associate_user',
-    'social_core.pipeline.social_auth.load_extra_data',
-    'social_core.pipeline.user.user_details',
+    "social_core.pipeline.social_auth.social_details",
+    "social_core.pipeline.social_auth.social_uid",
+    "social_core.pipeline.social_auth.auth_allowed",
+    "social_core.pipeline.social_auth.social_user",
+    "social_core.pipeline.user.get_username",
+    # "social_core.pipeline.mail.mail_validation",
+    # "social_core.pipeline.social_auth.associate_by_email",
+    "social_core.pipeline.user.create_user",
+    "accounts.pipeline.get_identidad",  # Actualizar con los datos de Gestión de Identidades
+    "social_core.pipeline.social_auth.associate_user",
+    "social_core.pipeline.social_auth.load_extra_data",
+    "social_core.pipeline.user.user_details",
 )
 
 SOCIAL_AUTH_URL_NAMESPACE = "social"
 
 # CRISPY FORMS
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
+CRISPY_TEMPLATE_PACK = "bootstrap4"
+
+# SUMMERNOTE
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
+SUMMERNOTE_THEME = "bs4"
+
+SUMMERNOTE_CONFIG = {
+    # Using SummernoteWidget - iframe mode, default
+    "iframe": True,
+
+    # You can put custom Summernote settings
+    "summernote": {
+        # As an example, using Summernote Air-mode
+        #'airMode': False,
+
+        # Change editor size
+        "width": '100%',
+        "height": '480',
+
+        # Use proper language setting automatically (default)
+        "lang": None,
+
+        # Or, set editor language/locale forcely
+        # "lang": "ko-KR",
+
+        # You can also add custom settings for external plugins
+        # "print": {
+        #     "stylesheetUrl": "/some_static_folder/printable.css",
+        # },
+    },
+
+    # Need authentication while uploading attachments.
+    "attachment_require_authentication": True,
+
+    # Set `upload_to` function for attachments.
+    #'attachment_upload_to': my_custom_upload_to_func(),
+
+    # Set custom storage class for attachments.
+    #'attachment_storage_class': 'my.custom.storage.class.name',
+
+    # Set custom model for attachments (default: 'django_summernote.Attachment')
+    #'attachment_model': 'my.custom.attachment.model', # must inherit 'django_summernote.AbstractAttachment'
+
+    # You can disable attachment feature.
+    #'disable_attachment': False,
+
+    # Set `True` to return attachment paths in absolute URIs.
+    #'attachment_absolute_uri': False,
+
+    # You can add custom css/js for SummernoteWidget.
+    #'css': (),
+    #'js': (
+    #),
+
+    # You can also add custom css/js for SummernoteInplaceWidget.
+    # !!! Be sure to put {{ form.media }} in template before initiate summernote.
+    #'css_for_inplace': (
+    #),
+    #'js_for_inplace': (
+    #),
+
+    # Codemirror as codeview
+    # If any codemirror settings are defined, it will include codemirror files automatically.
+    "css": (
+        "//cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/theme/monokai.min.css",
+    ),
+    "codemirror": {
+        "mode": "htmlmixed",
+        "lineNumbers": "true",
+
+        # You have to include theme file in 'css' or 'css_for_inplace' before using it.
+        "theme": "monokai",
+    },
+
+    # Lazy initialize
+    # If you want to initialize summernote at the bottom of page, set this as True
+    # and call `initSummernote()` on your page.
+    "lazy": True,
+    #'lazy': False,
+
+    # To use external plugins,
+    # Include them within `css` and `js`.
+    #'js': {
+    #    '/some_static_folder/summernote-ext-print.js',
+    #    '//somewhere_in_internet/summernote-plugin-name.js',
+    #},
+}
