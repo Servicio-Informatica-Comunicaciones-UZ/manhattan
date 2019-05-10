@@ -217,6 +217,7 @@ class Proyecto(models.Model):
             ("BORRADOR", "Solicitud en preparación"),
             ("SOLICITADO", "Solicitud presentada"),
         ),
+        default="BORRADOR",
         max_length=63,
     )
     contexto = models.TextField(

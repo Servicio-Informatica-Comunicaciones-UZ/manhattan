@@ -1,7 +1,9 @@
 import json
 from datetime import date
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.forms.models import modelform_factory
+from django.http import HttpResponseRedirect
 from django.http.response import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
@@ -10,9 +12,9 @@ from django.views.generic import (
     DetailView,
     FormView,
     ListView,
+    RedirectView,
     TemplateView,
     View,
-    FormView,
 )
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django_summernote.widgets import SummernoteWidget
@@ -159,6 +161,30 @@ class ProyectoDetailView(DetailView):
         context["campos"] = json.loads(self.object.programa.campos)
 
         return context
+
+
+class ProyectoPresentarView(LoginRequiredMixin, RedirectView):
+    """
+    Presentar una solicitud de proyecto.
+    El proyecto pasa de estado «Borrador» a estado «Solicitado».
+    """
+    # TODO: Comprobar permisos, fecha
+
+    def get_redirect_url(self, *args, **kwargs):
+        return reverse_lazy("proyecto_detail", args=[kwargs.get("pk")])
+
+    def post(self, request, *args, **kwargs):
+        proyecto_id = kwargs.get("pk")
+        proyecto = Proyecto.objects.get(pk=proyecto_id)
+
+        # TODO ¿Chequear el estado actual del proyecto?
+        proyecto.estado = "SOLICITADO"
+        proyecto.save()
+
+        # TODO Enviar correos a invitados y aprobadores
+        # TODO Modificar detail.html para no mostrar botones de edición/presentación
+        messages.success(request, _("Su solicitud de proyecto ha sido presentada."))
+        return super().post(request, *args, **kwargs)
 
 
 class ProyectoUpdateFieldView(LoginRequiredMixin, UpdateView):

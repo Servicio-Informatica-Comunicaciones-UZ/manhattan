@@ -1,8 +1,36 @@
 import urllib.parse
 from django import template
 from django.urls import reverse
+from django.utils.safestring import mark_safe
 
 register = template.Library()
+
+# DEFAULT_TAGS defined in django.contrib.messages.constants
+MESSAGE_ICONS = {
+    "debug": '<i class="fas fa-bug"></i>',
+    "info": '<i class="fas fa-info-circle"></i>',
+    "success": '<i class="fas fa-check-circle"></i>',
+    "warning": '<i class="fas fa-exclamation-triangle"></i>',
+    "error": '<i class="fas fa-bomb"></i>',
+}
+
+MESSAGE_STYLES = {
+    "debug": "alert-info",
+    "info": "alert-info",
+    "success": "alert-success",
+    "warning": "alert-warning",
+    "error": "alert-danger",
+}
+
+
+@register.simple_tag
+def alert_icon(tag):
+    return mark_safe(MESSAGE_ICONS[tag])
+
+
+@register.simple_tag
+def alert_style(tag):
+    return MESSAGE_STYLES[tag]
 
 
 @register.simple_tag

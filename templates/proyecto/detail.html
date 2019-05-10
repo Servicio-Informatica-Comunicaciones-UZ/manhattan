@@ -102,7 +102,35 @@
     <a href="{% url 'proyectos_usuario_list' %}" class="btn btn-info">
       <i class="fas fa-step-backward"></i> {% trans 'Retroceder' %}
     </a>
-    <button class="btn btn-warning" type="submit"><i class="fas fa-check"></i> {% trans 'Presentar' %}</button>
+    <button class="btn btn-warning" data-toggle="modal" data-target="#presentarModal" type="button">
+      <i class="fas fa-check"></i> {% trans 'Presentar' %}
+    </button>
   </div>
 </div>
+
+
+<div class="modal fade" id="presentarModal" tabindex="-1" role="dialog" aria-labelledby="presentarModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="presentarModalLabel">{% trans "¿Seguro que desea presentar la solicitud?" %}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>{% trans "Una vez presentada ya no podrá hacer ningún cambio." %}</p>
+        <p>{% trans "Se enviarán mensajes informativos a las personas invitadas y, en su caso, a quien deba dar su visto bueno." %}</p>
+      </div>
+      <div class="modal-footer">
+        <form action="{% url 'proyecto_presentar' pk=proyecto.id %}" id="presentar-form" method="post">
+          {% csrf_token %}
+          <button type="button" class="btn btn-info" data-dismiss="modal"><i class="fas fa-times"></i> {% trans "Cancelar" %}</button>
+          <button type="submit" class="btn btn-warning"><i class="fas fa-check"></i> {% trans "Presentar" %}</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock content %}
