@@ -29,6 +29,17 @@ DEBUG = True
 ALLOWED_HOSTS = []  # ['*']
 
 
+DEFAULT_FROM_EMAIL = 'leocricia@manhattan.local'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.manhattan.local'
+EMAIL_HOST_USER = 'mls'
+EMAIL_HOST_PASSWORD = 'plaff'
+EMAIL_PORT = 587
+EMAIL_USE_LOCALTIME = True
+EMAIL_USE_TLS = True
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -58,6 +69,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "manhattan_project.urls"
+
+SITE_URL = "http://manhattan.local/"
 
 TEMPLATES = [
     {
@@ -227,8 +240,8 @@ SUMMERNOTE_CONFIG = {
         #'airMode': False,
 
         # Change editor size
-        "width": '100%',
-        "height": '480',
+        "width": "100%",
+        "height": "480",
 
         # Use proper language setting automatically (default)
         "lang": None,
@@ -246,31 +259,31 @@ SUMMERNOTE_CONFIG = {
     "attachment_require_authentication": True,
 
     # Set `upload_to` function for attachments.
-    #'attachment_upload_to': my_custom_upload_to_func(),
+    # 'attachment_upload_to': my_custom_upload_to_func(),
 
     # Set custom storage class for attachments.
-    #'attachment_storage_class': 'my.custom.storage.class.name',
+    # 'attachment_storage_class': 'my.custom.storage.class.name',
 
     # Set custom model for attachments (default: 'django_summernote.Attachment')
-    #'attachment_model': 'my.custom.attachment.model', # must inherit 'django_summernote.AbstractAttachment'
+    # 'attachment_model': 'my.custom.attachment.model', # must inherit 'django_summernote.AbstractAttachment'
 
     # You can disable attachment feature.
-    #'disable_attachment': False,
+    # 'disable_attachment': False,
 
     # Set `True` to return attachment paths in absolute URIs.
-    #'attachment_absolute_uri': False,
+    # 'attachment_absolute_uri': False,
 
     # You can add custom css/js for SummernoteWidget.
-    #'css': (),
-    #'js': (
-    #),
+    # 'css': (),
+    # 'js': (
+    # ),
 
     # You can also add custom css/js for SummernoteInplaceWidget.
     # !!! Be sure to put {{ form.media }} in template before initiate summernote.
-    #'css_for_inplace': (
-    #),
-    #'js_for_inplace': (
-    #),
+    # 'css_for_inplace': (
+    # ),
+    # 'js_for_inplace': (
+    # ),
 
     # Codemirror as codeview
     # If any codemirror settings are defined, it will include codemirror files automatically.
@@ -289,12 +302,12 @@ SUMMERNOTE_CONFIG = {
     # If you want to initialize summernote at the bottom of page, set this as True
     # and call `initSummernote()` on your page.
     "lazy": True,
-    #'lazy': False,
+    # 'lazy': False,
 
     # To use external plugins,
     # Include them within `css` and `js`.
-    #'js': {
-    #    '/some_static_folder/summernote-ext-print.js',
-    #    '//somewhere_in_internet/summernote-plugin-name.js',
-    #},
+    # 'js': {
+    #     '/some_static_folder/summernote-ext-print.js',
+    #     '//somewhere_in_internet/summernote-plugin-name.js',
+    # },
 }

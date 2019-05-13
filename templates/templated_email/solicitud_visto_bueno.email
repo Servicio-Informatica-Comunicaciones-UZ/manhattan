@@ -1,0 +1,28 @@
+{% block subject %}VºBº del proyecto «{{titulo_proyecto}}»{% endblock %}
+{% block plain %}
+{% if tratamiento_decano in 'Decana,Directora' %}
+Estimada {{nombre_decano}}:
+{% elif tratamiento_decano in 'Decano,Director' %}
+Estimado {{nombre_decano}}:
+{% else %}
+Estimad@ {{nombre_decano}}:
+{% endif %}
+
+{{nombre_coordinador}} ha solicitado el siguiente Proyecto de Innovación Docente:
+
+  Título: {{titulo_proyecto}}
+  Programa: {{programa_proyecto}}
+  Descripción: {{descripcion_proyecto}}
+
+
+Los proyectos de este programa deben ser impulsados por el centro.
+Por ello, para que solicitud anterior pueda ser evaluada, debe contar con
+el visto bueno del responsable del centro.
+
+Para dar su visto bueno a dicha solicitud, visite la web <{{site_url}}>
+e inicie sesión con su NIP y contraseña administrativa.
+
+
+Atentamente,
+    Vicerrectorado de Política Académica
+{% endblock %}

@@ -170,6 +170,7 @@ class ProyectoPresentarView(LoginRequiredMixin, RedirectView):
     """
     Presentar una solicitud de proyecto.
     El proyecto pasa de estado «Borrador» a estado «Solicitado».
+    Se envían correos a los agentes involucrados.
     """
 
     # TODO: Comprobar permisos, fecha
@@ -182,9 +183,20 @@ class ProyectoPresentarView(LoginRequiredMixin, RedirectView):
         proyecto = Proyecto.objects.get(pk=proyecto_id)
 
         # TODO ¿Chequear el estado actual del proyecto?
-        # TODO Enviar mensaje a aprobadores
 
-        # Enviar mensaje a los invitados al proyecto
+        self._enviar_invitaciones(request, proyecto)
+        if proyecto.programa.nombre_corto in ["PIEC", "PRACUZ"]:
+            self._enviar_solicitudes_visto_bueno(request, proyecto)
+
+        proyecto.estado = "SOLICITADO"
+        proyecto.save()
+
+        # TODO Modificar detail.html para no mostrar botones de edición/presentación
+        messages.success(request, _("Su solicitud de proyecto ha sido presentada."))
+        return super().post(request, *args, **kwargs)
+
+    def _enviar_invitaciones(self, request, proyecto):
+        """Enviar mensaje a los invitados al proyecto"""
         for invitado in proyecto.participantes.filter(tipo_participacion="invitado"):
             send_templated_mail(
                 template_name="invitacion",
@@ -197,15 +209,26 @@ class ProyectoPresentarView(LoginRequiredMixin, RedirectView):
                     "titulo_proyecto": proyecto.titulo,
                     "programa_proyecto": f"{proyecto.programa.nombre_corto} ({proyecto.programa.nombre_largo})",
                     "descripcion_proyecto": proyecto.descripcion,
+                    "site_url": settings.SITE_URL,
                 },
             )
 
-        proyecto.estado = "SOLICITADO"
-        proyecto.save()
-
-        # TODO Modificar detail.html para no mostrar botones de edición/presentación
-        messages.success(request, _("Su solicitud de proyecto ha sido presentada."))
-        return super().post(request, *args, **kwargs)
+    def _enviar_solicitudes_visto_bueno(self, request, proyecto):
+        """Enviar mensaje al responsable del centro solicitando su visto bueno"""
+        send_templated_mail(
+            template_name="solicitud_visto_bueno",
+            from_email=None,  # settings.DEFAULT_FROM_EMAIL
+            recipient_list=[proyecto.centro.email_decano],
+            context={
+                "nombre_coordinador": request.user.get_full_name(),
+                "nombre_decano": proyecto.centro.nombre_decano,
+                "tratamiento_decano": proyecto.centro.tratamiento_decano,
+                "titulo_proyecto": proyecto.titulo,
+                "programa_proyecto": f"{proyecto.programa.nombre_corto} ({proyecto.programa.nombre_largo})",
+                "descripcion_proyecto": proyecto.descripcion,
+                "site_url": settings.SITE_URL,
+            },
+        )
 
 
 class ProyectoUpdateFieldView(LoginRequiredMixin, UpdateView):

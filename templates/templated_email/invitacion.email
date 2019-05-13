@@ -5,7 +5,7 @@ Estimada {{nombre_invitado}}:
 {% elif sexo_invitado == 'M' %}
 Estimado {{nombre_invitado}}:
 {% else %}
-Invitad@ {{nombre_invitado}}:
+Estimad@ {{nombre_invitado}}:
 {% endif %}
 
 {{nombre_coordinador}} le ha invitado a participar en el siguiente Proyecto de Innovación Docente:
@@ -15,7 +15,7 @@ Invitad@ {{nombre_invitado}}:
   Descripción: {{descripcion_proyecto}}
 
 
-Si desea aceptar la invitación, visite la web <http://manhattan.unizar.es>
+Si desea aceptar la invitación, visite la web <{{site_url}}>
 e inicie sesión con su NIP y contraseña administrativa.
 
 
