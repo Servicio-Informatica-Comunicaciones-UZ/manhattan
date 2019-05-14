@@ -2,7 +2,7 @@ import json
 from datetime import date
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.forms.models import modelform_factory
 from django.http import HttpResponseRedirect
 from django.http.response import HttpResponse
@@ -33,6 +33,61 @@ from .models import (
 )
 
 
+class ChecksMixin(UserPassesTestMixin):
+    """Proporciona comprobaciones para autorizar o no una acción a un usuario."""
+
+    def es_coordinador(self, proyecto_id):
+        """Devuelve si el usuario actual es coordinador del proyecto indicado."""
+        proyecto = Proyecto.objects.get(id=proyecto_id)
+        usuario_actual = self.request.user
+        coordinadores_participantes = proyecto.participantes.filter(
+            tipo_participacion__in=["coordinador", "coordinador_principal"]
+        ).all()
+        usuarios_coordinadores = list(
+            map(lambda p: p.usuario, coordinadores_participantes)
+        )
+        self.permission_denied_message = _("Usted no es coordinador de este proyecto.")
+
+        return usuario_actual in usuarios_coordinadores
+
+    def es_participante(self, proyecto_id):
+        """Devuelve si el usuario actual es participante del proyecto indicado."""
+        proyecto = Proyecto.objects.get(id=proyecto_id)
+        usuario_actual = self.request.user
+        pp = (
+            proyecto.participantes.filter(usuario=usuario_actual)
+            .filter(tipo_participacion="participante")
+            .all()
+        )
+        self.permission_denied_message = _("Usted no es participante de este proyecto.")
+
+        return len(pp) > 0
+
+    def es_invitado(self, proyecto_id):
+        """Devuelve si el usuario actual es invitado del proyecto indicado."""
+        proyecto = Proyecto.objects.get(id=proyecto_id)
+        usuario_actual = self.request.user
+        pp = (
+            proyecto.participantes.filter(usuario=usuario_actual)
+            .filter(tipo_participacion="invitado")
+            .all()
+        )
+        self.permission_denied_message = _("Usted no está invitado a este proyecto.")
+
+        return len(pp) > 0
+
+    def es_pas_o_pdi(self):
+        """Devuelve si el usuario actual es PAS o PDI."""
+        usuario_actual = self.request.user
+        colectivos_del_usuario = json.loads(usuario_actual.colectivos)
+        self.permission_denied_message = _("Usted no es PAS ni PDI.")
+
+        return any(
+            col_autorizado in colectivos_del_usuario
+            for col_autorizado in ["PAS", "PDI"]
+        )
+
+
 class AyudaView(TemplateView):
     template_name = "ayuda.html"
 
@@ -41,10 +96,9 @@ class HomePageView(TemplateView):
     template_name = "home.html"
 
 
-class InvitacionView(LoginRequiredMixin, CreateView):
-    """Formulario para invitar a una persona a un proyecto determinado."""
+class InvitacionView(LoginRequiredMixin, ChecksMixin, CreateView):
+    """Muestra un formulario para invitar a una persona a un proyecto determinado."""
 
-    # TODO: Comprobar permisos, estado del proyecto, fecha.
     form_class = InvitacionForm
     model = ParticipanteProyecto
     template_name = "participante-proyecto/invitar.html"
@@ -67,9 +121,13 @@ class InvitacionView(LoginRequiredMixin, CreateView):
             "proyecto_detail", kwargs={"pk": self.kwargs["proyecto_id"]}
         )
 
+    def test_func(self):
+        # TODO: Comprobar estado del proyecto, fecha.
+        return self.es_coordinador(self.kwargs["proyecto_id"])
 
-class ParticipanteDeleteView(LoginRequiredMixin, DeleteView):
-    """Borrar un registro de ParticipanteProyecto"""
+
+class ParticipanteDeleteView(LoginRequiredMixin, ChecksMixin, DeleteView):
+    """Borra un registro de ParticipanteProyecto"""
 
     model = ParticipanteProyecto
     template_name = "participante-proyecto/confirm_delete.html"
@@ -77,12 +135,12 @@ class ParticipanteDeleteView(LoginRequiredMixin, DeleteView):
     def get_success_url(self):
         return reverse_lazy("proyecto_detail", args=[self.object.proyecto.id])
 
+    def test_func(self):
+        return self.es_coordinador(self.get_object().proyecto.id)
 
-class ProyectoCreateView(LoginRequiredMixin, CreateView):
+
+class ProyectoCreateView(LoginRequiredMixin, ChecksMixin, CreateView):
     """Crea una nueva solicitud de proyecto"""
-
-    # TODO: Comprobar usuario para Proyectos de titulación y POU.
-    # TODO: Comprobar fecha
 
     model = Proyecto
     template_name = "proyecto/new.html"
@@ -127,12 +185,15 @@ class ProyectoCreateView(LoginRequiredMixin, CreateView):
         )
         registro.save()
 
+    def test_func(self):
+        # TODO: Comprobar usuario para Proyectos de titulación y POU.
+        # TODO: Comprobar fecha
+        return self.es_pas_o_pdi()
 
-class ProyectoDetailView(DetailView):
+
+class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
     """Muestra una solicitud de proyecto."""
 
-    # TODO: Comprobar permisos
-    #   - Coordinadores, participantes/invitados, evaluadores.  Gestores.
     model = Proyecto
     template_name = "proyecto/detail.html"
 
@@ -165,15 +226,21 @@ class ProyectoDetailView(DetailView):
 
         return context
 
+    def test_func(self):
+        # TODO: Los evaluadores y gestores también tendrán que tener acceso.
+        return (
+            self.es_coordinador(self.kwargs["pk"])
+            or self.es_participante(self.kwargs["pk"])
+            or self.es_invitado(self.kwargs["pk"])
+        )
 
-class ProyectoPresentarView(LoginRequiredMixin, RedirectView):
-    """
-    Presentar una solicitud de proyecto.
+
+class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
+    """Presenta una solicitud de proyecto.
+
     El proyecto pasa de estado «Borrador» a estado «Solicitado».
     Se envían correos a los agentes involucrados.
     """
-
-    # TODO: Comprobar permisos, fecha
 
     def get_redirect_url(self, *args, **kwargs):
         return reverse_lazy("proyecto_detail", args=[kwargs.get("pk")])
@@ -187,6 +254,7 @@ class ProyectoPresentarView(LoginRequiredMixin, RedirectView):
         self._enviar_invitaciones(request, proyecto)
         if proyecto.programa.nombre_corto in ["PIEC", "PRACUZ"]:
             self._enviar_solicitudes_visto_bueno(request, proyecto)
+        # TODO Enviar "resguardo" al solicitante. PDF?
 
         proyecto.estado = "SOLICITADO"
         proyecto.save()
@@ -196,7 +264,7 @@ class ProyectoPresentarView(LoginRequiredMixin, RedirectView):
         return super().post(request, *args, **kwargs)
 
     def _enviar_invitaciones(self, request, proyecto):
-        """Enviar mensaje a los invitados al proyecto"""
+        """Envia un mensaje a cada uno de los invitados al proyecto."""
         for invitado in proyecto.participantes.filter(tipo_participacion="invitado"):
             send_templated_mail(
                 template_name="invitacion",
@@ -214,7 +282,7 @@ class ProyectoPresentarView(LoginRequiredMixin, RedirectView):
             )
 
     def _enviar_solicitudes_visto_bueno(self, request, proyecto):
-        """Enviar mensaje al responsable del centro solicitando su visto bueno"""
+        """Envia un mensaje al responsable del centro solicitando su visto bueno."""
         send_templated_mail(
             template_name="solicitud_visto_bueno",
             from_email=None,  # settings.DEFAULT_FROM_EMAIL
@@ -230,10 +298,13 @@ class ProyectoPresentarView(LoginRequiredMixin, RedirectView):
             },
         )
 
+    def test_func(self):
+        # TODO: Comprobar fecha
+        return self.es_coordinador(self.kwargs["pk"])
 
-class ProyectoUpdateFieldView(LoginRequiredMixin, UpdateView):
-    # TODO: Comprobar permisos - coordinadores
-    #       Modificar estado, sólo para gestores
+
+class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
+    # TODO: Modificar estado, sólo para gestores
     #       No permitir modificar convocatoria, etc
     # TODO: Comprobar estado/fecha
     model = Proyecto
@@ -257,6 +328,9 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, UpdateView):
         self.fields = (campo,)
         return super().get_form_class()
 
+    def test_func(self):
+        return self.es_coordinador(self.kwargs["pk"])
+
 
 class ProyectosUsuarioListView(LoginRequiredMixin, ListView):
     """Lista los proyectos coordinados por el usuario actual."""
@@ -267,9 +341,13 @@ class ProyectosUsuarioListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         # TODO ¿Listar sólo los de la convocatoria actual?
         usuario = self.request.user
-        return Proyecto.objects.filter(
-            participantes__tipo_participacion__in=[
+        coordinador = "coordinador"
+        queryset = Proyecto.objects.filter(
+            participantes__tipo_participacion_id__in=[
                 "coordinador",
                 "coordinador_principal",
-            ]
-        ).filter(participantes__usuario=usuario)
+            ],
+            participantes__usuario=usuario,
+        )
+        # print(queryset.query)  # DEBUG
+        return queryset

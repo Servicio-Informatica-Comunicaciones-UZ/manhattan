@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load i18n custom_tags %}
+{% block title %}{% trans "403 Prohibido" %}{% endblock title %}
+{% block description %}{% trans "403 Prohibido" %}{% endblock description %}
+
+{% block content %}
+<div class="container-blanco">
+  <h1>{% trans "403 Prohibido" %}</h1>
+  <hr />
+  <br />
+
+  <p>{% trans 'No está autorizado a realizar esta acción:' %}<p>
+
+  <div class="alert alert-danger" role="alert">
+    {% alert_icon 'error' %}
+    {{ exception }}
+  </div>
+</div>
+{% endblock content %}
