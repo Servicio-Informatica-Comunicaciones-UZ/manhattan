@@ -12,7 +12,8 @@ from .views import (
     ProyectoDetailView,
     ProyectoPresentarView,
     ProyectoUpdateFieldView,
-    ProyectosUsuarioListView,
+    # ProyectosUsuarioListView,
+    ProyectosUsuarioView,
 )
 
 urlpatterns = [
@@ -41,9 +42,7 @@ urlpatterns = [
         ProyectoPresentarView.as_view(),
         name="proyecto_presentar",
     ),
-    path(
-        "proyecto/", ProyectosUsuarioListView.as_view(), name="proyectos_usuario_list"
-    ),
+    path("proyecto/", ProyectosUsuarioView.as_view(), name="proyectos_usuario_list"),
 ]
 
 if settings.DEBUG:

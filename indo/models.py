@@ -440,6 +440,12 @@ class Proyecto(models.Model):
         except ParticipanteProyecto.DoesNotExist:
             return None
 
+    def get_usuario_coordinador(self):
+        pp = ParticipanteProyecto.objects.get(
+            proyecto_id=self.id, tipo_participacion_id="coordinador"
+        )
+        return pp.usuario
+
     def __str__(self):
         return self.codigo
 

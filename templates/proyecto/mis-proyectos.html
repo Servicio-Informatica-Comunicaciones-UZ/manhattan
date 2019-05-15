@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% trans "Proyectos vinculadosl usuario" %}{% endblock title %}
+{% block description %}{% trans "Proyectos vinculados al usuario" %}{% endblock description %}
+
+{% block content %}
+<div class="container-blanco">
+    <h1>{% trans "Proyectos coordinados" %}</h1>
+    <hr />
+    <br />
+
+    {% if proyectos_coordinados %}
+        <div class="table-responsive">
+            <table class="table table-hover table-striped table-sm">
+                <tr>
+                    <th>{% trans 'Programa' %}</th>
+                    <th>{% trans 'Línea' %}</th>
+                    <th>{% trans 'Título' %}</th>
+                    <th>{% trans 'Estado' %}</th>
+                </tr>
+                {% for proyecto in proyectos_coordinados %}
+                    <tr>
+                        <td>{{proyecto.programa.nombre_corto}}</td>
+                        <td>{{proyecto.linea.nombre}}</td>
+                        <td><a href="{% url 'proyecto_detail' proyecto.id %}">{{ proyecto.titulo }}</a></td>
+                        <td>{{proyecto.get_estado_display}}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    {% else %}
+        <p>{% trans 'No coordina ningún proyecto.' %}</p>
+    {% endif %}
+
+    <p><a href="{% url 'proyecto_new' %}" class="btn btn-info">{% trans "Solicitar nuevo proyecto" %}</a></p>
+    <br /><br />
+
+
+    <h1>{% trans "Proyectos participados" %}</h1>
+    <hr />
+    <br />
+
+    {% if proyectos_participados %}
+    <div class="table-responsive">
+        <table class="table table-hover table-striped table-sm">
+        <tr>
+            <th>{% trans 'Programa' %}</th>
+            <th>{% trans 'Línea' %}</th>
+            <th>{% trans 'Título' %}</th>
+            <th>{% trans 'Coordinador' %}</th>
+        </tr>
+        {% for proyecto in proyectos_participados %}
+            <tr>
+            <td>{{proyecto.programa.nombre_corto}}</td>
+            <td>{{proyecto.linea.nombre}}</td>
+            <td><a href="{% url 'proyecto_detail' proyecto.id %}">{{ proyecto.titulo }}</a></td>
+            <td>{{proyecto.get_usuario_coordinador.get_full_name}}</td>
+            </tr>
+        {% endfor %}
+        </table>
+    </div>
+    {% else %}
+        <p>{% trans 'No participa en ningún proyecto.' %}</p>
+    {% endif %}
+    <br /><br />
+
+
+    <h1>{% trans "Proyectos invitado" %}</h1>
+    <hr />
+    <br />
+
+    {% if proyectos_invitado %}
+        <div class="table-responsive">
+            <table class="table table-hover table-striped table-sm">
+            <tr>
+                <th>{% trans 'Programa' %}</th>
+                <th>{% trans 'Línea' %}</th>
+                <th>{% trans 'Título' %}</th>
+                <th>{% trans 'Coordinador' %}</th>
+            </tr>
+            {% for proyecto in proyectos_invitado %}
+                <tr>
+                <td>{{proyecto.programa.nombre_corto}}</td>
+                <td>{{proyecto.linea.nombre}}</td>
+                <td><a href="{% url 'proyecto_detail' proyecto.id %}">{{ proyecto.titulo }}</a></td>
+                <td>{{proyecto.get_usuario_coordinador.get_full_name}}</td>
+                </tr>
+            {% endfor %}
+            </table>
+        </div>
+    {% else %}
+        <p>{% trans 'No está invitado a ningún proyecto.' %}</p>
+    {% endif %}
+</div>
+{% endblock content %}
