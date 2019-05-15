@@ -54,27 +54,32 @@ class ChecksMixin(UserPassesTestMixin):
         """Devuelve si el usuario actual es participante del proyecto indicado."""
         proyecto = Proyecto.objects.get(id=proyecto_id)
         usuario_actual = self.request.user
-        pp = (
-            proyecto.participantes.filter(usuario=usuario_actual)
-            .filter(tipo_participacion="participante")
-            .all()
-        )
+        pp = proyecto.participantes.filter(
+            usuario=usuario_actual, tipo_participacion="participante"
+        ).all()
         self.permission_denied_message = _("Usted no es participante de este proyecto.")
 
-        return len(pp) > 0
+        return True if pp else False
 
     def es_invitado(self, proyecto_id):
         """Devuelve si el usuario actual es invitado del proyecto indicado."""
         proyecto = Proyecto.objects.get(id=proyecto_id)
         usuario_actual = self.request.user
-        pp = (
-            proyecto.participantes.filter(usuario=usuario_actual)
-            .filter(tipo_participacion="invitado")
-            .all()
-        )
+        pp = proyecto.participantes.filter(
+            usuario=usuario_actual, tipo_participacion="invitado"
+        ).all()
         self.permission_denied_message = _("Usted no está invitado a este proyecto.")
 
-        return len(pp) > 0
+        return True if pp else False
+
+    def esta_vinculado(self, proyecto_id):
+        """Devuelve si el usuario actual está vinculado al proyecto indicado."""
+        proyecto = Proyecto.objects.get(id=proyecto_id)
+        usuario_actual = self.request.user
+        pp = proyecto.participantes.filter(usuario=usuario_actual).all()
+        self.permission_denied_message = _("Usted no está vinculado a este proyecto.")
+
+        return True if pp else False
 
     def es_pas_o_pdi(self):
         """Devuelve si el usuario actual es PAS o PDI."""
@@ -228,11 +233,7 @@ class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
 
     def test_func(self):
         # TODO: Los evaluadores y gestores también tendrán que tener acceso.
-        return (
-            self.es_coordinador(self.kwargs["pk"])
-            or self.es_participante(self.kwargs["pk"])
-            or self.es_invitado(self.kwargs["pk"])
-        )
+        return self.esta_vinculado(self.kwargs["pk"])
 
 
 class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
@@ -304,6 +305,7 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
 
 
 class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
+    """Actualiza un campo de una solicitud de proyecto."""
     # TODO: Modificar estado, sólo para gestores
     #       No permitir modificar convocatoria, etc
     # TODO: Comprobar estado/fecha
