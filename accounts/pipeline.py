@@ -96,7 +96,7 @@ def get_identidad(strategy, response, user, *args, **kwargs):
     user.departamento_id_nks = json.dumps(departamento_id_nks)
 
     colectivos = list({perfil.get("COD_PERFIL") for perfil in perfiles})
-    user.colectivos = colectivos
+    user.colectivos = json.dumps(colectivos)
 
     # user.save()
     strategy.storage.user.changed(user)
