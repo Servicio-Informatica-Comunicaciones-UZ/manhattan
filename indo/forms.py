@@ -62,6 +62,8 @@ class ProyectoForm(forms.ModelForm):
         programa = cleaned_data.get("programa")
         linea = cleaned_data.get("linea")
         lineas_del_programa = programa.lineas.all()
+        centro = cleaned_data.get("centro")
+        estudio = cleaned_data.get("estudio")
 
         if linea and linea.programa_id != programa.id:
             self.add_error(
@@ -71,6 +73,14 @@ class ProyectoForm(forms.ModelForm):
 
         if lineas_del_programa and not linea:
             self.add_error("linea", _("Este programa requiere seleccionar una línea."))
+
+        if programa.nombre_corto in ("PIEC", "PRACUZ", "PIPOUZ") and not centro:
+            self.add_error(
+                "centro", _("Este programa debe estar vinculado a un centro.")
+            )
+
+        if programa.nombre_corto == "PIET" and not estudio:
+            self.add_error("estudio", _("Los PIET deben estar vinculado a un estudio."))
 
     class Meta:
         fields = ["titulo", "descripcion", "programa", "linea", "centro", "estudio"]
