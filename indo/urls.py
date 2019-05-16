@@ -12,7 +12,6 @@ from .views import (
     ProyectoDetailView,
     ProyectoPresentarView,
     ProyectoUpdateFieldView,
-    # ProyectosUsuarioListView,
     ProyectosUsuarioView,
 )
 

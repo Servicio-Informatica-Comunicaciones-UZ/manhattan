@@ -335,26 +335,6 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
         return self.es_coordinador(self.kwargs["pk"])
 
 
-# class ProyectosUsuarioListView(LoginRequiredMixin, ListView):
-#     """Lista los proyectos coordinados por el usuario actual."""
-
-#     context_object_name = "proyectos"
-#     template_name = "proyecto/list.html"
-
-#     def get_queryset(self):
-#         # TODO ¿Listar sólo los de la convocatoria actual?
-#         usuario = self.request.user
-#         queryset = Proyecto.objects.filter(
-#             participantes__tipo_participacion_id__in=[
-#                 "coordinador",
-#                 "coordinador_principal",
-#             ],
-#             participantes__usuario=usuario,
-#         )
-#         # print(queryset.query)  # DEBUG
-#         return queryset
-
-
 class ProyectosUsuarioView(LoginRequiredMixin, TemplateView):
     """Lista los proyectos a los que está vinculado el usuario actual."""
 
@@ -363,20 +343,32 @@ class ProyectosUsuarioView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         usuario = self.request.user
         context = super().get_context_data(**kwargs)
-        context["proyectos_coordinados"] = Proyecto.objects.filter(
-            participantes__usuario=usuario,
-            participantes__tipo_participacion_id__in=[
-                "coordinador",
-                "coordinador_principal",
-            ],
-        ).all()
-        context["proyectos_participados"] = Proyecto.objects.filter(
-            participantes__usuario=usuario,
-            participantes__tipo_participacion_id="participante",
-        ).all()
-        context["proyectos_invitado"] = Proyecto.objects.filter(
-            participantes__usuario=usuario,
-            participantes__tipo_participacion_id="invitado",
-        ).all()
+        context["proyectos_coordinados"] = (
+            Proyecto.objects.filter(
+                participantes__usuario=usuario,
+                participantes__tipo_participacion_id__in=[
+                    "coordinador",
+                    "coordinador_principal",
+                ],
+            )
+            .order_by("programa__nombre_corto", "linea__nombre", "titulo")
+            .all()
+        )
+        context["proyectos_participados"] = (
+            Proyecto.objects.filter(
+                participantes__usuario=usuario,
+                participantes__tipo_participacion_id="participante",
+            )
+            .order_by("programa__nombre_corto", "linea__nombre", "titulo")
+            .all()
+        )
+        context["proyectos_invitado"] = (
+            Proyecto.objects.filter(
+                participantes__usuario=usuario,
+                participantes__tipo_participacion_id="invitado",
+            )
+            .order_by("programa__nombre_corto", "linea__nombre", "titulo")
+            .all()
+        )
 
         return context
