@@ -387,14 +387,21 @@ class Proyecto(models.Model):
     )
     # publicar_memoria = models.BooleanField("¿Publicar la memoria?", default=True)
     financiacion = models.TextField(
-        _("Financiación solicitada"),
+        _("Financiación"),
         blank=True,
         null=True,
         help_text=_(
-            "Justificar la necesidad de lo solicitado e indicar el importe, siguiendo las normas de la convocatoria. Añadir información sobre otras fuentes de financiación"
+            "Justificar la necesidad de lo solicitado. Añadir información sobre otras fuentes de financiación"
         ),
     )
-    ayuda = models.PositiveIntegerField(_("Ayuda solicitada"), blank=True, null=True)
+    ayuda = models.PositiveIntegerField(
+        _("Ayuda económica solicitada"),
+        blank=True,
+        null=True,
+        help_text=_(
+            "Las normas de la convocatoria establecen el importe máximo que se puede solicitar según el programa."
+        ),
+    )
     centro = models.ForeignKey(
         "Centro",
         on_delete=models.PROTECT,

@@ -16,73 +16,82 @@
   <hr />
   <br />
 
-  <p><strong>{% trans 'Convocatoria' %}</strong>: {{ proyecto.convocatoria_id }}</p>
-
-  <p>
-    <strong>{% trans 'Programa' %}</strong>: {{ proyecto.programa.nombre_corto }} ({{ proyecto.programa.nombre_largo }})
-  </p>
-
-  {% if proyecto.linea %}
-    <p><strong>{% trans 'Línea' %}</strong>: {{ proyecto.linea.nombre }}</p>
-  {% endif %}
-
-  {% if proyecto.centro %}
-    <p><strong>{% trans 'Centro' %}</strong>: {{ proyecto.centro.nombre }}</p>
-  {% endif %}
-
-  {% if proyecto.estudio %}
-    <p><strong>{% trans 'Estudio' %}</strong>: {{ proyecto.estudio.nombre }}</p>
-  {% endif %}
-
-  {% if coordinador_principal %}
-    <p>
-      <strong>{{ coordinador_principal.get_cargo }}</strong>:
-      {{ coordinador_principal.usuario.get_full_name }}
-    </p>
-  {% endif %}
-
-  {% if coordinador %}
-    <p>
-      <strong>{{ coordinador.get_cargo }}</strong>:
-      {{ coordinador.usuario.get_full_name }}
-    </p>
-  {% endif %}
-
-  <p><strong>{% trans 'Invitados' %}</strong>:<br /></p>
   <div class="table-responsive">
     <table class="table table-hover table-striped table-sm">
-      {% for invitado in invitados %}
+      <tr><td><strong>{% trans 'Convocatoria' %}</strong>:</td><td>{{ proyecto.convocatoria_id }}</td></tr>
+      <tr>
+        <td><strong>{% trans 'Programa' %}</strong>:</td>
+        <td>{{ proyecto.programa.nombre_corto }} ({{ proyecto.programa.nombre_largo }})</td>
+      </tr>
+      {% if proyecto.linea %}
+        <tr><td><strong>{% trans 'Línea' %}</strong>:</td><td>{{ proyecto.linea.nombre }}</td></tr>
+      {% endif %}
+      {% if proyecto.centro %}
+        <tr><td><strong>{% trans 'Centro' %}</strong>:</td><td><{{ proyecto.centro.nombre }}/td></tr>
+      {% endif %}
+      {% if proyecto.estudio %}
+        <tr><td><strong>{% trans 'Estudio' %}</strong>:</td><td>{{ proyecto.estudio.nombre }}</td></tr>
+      {% endif %}
+      {% if coordinador_principal %}
         <tr>
-          <td>{{ invitado.usuario.get_full_name }}</td>
-          <td><a href={% url 'participante_delete' invitado.id %} aria-label="{% trans "Eliminar" %}"><i aria-hidden="true" class="fas fa-trash-alt" title="{% trans "Eliminar" %}"></i></a></td>
+          <td><strong>{{ coordinador_principal.get_cargo }}</strong>:</td>
+          <td>{{ coordinador_principal.usuario.get_full_name }}</td>
         </tr>
-      {% endfor %}
+      {% endif %}
+      {% if coordinador %}
+        <tr><td><strong>{{ coordinador.get_cargo }}</strong>:</td><td>{{ coordinador.usuario.get_full_name }}</td></tr>
+      {% endif %}
     </table>
-  </div>
+  </div><br />
+
+  <h3>{% trans 'Invitados' %}</h3>
+  {% if invitados %}
+    <div class="table-responsive">
+      <table class="table table-hover table-striped table-sm">
+        {% for invitado in invitados %}
+          <tr>
+            <td>{{ invitado.usuario.get_full_name }}</td>
+            <td><a href={% url 'participante_delete' invitado.id %} aria-label="{% trans "Eliminar" %}"><i aria-hidden="true" class="fas fa-trash-alt" title="{% trans "Eliminar" %}"></i></a></td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+  {% else %}
+    <p>{% trans 'Aquí aparecerán las personas a las que invite a participar en este proyecto.'%}</p>
+  {% endif %}
   <p>
     <a href="{% url 'participante_invitar' proyecto.id %}" class="btn btn-info btn-sm"
       ><i class="fas fa-plus" aria-hidden="true"></i>&nbsp; {% trans 'Añadir' %}</a>
-  </p>
+  </p><br />
 
-  <p><strong>{% trans 'Participantes' %}</strong>:<br /></p>
-  <div class="table-responsive">
-    <table class="table table-hover table-striped table-sm">
-      {% for participante in participantes %}
-        <tr>
-          <td>{{ participante.usuario.get_full_name }}</td>
-          <td><a href={% url 'participante_delete' participante.id %} aria-label="{% trans "Eliminar" %}"><i aria-hidden="true" class="fas fa-trash-alt" title="{% trans "Eliminar" %}"></i></a></td>
-        </tr>
-      {% endfor %}
-    </table>
-  </div>
+  <h3>{% trans 'Participantes' %}</strong></h3>
+  {% if participantes %}
+    <div class="table-responsive">
+      <table class="table table-hover table-striped table-sm">
+        {% for participante in participantes %}
+          <tr>
+            <td>{{ participante.usuario.get_full_name }}</td>
+            <td><a href={% url 'participante_delete' participante.id %} aria-label="{% trans "Eliminar" %}"><i aria-hidden="true" class="fas fa-trash-alt" title="{% trans "Eliminar" %}"></i></a></td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+  {% else %}
+    <p>{% trans 'Aquí aparecerán las personas que acepten la invitación a participar en este proyecto.'%}</p>
+  {% endif %}
   <br />
 
   {# TODO: filtro para HTML procedente de procesador de textos #}
   <h3>{% trans 'Descripción' %}</h3>
   <p>{{ proyecto.descripcion | safe }}</p>
+  <p>
+    <a href="{% url 'proyecto_update_field' proyecto.id "descripcion" %}" class="btn btn-info btn-sm">
+      <i class="fas fa-pencil-alt" aria-hidden="true"></i>&nbsp; {% trans 'Editar' %}
+    </a>
+  </p>
 
   {% for campo in campos %}
-    <h3>{{ proyecto|get_attr_verbose_name:campo }}</h3>
+    <h3>{{ proyecto | get_attr_verbose_name:campo }}</h3>
     <p>{{ proyecto | get_obj_attr:campo | default:"" | safe }}</p>
     <p>
       <a href="{% url 'proyecto_update_field' proyecto.id campo %}" class="btn btn-info btn-sm">
@@ -91,11 +100,21 @@
     </p>
   {% endfor %}
 
-  <h3>{{ proyecto | get_attr_verbose_name:"financiacion" }}</h3>
-  <p>{{ proyecto.financiacion | default:"" | safe }}</p>
-
   <h3>{{ proyecto | get_attr_verbose_name:"ayuda" }}</h3>
   <p>{{ proyecto.ayuda | default:"" }}</p>
+  <p>
+    <a href="{% url 'proyecto_update_field' proyecto.id "ayuda" %}" class="btn btn-info btn-sm">
+      <i class="fas fa-pencil-alt" aria-hidden="true"></i>&nbsp; {% trans 'Editar' %}
+    </a>
+  </p>
+
+  <h3>{{ proyecto | get_attr_verbose_name:"financiacion" }}</h3>
+  <p>{{ proyecto.financiacion | default:"" | safe }}</p>
+  <p>
+    <a href="{% url 'proyecto_update_field' proyecto.id "financiacion" %}" class="btn btn-info btn-sm">
+      <i class="fas fa-pencil-alt" aria-hidden="true"></i>&nbsp; {% trans 'Editar' %}
+    </a>
+  </p>
 
   <br style="clear: both;" />
   <div class="btn-group" role="group" aria-label="Botones">

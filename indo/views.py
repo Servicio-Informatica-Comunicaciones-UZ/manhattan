@@ -4,7 +4,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.forms.models import modelform_factory
-from django.http import HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect
 from django.http.response import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
@@ -307,24 +307,24 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
 class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
     """Actualiza un campo de una solicitud de proyecto."""
 
-    # TODO: Modificar estado, sólo para gestores
-    #       No permitir modificar convocatoria, etc
     # TODO: Comprobar estado/fecha
     model = Proyecto
     template_name = "proyecto/update.html"
 
     def get_form_class(self, **kwargs):
         campo = self.kwargs["campo"]
-        if campo not in (
+        if campo in (
             "centro",
+            "codigo",
             "convocatoria",
-            "departamento",
-            "licencia",
+            "estado",
+            "estudio",
             "linea",
             "programa",
-            "ayuda",
-            "estado",
         ):
+            raise Http404(_("No puede editar ese campo."))
+
+        if campo not in ("titulo", "departamento", "licencia", "ayuda"):
             return modelform_factory(
                 Proyecto, fields=(campo,), widgets={campo: SummernoteWidget()}
             )
