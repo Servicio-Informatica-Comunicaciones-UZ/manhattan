@@ -41,6 +41,7 @@
       {% if coordinador %}
         <tr><td><strong>{{ coordinador.get_cargo }}</strong>:</td><td>{{ coordinador.usuario.get_full_name }}</td></tr>
       {% endif %}
+      <tr><td><strong>{% trans 'Estado' %}</strong>:</td><td>{{ proyecto.get_estado_display }}</td></tr>
     </table>
   </div><br />
 

@@ -251,6 +251,9 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
         proyecto = Proyecto.objects.get(pk=proyecto_id)
 
         # TODO ¿Chequear el estado actual del proyecto?
+        if proyecto.ayuda > proyecto.programa.max_ayuda:
+            messages.error(request, _(f"La ayuda solicitada ({proyecto.ayuda} €) excede el máximo permitido para este programa ({proyecto.programa.max_ayuda} €)."))
+            return super().post(request, *args, **kwargs)
 
         self._enviar_invitaciones(request, proyecto)
         if proyecto.programa.nombre_corto in ["PIEC", "PRACUZ"]:
