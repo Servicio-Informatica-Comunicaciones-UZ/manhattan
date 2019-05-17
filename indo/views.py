@@ -82,14 +82,14 @@ class ChecksMixin(UserPassesTestMixin):
         return True if pp else False
 
     def es_pas_o_pdi(self):
-        """Devuelve si el usuario actual es PAS o PDI."""
+        """Devuelve si el usuario actual es PAS o PDI de la UZ o de sus centros adscritos."""
         usuario_actual = self.request.user
         colectivos_del_usuario = json.loads(usuario_actual.colectivos)
         self.permission_denied_message = _("Usted no es PAS ni PDI.")
 
         return any(
             col_autorizado in colectivos_del_usuario
-            for col_autorizado in ["PAS", "PDI"]
+            for col_autorizado in ["PAS", "ADS", "PDI"]
         )
 
 
