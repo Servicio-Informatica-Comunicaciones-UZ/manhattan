@@ -96,6 +96,12 @@ def get_identidad(strategy, response, user, *args, **kwargs):
     user.departamento_id_nks = json.dumps(departamento_id_nks)
 
     colectivos = list({perfil.get("COD_PERFIL") for perfil in perfiles})
+    # Si el usuario es PDI o PAS de un centro adscrito, añadimos el colectivo "ADS".
+    cod_vinculaciones = {
+        vinculacion.get("COD_VINCULACION") for vinculacion in vinculaciones
+    }
+    if any(cod_adscritos in cod_vinculaciones for cod_adscritos in (12, 13, 42)):
+        colectivos.append("ADS")
     user.colectivos = json.dumps(colectivos)
 
     # user.save()
