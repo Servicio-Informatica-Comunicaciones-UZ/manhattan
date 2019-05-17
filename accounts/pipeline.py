@@ -2,15 +2,6 @@ import json
 from django.db import connections
 
 
-class EMailDesconocido(Exception):
-    """
-    Excepción elevada cuando el usuario no tiene establecida
-    ninguna dirección de correo electrónico en Gestión de Identidades.
-    """
-
-    pass
-
-
 class UsuarioNoEncontrado(Exception):
     """Excepción elevada cuando no se encuentra al usuario en Gestión de Identidades"""
 
@@ -57,9 +48,10 @@ def get_identidad(strategy, response, user, *args, **kwargs):
     user.last_name = identidad.get("APELLIDO_1")
     user.last_name_2 = identidad.get("APELLIDO_2")
     user.email = identidad.get("CORREO_PERSONAL") or identidad.get("CORREO_PRINCIPAL")
-    # El email es un campo requerido en el modelo.
+    # El email es un campo NOT NULL en el modelo.
     if not user.email:
-        raise EMailDesconocido("Usuario sin dirección de correo establecida.")
+        user.email = ""
+    user.is_active = identidad.get("ACTIVO") != "N"
     user.nombre_oficial = identidad.get("NOMBRE_ADMIN")
     user.numero_documento = identidad.get("DOC_ID")
     user.sexo = identidad.get("SEXO")

@@ -453,6 +453,10 @@ class Proyecto(models.Model):
         )
         return pp.usuario
 
+    def get_usuarios_vinculados(self):
+        """Devuelve todos los usuarios vinculados al proyecto (invitados, participantes, etc)."""
+        return list(map(lambda p: p.usuario, self.participantes.all()))
+
     def __str__(self):
         return self.codigo
 

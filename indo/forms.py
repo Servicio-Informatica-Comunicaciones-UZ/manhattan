@@ -35,14 +35,37 @@ class InvitacionForm(forms.ModelForm):
                 raise forms.ValidationError(
                     _(f"¡Usuario desconocido! No se ha encontrado el NIP «{nip}».")
                 )
-            except EMailDesconocido:
-                usuario.delete()
-                raise forms.ValidationError(
-                    _(
-                        f"No fue posible invitar al usuario «{nip}» porque no tiene establecida ninguna dirección de correo electrónico en el sistema de Gestión de Identidades."
-                    )
+
+        get_identidad(load_strategy(self.request), None, usuario)
+        if not usuario.is_active:
+            raise forms.ValidationError(
+                _("Usuario inactivo en el sistema de Gestión de Identidades")
+            )
+        if not usuario.email:
+            raise forms.ValidationError(
+                _(
+                    f"No fue posible invitar al usuario «{nip}» porque no tiene establecida ninguna dirección de correo electrónico en el sistema de Gestión de Identidades."
                 )
+            )
+
         cleaned_data["usuario"] = usuario
+        # La participación de los estudiantes estará limitada a dos por proyecto (excepto en los PIPOUZ).
+        if self.proyecto.programa.nombre_corto != "PIPOUZ":
+            if usuario.get_colectivo_principal() == "EST":
+                vinculados = self.proyecto.get_usuarios_vinculados()
+                estudiantes = []
+                for vinculado in vinculados:
+                    if vinculado.get_colectivo_principal() == "EST":
+                        estudiantes.append(vinculado)
+                if len(estudiantes) >= 2:
+                    nombres_estudiantes = ", ".join(
+                        list(map(lambda e: e.get_full_name(), estudiantes))
+                    )
+                    raise forms.ValidationError(
+                        _(
+                            f"Ya se ha alcanzado el máximo de participación de dos estudiantes por proyecto: {nombres_estudiantes}."
+                        )
+                    )
 
     def save(self, commit=True):
         invitado = super().save(commit=False)

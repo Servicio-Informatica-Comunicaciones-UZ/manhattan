@@ -1,3 +1,4 @@
+import json
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -55,6 +56,14 @@ class CustomUser(AbstractUser):
     # Métodos adicionales
     def __str__(self):
         return self.username
+
+    def get_colectivo_principal(self):
+        """Devuelve el colectivo del usuario según el orden de prelación PDI>ADS>PAS>EST"""
+        colectivos_del_usuario = json.loads(self.colectivos)
+        for col in ("PDI", "ADS", "PAS", "EST"):
+            if col in colectivos_del_usuario:
+                return col
+        return None
 
     # Custom Manager
     objects = CustomUserManager()
