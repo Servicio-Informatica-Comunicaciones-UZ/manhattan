@@ -4,19 +4,11 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.forms.models import modelform_factory
-from django.http import Http404, HttpResponseRedirect
-from django.http.response import HttpResponse
-from django.shortcuts import render, redirect
-from django.urls import reverse, reverse_lazy
+from django.http import Http404
+from django.shortcuts import redirect
+from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import (
-    DetailView,
-    FormView,
-    ListView,
-    RedirectView,
-    TemplateView,
-    View,
-)
+from django.views.generic import DetailView, RedirectView, TemplateView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django_summernote.widgets import SummernoteWidget
 
@@ -82,7 +74,9 @@ class ChecksMixin(UserPassesTestMixin):
         return True if pp else False
 
     def es_pas_o_pdi(self):
-        """Devuelve si el usuario actual es PAS o PDI de la UZ o de sus centros adscritos."""
+        """
+        Devuelve si el usuario actual es PAS o PDI de la UZ o de sus centros adscritos.
+        """
         usuario_actual = self.request.user
         colectivos_del_usuario = json.loads(usuario_actual.colectivos)
         self.permission_denied_message = _("Usted no es PAS ni PDI.")
@@ -153,22 +147,25 @@ class ProyectoCreateView(LoginRequiredMixin, ChecksMixin, CreateView):
     form_class = ProyectoForm
 
     def form_valid(self, form):
-        # This method is called when valid form data has been POSTed, to do custom logic on form data.
-        # It should return an HttpResponse.
+        # This method is called when valid form data has been POSTed,
+        # to do custom logic on form data. It should return an HttpResponse.
         proyecto = form.save()
         self._guardar_coordinador(proyecto)
         self._registrar_creacion(proyecto)
         return redirect("proyecto_detail", proyecto.id)
 
     def get_form(self, form_class=None):
-        """Devuelve el formulario añadiendo automáticamente el campo Convocatoria, que es requerido."""
+        """
+        Devuelve el formulario añadiendo automáticamente el campo Convocatoria,
+        que es requerido.
+        """
         form = super(ProyectoCreateView, self).get_form(form_class)
         form.instance.convocatoria = Convocatoria(date.today().year)
         return form
 
     def _guardar_coordinador(self, proyecto):
-        # Los PIET debe solicitarlos uno de los coordinadores del estudio ("coordinador principal")
-        # quien podrá nombrar a otro coordinador.
+        # Los PIET debe solicitarlos uno de los coordinadores del estudio
+        # ("coordinador principal") quien podrá nombrar a otro coordinador.
         if proyecto.programa.nombre_corto == "PIET":
             tipo_participacion = "coordinador_principal"
         else:
@@ -251,8 +248,25 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
         proyecto = Proyecto.objects.get(pk=proyecto_id)
 
         # TODO ¿Chequear el estado actual del proyecto?
+        if not proyecto.ayuda:
+            messages.error(request, _("No ha indicado la ayuda solicitada."))
+            return super().post(request, *args, **kwargs)
+
         if proyecto.ayuda > proyecto.programa.max_ayuda:
-            messages.error(request, _(f"La ayuda solicitada ({proyecto.ayuda} €) excede el máximo permitido para este programa ({proyecto.programa.max_ayuda} €)."))
+            messages.error(
+                request,
+                _(
+                    f"La ayuda solicitada ({proyecto.ayuda} €) excede el máximo "
+                    "permitido para este programa ({proyecto.programa.max_ayuda} €)."
+                ),
+            )
+            return super().post(request, *args, **kwargs)
+
+        if not proyecto.tiene_invitados():
+            messages.error(
+                request,
+                _("La solicitud debe incluir al menos un invitado a participar."),
+            )
             return super().post(request, *args, **kwargs)
 
         self._enviar_invitaciones(request, proyecto)
@@ -279,7 +293,8 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
                     "nombre_invitado": invitado.usuario.get_full_name(),
                     "sexo_invitado": invitado.usuario.sexo,
                     "titulo_proyecto": proyecto.titulo,
-                    "programa_proyecto": f"{proyecto.programa.nombre_corto} ({proyecto.programa.nombre_largo})",
+                    "programa_proyecto": f"{proyecto.programa.nombre_corto} "
+                    + f"({proyecto.programa.nombre_largo})",
                     "descripcion_proyecto": proyecto.descripcion,
                     "site_url": settings.SITE_URL,
                 },
@@ -296,7 +311,8 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
                 "nombre_decano": proyecto.centro.nombre_decano,
                 "tratamiento_decano": proyecto.centro.tratamiento_decano,
                 "titulo_proyecto": proyecto.titulo,
-                "programa_proyecto": f"{proyecto.programa.nombre_corto} ({proyecto.programa.nombre_largo})",
+                "programa_proyecto": f"{proyecto.programa.nombre_corto} "
+                f"({proyecto.programa.nombre_largo})",
                 "descripcion_proyecto": proyecto.descripcion,
                 "site_url": settings.SITE_URL,
             },

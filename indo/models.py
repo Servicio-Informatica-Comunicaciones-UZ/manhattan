@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date
 from django.db import models
 from django.db.models.query_utils import Q
 from django.urls import reverse
@@ -209,7 +209,8 @@ class Proyecto(models.Model):
         null=True,
         max_length=4095,
         help_text=_(
-            "Resumen sucinto del proyecto. Máximo recomendable: un párrafo de 10 líneas."
+            "Resumen sucinto del proyecto. Máximo recomendable: "
+            "un párrafo de 10 líneas."
         ),
     )
     estado = models.CharField(
@@ -225,7 +226,8 @@ class Proyecto(models.Model):
         blank=True,
         null=True,
         help_text=_(
-            "Necesidad a la que responde el proyecto, mejoras esperadas respecto al estado de la cuestión, conocimiento que se genera"
+            "Necesidad a la que responde el proyecto, mejoras esperadas respecto "
+            "al estado de la cuestión, conocimiento que se genera."
         ),
     )
     objetivos = models.TextField(_("Objetivos del Proyecto"), blank=True, null=True)
@@ -234,12 +236,15 @@ class Proyecto(models.Model):
         blank=True,
         null=True,
         help_text=_(
-            "Métodos/técnicas utilizadas, características de la muestra, actividades previstas por los estudiantes y por el equipo del proyecto, calendario de actividades"
+            "Métodos/técnicas utilizadas, características de la muestra, "
+            "actividades previstas por los estudiantes y por el equipo del proyecto, "
+            "calendario de actividades."
         ),
     )
     mejoras = models.TextField(
         _(
-            "Mejoras esperadas en el proceso de enseñanza-aprendizaje y cómo se comprobarán"
+            "Mejoras esperadas en el proceso de enseñanza-aprendizaje "
+            "y cómo se comprobarán."
         ),
         blank=True,
         null=True,
@@ -279,7 +284,8 @@ class Proyecto(models.Model):
         blank=True,
         null=True,
         help_text=_(
-            "Nombres de los proyectos de innovación realizados en cursos anteriores que estén relacionados con la temática propuesta"
+            "Nombres de los proyectos de innovación realizados en cursos anteriores "
+            "que estén relacionados con la temática propuesta."
         ),
     )
     impacto = models.TextField(_("Impacto del proyecto"), blank=True, null=True)
@@ -296,7 +302,8 @@ class Proyecto(models.Model):
         blank=True,
         null=True,
         help_text=_(
-            "Experiencia común conjunta, experiencia previa en el tipo de curso solicitado, etc."
+            "Experiencia común conjunta, experiencia previa en el tipo de curso "
+            "solicitado, etc."
         ),
     )
     caracter_estrategico = models.TextField(
@@ -309,7 +316,8 @@ class Proyecto(models.Model):
     ramas = models.TextField(_("Ramas de conocimiento"), blank=True, null=True)
     mejoras_pou = models.TextField(
         _(
-            "Mejoras esperadas en el Plan de Orientación Universitaria y cómo se comprobarán"
+            "Mejoras esperadas en el Plan de Orientación Universitaria "
+            "y cómo se comprobarán."
         ),
         blank=True,
         null=True,
@@ -322,7 +330,10 @@ class Proyecto(models.Model):
         blank=True,
         null=True,
         help_text=_(
-            "Consultar las áreas en el bloque derecho de <a href='https://ocw.unizar.es/ocw/course/index.php?categoryid=8' target='_blank'>https://ocw.unizar.es/ocw/course/index.php?categoryid=8</a>."
+            "Consultar las áreas en el bloque derecho de "
+            "<a href='https://ocw.unizar.es/ocw/course/index.php?categoryid=8' "
+            "target='_blank'>https://ocw.unizar.es/ocw/course/index.php?categoryid=8"
+            "</a>."
         ),
     )
     contenidos = models.TextField(
@@ -330,7 +341,8 @@ class Proyecto(models.Model):
         blank=True,
         null=True,
         help_text=_(
-            "Para OCW indicar los temas, que incluirán teoría, problemas, autoevaluación, etc."
+            "Para OCW indicar los temas, que incluirán teoría, problemas, "
+            "autoevaluación, etc."
         ),
     )
     afectadas = models.TextField(
@@ -344,7 +356,9 @@ class Proyecto(models.Model):
         blank=True,
         null=True,
         help_text=_(
-            "Incluir el enlace (o enlaces) a la página de los estudios en la que se encuentra el plan de mejora y una mención expresa a qué aspecto del mismo se refiere el proyecto."
+            "Incluir el enlace (o enlaces) a la página de los estudios en la que se "
+            "encuentra el plan de mejora y una mención expresa a qué aspecto del mismo "
+            "se refiere el proyecto."
         ),
     )
     contenido_modulos = models.TextField(
@@ -352,7 +366,9 @@ class Proyecto(models.Model):
         blank=True,
         null=True,
         help_text=_(
-            "Los cursos 0 deberán incluir un capítulo 0 con las competencias demandadas al alumnado que va a comenzar el estudio o estudios objeto del curso."
+            "Los cursos 0 deberán incluir un capítulo 0 con las competencias "
+            "demandadas al alumnado que va a comenzar el estudio o estudios "
+            "objeto del curso."
         ),
     )
     material_previo = models.TextField(
@@ -363,7 +379,8 @@ class Proyecto(models.Model):
         blank=True,
         null=True,
         help_text=_(
-            "Número de semanas y número de horas de estudio y trabajo autónomo del participante en todo el curso."
+            "Número de semanas y número de horas de estudio y trabajo autónomo "
+            "del participante en todo el curso."
         ),
     )
     multimedia = models.TextField(
@@ -371,7 +388,8 @@ class Proyecto(models.Model):
         blank=True,
         null=True,
         help_text=_(
-            "Elementos multimedia e innovadores que va a utilizar en la elaboración del curso"
+            "Elementos multimedia e innovadores que va a utilizar "
+            "en la elaboración del curso."
         ),
     )
     indicadores = models.TextField(
@@ -391,7 +409,8 @@ class Proyecto(models.Model):
         blank=True,
         null=True,
         help_text=_(
-            "Justificar la necesidad de lo solicitado. Añadir información sobre otras fuentes de financiación"
+            "Justificar la necesidad de lo solicitado. "
+            "Añadir información sobre otras fuentes de financiación."
         ),
     )
     ayuda = models.PositiveIntegerField(
@@ -399,7 +418,8 @@ class Proyecto(models.Model):
         blank=True,
         null=True,
         help_text=_(
-            "Las normas de la convocatoria establecen el importe máximo que se puede solicitar según el programa."
+            "Las normas de la convocatoria establecen el importe máximo "
+            "que se puede solicitar según el programa."
         ),
     )
     centro = models.ForeignKey(
@@ -454,8 +474,16 @@ class Proyecto(models.Model):
         return pp.usuario
 
     def get_usuarios_vinculados(self):
-        """Devuelve todos los usuarios vinculados al proyecto (invitados, participantes, etc)."""
+        """
+        Devuelve todos los usuarios vinculados al proyecto
+        (invitados, participantes, etc).
+        """
         return list(map(lambda p: p.usuario, self.participantes.all()))
+
+    def tiene_invitados(self):
+        """Devuelve si el proyecto tiene al menos un invitado."""
+        num_invitados = self.participantes.filter(tipo_participacion="invitado").count()
+        return num_invitados >= 1
 
     def __str__(self):
         return self.codigo
