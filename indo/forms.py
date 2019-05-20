@@ -1,17 +1,17 @@
-from datetime import date
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from social_django.utils import load_strategy
-from .models import Linea, Programa, ParticipanteProyecto, Proyecto, TipoParticipacion
+from .models import ParticipanteProyecto, Proyecto, TipoParticipacion
 from accounts.models import CustomUser as CustomUser
-from accounts.pipeline import get_identidad, EMailDesconocido, UsuarioNoEncontrado
+from accounts.pipeline import get_identidad, UsuarioNoEncontrado
 
 
 class InvitacionForm(forms.ModelForm):
     nip = forms.IntegerField(
         label=_("NIP"),
         help_text=_(
-            "Número de Identificación Personal en la Universidad de Zaragoza de la persona a invitar"
+            "Número de Identificación Personal en la Universidad de Zaragoza "
+            "de la persona a invitar."
         ),
     )
 
@@ -44,12 +44,15 @@ class InvitacionForm(forms.ModelForm):
         if not usuario.email:
             raise forms.ValidationError(
                 _(
-                    f"No fue posible invitar al usuario «{nip}» porque no tiene establecida ninguna dirección de correo electrónico en el sistema de Gestión de Identidades."
+                    f"No fue posible invitar al usuario «{nip}» porque no tiene "
+                    "establecida ninguna dirección de correo electrónico en el sistema "
+                    "de Gestión de Identidades."
                 )
             )
 
         cleaned_data["usuario"] = usuario
-        # La participación de los estudiantes estará limitada a dos por proyecto (excepto en los PIPOUZ).
+        # La participación de los estudiantes estará limitada a dos por proyecto
+        # (excepto en los PIPOUZ).
         if self.proyecto.programa.nombre_corto != "PIPOUZ":
             if usuario.get_colectivo_principal() == "EST":
                 vinculados = self.proyecto.get_usuarios_vinculados()
@@ -57,13 +60,15 @@ class InvitacionForm(forms.ModelForm):
                 for vinculado in vinculados:
                     if vinculado.get_colectivo_principal() == "EST":
                         estudiantes.append(vinculado)
-                if len(estudiantes) >= 2:
+                if len(estudiantes) >= self.proyecto.programa.max_estudiantes:
                     nombres_estudiantes = ", ".join(
                         list(map(lambda e: e.get_full_name(), estudiantes))
                     )
                     raise forms.ValidationError(
                         _(
-                            f"Ya se ha alcanzado el máximo de participación de dos estudiantes por proyecto: {nombres_estudiantes}."
+                            "Ya se ha alcanzado el máximo de participación de "
+                            f"{self.proyecto.programa.max_estudiantes} estudiantes "
+                            f"por proyecto: {nombres_estudiantes}."
                         )
                     )
 
