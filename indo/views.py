@@ -68,7 +68,11 @@ class ChecksMixin(UserPassesTestMixin):
         """Devuelve si el usuario actual está vinculado al proyecto indicado."""
         proyecto = Proyecto.objects.get(id=proyecto_id)
         usuario_actual = self.request.user
-        pp = proyecto.participantes.filter(usuario=usuario_actual).all()
+        pp = (
+            proyecto.participantes.filter(usuario=usuario_actual)
+            .exclude(tipo_participacion="invitacion_rehusada")
+            .all()
+        )
         self.permission_denied_message = _("Usted no está vinculado a este proyecto.")
 
         return True if pp else False
