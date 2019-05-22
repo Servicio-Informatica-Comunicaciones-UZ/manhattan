@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load i18n static %}
+{% block title %}{% trans "404 Página no encontrada" %}{% endblock title %}
+{% block description %}{% trans "404 Página no encontrada" %}{% endblock description %}
+
+{% block content %}
+<div class="container-blanco">
+  <h1>{% trans "404 Página no encontrada" %}</h1>
+  <hr />
+  <br />
+
+  <div style="text-align: center;">
+    <img src="{% static 'img/torico_by_quique.jpg' %}">
+    <h1 class="text-danger">{% trans '¡Teruel existe!' %}</h1>
+    <h2 class="text-muted">{% trans 'Pero esta página, ya no.' %}</h2>
+    <p>{% trans 'O quizás nunca haya existido. Compruebe que la dirección sea correcta.' %}</p>
+    <p class="text-muted">{{ exception }}</p>
+  </div>
+</div>
+{% endblock content %}
