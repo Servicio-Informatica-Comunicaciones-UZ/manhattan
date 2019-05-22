@@ -16,10 +16,14 @@
 
   <form action="" method="post">
     {% csrf_token %}
-    {% if object.tipo_participacion.nombre == "invitado" %}
-      <p>{% blocktrans with nombre=object.usuario.get_full_name titulo=object.proyecto.titulo%}¿Seguro que desea retirarle a {{ nombre }} la invitación al proyecto «{{ titulo }}»?{% endblocktrans %}</p>
+    {% if object.tipo_participacion.nombre in "invitado,invitacion_rehusada" %}
+      <p>{% blocktrans with nombre=object.usuario.get_full_name titulo=object.proyecto.titulo%}
+        ¿Seguro que desea eliminar la invitación a {{ nombre }} al proyecto «{{ titulo }}»?
+      {% endblocktrans %}</p>
     {% else %}
-      <p>{% blocktrans with nombre=object.usuario.get_full_name titulo=object.proyecto.titulo%}¿Seguro que desea retirarle a {{ nombre }} la participación en el proyecto «{{ titulo }}»?{% endblocktrans %}</p>
+      <p>{% blocktrans with nombre=object.usuario.get_full_name titulo=object.proyecto.titulo%}
+        ¿Seguro que desea retirarle a {{ nombre }} la participación en el proyecto «{{ titulo }}»?{% endblocktrans %}
+      </p>
     {% endif %}
     <div class="btn-group" role="group" aria-label="Botones">
       <a href="{% url 'proyecto_detail' object.proyecto.id %}" class="btn btn-info">

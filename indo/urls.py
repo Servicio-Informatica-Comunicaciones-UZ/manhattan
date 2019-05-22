@@ -7,6 +7,8 @@ from .views import (
     AyudaView,
     HomePageView,
     InvitacionView,
+    ParticipanteAceptarView,
+    ParticipanteDeclinarView,
     ParticipanteDeleteView,
     ProyectoCreateView,
     ProyectoDetailView,
@@ -19,6 +21,16 @@ urlpatterns = [
     path("", HomePageView.as_view(), name="home"),
     path("summernote/", include("django_summernote.urls")),
     path("ayuda/", AyudaView.as_view(), name="ayuda"),
+    path(
+        "participante-proyecto/aceptar_invitacion/<int:proyecto_id>",
+        ParticipanteAceptarView.as_view(),
+        name="participante_aceptar",
+    ),
+    path(
+        "participante-proyecto/declinar_invitacion",
+        ParticipanteDeclinarView.as_view(),
+        name="participante_declinar",
+    ),
     path(
         "participante-proyecto/invitar/<int:proyecto_id>",
         InvitacionView.as_view(),

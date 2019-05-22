@@ -67,7 +67,7 @@
     <br /><br />
 
 
-    <h1>{% trans "Proyectos invitado" %}</h1>
+    <h1>{% trans "Invitaciones a proyectos" %}</h1>
     <hr />
     <br />
 
@@ -80,6 +80,7 @@
                     <th>{% trans 'Título' %}</th>
                     <th>{% trans 'Coordinador' %}</th>
                     <th>{% trans 'Estado' %}</th>
+                    <th>{% trans 'Acción '%}
                 </tr>
                 {% for proyecto in proyectos_invitado %}
                     <tr>
@@ -88,6 +89,17 @@
                         <td><a href="{% url 'proyecto_detail' proyecto.id %}">{{ proyecto.titulo }}</a></td>
                         <td>{{proyecto.get_usuario_coordinador.get_full_name}}</td>
                         <td>{{proyecto.get_estado_display}}</td>
+                        <td>
+                            <form action="{% url 'participante_aceptar' proyecto_id=proyecto.id %}" id="aceptar-form" method="post">
+                                {% csrf_token %}
+                                <div class="btn-group" role="group" aria-label="Botones">
+                                    <button class="btn btn-secondary btn-sm prepararDeclinar" data-id={{proyecto.id}} data-titulo="{{proyecto.titulo}}" data-toggle="modal" data-target="#declinarModal" type="button">
+                                        <i class="fas fa-times"></i> {% trans 'Declinar' %}
+                                    </button>
+                                    <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-check"></i> {% trans "Aceptar" %}</button>
+                                </div>
+                            </form>
+                        </td>
                     </tr>
                 {% endfor %}
             </table>
@@ -96,4 +108,40 @@
         <p>{% trans 'No está invitado a ningún proyecto.' %}</p>
     {% endif %}
 </div>
+
+<div class="modal fade" id="declinarModal" tabindex="-1" role="dialog" aria-labelledby="declinarModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="declinarModalLabel">{% trans "¿Seguro que desea rehusar la invitación?" %}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="advertencia"></div>
+        <p>{% trans "Esta acción es irreversible." %}</p>
+        <p>{% trans "Una vez haya declinado la invitación, ya no podrá echarse atrás y aceptarla." %}</p>
+      </div>
+      <div class="modal-footer">
+        <form action='{% url 'participante_declinar' %}' id='declinar-form' method='post'>
+            {% csrf_token %}
+            <div class="campo-oculto"></div>
+            <button type='button' class='btn btn-info' data-dismiss='modal'><i class='fas fa-times'></i> {% trans 'Cancelar' %}</button>
+            <button type='submit' class='btn btn-warning'><i class='fas fa-user-times'></i> {% trans 'Declinar' %}</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock content %}
+
+{% block extrajs %}
+<script type="text/javascript">
+    // $(document).on('click', '.prepararDeclinar', function() {
+    $('.prepararDeclinar').click(function (e) {
+        $('#declinarModal .advertencia').html("<p>¿Seguro que no desea participar en el proyecto «" + $(this).data('titulo') + "»?</p>");
+        $('#declinarModal .campo-oculto').html("<input type='hidden' id='proyecto_id' name='proyecto_id' value='" + $(this).data('id') + "'>");
+    });
+</script>
+{% endblock extrajs %}

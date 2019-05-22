@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.forms.models import modelform_factory
 from django.http import Http404
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, RedirectView, TemplateView
@@ -125,6 +125,58 @@ class InvitacionView(LoginRequiredMixin, ChecksMixin, CreateView):
         return self.es_coordinador(self.kwargs["proyecto_id"])
 
 
+class ParticipanteAceptarView(LoginRequiredMixin, RedirectView):
+    """Aceptar la invitación a participar en un proyecto."""
+
+    def get_redirect_url(self, *args, **kwargs):
+        return reverse_lazy("proyectos_usuario_list")
+
+    def post(self, request, *args, **kwargs):
+        proyecto_id = kwargs.get("proyecto_id")
+        proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
+        usuario_actual = self.request.user
+        pp = get_object_or_404(
+            ParticipanteProyecto,
+            proyecto_id=proyecto_id,
+            usuario=usuario_actual,
+            tipo_participacion="invitado",
+        )
+        pp.tipo_participacion_id = "participante"
+        pp.save()
+
+        messages.success(
+            request,
+            _(f"Ha pasado a ser participante del proyecto «{proyecto.titulo}»."),
+        )
+        return super().post(request, *args, **kwargs)
+
+
+class ParticipanteDeclinarView(LoginRequiredMixin, RedirectView):
+    """Declinar la invitación a participar en un proyecto."""
+
+    def get_redirect_url(self, *args, **kwargs):
+        return reverse_lazy("proyectos_usuario_list")
+
+    def post(self, request, *args, **kwargs):
+        proyecto_id = request.POST.get("proyecto_id")
+        proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
+        usuario_actual = self.request.user
+        pp = get_object_or_404(
+            ParticipanteProyecto,
+            proyecto_id=proyecto_id,
+            usuario=usuario_actual,
+            tipo_participacion="invitado",
+        )
+        pp.tipo_participacion_id = "invitacion_rehusada"
+        pp.save()
+
+        messages.success(
+            request,
+            _(f"Ha rehusado ser participante del proyecto «{proyecto.titulo}»."),
+        )
+        return super().post(request, *args, **kwargs)
+
+
 class ParticipanteDeleteView(LoginRequiredMixin, ChecksMixin, DeleteView):
     """Borra un registro de ParticipanteProyecto"""
 
@@ -218,8 +270,10 @@ class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
         context["participantes"] = participantes
 
         invitados = (
-            self.object.participantes.filter(tipo_participacion="invitado")
-            .order_by("usuario__first_name", "usuario__last_name")
+            self.object.participantes.filter(
+                tipo_participacion__in=["invitado", "invitacion_rehusada"]
+            )
+            .order_by("tipo_participacion", "usuario__first_name", "usuario__last_name")
             .all()
         )
         context["invitados"] = invitados

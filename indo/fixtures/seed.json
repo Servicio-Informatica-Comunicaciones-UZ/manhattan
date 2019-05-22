@@ -170,6 +170,11 @@
     },
     {
         "model": "indo.tipoparticipacion",
+        "pk": "invitacion_rehusada",
+        "fields": {}
+    },
+    {
+        "model": "indo.tipoparticipacion",
         "pk": "participante",
         "fields": {}
     },
