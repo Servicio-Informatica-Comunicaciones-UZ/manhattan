@@ -28,8 +28,8 @@
         {{ form.as_p }}
         <br style="clear: both;">
         <div class="btn-group" role="group" aria-label="Botones">
-            <a href="{% url 'proyecto_detail' proyecto.id %}" class="btn btn-info"><i class="fas fa-step-backward"></i> {% trans 'Retroceder' %}</a>
-            <button class="btn btn-warning" type="submit"><i class="fas fa-check"></i> {% trans 'Actualizar' %}</button>
+            <a href="{% url 'proyecto_detail' proyecto.id %}" class="btn btn-info"><span class="fas fa-step-backward"></span> {% trans 'Retroceder' %}</a>
+            <button class="btn btn-warning" type="submit"><span class="fas fa-check"></span> {% trans 'Actualizar' %}</button>
         </div>
     </form>
 </div>

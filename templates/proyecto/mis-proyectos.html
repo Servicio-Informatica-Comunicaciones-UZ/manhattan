@@ -94,9 +94,9 @@
                                 {% csrf_token %}
                                 <div class="btn-group" role="group" aria-label="Botones">
                                     <button class="btn btn-secondary btn-sm prepararDeclinar" data-id={{proyecto.id}} data-titulo="{{proyecto.titulo}}" data-toggle="modal" data-target="#declinarModal" type="button">
-                                        <i class="fas fa-times"></i> {% trans 'Declinar' %}
+                                        <span class="fas fa-times"></span> {% trans 'Declinar' %}
                                     </button>
-                                    <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-check"></i> {% trans "Aceptar" %}</button>
+                                    <button type="submit" class="btn btn-primary btn-sm"><span class="fas fa-check"></span> {% trans "Aceptar" %}</button>
                                 </div>
                             </form>
                         </td>
@@ -127,8 +127,8 @@
         <form action='{% url 'participante_declinar' %}' id='declinar-form' method='post'>
             {% csrf_token %}
             <div class="campo-oculto"></div>
-            <button type='button' class='btn btn-info' data-dismiss='modal'><i class='fas fa-times'></i> {% trans 'Cancelar' %}</button>
-            <button type='submit' class='btn btn-warning'><i class='fas fa-user-times'></i> {% trans 'Declinar' %}</button>
+            <button type='button' class='btn btn-info' data-dismiss='modal'><span class='fas fa-times'></span> {% trans 'Cancelar' %}</button>
+            <button type='submit' class='btn btn-warning'><span class='fas fa-user-times'></span> {% trans 'Declinar' %}</button>
         </form>
       </div>
     </div>
