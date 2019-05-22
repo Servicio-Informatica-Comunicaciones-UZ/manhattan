@@ -30,7 +30,7 @@ class ChecksMixin(UserPassesTestMixin):
 
     def es_coordinador(self, proyecto_id):
         """Devuelve si el usuario actual es coordinador del proyecto indicado."""
-        proyecto = Proyecto.objects.get(id=proyecto_id)
+        proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
         usuario_actual = self.request.user
         coordinadores_participantes = proyecto.participantes.filter(
             tipo_participacion__in=["coordinador", "coordinador_principal"]
@@ -44,7 +44,7 @@ class ChecksMixin(UserPassesTestMixin):
 
     def es_participante(self, proyecto_id):
         """Devuelve si el usuario actual es participante del proyecto indicado."""
-        proyecto = Proyecto.objects.get(id=proyecto_id)
+        proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
         usuario_actual = self.request.user
         pp = proyecto.participantes.filter(
             usuario=usuario_actual, tipo_participacion="participante"
@@ -55,7 +55,7 @@ class ChecksMixin(UserPassesTestMixin):
 
     def es_invitado(self, proyecto_id):
         """Devuelve si el usuario actual es invitado del proyecto indicado."""
-        proyecto = Proyecto.objects.get(id=proyecto_id)
+        proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
         usuario_actual = self.request.user
         pp = proyecto.participantes.filter(
             usuario=usuario_actual, tipo_participacion="invitado"
@@ -66,7 +66,7 @@ class ChecksMixin(UserPassesTestMixin):
 
     def esta_vinculado(self, proyecto_id):
         """Devuelve si el usuario actual está vinculado al proyecto indicado."""
-        proyecto = Proyecto.objects.get(id=proyecto_id)
+        proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
         usuario_actual = self.request.user
         pp = (
             proyecto.participantes.filter(usuario=usuario_actual)
