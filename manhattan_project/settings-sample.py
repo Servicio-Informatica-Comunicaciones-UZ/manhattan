@@ -29,12 +29,12 @@ DEBUG = True
 ALLOWED_HOSTS = []  # ['*']
 
 
-DEFAULT_FROM_EMAIL = 'leocricia@manhattan.local'
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.manhattan.local'
-EMAIL_HOST_USER = 'mls'
-EMAIL_HOST_PASSWORD = 'plaff'
+DEFAULT_FROM_EMAIL = "leocricia@manhattan.local"
+# Production value: 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_HOST = "smtp.manhattan.local"
+EMAIL_HOST_USER = "mls"
+EMAIL_HOST_PASSWORD = "plaff"
 EMAIL_PORT = 587
 EMAIL_USE_LOCALTIME = True
 EMAIL_USE_TLS = True
@@ -53,9 +53,9 @@ INSTALLED_APPS = [
     "indo.apps.IndoConfig",
     "accounts.apps.AccountsConfig",
     # 3rd Party
-    "crispy_forms",         # https://github.com/django-crispy-forms/django-crispy-forms
-    "django_summernote",    # https://github.com/summernote/django-summernote
-    "social_django",        # https://github.com/python-social-auth/social-app-django
+    "crispy_forms",  # https://github.com/django-crispy-forms/django-crispy-forms
+    "django_summernote",  # https://github.com/summernote/django-summernote
+    "social_django",  # https://github.com/python-social-auth/social-app-django
 ]
 
 MIDDLEWARE = [
@@ -99,28 +99,28 @@ WSGI_APPLICATION = "manhattan_project.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",  # Database engine
-        "NAME": "manhattan",        # Database name
-        "USER": "albert",           # Database user
-        "PASSWORD": "einstein",     # Database password
-        "HOST": "",                 # Set to empty string for localhost.
-        "PORT": "",                 # Set to empty string for default.
+        "NAME": "manhattan",  # Database name
+        "USER": "albert",  # Database user
+        "PASSWORD": "einstein",  # Database password
+        "HOST": "",  # Set to empty string for localhost.
+        "PORT": "",  # Set to empty string for default.
         # Additional database options
         "OPTIONS": {
-            "charset": "utf8mb4",   # Requires `innodb_default_row_format = dynamic`
-        }
+            "charset": "utf8mb4"  # Requires `innodb_default_row_format = dynamic`
+        },
     },
     "identidades": {
         "ENGINE": "django.db.backends.oracle",  # Database engine
-        "NAME": "DELFOS",                       # Database name
-        "USER": "dodona",                       # Database user
-        "PASSWORD": "PopolWuj",                 # Database password
-        "HOST": "oraculo.unizar.es",            # Set to empty string for localhost.
-        "PORT": "1521",                         # Set to empty string for default.
+        "NAME": "DELFOS",  # Database name
+        "USER": "dodona",  # Database user
+        "PASSWORD": "PopolWuj",  # Database password
+        "HOST": "oraculo.unizar.es",  # Set to empty string for localhost.
+        "PORT": "1521",  # Set to empty string for default.
         # Additional database options
         # "OPTIONS": {
         #     "charset": "WE8ISO8859P1",
         # }
-    }
+    },
 }
 
 
@@ -129,7 +129,7 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"  # noqa: E501
     },
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
@@ -162,14 +162,15 @@ LOGIN_REDIRECT_URL = "proyectos_usuario_list"
 LOGOUT_REDIRECT_URL = "home"
 
 
-### SAML with Python Social Auth ###
+# ## SAML with Python Social Auth ## #
 # https://python-social-auth.readthedocs.io/en/latest/backends/saml.html
 
 AUTHENTICATION_BACKENDS = (
     "social_core.backends.saml.SAMLAuth",
     "django.contrib.auth.backends.ModelBackend",
 )
-# When using PostgreSQL, it’s recommended to use the built-in JSONB field to store the extracted extra_data.
+# When using PostgreSQL,
+# it’s recommended to use the built-in JSONB field to store the extracted extra_data.
 # To enable it define the setting:
 # SOCIAL_AUTH_POSTGRES_JSONFIELD = True
 # Identifier of the SP entity (must be a URI)
@@ -197,10 +198,10 @@ SOCIAL_AUTH_SAML_ENABLED_IDPS = {
         "url": "https://FIXME.idp.com/saml2/idp/SSOService.php",
         "x509cert": "Lovely spam, wonderful spam",
         "attr_user_permanent_id": "uid",
-        'attr_full_name': "cn",             # "urn:oid:2.5.4.3"
-        "attr_first_name": "givenName",     # "urn:oid:2.5.4.42"
-        "attr_last_name": "sn",             # "urn:oid:2.5.4.4"
-        "attr_username": "uid",             # "urn:oid:0.9.2342.19200300.100.1.1"
+        "attr_full_name": "cn",  # "urn:oid:2.5.4.3"
+        "attr_first_name": "givenName",  # "urn:oid:2.5.4.42"
+        "attr_last_name": "sn",  # "urn:oid:2.5.4.4"
+        "attr_username": "uid",  # "urn:oid:0.9.2342.19200300.100.1.1"
         # "attr_email": "email",            # "urn:oid:0.9.2342.19200300.100.1.3"
     }
 }
@@ -211,10 +212,9 @@ SOCIAL_AUTH_PIPELINE = (
     "social_core.pipeline.social_auth.auth_allowed",
     "social_core.pipeline.social_auth.social_user",
     "social_core.pipeline.user.get_username",
-    # "social_core.pipeline.mail.mail_validation",
-    # "social_core.pipeline.social_auth.associate_by_email",
     "social_core.pipeline.user.create_user",
-    "accounts.pipeline.get_identidad",  # Actualizar con los datos de Gestión de Identidades
+    # Actualizar con los datos de Gestión de Identidades
+    "accounts.pipeline.get_identidad",
     "social_core.pipeline.social_auth.associate_user",
     "social_core.pipeline.social_auth.load_extra_data",
     "social_core.pipeline.user.user_details",
@@ -233,77 +233,62 @@ SUMMERNOTE_THEME = "bs4"
 SUMMERNOTE_CONFIG = {
     # Using SummernoteWidget - iframe mode, default
     "iframe": True,
-
     # You can put custom Summernote settings
     "summernote": {
         # As an example, using Summernote Air-mode
-        #'airMode': False,
-
+        # 'airMode': False,
         # Change editor size
         "width": "100%",
         "height": "480",
-
         # Use proper language setting automatically (default)
         "lang": None,
-
         # Or, set editor language/locale forcely
         # "lang": "ko-KR",
-
         # You can also add custom settings for external plugins
         # "print": {
         #     "stylesheetUrl": "/some_static_folder/printable.css",
         # },
     },
-
     # Need authentication while uploading attachments.
     "attachment_require_authentication": True,
-
     # Set `upload_to` function for attachments.
     # 'attachment_upload_to': my_custom_upload_to_func(),
-
     # Set custom storage class for attachments.
     # 'attachment_storage_class': 'my.custom.storage.class.name',
-
     # Set custom model for attachments (default: 'django_summernote.Attachment')
-    # 'attachment_model': 'my.custom.attachment.model', # must inherit 'django_summernote.AbstractAttachment'
-
+    # must inherit 'django_summernote.AbstractAttachment'
+    # 'attachment_model': 'my.custom.attachment.model',
     # You can disable attachment feature.
     # 'disable_attachment': False,
-
     # Set `True` to return attachment paths in absolute URIs.
     # 'attachment_absolute_uri': False,
-
     # You can add custom css/js for SummernoteWidget.
     # 'css': (),
     # 'js': (
     # ),
-
     # You can also add custom css/js for SummernoteInplaceWidget.
     # !!! Be sure to put {{ form.media }} in template before initiate summernote.
     # 'css_for_inplace': (
     # ),
     # 'js_for_inplace': (
     # ),
-
     # Codemirror as codeview
-    # If any codemirror settings are defined, it will include codemirror files automatically.
+    # If any codemirror settings are defined,
+    # it will include codemirror files automatically.
     "css": (
         "//cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/theme/monokai.min.css",
     ),
     "codemirror": {
         "mode": "htmlmixed",
         "lineNumbers": "true",
-
         # You have to include theme file in 'css' or 'css_for_inplace' before using it.
         "theme": "monokai",
     },
-
     # Lazy initialize
     # If you want to initialize summernote at the bottom of page, set this as True
     # and call `initSummernote()` on your page.
     "lazy": True,
     # 'lazy': False,
-
     # To use external plugins,
     # Include them within `css` and `js`.
     # 'js': {

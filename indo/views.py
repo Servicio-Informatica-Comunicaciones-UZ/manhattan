@@ -199,7 +199,6 @@ class ProyectoCreateView(LoginRequiredMixin, ChecksMixin, CreateView):
 
     model = Proyecto
     template_name = "proyecto/new.html"
-    # fields = ["titulo", "descripcion", "programa", "linea", "centro", "estudio"]
     form_class = ProyectoForm
 
     def form_valid(self, form):
@@ -227,12 +226,12 @@ class ProyectoCreateView(LoginRequiredMixin, ChecksMixin, CreateView):
         else:
             tipo_participacion = "coordinador"
 
-        participanteProyecto = ParticipanteProyecto(
+        pp = ParticipanteProyecto(
             proyecto=proyecto,
             tipo_participacion=TipoParticipacion(nombre=tipo_participacion),
             usuario=self.request.user,
         )
-        participanteProyecto.save()
+        pp.save()
 
     def _registrar_creacion(self, proyecto):
         evento = Evento.objects.get(nombre="creacion_solicitud")

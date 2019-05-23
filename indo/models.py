@@ -112,7 +112,6 @@ class Estudio(models.Model):
     id = models.PositiveSmallIntegerField(_("Cód. estudio"), primary_key=True)
     nombre = models.CharField(max_length=255)
     esta_activo = models.BooleanField("¿Activo?", default=True)
-    # rama = models.ForeignKey("Rama", on_delete=models.PROTECT)
     rama = models.CharField(max_length=1, choices=OPCIONES_RAMA)
     tipo_estudio = models.ForeignKey("TipoEstudio", on_delete=models.PROTECT)
 
@@ -403,7 +402,6 @@ class Proyecto(models.Model):
         null=True,
         help_text=_("Sólo obligatorias para MOOCs."),
     )
-    # publicar_memoria = models.BooleanField("¿Publicar la memoria?", default=True)
     financiacion = models.TextField(
         _("Financiación"),
         blank=True,
@@ -487,13 +485,6 @@ class Proyecto(models.Model):
 
     def __str__(self):
         return self.codigo
-
-
-"""
-class Rama(models.Model):
-    id = models.CharField(primary_key=True, max_length=1)
-    nombre = models.CharField(max_length=63)
-"""
 
 
 class Registro(models.Model):

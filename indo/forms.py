@@ -53,24 +53,26 @@ class InvitacionForm(forms.ModelForm):
         cleaned_data["usuario"] = usuario
         # La participación de los estudiantes estará limitada a dos por proyecto
         # (excepto en los PIPOUZ).
-        if self.proyecto.programa.nombre_corto != "PIPOUZ":
-            if usuario.get_colectivo_principal() == "EST":
-                vinculados = self.proyecto.get_usuarios_vinculados()
-                estudiantes = []
-                for vinculado in vinculados:
-                    if vinculado.get_colectivo_principal() == "EST":
-                        estudiantes.append(vinculado)
-                if len(estudiantes) >= self.proyecto.programa.max_estudiantes:
-                    nombres_estudiantes = ", ".join(
-                        list(map(lambda e: e.get_full_name(), estudiantes))
+        if (
+            self.proyecto.programa.nombre_corto != "PIPOUZ"
+            and usuario.get_colectivo_principal() == "EST"
+        ):
+            vinculados = self.proyecto.get_usuarios_vinculados()
+            estudiantes = []
+            for vinculado in vinculados:
+                if vinculado.get_colectivo_principal() == "EST":
+                    estudiantes.append(vinculado)
+            if len(estudiantes) >= self.proyecto.programa.max_estudiantes:
+                nombres_estudiantes = ", ".join(
+                    list(map(lambda e: e.get_full_name(), estudiantes))
+                )
+                raise forms.ValidationError(
+                    _(
+                        "Ya se ha alcanzado el máximo de participación de "
+                        f"{self.proyecto.programa.max_estudiantes} estudiantes "
+                        f"por proyecto: {nombres_estudiantes}."
                     )
-                    raise forms.ValidationError(
-                        _(
-                            "Ya se ha alcanzado el máximo de participación de "
-                            f"{self.proyecto.programa.max_estudiantes} estudiantes "
-                            f"por proyecto: {nombres_estudiantes}."
-                        )
-                    )
+                )
 
     def save(self, commit=True):
         invitado = super().save(commit=False)
