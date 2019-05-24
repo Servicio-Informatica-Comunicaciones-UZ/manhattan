@@ -99,8 +99,8 @@
     <p>{{ proyecto | get_obj_attr:campo | default:"" | safe }}</p>
     <p>
       <a href="{% url 'proyecto_update_field' proyecto.id campo %}" class="btn btn-info btn-sm">
-        <span class="fas fa-pencil-alt" aria-hidden="true"></i>&nbsp; {% trans 'Editar' %}
-      </span>
+        <span class="fas fa-pencil-alt" aria-hidden="true"></span>&nbsp; {% trans 'Editar' %}
+      </a>
     </p>
   {% endfor %}
 
