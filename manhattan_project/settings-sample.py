@@ -21,10 +21,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "xk6ujnt_zj7xlnt@c&$jc9f_=u3io5e!87imbqz4)=li*$tu%w"
+SECRET_KEY = os.environ.get(
+    "DJANGO_SECRET_KEY", "xk6ujnt_zj7xlnt@c&$jc9f_=u3io5e!87imbqz4)=li*$tu%w"
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", False) == "True"
 
 ALLOWED_HOSTS = []  # ['*']
 
@@ -99,10 +101,10 @@ WSGI_APPLICATION = "manhattan_project.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",  # Database engine
-        "NAME": "manhattan",  # Database name
-        "USER": "albert",  # Database user
-        "PASSWORD": "einstein",  # Database password
-        "HOST": "",  # Set to empty string for localhost.
+        "NAME": os.environ.get("DB_NAME"),  # Database name
+        "USER": os.environ.get("DB_USER"),  # Database user
+        "PASSWORD": os.environ.get("DB_PASSWORD"),  # Database password
+        "HOST": os.environ.get("DB_HOST"),  # Set to empty string for localhost.
         "PORT": "",  # Set to empty string for default.
         # Additional database options
         "OPTIONS": {
@@ -154,8 +156,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+STATICFILES_STORAGE = "django.contrib.staticfiles.storage.ManifestStaticFilesStorage"
 
 AUTH_USER_MODEL = "accounts.CustomUser"
 LOGIN_REDIRECT_URL = "proyectos_usuario_list"
@@ -227,7 +231,7 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 # SUMMERNOTE
 MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 SUMMERNOTE_THEME = "bs4"
 
 SUMMERNOTE_CONFIG = {

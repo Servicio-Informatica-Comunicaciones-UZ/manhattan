@@ -34,7 +34,7 @@ pipenv --python 3.7 install --dev
 Configuración inicial
 ---------------------
 
-1. Configurar la base de datos en la sección `DATABASES` de `manhattan_project/settings.py`.
+1. Configurar las bases de datos en el fichero `.env` y la sección `DATABASES` de `manhattan_project/settings.py`.
 2. Configurar los datos para el correo, y la URL del sitio.
 3. Configurar los datos para el _Single Sign On_ (SAML).
 4. Ejecutar

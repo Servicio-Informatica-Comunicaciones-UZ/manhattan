@@ -1,0 +1,15 @@
+version: "3.7"
+services:
+    web:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        command: uwsgi
+        env_file: .env
+        ports:
+            - protocol: tcp
+              published: 8000
+              target: 8000
+        restart: on-failure
+        volumes:
+            - ./media:/code/media:rw

@@ -16,7 +16,6 @@ cx-oracle = "*"
 django-crispy-forms = "==1.7.2"
 django-summernote = "*"
 django-templated-email = "*"
-whitenoise = "*"
 
 [requires]
 python_version = "3.7"

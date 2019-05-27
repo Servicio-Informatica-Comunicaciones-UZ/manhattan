@@ -4,6 +4,7 @@ LABEL maintainer="Enrique Matías Sánchez <quique@unizar.es>"
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
+# All output to stdout will be flushed immediately
 ENV PYTHONUNBUFFERED 1
 
 # Install packages needed to run your application (not build deps):
@@ -16,7 +17,9 @@ RUN apt-get update \
       libmariadbclient18 \
       libpcre3 \
       libxmlsec1-openssl \
-      mime-support
+      mime-support \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy the requirements file to the container image
 COPY requirements.txt ./
@@ -31,6 +34,7 @@ RUN set -ex \
     libmariadbclient-dev \
     libpcre3-dev \
     libxmlsec1-dev" \
+  && apt-get update \
   && apt-get install -y --no-install-recommends $BUILD_DEPS \
   && pip install --no-cache-dir -r requirements.txt \
   # && pip install gunicorn \
@@ -64,10 +68,12 @@ ENV UWSGI_WSGI_FILE=manhattan_project/wsgi.py
 ENV UWSGI_HTTP=:8000 UWSGI_MASTER=1 UWSGI_HTTP_AUTO_CHUNKED=1 UWSGI_HTTP_KEEPALIVE=1 UWSGI_UID=1000 UWSGI_GID=2000 UWSGI_LAZY_APPS=1 UWSGI_WSGI_ENV_BEHAVIOR=holy
 
 # Number of uWSGI workers and threads per worker (customize as needed):
-ENV UWSGI_WORKERS=2 UWSGI_THREADS=4
+ENV UWSGI_WORKERS=4 UWSGI_THREADS=1
 
 # uWSGI static file serving configuration (customize, or comment out if using Whitenoise or S3):
-# ENV UWSGI_STATIC_MAP="/static/=/code/staticfiles/" UWSGI_STATIC_EXPIRES_URI="/static/.*\.[a-f0-9]{12,}\.(css|js|png|jpg|jpeg|gif|ico|woff|ttf|otf|svg|scss|map|txt) 315360000"
+ENV UWSGI_STATIC_MAP="/static/=/code/staticfiles/" UWSGI_STATIC_EXPIRES_URI="/static/.*\.[a-f0-9]{12,}\.(css|js|png|jpg|jpeg|gif|ico|woff|ttf|otf|svg|scss|pdf|map|txt) 86400"
+ENV UWSGI_STATIC_MAP="/media/=/code/media/" UWSGI_STATIC_EXPIRES_URI="/media/.*/.*/.*\.[a-f0-9]{12,}\.(png|jpg|jpeg|gif|svg) 3600"
+
 
 # Deny invalid hosts before they get to Django (uncomment and change to your hostname(s)):
 # ENV UWSGI_ROUTE_HOST="^(?!localhost:8000$) break:400"
