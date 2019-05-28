@@ -27,7 +27,7 @@
         <tr><td><strong>{% trans 'Línea' %}</strong>:</td><td>{{ proyecto.linea.nombre }}</td></tr>
       {% endif %}
       {% if proyecto.centro %}
-        <tr><td><strong>{% trans 'Centro' %}</strong>:</td><td><{{ proyecto.centro.nombre }}/td></tr>
+        <tr><td><strong>{% trans 'Centro' %}</strong>:</td><td>{{ proyecto.centro.nombre }}</td></tr>
       {% endif %}
       {% if proyecto.estudio %}
         <tr><td><strong>{% trans 'Estudio' %}</strong>:</td><td>{{ proyecto.estudio.nombre }}</td></tr>
@@ -145,7 +145,7 @@
         <p>{% trans "Una vez presentada ya no podrá hacer ningún cambio." %}</p>
         <p>{% trans "Se enviarán mensajes informativos a las personas invitadas y, en su caso, a quien deba dar su visto bueno." %}</p>
         <p>{% blocktrans %}Al presentar la solicitud, usted se compromete, en caso de concesión,
-          a cumplir con las obligaciones establecidas en las bases de la convocatoria."{% endblocktrans %}</p>
+          a cumplir con las obligaciones establecidas en las bases de la convocatoria.{% endblocktrans %}</p>
       </div>
       <div class="modal-footer">
         <form action="{% url 'proyecto_presentar' pk=proyecto.id %}" id="presentar-form" method="post">

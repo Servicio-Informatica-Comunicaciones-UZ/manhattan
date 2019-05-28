@@ -314,7 +314,7 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
                 request,
                 _(
                     f"La ayuda solicitada ({proyecto.ayuda} €) excede el máximo "
-                    "permitido para este programa ({proyecto.programa.max_ayuda} €)."
+                    f"permitido para este programa ({proyecto.programa.max_ayuda} €)."
                 ),
             )
             return super().post(request, *args, **kwargs)

@@ -115,6 +115,9 @@ class Estudio(models.Model):
     rama = models.CharField(max_length=1, choices=OPCIONES_RAMA)
     tipo_estudio = models.ForeignKey("TipoEstudio", on_delete=models.PROTECT)
 
+    def __str__(self):
+        return self.nombre
+
 
 class Evento(models.Model):
     nombre = models.CharField(primary_key=True, max_length=31)
