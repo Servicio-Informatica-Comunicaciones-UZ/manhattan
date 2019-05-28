@@ -196,6 +196,7 @@ SOCIAL_AUTH_SAML_SUPPORT_CONTACT = {
     "givenName": "Vicerrectorado de Política Académica",
     "emailAddress": "innova.docen@manhattan.local",
 }
+# Si se cambia el backend de autenticación, actualizar clean() en InvitacionForm
 SOCIAL_AUTH_SAML_ENABLED_IDPS = {
     "lord": {
         "entity_id": "https://FIXME.idp.com/saml2/idp/metadata.php",

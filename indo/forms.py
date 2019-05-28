@@ -1,5 +1,6 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
+from social_django.models import UserSocialAuth
 from social_django.utils import load_strategy
 from .models import ParticipanteProyecto, Proyecto, TipoParticipacion
 from accounts.models import CustomUser as CustomUser
@@ -35,6 +36,11 @@ class InvitacionForm(forms.ModelForm):
                 raise forms.ValidationError(
                     _(f"¡Usuario desconocido! No se ha encontrado el NIP «{nip}».")
                 )
+            # HACK
+            usuario_social = UserSocialAuth(
+                uid=f"lord:{usuario.username}", provider="saml", user=usuario
+            )
+            usuario_social.save()
 
         get_identidad(load_strategy(self.request), None, usuario)
         if not usuario.is_active:
