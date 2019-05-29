@@ -65,11 +65,13 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarCollapse">
         <ul class="navbar-nav ml-auto">
+          {% if user.is_authenticated %}
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'proyectos_usuario_list' %}"
-              ><span class="fas fa-project-diagram"></span> &nbsp;{% trans "Proyectos" %}</a
-            >
+            <a class="nav-link" href="{% url 'proyectos_usuario_list' %}">
+              <span class="fas fa-project-diagram"></span> &nbsp;{% trans "Mis proyectos" %}
+            </a>
           </li>
+          {% endif %}
           <li class="nav-item">
             <a class="nav-link" href="{% url 'ayuda' %}"
               ><span class="fas fa-question-circle"></span> &nbsp;{% trans "Ayuda" %}</a
