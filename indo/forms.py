@@ -57,13 +57,21 @@ class InvitacionForm(forms.ModelForm):
             )
 
         cleaned_data["usuario"] = usuario
+        # Si un usuario ya está vinculado al proyecto, no se le puede invitar.
+        vinculados = self.proyecto.get_usuarios_vinculados()
+        if usuario in vinculados:
+            raise forms.ValidationError(
+                _(
+                    f"No puede invitar a {usuario.get_full_name()} "
+                    "porque ya está vinculado a este proyecto."
+                )
+            )
         # La participación de los estudiantes estará limitada a dos por proyecto
         # (excepto en los PIPOUZ).
         if (
             self.proyecto.programa.nombre_corto != "PIPOUZ"
             and usuario.get_colectivo_principal() == "EST"
         ):
-            vinculados = self.proyecto.get_usuarios_vinculados()
             estudiantes = []
             for vinculado in vinculados:
                 if vinculado.get_colectivo_principal() == "EST":
