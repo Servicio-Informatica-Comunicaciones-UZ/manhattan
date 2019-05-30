@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n custom_tags %}
+{% load i18n custom_tags static %}
 {% block title %}{% trans "403 Prohibido" %}{% endblock title %}
 {% block description %}{% trans "403 Prohibido" %}{% endblock description %}
 
@@ -9,11 +9,14 @@
   <hr />
   <br />
 
-  <p>{% trans 'No está autorizado a realizar esta acción:' %}<p>
+  <div style="text-align: center;">
+    <p><img src="{% static 'img/star_wars_lego_storm_trooper_parade.jpg' %}" alt="Tropas imperiales"></p>
+    <p>{% trans 'No está autorizado a realizar esta acción:' %}<p>
 
-  <div class="alert alert-danger" role="alert">
-    {% alert_icon 'error' %}
-    {{ exception }}
+    <div class="alert alert-danger" role="alert">
+      {% alert_icon 'error' %}
+      {{ exception }}
+    </div>
   </div>
 </div>
 {% endblock content %}
