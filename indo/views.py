@@ -283,6 +283,10 @@ class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
 
         context["campos"] = json.loads(self.object.programa.campos)
 
+        context["permitir_edicion"] = (
+            self.es_coordinador(self.object.id) and self.object.en_borrador()
+        )
+
         return context
 
     def test_func(self):

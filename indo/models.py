@@ -457,6 +457,9 @@ class Proyecto(models.Model):
         limit_choices_to={"convocatoria_id": date.today().year},
     )
 
+    def en_borrador(self):
+        return self.estado == "BORRADOR"
+
     def get_absolute_url(self):
         return reverse("proyecto_detail", args=[str(self.id)])
 

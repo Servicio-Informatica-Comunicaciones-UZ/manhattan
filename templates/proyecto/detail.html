@@ -2,14 +2,16 @@
 {% load custom_tags i18n %}
 {% block content %}
 <div class="container-blanco">
-  <div class="alert alert-info">
-    <span class="fas fa-info-circle"></span>
-    <div>
-      {% trans 'Puede editar su solicitud tantas veces como desee.' %}<br />
-      {% trans 'Cuando esté satisfecho, pulse el botón «Presentar».' %}
-      {% trans 'Una vez haya presentado la solicitud, ya no podrá modificarla.' %}
+  {% if permitir_edicion %}
+    <div class="alert alert-info">
+      <span class="fas fa-info-circle"></span>
+      <div>
+        {% trans 'Puede editar su solicitud tantas veces como desee.' %}<br />
+        {% trans 'Cuando esté satisfecho, pulse el botón «Presentar».' %}
+        {% trans 'Una vez haya presentado la solicitud, ya no podrá modificarla.' %}
+      </div>
     </div>
-  </div>
+  {% endif %}
 
   <h1>{{ proyecto.titulo }}</h1>
   {# DetailView proporciona el objeto de contexto `proyecto` #}
@@ -53,7 +55,11 @@
           <tr>
             <td>{{ invitado.usuario.get_full_name }}</td>
             <td>{% if invitado.tipo_participacion_id == "invitado" %}{% trans "Pendiente" %}{% else %}{% trans "Declinada" %}{% endif %}</td>
-            <td><a href={% url 'participante_delete' invitado.id %} aria-label="{% trans "Eliminar" %}"><span aria-hidden="true" class="fas fa-trash-alt" title="{% trans "Eliminar" %}"></span></a></td>
+            {% if permitir_edicion %}
+              <td><a href={% url 'participante_delete' invitado.id %} aria-label="{% trans "Eliminar" %}">
+                <span aria-hidden="true" class="fas fa-trash-alt" title="{% trans "Eliminar" %}"></span>
+              </a></td>
+            {% endif %}
           </tr>
         {% endfor %}
       </table>
@@ -61,10 +67,14 @@
   {% else %}
     <p>{% trans 'Aquí aparecerán las personas a las que invite a participar en este proyecto.'%}</p>
   {% endif %}
-  <p>
-    <a href="{% url 'participante_invitar' proyecto.id %}" class="btn btn-info btn-sm"
-      ><span class="fas fa-plus" aria-hidden="true"></span>&nbsp; {% trans 'Añadir' %}</a>
-  </p><br />
+  {% if permitir_edicion %}
+    <p>
+      <a href="{% url 'participante_invitar' proyecto.id %}" class="btn btn-info btn-sm">
+        <span class="fas fa-plus" aria-hidden="true"></span>&nbsp; {% trans 'Añadir' %}
+      </a>
+    </p>
+  {% endif %}
+  <br />
 
   <h3>{% trans 'Participantes' %}</strong></h3>
   {% if participantes %}
@@ -73,9 +83,11 @@
         {% for participante in participantes %}
           <tr>
             <td>{{ participante.usuario.get_full_name }}</td>
-            <td><a href={% url 'participante_delete' participante.id %} aria-label="{% trans "Eliminar" %}">
-              <span aria-hidden="true" class="fas fa-trash-alt" title="{% trans "Eliminar" %}"></span>
-            </a></td>
+            {% if permitir_edicion %}
+              <td><a href={% url 'participante_delete' participante.id %} aria-label="{% trans "Eliminar" %}">
+                <span aria-hidden="true" class="fas fa-trash-alt" title="{% trans "Eliminar" %}"></span>
+              </a></td>
+            {% endif %}
           </tr>
         {% endfor %}
       </table>
@@ -88,46 +100,56 @@
   {# TODO: filtro para HTML procedente de procesador de textos #}
   <h3>{% trans 'Descripción' %}</h3>
   <p>{{ proyecto.descripcion | safe }}</p>
-  <p>
-    <a href="{% url 'proyecto_update_field' proyecto.id "descripcion" %}" class="btn btn-info btn-sm">
-      <span class="fas fa-pencil-alt" aria-hidden="true"></span>&nbsp; {% trans 'Editar' %}
-    </a>
-  </p>
+  {% if permitir_edicion %}
+    <p>
+      <a href="{% url 'proyecto_update_field' proyecto.id "descripcion" %}" class="btn btn-info btn-sm">
+        <span class="fas fa-pencil-alt" aria-hidden="true"></span>&nbsp; {% trans 'Editar' %}
+      </a>
+    </p>
+  {% endif %}
 
   {% for campo in campos %}
     <h3>{{ proyecto | get_attr_verbose_name:campo }}</h3>
     <p>{{ proyecto | get_obj_attr:campo | default:"" | safe }}</p>
-    <p>
-      <a href="{% url 'proyecto_update_field' proyecto.id campo %}" class="btn btn-info btn-sm">
-        <span class="fas fa-pencil-alt" aria-hidden="true"></span>&nbsp; {% trans 'Editar' %}
-      </a>
-    </p>
+    {% if permitir_edicion %}
+      <p>
+        <a href="{% url 'proyecto_update_field' proyecto.id campo %}" class="btn btn-info btn-sm">
+          <span class="fas fa-pencil-alt" aria-hidden="true"></span>&nbsp; {% trans 'Editar' %}
+        </a>
+      </p>
+    {% endif %}
   {% endfor %}
 
   <h3>{{ proyecto | get_attr_verbose_name:"ayuda" }}</h3>
   <p>{{ proyecto.ayuda | default:"" }}</p>
-  <p>
-    <a href="{% url 'proyecto_update_field' proyecto.id "ayuda" %}" class="btn btn-info btn-sm">
-      <span class="fas fa-pencil-alt" aria-hidden="true"></span>&nbsp; {% trans 'Editar' %}
-    </a>
-  </p>
+  {% if permitir_edicion %}
+    <p>
+      <a href="{% url 'proyecto_update_field' proyecto.id "ayuda" %}" class="btn btn-info btn-sm">
+        <span class="fas fa-pencil-alt" aria-hidden="true"></span>&nbsp; {% trans 'Editar' %}
+      </a>
+    </p>
+  {% endif %}
 
   <h3>{{ proyecto | get_attr_verbose_name:"financiacion" }}</h3>
   <p>{{ proyecto.financiacion | default:"" | safe }}</p>
-  <p>
-    <a href="{% url 'proyecto_update_field' proyecto.id "financiacion" %}" class="btn btn-info btn-sm">
-      <span class="fas fa-pencil-alt" aria-hidden="true"></span>&nbsp; {% trans 'Editar' %}
-    </a>
-  </p>
+  {% if permitir_edicion %}
+    <p>
+      <a href="{% url 'proyecto_update_field' proyecto.id "financiacion" %}" class="btn btn-info btn-sm">
+        <span class="fas fa-pencil-alt" aria-hidden="true"></span>&nbsp; {% trans 'Editar' %}
+      </a>
+    </p>
+  {% endif %}
 
   <br style="clear: both;" />
   <div class="btn-group" role="group" aria-label="Botones">
     <a href="{% url 'proyectos_usuario_list' %}" class="btn btn-info">
       <span class="fas fa-step-backward"></span> {% trans 'Retroceder' %}
     </a>
-    <button class="btn btn-warning" data-toggle="modal" data-target="#presentarModal" type="button">
-      <span class="fas fa-check"></span> {% trans 'Presentar' %}
-    </button>
+    {% if permitir_edicion %}
+      <button class="btn btn-warning" data-toggle="modal" data-target="#presentarModal" type="button">
+        <span class="fas fa-check"></span> {% trans 'Presentar' %}
+      </button>
+    {% endif %}
   </div>
 </div>
 
