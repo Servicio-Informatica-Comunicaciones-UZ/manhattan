@@ -1,8 +1,11 @@
 import json
+import pypandoc
 from datetime import date
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.forms.models import modelform_factory
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
@@ -363,13 +366,27 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
                     "titulo_proyecto": proyecto.titulo,
                     "programa_proyecto": f"{proyecto.programa.nombre_corto} "
                     + f"({proyecto.programa.nombre_largo})",
-                    "descripcion_proyecto": proyecto.descripcion,
+                    "descripcion_proyecto": pypandoc.convert_text(
+                        proyecto.descripcion, "md", format="html"
+                    ).replace("\\\n", "\n"),
                     "site_url": settings.SITE_URL,
                 },
             )
 
     def _enviar_solicitudes_visto_bueno(self, request, proyecto):
         """Envia un mensaje al responsable del centro solicitando su visto bueno."""
+        try:
+            validate_email(proyecto.centro.email_decano)
+        except ValidationError:
+            messages.warning(
+                request,
+                _(
+                    "La dirección de correo electrónico del director o decano "
+                    "del centro no es válida."
+                ),
+            )
+            return
+
         send_templated_mail(
             template_name="solicitud_visto_bueno",
             from_email=None,  # settings.DEFAULT_FROM_EMAIL
@@ -381,7 +398,9 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
                 "titulo_proyecto": proyecto.titulo,
                 "programa_proyecto": f"{proyecto.programa.nombre_corto} "
                 f"({proyecto.programa.nombre_largo})",
-                "descripcion_proyecto": proyecto.descripcion,
+                "descripcion_proyecto": pypandoc.convert_text(
+                    proyecto.descripcion, "md", format="html"
+                ).replace("\\\n", "\n"),
                 "site_url": settings.SITE_URL,
             },
         )

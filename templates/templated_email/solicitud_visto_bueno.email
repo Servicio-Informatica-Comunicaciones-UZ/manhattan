@@ -12,7 +12,7 @@ Estimad@ {{nombre_decano}}:
 
   Título: {{titulo_proyecto}}
   Programa: {{programa_proyecto}}
-  Descripción: {{descripcion_proyecto}}
+  Descripción: {{ descripcion_proyecto | striptags }}
 
 
 Los proyectos de este programa deben ser impulsados por el centro.

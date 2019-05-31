@@ -12,7 +12,7 @@ Estimad@ {{nombre_invitado}}:
 
   Título: {{titulo_proyecto}}
   Programa: {{programa_proyecto}}
-  Descripción: {{descripcion_proyecto}}
+  Descripción: {{ descripcion_proyecto | striptags }}
 
 
 Si desea aceptar la invitación, visite la web <{{site_url}}>
