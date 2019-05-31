@@ -121,7 +121,7 @@
   {% endfor %}
 
   <h3>{{ proyecto | get_attr_verbose_name:"ayuda" }}</h3>
-  <p>{{ proyecto.ayuda | default:"" }}</p>
+  <p>{{ proyecto.ayuda | default:0 }} €</p>
   {% if permitir_edicion %}
     <p>
       <a href="{% url 'proyecto_update_field' proyecto.id "ayuda" %}" class="btn btn-info btn-sm">

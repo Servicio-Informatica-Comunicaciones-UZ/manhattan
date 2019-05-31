@@ -309,8 +309,15 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
         proyecto = Proyecto.objects.get(pk=proyecto_id)
 
         # TODO ¿Chequear el estado actual del proyecto?
-        if not proyecto.ayuda:
-            messages.error(request, _("No ha indicado la ayuda solicitada."))
+
+        if request.user.get_colectivo_principal() == "ADS" and proyecto.ayuda != 0:
+            messages.error(
+                request,
+                _(
+                    "Los profesores de los centros adscritos no pueden coordinar "
+                    "proyectos con financiación."
+                ),
+            )
             return super().post(request, *args, **kwargs)
 
         if proyecto.ayuda > proyecto.programa.max_ayuda:

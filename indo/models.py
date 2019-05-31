@@ -422,6 +422,7 @@ class Proyecto(models.Model):
             "Las normas de la convocatoria establecen el importe máximo "
             "que se puede solicitar según el programa."
         ),
+        default=0,
     )
     centro = models.ForeignKey(
         "Centro",
