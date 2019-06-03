@@ -1,0 +1,8 @@
+[run]
+source = indo
+
+[report]
+ignore_errors = True
+omit =
+    */tests/*
+    */migrations/*
