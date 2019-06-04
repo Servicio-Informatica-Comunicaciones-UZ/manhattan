@@ -431,9 +431,29 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
             raise Http404(_("No puede editar ese campo."))
 
         if campo not in ("titulo", "departamento", "licencia", "ayuda"):
-            return modelform_factory(
+            formulario = modelform_factory(
                 Proyecto, fields=(campo,), widgets={campo: SummernoteWidget()}
             )
+
+            def as_p(self):
+                """
+                Return this form rendered as HTML <p>s,
+                with the helptext over the textarea.
+                """
+                return self._html_output(
+                    normal_row="""<p%(html_class_attr)s>
+                    %(label)s
+                    %(help_text)s
+                    %(field)s
+                    </p>""",
+                    error_row="%s",
+                    row_ender="</p>",
+                    help_text_html='<span class="helptext">%s</span>',
+                    errors_on_separate_row=True,
+                )
+
+            formulario.as_p = as_p
+            return formulario
         self.fields = (campo,)
         return super().get_form_class()
 
