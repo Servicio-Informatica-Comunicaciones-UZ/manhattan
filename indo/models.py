@@ -7,17 +7,17 @@ from django.utils.translation import gettext_lazy as _
 
 class Centro(models.Model):
     id = models.IntegerField(primary_key=True)
-    academico_id_nk = models.IntegerField("cód. académico", blank=True, null=True)
+    academico_id_nk = models.IntegerField(_("cód. académico"), blank=True, null=True)
     rrhh_id_nk = models.CharField(
-        "cód. RRHH", max_length=4, blank=True, null=True, unique=True
+        _("cód. RRHH"), max_length=4, blank=True, null=True, unique=True
     )
     nombre = models.CharField(max_length=255)
     tipo_centro = models.CharField(
-        "tipo de centro", max_length=30, blank=True, null=True
+        _("tipo de centro"), max_length=30, blank=True, null=True
     )
-    direccion = models.CharField("dirección", max_length=140, blank=True, null=True)
+    direccion = models.CharField(_("dirección"), max_length=140, blank=True, null=True)
     municipio = models.CharField(max_length=100, blank=True, null=True)
-    telefono = models.CharField("teléfono", max_length=30, blank=True, null=True)
+    telefono = models.CharField(_("teléfono"), max_length=30, blank=True, null=True)
     email = models.EmailField(_("email address"), blank=True, null=True)
     url = models.URLField("URL", max_length=255, blank=True, null=True)
     nip_decano = models.PositiveIntegerField(
@@ -45,16 +45,19 @@ class Centro(models.Model):
     email_secretario = models.EmailField(
         _("email del secretario"), blank=True, null=True
     )
-    nip_coord_pou = models.PositiveIntegerField(
-        _("NIP del coordinador POU"), blank=True, null=True
+    nips_coord_pou = models.CharField(
+        _("NIPs de los coordinadores POU"), blank=True, max_length=255, null=True
     )
-    nombre_coord_pou = models.CharField(
-        _("nombre del coordinador POU"), max_length=255, blank=True, null=True
+    nombres_coords_pou = models.CharField(
+        _("nombres de los coordinadores POU"), blank=True, max_length=1023, null=True
     )
-    email_coord_pou = models.EmailField(
-        _("email del coordinador POU"), blank=True, null=True
+    emails_coords_pou = models.CharField(
+        _("emails de los coordinadores POU"), blank=True, max_length=1023, null=True
     )
-    esta_activo = models.BooleanField("¿Activo?", default=False)
+    unidad_gasto = models.CharField(
+        _("unidad de gasto"), blank=True, max_length=3, null=True
+    )
+    esta_activo = models.BooleanField(_("¿Activo?"), default=False)
 
     def __str__(self):
         return f"{self.academico_id_nk} {self.rrhh_id_nk} {self.nombre}"
@@ -94,6 +97,9 @@ class Departamento(models.Model):
         _("nombre del director"), max_length=255, blank=True, null=True
     )
     email_director = models.EmailField(_("email del director"), blank=True, null=True)
+    unidad_gasto = models.CharField(
+        _("unidad de gasto"), blank=True, max_length=3, null=True
+    )
 
     def __str__(self):
         return f"{self.academico_id_nk} {self.rrhh_id_nk} {self.nombre}"
