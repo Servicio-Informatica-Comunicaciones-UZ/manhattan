@@ -9,6 +9,7 @@ from .views import (
     ParticipanteAceptarView,
     ParticipanteDeclinarView,
     ParticipanteDeleteView,
+    ParticipanteRenunciarView,
     ProyectoCreateView,
     ProyectoDetailView,
     ProyectoPresentarView,
@@ -34,6 +35,11 @@ urlpatterns = [
         "participante-proyecto/invitar/<int:proyecto_id>",
         InvitacionView.as_view(),
         name="participante_invitar",
+    ),
+    path(
+        "participante-proyecto/renunciar",
+        ParticipanteRenunciarView.as_view(),
+        name="participante_renunciar",
     ),
     path(
         "participante-proyecto/<int:pk>/delete/",

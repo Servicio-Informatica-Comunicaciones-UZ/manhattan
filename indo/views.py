@@ -184,6 +184,32 @@ class ParticipanteDeclinarView(LoginRequiredMixin, RedirectView):
         return super().post(request, *args, **kwargs)
 
 
+class ParticipanteRenunciarView(LoginRequiredMixin, RedirectView):
+    """Renunciar a participar en un proyecto."""
+
+    def get_redirect_url(self, *args, **kwargs):
+        return reverse_lazy("proyectos_usuario_list")
+
+    def post(self, request, *args, **kwargs):
+        proyecto_id = request.POST.get("proyecto_id")
+        proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
+        usuario_actual = self.request.user
+        pp = get_object_or_404(
+            ParticipanteProyecto,
+            proyecto_id=proyecto_id,
+            usuario=usuario_actual,
+            tipo_participacion="participante",
+        )
+        pp.tipo_participacion_id = "invitacion_rehusada"
+        pp.save()
+
+        messages.success(
+            request,
+            _(f"Ha renunciado a participar en el proyecto «{proyecto.titulo}»."),
+        )
+        return super().post(request, *args, **kwargs)
+
+
 class ParticipanteDeleteView(LoginRequiredMixin, ChecksMixin, DeleteView):
     """Borra un registro de ParticipanteProyecto"""
 
