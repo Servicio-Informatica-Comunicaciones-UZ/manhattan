@@ -394,7 +394,7 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
                     + f"({proyecto.programa.nombre_largo})",
                     "descripcion_proyecto": pypandoc.convert_text(
                         proyecto.descripcion, "md", format="html"
-                    ).replace("\\\n", "\n"),
+                    ).replace("\\\n", "  \n"),
                     "site_url": settings.SITE_URL,
                 },
             )
