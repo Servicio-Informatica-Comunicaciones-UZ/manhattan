@@ -6,7 +6,9 @@ from django.utils.translation import gettext_lazy as _
 
 class CustomUserManager(UserManager):
     def get_or_none(self, **kwargs):
-        """Devuelve el usuario con las propiedades indicadas, o `None` si no se encuentra."""
+        """
+        Devuelve el usuario con las propiedades indicadas, o `None` si no se encuentra.
+        """
         try:
             return self.get(**kwargs)
         except CustomUser.DoesNotExist:
@@ -58,12 +60,25 @@ class CustomUser(AbstractUser):
         return self.username
 
     def get_colectivo_principal(self):
-        """Devuelve el colectivo del usuario según el orden de prelación PDI>ADS>PAS>EST"""
+        """
+        Devuelve el colectivo del usuario según el orden de prelación PDI>ADS>PAS>EST.
+        """
         colectivos_del_usuario = json.loads(self.colectivos)
         for col in ("PDI", "ADS", "PAS", "EST"):
             if col in colectivos_del_usuario:
                 return col
         return None
+
+    def get_num_equipos(self):
+        """Devuelve el número de equipos de trabajo en los que participa el usuario."""
+        num_como_participante = self.vinculaciones.filter(
+            tipo_participacion="participante"
+        ).count()
+        num_como_coordinador = self.vinculaciones.filter(
+            tipo_participacion="coordinador", proyecto__estado="SOLICITADO"
+        ).count()
+        num_equipos = num_como_participante + num_como_coordinador
+        return num_equipos
 
     # Custom Manager
     objects = CustomUserManager()

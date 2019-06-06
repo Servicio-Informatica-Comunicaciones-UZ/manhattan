@@ -139,9 +139,24 @@ class ParticipanteAceptarView(LoginRequiredMixin, RedirectView):
         return reverse_lazy("proyectos_usuario_list")
 
     def post(self, request, *args, **kwargs):
+        usuario_actual = self.request.user
+
+        num_equipos = usuario_actual.get_num_equipos()
+        num_max_equipos = Convocatoria.objects.order_by("-id").first().num_max_equipos
+        if num_equipos >= num_max_equipos:
+            messages.error(
+                request,
+                _(
+                    f"""No puede aceptar esta invitación porque ya forma parte del número
+                máximo de equipos de trabajo permitido ({num_max_equipos}).
+                Para poder aceptar esta invitación, antes debería renunciar a participar
+                en algún otro proyecto."""
+                ),
+            )
+            return super().post(request, *args, **kwargs)
+
         proyecto_id = kwargs.get("proyecto_id")
         proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
-        usuario_actual = self.request.user
         pp = get_object_or_404(
             ParticipanteProyecto,
             proyecto_id=proyecto_id,
@@ -338,6 +353,20 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
         proyecto = Proyecto.objects.get(pk=proyecto_id)
 
         # TODO ¿Chequear el estado actual del proyecto?
+
+        num_equipos = self.request.user.get_num_equipos()
+        num_max_equipos = Convocatoria.objects.order_by("-id").first().num_max_equipos
+        if num_equipos >= num_max_equipos:
+            messages.error(
+                request,
+                _(
+                    f"""No puede presentar esta solicitud porque ya forma parte
+                del número máximo de equipos de trabajo permitido ({num_max_equipos}).
+                Para poder presentar esta solicitud de proyecto, antes debería renunciar
+                a participar en algún otro proyecto."""
+                ),
+            )
+            return super().post(request, *args, **kwargs)
 
         if request.user.get_colectivo_principal() == "ADS" and proyecto.ayuda != 0:
             messages.error(

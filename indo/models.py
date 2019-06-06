@@ -68,6 +68,7 @@ class Centro(models.Model):
 
 class Convocatoria(models.Model):
     id = models.PositiveSmallIntegerField(_("año"), primary_key=True)
+    num_max_equipos = models.PositiveSmallIntegerField(default=4)
     fecha_min_solicitudes = models.DateField()
     fecha_max_solicitudes = models.DateField()
     fecha_max_aceptos = models.DateField()
@@ -177,7 +178,9 @@ class ParticipanteProyecto(models.Model):
     tipo_participacion = models.ForeignKey(
         "TipoParticipacion", on_delete=models.PROTECT
     )
-    usuario = models.ForeignKey("accounts.CustomUser", on_delete=models.PROTECT)
+    usuario = models.ForeignKey(
+        "accounts.CustomUser", on_delete=models.PROTECT, related_name="vinculaciones"
+    )
 
     def get_cargo(self):
         if self.tipo_participacion.nombre == "coordinador":
