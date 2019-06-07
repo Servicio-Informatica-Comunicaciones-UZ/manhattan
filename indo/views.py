@@ -140,8 +140,10 @@ class ParticipanteAceptarView(LoginRequiredMixin, RedirectView):
 
     def post(self, request, *args, **kwargs):
         usuario_actual = self.request.user
+        proyecto_id = kwargs.get("proyecto_id")
+        proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
 
-        num_equipos = usuario_actual.get_num_equipos()
+        num_equipos = usuario_actual.get_num_equipos(proyecto.convocatoria_id)
         num_max_equipos = Convocatoria.objects.order_by("-id").first().num_max_equipos
         if num_equipos >= num_max_equipos:
             messages.error(
@@ -155,8 +157,6 @@ class ParticipanteAceptarView(LoginRequiredMixin, RedirectView):
             )
             return super().post(request, *args, **kwargs)
 
-        proyecto_id = kwargs.get("proyecto_id")
-        proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
         pp = get_object_or_404(
             ParticipanteProyecto,
             proyecto_id=proyecto_id,
@@ -354,7 +354,7 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
 
         # TODO ¿Chequear el estado actual del proyecto?
 
-        num_equipos = self.request.user.get_num_equipos()
+        num_equipos = self.request.user.get_num_equipos(proyecto.convocatoria_id)
         num_max_equipos = Convocatoria.objects.order_by("-id").first().num_max_equipos
         if num_equipos >= num_max_equipos:
             messages.error(
