@@ -22,7 +22,7 @@
     {% csrf_token %}
     {{ form | crispy }}
     <div class="btn-group" role="group" aria-label="Botones">
-      <a href="{% url 'proyectos_usuario_list' %}" class="btn btn-info"
+      <a href="{% url 'mis_proyectos' anyo_actual %}" class="btn btn-info"
         ><span class="fas fa-step-backward"></span> {% trans 'Retroceder' %}</a
       >
       <button class="btn btn-warning" type="submit" title="{% trans 'Crear borrador de solicitud' %}">

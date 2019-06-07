@@ -58,7 +58,11 @@ urlpatterns = [
         ProyectoPresentarView.as_view(),
         name="proyecto_presentar",
     ),
-    path("proyecto/", ProyectosUsuarioView.as_view(), name="proyectos_usuario_list"),
+    path(
+        "proyecto/mis-proyectos/<int:anyo>",
+        ProyectosUsuarioView.as_view(),
+        name="mis_proyectos",
+    ),
 ]
 
 if settings.DEBUG:

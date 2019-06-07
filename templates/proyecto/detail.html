@@ -142,7 +142,7 @@
 
   <br style="clear: both;" />
   <div class="btn-group" role="group" aria-label="Botones">
-    <a href="{% url 'proyectos_usuario_list' %}" class="btn btn-info">
+    <a href="{% url 'mis_proyectos' proyecto.convocatoria_id %}" class="btn btn-info">
       <span class="fas fa-step-backward"></span> {% trans 'Retroceder' %}
     </a>
     {% if permitir_edicion %}

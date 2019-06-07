@@ -136,7 +136,7 @@ class ParticipanteAceptarView(LoginRequiredMixin, RedirectView):
     """Aceptar la invitación a participar en un proyecto."""
 
     def get_redirect_url(self, *args, **kwargs):
-        return reverse_lazy("proyectos_usuario_list")
+        return reverse_lazy("mis_proyectos", kwargs={"anyo": date.today().year})
 
     def post(self, request, *args, **kwargs):
         usuario_actual = self.request.user
@@ -177,7 +177,7 @@ class ParticipanteDeclinarView(LoginRequiredMixin, RedirectView):
     """Declinar la invitación a participar en un proyecto."""
 
     def get_redirect_url(self, *args, **kwargs):
-        return reverse_lazy("proyectos_usuario_list")
+        return reverse_lazy("mis_proyectos", kwargs={"anyo": date.today().year})
 
     def post(self, request, *args, **kwargs):
         proyecto_id = request.POST.get("proyecto_id")
@@ -203,7 +203,7 @@ class ParticipanteRenunciarView(LoginRequiredMixin, RedirectView):
     """Renunciar a participar en un proyecto."""
 
     def get_redirect_url(self, *args, **kwargs):
-        return reverse_lazy("proyectos_usuario_list")
+        return reverse_lazy("mis_proyectos", kwargs={"anyo": date.today().year})
 
     def post(self, request, *args, **kwargs):
         proyecto_id = request.POST.get("proyecto_id")
@@ -523,9 +523,11 @@ class ProyectosUsuarioView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         usuario = self.request.user
+        anyo = self.kwargs["anyo"]
         context = super().get_context_data(**kwargs)
         context["proyectos_coordinados"] = (
             Proyecto.objects.filter(
+                convocatoria__id=anyo,
                 participantes__usuario=usuario,
                 participantes__tipo_participacion_id__in=[
                     "coordinador",
@@ -537,6 +539,7 @@ class ProyectosUsuarioView(LoginRequiredMixin, TemplateView):
         )
         context["proyectos_participados"] = (
             Proyecto.objects.filter(
+                convocatoria__id=anyo,
                 participantes__usuario=usuario,
                 participantes__tipo_participacion_id="participante",
             )
@@ -545,6 +548,7 @@ class ProyectosUsuarioView(LoginRequiredMixin, TemplateView):
         )
         context["proyectos_invitado"] = (
             Proyecto.objects.filter(
+                convocatoria__id=anyo,
                 participantes__usuario=usuario,
                 participantes__tipo_participacion_id="invitado",
             )

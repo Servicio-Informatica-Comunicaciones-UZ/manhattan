@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+from datetime import date
+from django.urls import reverse_lazy
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -163,7 +165,7 @@ STATICFILES_STORAGE = "django.contrib.staticfiles.storage.ManifestStaticFilesSto
 
 AUTH_USER_MODEL = "accounts.CustomUser"
 LOGIN_URL = f"{SITE_URL}login/saml/?idp=lord"
-LOGIN_REDIRECT_URL = "proyectos_usuario_list"
+LOGIN_REDIRECT_URL = reverse_lazy("mis_proyectos", args=[date.today().year])
 LOGOUT_REDIRECT_URL = "home"
 
 
