@@ -19,6 +19,7 @@ from templated_email import send_templated_mail
 
 from .forms import InvitacionForm, ProyectoForm
 from .models import (
+    Centro,
     Convocatoria,
     Evento,
     ParticipanteProyecto,
@@ -93,6 +94,20 @@ class ChecksMixin(UserPassesTestMixin):
             for col_autorizado in ["PAS", "ADS", "PDI"]
         )
 
+    def es_decano_o_director(self, proyecto_id):
+        """Devuelve si el usuario actual es decano o director del proyecto indicado."""
+        usuario_actual = self.request.user
+        proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
+        centro = proyecto.centro
+        if not centro:
+            return False
+        nip_decano = centro.nip_decano
+        self.permission_denied_message = _(
+            "Usted no es decano/director del centro del proyecto."
+        )
+
+        return usuario_actual.username == str(nip_decano)
+
 
 class AyudaView(TemplateView):
     template_name = "ayuda.html"
@@ -144,7 +159,7 @@ class ParticipanteAceptarView(LoginRequiredMixin, RedirectView):
         proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
 
         num_equipos = usuario_actual.get_num_equipos(proyecto.convocatoria_id)
-        num_max_equipos = Convocatoria.objects.order_by("-id").first().num_max_equipos
+        num_max_equipos = proyecto.convocatoria.num_max_equipos
         if num_equipos >= num_max_equipos:
             messages.error(
                 request,
@@ -335,7 +350,10 @@ class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
 
     def test_func(self):
         # TODO: Los evaluadores y gestores también tendrán que tener acceso.
-        return self.esta_vinculado(self.kwargs["pk"])
+        proyecto_id = self.kwargs["pk"]
+        return self.esta_vinculado(proyecto_id) or self.es_decano_o_director(
+            proyecto_id
+        )
 
 
 class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
@@ -355,7 +373,7 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
         # TODO ¿Chequear el estado actual del proyecto?
 
         num_equipos = self.request.user.get_num_equipos(proyecto.convocatoria_id)
-        num_max_equipos = Convocatoria.objects.order_by("-id").first().num_max_equipos
+        num_max_equipos = proyecto.convocatoria.num_max_equipos
         if num_equipos >= num_max_equipos:
             messages.error(
                 request,
@@ -485,7 +503,7 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
         ):
             raise Http404(_("No puede editar ese campo."))
 
-        if campo not in ("titulo", "departamento", "licencia", "ayuda"):
+        if campo not in ("titulo", "departamento", "licencia", "ayuda", "visto_bueno"):
             formulario = modelform_factory(
                 Proyecto, fields=(campo,), widgets={campo: SummernoteWidget()}
             )
@@ -513,7 +531,10 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
         return super().get_form_class()
 
     def test_func(self):
-        return self.es_coordinador(self.kwargs["pk"])
+        return self.es_coordinador(self.kwargs["pk"]) or (
+            self.kwargs["campo"] == "visto_bueno"
+            and self.es_decano_o_director(self.kwargs["pk"])
+        )
 
 
 class ProyectosUsuarioView(LoginRequiredMixin, TemplateView):
@@ -555,5 +576,18 @@ class ProyectosUsuarioView(LoginRequiredMixin, TemplateView):
             .order_by("programa__nombre_corto", "linea__nombre", "titulo")
             .all()
         )
+
+        try:
+            nip_decano = int(usuario.username)
+        except ValueError:
+            nip_decano = 0
+
+        centros_dirigidos = Centro.objects.filter(nip_decano=nip_decano).all()
+        if centros_dirigidos:
+            context["proyectos_centros_dirigidos"] = Proyecto.objects.filter(
+                convocatoria_id=anyo,
+                programa__requiere_visto_bueno=True,
+                centro__in=centros_dirigidos,
+            ).all()
 
         return context

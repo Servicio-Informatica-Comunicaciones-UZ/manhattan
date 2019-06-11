@@ -118,7 +118,7 @@ class Estudio(models.Model):
     )
     id = models.PositiveSmallIntegerField(_("Cód. estudio"), primary_key=True)
     nombre = models.CharField(max_length=255)
-    esta_activo = models.BooleanField("¿Activo?", default=True)
+    esta_activo = models.BooleanField(_("¿Activo?"), default=True)
     rama = models.CharField(max_length=1, choices=OPCIONES_RAMA)
     tipo_estudio = models.ForeignKey("TipoEstudio", on_delete=models.PROTECT)
 
@@ -206,6 +206,9 @@ class Programa(models.Model):
     )
     campos = models.TextField(null=True)
     convocatoria = models.ForeignKey("Convocatoria", on_delete=models.PROTECT)
+    requiere_visto_bueno = models.BooleanField(
+        _("¿Requiere el visto bueno del director o decano?"), default="False"
+    )
 
     def __str__(self):
         return f"{self.nombre_corto}"
@@ -439,6 +442,7 @@ class Proyecto(models.Model):
         blank=True,
         null=True,
         help_text=_("Sólo obligatorio para PIEC, PRACUZ, PIPOUZ."),
+        related_name="proyectos",
     )
     convocatoria = models.ForeignKey("Convocatoria", on_delete=models.PROTECT)
     departamento = models.ForeignKey(
@@ -466,6 +470,7 @@ class Proyecto(models.Model):
         on_delete=models.PROTECT,
         limit_choices_to={"convocatoria_id": date.today().year},
     )
+    visto_bueno = models.BooleanField(_("Visto bueno"), null=True)
 
     def en_borrador(self):
         return self.estado == "BORRADOR"

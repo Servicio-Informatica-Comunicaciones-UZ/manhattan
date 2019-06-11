@@ -113,6 +113,44 @@
     {% else %}
         <p>{% trans 'No está invitado a ningún proyecto.' %}</p>
     {% endif %}
+    <br /><br />
+
+    {% if proyectos_centros_dirigidos %}
+        <h1>{% trans "Proyectos impulsados por mi centro" %}</h1>
+        <hr />
+        <br />
+
+        <div class="table-responsive">
+            <table class="table table-hover table-striped table-sm">
+                <tr>
+                    <th>{% trans 'Programa' %}</th>
+                    <th>{% trans 'Línea' %}</th>
+                    <th>{% trans 'Título' %}</th>
+                    <th>{% trans 'Coordinador' %}</th>
+                    <th>{% trans 'Estado' %}</th>
+                    <th>{% trans 'Visto bueno '%}</th>
+                    <th>{% trans 'Acción '%}</th>
+                </tr>
+                {% for proyecto in proyectos_centros_dirigidos %}
+                    <tr>
+                        <td>{{proyecto.programa.nombre_corto}}</td>
+                        <td>{{proyecto.linea.nombre}}</td>
+                        <td><a href="{% url 'proyecto_detail' proyecto.id %}">{{ proyecto.titulo }}</a></td>
+                        <td>{{proyecto.get_usuario_coordinador.get_full_name}}</td>
+                        <td>{{proyecto.get_estado_display}}</td>
+                        <td>{{proyecto.visto_bueno | yesno:"Sí,No,—"}}</td>
+                        <td>
+                            {% if proyecto.estado == 'SOLICITADO' %}
+                                <a href="{% url 'proyecto_update_field' proyecto.id "visto_bueno" %}" class="btn btn-info btn-sm">
+                                    <span class="fas fa-pencil-alt" aria-hidden="true"></span>&nbsp; {% trans 'Editar' %}
+                                </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    {% endif %}
 </div>
 
 <div class="modal fade" id="declinarModal" tabindex="-1" role="dialog" aria-labelledby="declinarModalLabel" aria-hidden="true">
