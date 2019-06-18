@@ -17,6 +17,7 @@ from .views import (
     ProyectosUsuarioView,
 )
 
+
 urlpatterns = [
     path("", HomePageView.as_view(), name="home"),
     path("summernote/", include("django_summernote.urls")),

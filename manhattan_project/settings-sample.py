@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 
 import os
 from datetime import date
+
 from django.urls import reverse_lazy
 
 

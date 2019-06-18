@@ -1,10 +1,11 @@
+from accounts.models import CustomUser
+from accounts.pipeline import UsuarioNoEncontrado, get_identidad
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from social_django.models import UserSocialAuth
 from social_django.utils import load_strategy
+
 from .models import ParticipanteProyecto, Proyecto, TipoParticipacion
-from accounts.models import CustomUser as CustomUser
-from accounts.pipeline import get_identidad, UsuarioNoEncontrado
 
 
 class InvitacionForm(forms.ModelForm):

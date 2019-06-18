@@ -5,7 +5,6 @@
 
 {% block content %}
 <div class="container-blanco">
-
   {% if object.tipo_participacion.nombre == "invitado" %}
     <h1>{% trans "Eliminar invitado" %}</h1>
   {% else %}
@@ -17,19 +16,25 @@
   <form action="" method="post">
     {% csrf_token %}
     {% if object.tipo_participacion.nombre in "invitado,invitacion_rehusada" %}
-      <p>{% blocktrans with nombre=object.usuario.get_full_name titulo=object.proyecto.titulo%}
+      <p>
+        {% blocktrans with nombre=object.usuario.get_full_name titulo=object.proyecto.titulo%}
         ¿Seguro que desea eliminar la invitación a {{ nombre }} al proyecto «{{ titulo }}»?
-      {% endblocktrans %}</p>
+        {% endblocktrans %}
+      </p>
     {% else %}
-      <p>{% blocktrans with nombre=object.usuario.get_full_name titulo=object.proyecto.titulo%}
-        ¿Seguro que desea retirarle a {{ nombre }} la participación en el proyecto «{{ titulo }}»?{% endblocktrans %}
+      <p>
+        {% blocktrans with nombre=object.usuario.get_full_name titulo=object.proyecto.titulo%}
+        ¿Seguro que desea retirarle a {{ nombre }} la participación en el proyecto «{{ titulo }}»?
+        {% endblocktrans %}
       </p>
     {% endif %}
     <div class="btn-group" role="group" aria-label="Botones">
       <a href="{% url 'proyecto_detail' object.proyecto.id %}" class="btn btn-info">
         <span class="fas fa-step-backward"></span> {% trans 'Retroceder' %}
       </a>
-      <button class="btn btn-warning" type="submit"><span class='fas fa-trash-alt'></span> {% trans 'Eliminar' %}</button>
+      <button class="btn btn-warning" type="submit">
+        <span class="fas fa-trash-alt"></span> {% trans 'Eliminar' %}
+      </button>
     </div>
   </form>
 

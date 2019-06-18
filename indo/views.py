@@ -1,6 +1,7 @@
 import json
-import pypandoc
 from datetime import date
+
+import pypandoc
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -12,9 +13,8 @@ from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, RedirectView, TemplateView
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django_summernote.widgets import SummernoteWidget
-
 from templated_email import send_templated_mail
 
 from .forms import InvitacionForm, ProyectoForm

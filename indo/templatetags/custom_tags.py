@@ -1,7 +1,9 @@
 import urllib.parse
+
 from django import template
 from django.urls import reverse
 from django.utils.safestring import mark_safe
+
 
 register = template.Library()
 
