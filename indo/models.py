@@ -1,4 +1,5 @@
 from datetime import date
+
 from django.db import models
 from django.db.models.query_utils import Q
 from django.urls import reverse
@@ -6,11 +7,9 @@ from django.utils.translation import gettext_lazy as _
 
 
 class Centro(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     academico_id_nk = models.IntegerField(_("cód. académico"), blank=True, null=True)
-    rrhh_id_nk = models.CharField(
-        _("cód. RRHH"), max_length=4, blank=True, null=True, unique=True
-    )
+    rrhh_id_nk = models.CharField(_("cód. RRHH"), max_length=4, blank=True, null=True)
     nombre = models.CharField(max_length=255)
     tipo_centro = models.CharField(
         _("tipo de centro"), max_length=30, blank=True, null=True
@@ -64,6 +63,7 @@ class Centro(models.Model):
 
     class Meta:
         indexes = [models.Index(fields=["academico_id_nk"])]
+        unique_together = ["academico_id_nk", "rrhh_id_nk"]
 
 
 class Convocatoria(models.Model):
@@ -79,13 +79,11 @@ class Convocatoria(models.Model):
 
 
 class Departamento(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     academico_id_nk = models.IntegerField(
         "cód. académico", blank=True, db_index=True, null=True
     )
-    rrhh_id_nk = models.CharField(
-        "cód. RRHH", max_length=4, blank=True, null=True, unique=True
-    )
+    rrhh_id_nk = models.CharField("cód. RRHH", max_length=4, blank=True, null=True)
     nombre = models.CharField(max_length=255, blank=True, null=True)
     email = models.EmailField(_("email del departamento"), blank=True, null=True)
     email_secretaria = models.EmailField(
@@ -104,6 +102,9 @@ class Departamento(models.Model):
 
     def __str__(self):
         return f"{self.academico_id_nk} {self.rrhh_id_nk} {self.nombre}"
+
+    class Meta:
+        unique_together = ["academico_id_nk", "rrhh_id_nk"]
 
 
 class Estudio(models.Model):
