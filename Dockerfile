@@ -1,5 +1,5 @@
 # Pull base image
-FROM python:3.7-slim
+FROM python:3.7-slim-buster
 LABEL maintainer="Enrique Matías Sánchez <quique@unizar.es>"
 
 # Set environment variables
@@ -14,7 +14,7 @@ ENV PYTHONUNBUFFERED 1
 #   mime-support -- for mime types when serving static files
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-      libmariadbclient18 \
+      libmariadb3 \
       libpcre3 \
       libxmlsec1-openssl \
       mime-support \
@@ -31,9 +31,11 @@ COPY requirements.txt ./
 RUN set -ex \
   && BUILD_DEPS=" \
     gcc \
-    libmariadbclient-dev \
+    libmariadb-dev \
+    libmariadb-dev-compat \
     libpcre3-dev \
-    libxmlsec1-dev" \
+    libxmlsec1-dev \
+    pkg-config" \
   && apt-get update \
   && apt-get install -y --no-install-recommends $BUILD_DEPS \
   && pip install --no-cache-dir -r requirements.txt \
