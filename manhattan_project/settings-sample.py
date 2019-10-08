@@ -34,7 +34,7 @@ DEBUG = os.environ.get("DEBUG", False) == "True"
 ALLOWED_HOSTS = []  # ['*']
 
 
-DEFAULT_FROM_EMAIL = "leocricia@manhattan.local"
+DEFAULT_FROM_EMAIL = "La Maestra <leocricia@manhattan.local>"
 # Production value: 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 EMAIL_HOST = "smtp.manhattan.local"
@@ -205,6 +205,7 @@ SOCIAL_AUTH_SAML_ENABLED_IDPS = {
     "lord": {
         "entity_id": "https://FIXME.idp.com/saml2/idp/metadata.php",
         "url": "https://FIXME.idp.com/saml2/idp/SSOService.php",
+        "slo_url": "https://FIXME.idp.com/saml2/idp/SingleLogoutService.php",
         "x509cert": "Lovely spam, wonderful spam",
         "attr_user_permanent_id": "uid",
         "attr_full_name": "cn",  # "urn:oid:2.5.4.3"

@@ -3,6 +3,7 @@ certifi==2019.9.11
 chardet==3.0.4
 cx-oracle==7.2.3
 defusedxml==0.6.0 ; python_version >= '3.0'
+django-annoying==0.10.5
 django-crispy-forms==1.7.2
 django-render-block==0.6
 django-summernote==0.8.11.4

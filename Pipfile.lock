@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "1384080fab35e45a327687b8d4bdda953df7f2739799216cbea0d643754944d3"
+            "sha256": "4449b80f25d66ee94c09828817afdfc6562ebf9657c6fe99d79b9d3215e0753c"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -65,6 +65,14 @@
             ],
             "index": "pypi",
             "version": "==2.2.6"
+        },
+        "django-annoying": {
+            "hashes": [
+                "sha256:3654d16f9e2f86a2f8688820bcf6d797c93db89197a117b1930d350e7a9509dd",
+                "sha256:d9fe882258bf7278915e7835b4f93e12e7fd9b14c226eb06e210f9542aa5de5b"
+            ],
+            "index": "pypi",
+            "version": "==0.10.5"
         },
         "django-crispy-forms": {
             "hashes": [

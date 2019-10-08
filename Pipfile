@@ -18,6 +18,7 @@ django-crispy-forms = "==1.7.2"
 django-summernote = "*"
 django-templated-email = "*"
 pypandoc = "*"
+django-annoying = "*"
 
 [requires]
 python_version = "3.7"
