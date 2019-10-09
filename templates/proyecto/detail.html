@@ -97,7 +97,7 @@
       </table>
     </div>
   {% else %}
-    <p>{% trans 'Aquí aparecerán las personas a las que invite a participar en este proyecto.'%}</p>
+    <p>{% trans 'Aquí aparecerán las personas a las que invite a participar en este proyecto.' %}</p>
   {% endif %}
 
   {% if permitir_edicion %}
@@ -128,7 +128,7 @@
       </table>
     </div>
   {% else %}
-    <p>{% trans 'Aquí aparecerán las personas que acepten la invitación a participar en este proyecto.'%}</p>
+    <p>{% trans 'Aquí aparecerán las personas que acepten la invitación a participar en este proyecto.' %}</p>
   {% endif %}
   <br />
 
@@ -211,8 +211,8 @@
       <div class="modal-body">
         <p>{% trans "Una vez presentada ya no podrá hacer ningún cambio." %}</p>
         <p>
-          {% trans "Se enviarán mensajes informativos a las personas invitadas y, en su caso, a quien deba dar su visto
-          bueno." %}
+          {% blocktrans %}Se enviarán mensajes informativos a las personas invitadas y,
+          en su caso, a quien deba dar su visto bueno.{% endblocktrans %}
         </p>
         <p>
           {% blocktrans %}Al presentar la solicitud, usted se compromete, en caso de concesión, a cumplir con las
