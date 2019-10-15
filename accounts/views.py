@@ -46,7 +46,7 @@ class LogoutView(LoginRequiredMixin, RedirectView):
 
     def get(self, request, *args, **kwargs):
         saml_backend = load_backend(
-            load_strategy(request), "saml", redirect_uri="/accounts/sls/"
+            load_strategy(request), "saml", redirect_uri="{% url 'sls' %}"
         )
         # As of now, this code only handles the first association.
         association = request.user.social_auth.first()
