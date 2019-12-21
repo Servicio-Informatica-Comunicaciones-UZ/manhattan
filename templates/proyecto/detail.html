@@ -14,58 +14,58 @@
     </div>
   {% endif %}
 
-  <h1>{{ proyecto.titulo }}</h1>
+  <h1 id="titulo">{{ proyecto.titulo }}</h1>
   {# DetailView proporciona el objeto de contexto `proyecto` #}
   <hr />
   <br />
 
   <div class="table-responsive">
-    <table class="table table-hover table-striped table-sm">
+    <table class="table table-hover table-striped table-sm" aria-describedby="titulo">
       <tr>
-        <td><strong>{% trans 'Convocatoria' %}</strong>:</td>
+        <th scope="row"><strong>{% trans 'Convocatoria' %}</strong>:</th>
         <td>{{ proyecto.convocatoria_id }}</td>
       </tr>
       <tr>
-        <td><strong>{% trans 'Programa' %}</strong>:</td>
+        <th scope="row"><strong>{% trans 'Programa' %}</strong>:</th>
         <td>{{ proyecto.programa.nombre_corto }} ({{ proyecto.programa.nombre_largo }})</td>
       </tr>
       {% if proyecto.linea %}
       <tr>
-        <td><strong>{% trans 'Línea' %}</strong>:</td>
+        <th scope="row"><strong>{% trans 'Línea' %}</strong>:</th>
         <td>{{ proyecto.linea.nombre }}</td>
       </tr>
       {% endif %}
       {% if proyecto.centro %}
       <tr>
-        <td><strong>{% trans 'Centro' %}</strong>:</td>
+        <th scope="row"><strong>{% trans 'Centro' %}</strong>:</th>
         <td>{{ proyecto.centro.nombre }}</td>
       </tr>
       {% endif %}
       {% if proyecto.estudio %}
       <tr>
-        <td><strong>{% trans 'Estudio' %}</strong>:</td>
+        <th scope="row"><strong>{% trans 'Estudio' %}</strong>:</th>
         <td>{{ proyecto.estudio.nombre }}</td>
       </tr>
       {% endif %}
       {% if coordinador_principal %}
         <tr>
-          <td><strong>{{ coordinador_principal.get_cargo }}</strong>:</td>
+          <th scope="row"><strong>{{ coordinador_principal.get_cargo }}</strong>:</th>
           <td>{{ coordinador_principal.usuario.get_full_name }}</td>
         </tr>
       {% endif %}
       {% if coordinador %}
       <tr>
-        <td><strong>{{ coordinador.get_cargo }}</strong>:</td>
+        <th scope="row"><strong>{{ coordinador.get_cargo }}</strong>:</th>
         <td>{{ coordinador.usuario.get_full_name }}</td>
       </tr>
       {% endif %}
       <tr>
-        <td><strong>{% trans 'Estado' %}</strong>:</td>
+        <th scope="row"><strong>{% trans 'Estado' %}</strong>:</th>
         <td>{{ proyecto.get_estado_display }}</td>
       </tr>
       {% if proyecto.programa.requiere_visto_bueno %}
       <tr>
-        <td><strong>{% trans 'Visto bueno' %}</strong>:</td>
+        <th scope="row"><strong>{% trans 'Visto bueno' %}</strong>:</th>
         <td>{{ proyecto.visto_bueno | yesno:"Sí,No,—" }}</td>
       </tr>
       {% endif %}
@@ -73,10 +73,17 @@
   </div>
   <br />
 
-  <h3>{% trans 'Invitaciones' %}</h3>
+  <h3 id="invitaciones">{% trans 'Invitaciones' %}</h3>
   {% if invitados %}
     <div class="table-responsive">
-      <table class="table table-hover table-striped table-sm">
+      <table class="table table-hover table-striped table-sm" aria-describedby="invitaciones">
+        <tr>
+          <th scope="col">{% trans "Usuario" %}</th>
+          <th scope="col">{% trans "Estado" %}</th>
+	  {% if permitir_edicion %}
+            <th scope="col">{% trans "Acción" %}</th>
+          {% endif %}
+        </tr>
         {% for invitado in invitados %}
           <tr>
             <td>{{ invitado.usuario.get_full_name }}</td>
@@ -109,10 +116,16 @@
   {% endif %}
   <br />
 
-  <h3>{% trans 'Participantes' %}</h3>
+  <h3 id="participantes">{% trans 'Participantes' %}</h3>
   {% if participantes %}
     <div class="table-responsive">
-      <table class="table table-hover table-striped table-sm">
+      <table class="table table-hover table-striped table-sm" aria-describedby="participantes">
+         <tr>
+          <th scope="col">{% trans "Usuario" %}</th>
+          {% if permitir_edicion %}
+            <th scope="col">{% trans "Acción" %}</th>
+          {% endif %}
+        </tr>
         {% for participante in participantes %}
           <tr>
             <td>{{ participante.usuario.get_full_name }}</td>

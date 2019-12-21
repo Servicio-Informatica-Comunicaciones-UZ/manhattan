@@ -5,14 +5,14 @@
 
 {% block content %}
 <div class="container-blanco">
-  <h1>{% trans "¡Bienvenid@!" %}</h1>
+  <h1 id="datos">{% trans "Datos del usuario" %}</h1>
   <hr />
   <br />
 
-  <table class="table table-striped table-hover">
+  <table class="table table-striped table-hover" aria-describedby="datos">
     {% for key, value in datos_usuario.items %}
       <tr>
-        <td>{{key}}</td>
+        <th scope="row">{{key}}</td>
         <td>{{value}}</td>
       </tr>
     {% endfor %}

@@ -5,18 +5,18 @@
 
 {% block content %}
 <div class="container-blanco">
-  <h1>{% trans "Proyectos coordinados" %}</h1>
+  <h1 id="coordinados">{% trans "Proyectos coordinados" %}</h1>
   <hr />
   <br />
 
   {% if proyectos_coordinados %}
     <div class="table-responsive">
-      <table class="table table-hover table-striped table-sm">
+      <table class="table table-hover table-striped table-sm" aria-describedby="coordinados">
         <tr>
-          <th>{% trans 'Programa' %}</th>
-          <th>{% trans 'Línea' %}</th>
-          <th>{% trans 'Título' %}</th>
-          <th>{% trans 'Estado' %}</th>
+          <th scope="col">{% trans 'Programa' %}</th>
+          <th scope="col">{% trans 'Línea' %}</th>
+          <th scope="col">{% trans 'Título' %}</th>
+          <th scope="col">{% trans 'Estado' %}</th>
         </tr>
         {% for proyecto in proyectos_coordinados %}
           <tr>
@@ -35,20 +35,20 @@
   <p><a href="{% url 'proyecto_new' %}" class="btn btn-info">{% trans "Solicitar nuevo proyecto" %}</a></p>
   <br /><br />
 
-  <h1>{% trans "Proyectos en los que participo" %}</h1>
+  <h1 id="participados">{% trans "Proyectos en los que participo" %}</h1>
   <hr />
   <br />
 
   {% if proyectos_participados %}
     <div class="table-responsive">
-      <table class="table table-hover table-striped table-sm">
+      <table class="table table-hover table-striped table-sm" aria-describedby="participados">
         <tr>
-          <th>{% trans 'Programa' %}</th>
-          <th>{% trans 'Línea' %}</th>
-          <th>{% trans 'Título' %}</th>
-          <th>{% trans 'Coordinador' %}</th>
-          <th>{% trans 'Estado' %}</th>
-          <th>{% trans 'Acción' %}</th>
+          <th scope="col">{% trans 'Programa' %}</th>
+          <th scope="col">{% trans 'Línea' %}</th>
+          <th scope="col">{% trans 'Título' %}</th>
+          <th scope="col">{% trans 'Coordinador' %}</th>
+          <th scope="col">{% trans 'Estado' %}</th>
+          <th scope="col">{% trans 'Acción' %}</th>
         </tr>
 
         {% for proyecto in proyectos_participados %}
@@ -79,20 +79,20 @@
   {% endif %}
   <br /><br />
 
-  <h1>{% trans "Invitaciones a proyectos" %}</h1>
+  <h1 id="invitaciones">{% trans "Invitaciones a proyectos" %}</h1>
   <hr />
   <br />
 
   {% if proyectos_invitado %}
     <div class="table-responsive">
-      <table class="table table-hover table-striped table-sm">
+      <table class="table table-hover table-striped table-sm" aria-describedby="invitaciones">
         <tr>
-          <th>{% trans 'Programa' %}</th>
-          <th>{% trans 'Línea' %}</th>
-          <th>{% trans 'Título' %}</th>
-          <th>{% trans 'Coordinador' %}</th>
-          <th>{% trans 'Estado' %}</th>
-          <th>{% trans 'Acción' %}</th>
+          <th scope="col">{% trans 'Programa' %}</th>
+          <th scope="col">{% trans 'Línea' %}</th>
+          <th scope="col">{% trans 'Título' %}</th>
+          <th scope="col">{% trans 'Coordinador' %}</th>
+          <th scope="col">{% trans 'Estado' %}</th>
+          <th scope="col">{% trans 'Acción' %}</th>
         </tr>
 
         {% for proyecto in proyectos_invitado %}
@@ -132,20 +132,20 @@
   <br /><br />
 
   {% if proyectos_centros_dirigidos %}
-    <h1>{% trans "Proyectos impulsados por mi centro" %}</h1>
+    <h1 id="del-centro">{% trans "Proyectos impulsados por mi centro" %}</h1>
     <hr />
     <br />
 
     <div class="table-responsive">
-      <table class="table table-hover table-striped table-sm">
+      <table class="table table-hover table-striped table-sm" aria-describedby="del-centro">
         <tr>
-          <th>{% trans 'Programa' %}</th>
-          <th>{% trans 'Línea' %}</th>
-          <th>{% trans 'Título' %}</th>
-          <th>{% trans 'Coordinador' %}</th>
-          <th>{% trans 'Estado' %}</th>
-          <th>{% trans 'Visto bueno' %}</th>
-          <th>{% trans 'Acción' %}</th>
+          <th scope="col">{% trans 'Programa' %}</th>
+          <th scope="col">{% trans 'Línea' %}</th>
+          <th scope="col">{% trans 'Título' %}</th>
+          <th scope="col">{% trans 'Coordinador' %}</th>
+          <th scope="col">{% trans 'Estado' %}</th>
+          <th scope="col">{% trans 'Visto bueno' %}</th>
+          <th scope="col">{% trans 'Acción' %}</th>
         </tr>
         {% for proyecto in proyectos_centros_dirigidos %}
           <tr>
