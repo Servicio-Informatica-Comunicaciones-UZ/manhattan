@@ -6,8 +6,6 @@ from django.db import connections
 class UsuarioNoEncontrado(Exception):
     """Excepción elevada cuando no se encuentra al usuario en Gestión de Identidades"""
 
-    pass
-
 
 def dictfetchall(cursor):
     """Return all rows from a cursor as a dict."""
@@ -21,14 +19,14 @@ def dictfetchone(cursor):
     row = cursor.fetchone()
     if row:
         return dict(zip(columns, row))
-    else:
-        raise UsuarioNoEncontrado(
-            "Usuario desconocido. No se ha encontrado en Gestión de Identidades."
-        )
+
+    raise UsuarioNoEncontrado(
+        "Usuario desconocido. No se ha encontrado en Gestión de Identidades."
+    )
 
 
 def get_identidad(strategy, response, user, *args, **kwargs):
-    """Actualiza el modelo del usuario con los datos obtenidos de Gestión de Identidades."""
+    """Actualiza el usuario con los datos obtenidos de Gestión de Identidades."""
     with connections["identidades"].cursor() as cursor:
         cursor.execute(
             "SELECT * FROM GESTIDEN.GI_V_IDENTIDAD WHERE NIP = %s", [user.username]
