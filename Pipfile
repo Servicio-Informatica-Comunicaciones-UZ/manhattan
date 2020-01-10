@@ -8,17 +8,17 @@ pylint = "*"
 coverage = "*"
 
 [packages]
-django = "==2.2.6"
+django = "==3.0.2"  # Remember to re-generate `requirements.txt`
 mysqlclient = "*"
 social-auth-app-django = "*"
 social-auth-core = {extras = ["saml"],version = "*"}
 python3-saml = "*"
 cx-oracle = "*"
-django-crispy-forms = "==1.7.2"
+django-annoying = "*"
+django-crispy-forms = "==1.8.1"
 django-summernote = "*"
 django-templated-email = "*"
 pypandoc = "*"
-django-annoying = "*"
 
 [requires]
 python_version = "3.7"
