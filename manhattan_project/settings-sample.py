@@ -306,3 +306,5 @@ SUMMERNOTE_CONFIG = {
     #     '//somewhere_in_internet/summernote-plugin-name.js',
     # },
 }
+
+X_FRAME_OPTIONS = "SAMEORIGIN"  # Required by SummernoteWidget on Django 3.x
