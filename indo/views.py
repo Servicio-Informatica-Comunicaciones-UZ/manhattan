@@ -95,7 +95,7 @@ class ChecksMixin(UserPassesTestMixin):
         )
 
     def es_decano_o_director(self, proyecto_id):
-        """Devuelve si el usuario actual es decano o director del proyecto indicado."""
+        """Devuelve si el usuario actual es decano/director del centro del proyecto."""
         usuario_actual = self.request.user
         proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
         centro = proyecto.centro
@@ -107,6 +107,19 @@ class ChecksMixin(UserPassesTestMixin):
         )
 
         return usuario_actual.username == str(nip_decano)
+
+    def esta_vinculado_o_es_decano(self, proyecto_id):
+        """
+        Devuelve si el usuario actual está vinculado al proyecto indicado
+        o es decano o director del centro del proyecto."""
+        esta_autorizado = self.esta_vinculado(proyecto_id) or self.es_decano_o_director(
+            proyecto_id
+        )
+        self.permission_denied_message = _(
+            "Usted no está vinculado a este proyecto, "
+            "ni es decano/director del centro del proyecto."
+        )
+        return esta_autorizado
 
 
 class AyudaView(TemplateView):
@@ -373,9 +386,7 @@ class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
     def test_func(self):
         # TODO: Los evaluadores y gestores también tendrán que tener acceso.
         proyecto_id = self.kwargs["pk"]
-        return self.esta_vinculado(proyecto_id) or self.es_decano_o_director(
-            proyecto_id
-        )
+        return self.esta_vinculado_o_es_decano(proyecto_id)
 
 
 class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
