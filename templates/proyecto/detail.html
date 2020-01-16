@@ -191,6 +191,7 @@
     </p>
   {% endif %}
 
+  <!-- Botones -->
   <br style="clear: both;" />
   <div class="btn-group" role="group" aria-label="Botones">
     <a href="{% url 'mis_proyectos' proyecto.convocatoria_id %}" class="btn btn-info">
@@ -198,10 +199,51 @@
     </a>
 
     {% if permitir_edicion %}
+      <button class="btn btn-danger" data-toggle="modal" data-target="#anularModal" type="button">
+        <span class="fas fa-trash-alt"></span> {% trans 'Anular' %}
+      </button>
       <button class="btn btn-warning" data-toggle="modal" data-target="#presentarModal" type="button">
         <span class="fas fa-check"></span> {% trans 'Presentar' %}
       </button>
     {% endif %}
+  </div>
+</div>
+
+<div
+  class="modal fade"
+  id="anularModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="anularModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="anularModalLabel">{% trans "¿Seguro que desea anular la solicitud?" %}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>
+          {% blocktrans %}Si anula esta solicitud de proyecto, perderá todos los
+          datos introducidos en ella.{% endblocktrans %}
+        </p>
+        <p>{% trans "Esta acción es <strong>irreversible</strong>." %}</p>
+      </div>
+      <div class="modal-footer">
+        <form action="{% url 'proyecto_anular' pk=proyecto.id %}" id="eliminar-form" method="post">
+          {% csrf_token %}
+          <button type="button" class="btn btn-info" data-dismiss="modal">
+            <span class="fas fa-times"></span> {% trans "Cancelar" %}
+          </button>
+          <button type="submit" class="btn btn-danger">
+            <span class="fas fa-trash-alt"></span> {% trans "Anular" %}
+          </button>
+        </form>
+      </div>
+    </div>
   </div>
 </div>
 

@@ -307,6 +307,28 @@ class ProyectoCreateView(LoginRequiredMixin, ChecksMixin, CreateView):
         return self.es_pas_o_pdi()
 
 
+class ProyectoAnularView(LoginRequiredMixin, ChecksMixin, RedirectView):
+    """
+    Cambia el estado de una solicitud de proyecto a Anulada.
+    """
+
+    model = Proyecto
+
+    def get_redirect_url(self, *args, **kwargs):
+        return reverse_lazy("mis_proyectos", kwargs={"anyo": date.today().year})
+
+    def post(self, request, *args, **kwargs):
+        proyecto = Proyecto.objects.get(pk=kwargs.get("pk"))
+        proyecto.estado = "ANULADO"
+        proyecto.save()
+
+        messages.success(request, _("Su solicitud de proyecto ha sido anulada."))
+        return super().post(request, *args, **kwargs)
+
+    def test_func(self):
+        return self.es_coordinador(self.kwargs["pk"])
+
+
 class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
     """Muestra una solicitud de proyecto."""
 
@@ -555,6 +577,7 @@ class ProyectosUsuarioView(LoginRequiredMixin, TemplateView):
                     "coordinador_principal",
                 ],
             )
+            .exclude(estado="ANULADO")
             .order_by("programa__nombre_corto", "linea__nombre", "titulo")
             .all()
         )

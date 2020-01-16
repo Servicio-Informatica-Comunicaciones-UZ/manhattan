@@ -230,6 +230,7 @@ class Proyecto(models.Model):
     )
     estado = models.CharField(
         choices=(
+            ("ANULADO", "Solicitud anulada"),
             ("BORRADOR", "Solicitud en preparación"),
             ("SOLICITADO", "Solicitud presentada"),
         ),

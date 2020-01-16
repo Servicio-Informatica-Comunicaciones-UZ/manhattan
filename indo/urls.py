@@ -10,6 +10,7 @@ from .views import (
     ParticipanteDeclinarView,
     ParticipanteDeleteView,
     ParticipanteRenunciarView,
+    ProyectoAnularView,
     ProyectoCreateView,
     ProyectoDetailView,
     ProyectoPresentarView,
@@ -53,6 +54,11 @@ urlpatterns = [
         "proyecto/<int:pk>/edit/<campo>",
         ProyectoUpdateFieldView.as_view(),
         name="proyecto_update_field",
+    ),
+    path(
+        "proyecto/<int:pk>/anular/",
+        ProyectoAnularView.as_view(),
+        name="proyecto_anular",
     ),
     path(
         "proyecto/<int:pk>/presentar",
