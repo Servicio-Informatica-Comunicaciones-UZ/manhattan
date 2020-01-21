@@ -59,10 +59,9 @@ class Centro(models.Model):
     esta_activo = models.BooleanField(_("¿Activo?"), default=False)
 
     def __str__(self):
-        return f"{self.academico_id_nk} {self.rrhh_id_nk} {self.nombre}"
+        return f"{self.nombre} ({self.academico_id_nk} / {self.rrhh_id_nk})"
 
     class Meta:
-        indexes = [models.Index(fields=["academico_id_nk"])]
         unique_together = ["academico_id_nk", "rrhh_id_nk"]
 
 
@@ -101,7 +100,7 @@ class Departamento(models.Model):
     )
 
     def __str__(self):
-        return f"{self.academico_id_nk} {self.rrhh_id_nk} {self.nombre}"
+        return f"{self.nombre} ({self.academico_id_nk} / {self.rrhh_id_nk})"
 
     class Meta:
         unique_together = ["academico_id_nk", "rrhh_id_nk"]
