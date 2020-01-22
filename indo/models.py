@@ -1,7 +1,4 @@
-from datetime import date
-
 from django.db import models
-from django.db.models.query_utils import Q
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
@@ -63,6 +60,7 @@ class Centro(models.Model):
 
     class Meta:
         unique_together = ["academico_id_nk", "rrhh_id_nk"]
+        ordering = ["nombre"]
 
 
 class Convocatoria(models.Model):
@@ -123,7 +121,10 @@ class Estudio(models.Model):
     tipo_estudio = models.ForeignKey("TipoEstudio", on_delete=models.PROTECT)
 
     def __str__(self):
-        return self.nombre
+        return f"{self.nombre} ({self.tipo_estudio.nombre})"
+
+    class Meta:
+        ordering = ["nombre"]
 
 
 class Evento(models.Model):
@@ -454,6 +455,7 @@ class Proyecto(models.Model):
         on_delete=models.PROTECT,
         blank=True,
         null=True,
+        limit_choices_to={"esta_activo": True},
         help_text=_("Sólo obligatorio para PIET."),
     )
     licencia = models.ForeignKey("Licencia", on_delete=models.PROTECT, null=True)
@@ -462,15 +464,10 @@ class Proyecto(models.Model):
         on_delete=models.PROTECT,
         blank=True,
         null=True,
-        limit_choices_to=Q(programa__convocatoria_id=date.today().year),
         verbose_name=_("Línea"),
         help_text=_("En su caso."),
     )
-    programa = models.ForeignKey(
-        "Programa",
-        on_delete=models.PROTECT,
-        limit_choices_to={"convocatoria_id": date.today().year},
-    )
+    programa = models.ForeignKey("Programa", on_delete=models.PROTECT)
     visto_bueno = models.BooleanField(_("Visto bueno"), null=True)
 
     def en_borrador(self):

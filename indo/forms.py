@@ -1,11 +1,14 @@
+from datetime import date
+
 from accounts.models import CustomUser
 from accounts.pipeline import UsuarioNoEncontrado, get_identidad
 from django import forms
+from django.db.models import BLANK_CHOICE_DASH
 from django.utils.translation import gettext_lazy as _
 from social_django.models import UserSocialAuth
 from social_django.utils import load_strategy
 
-from .models import ParticipanteProyecto, Proyecto, TipoParticipacion
+from .models import Linea, ParticipanteProyecto, Programa, Proyecto, TipoParticipacion
 
 
 class InvitacionForm(forms.ModelForm):
@@ -126,6 +129,25 @@ class ProyectoForm(forms.ModelForm):
 
         if programa.nombre_corto == "PIET" and not estudio:
             self.add_error("estudio", _("Los PIET deben estar vinculado a un estudio."))
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["programa"].widget.choices = tuple(
+            BLANK_CHOICE_DASH
+            + list(
+                Programa.objects.filter(convocatoria_id=date.today().year)
+                .values_list("id", "nombre_corto")
+                .all()
+            )
+        )
+        self.fields["linea"].widget.choices = tuple(
+            BLANK_CHOICE_DASH
+            + list(
+                Linea.objects.filter(programa__convocatoria_id=date.today().year)
+                .values_list("id", "nombre")
+                .all()
+            )
+        )
 
     class Meta:
         fields = ["titulo", "descripcion", "programa", "linea", "centro", "estudio"]
