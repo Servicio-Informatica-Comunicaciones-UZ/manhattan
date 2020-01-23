@@ -1,5 +1,6 @@
 import json
 
+from django.core.validators import ValidationError, validate_email
 from django.db import connections
 
 
@@ -29,7 +30,8 @@ def get_identidad(strategy, response, user, *args, **kwargs):
     """Actualiza el usuario con los datos obtenidos de Gestión de Identidades."""
     with connections["identidades"].cursor() as cursor:
         cursor.execute(
-            "SELECT * FROM GESTIDEN.GI_V_IDENTIDAD WHERE NIP = %s", [user.username]
+            "SELECT * FROM GESTIDEN.GI_V_IDENTIDAD WHERE NIP = %s AND INDBAJA = 'N'",
+            [user.username],
         )
         identidad = dictfetchone(cursor)
         cursor.execute(
@@ -46,10 +48,18 @@ def get_identidad(strategy, response, user, *args, **kwargs):
     user.first_name = identidad.get("NOMBRE")
     user.last_name = identidad.get("APELLIDO_1")
     user.last_name_2 = identidad.get("APELLIDO_2")
-    user.email = identidad.get("CORREO_PERSONAL") or identidad.get("CORREO_PRINCIPAL")
+    correo_personal = (
+        identidad.get("CORREO_PERSONAL")
+        if is_email_valid(identidad.get("CORREO_PERSONAL"))
+        else None
+    )
+    correo_principal = (
+        identidad.get("CORREO_PRINCIPAL")
+        if is_email_valid(identidad.get("CORREO_PRINCIPAL"))
+        else None
+    )
     # El email es un campo NOT NULL en el modelo.
-    if not user.email:
-        user.email = ""
+    user.email = correo_personal or correo_principal or ""
     user.is_active = identidad.get("ACTIVO") != "N"
     user.nombre_oficial = identidad.get("NOMBRE_ADMIN")
     user.numero_documento = identidad.get("DOC_ID")
@@ -97,3 +107,12 @@ def get_identidad(strategy, response, user, *args, **kwargs):
 
     # user.save()
     strategy.storage.user.changed(user)
+
+
+def is_email_valid(email):
+    """Validate email address"""
+    try:
+        validate_email(email)
+    except ValidationError:
+        return False
+    return True
