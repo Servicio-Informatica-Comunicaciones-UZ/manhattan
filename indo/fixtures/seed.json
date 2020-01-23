@@ -124,5 +124,7 @@
     },
     { "model": "indo.tipoparticipacion", "pk": "coordinador", "fields": {} },
     { "model": "indo.tipoparticipacion", "pk": "coordinador_principal", "fields": {} },
+    { "model": "indo.tipoparticipacion", "pk": "invitacion_rehusada", "fields": {} },
+    { "model": "indo.tipoparticipacion", "pk": "invitado", "fields": {} },
     { "model": "indo.tipoparticipacion", "pk": "participante", "fields": {} }
 ]
