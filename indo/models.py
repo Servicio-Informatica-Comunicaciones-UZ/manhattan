@@ -220,7 +220,7 @@ class Proyecto(models.Model):
     codigo = models.CharField(max_length=31, null=True)
     titulo = models.CharField(_("Título"), max_length=255)
     descripcion = models.TextField(
-        _("Descripción"),
+        _("Resumen"),
         null=True,
         max_length=4095,
         help_text=_(
