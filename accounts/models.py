@@ -78,7 +78,7 @@ class CustomUser(AbstractUser):
             tipo_participacion="participante", proyecto__convocatoria_id=anyo
         ).count()
         num_como_coordinador = self.vinculaciones.filter(
-            tipo_participacion="coordinador",
+            tipo_participacion__in=["coordinador", "coordinador_principal"],
             proyecto__convocatoria_id=anyo,
             proyecto__estado="SOLICITADO",
         ).count()
