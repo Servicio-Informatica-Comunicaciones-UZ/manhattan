@@ -284,9 +284,10 @@ class ProyectoCreateView(LoginRequiredMixin, ChecksMixin, CreateView):
     def get_form(self, form_class=None):
         """
         Devuelve el formulario añadiendo automáticamente el campo Convocatoria,
-        que es requerido.
+        que es requerido, y el usuario, para comprobar si tiene los permisos necesarios.
         """
         form = super(ProyectoCreateView, self).get_form(form_class)
+        form.instance.user = self.request.user
         form.instance.convocatoria = Convocatoria(date.today().year)
         return form
 

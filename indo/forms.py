@@ -128,7 +128,21 @@ class ProyectoForm(forms.ModelForm):
             )
 
         if programa.nombre_corto == "PIET" and not estudio:
-            self.add_error("estudio", _("Los PIET deben estar vinculado a un estudio."))
+            self.add_error(
+                "estudio", _("Los PIET deben estar vinculados a un estudio.")
+            )
+
+        nip_coordinadores = list(
+            map(lambda p: f"{p.nip_coordinador}", estudio.planes.all())
+        )
+        if (
+            programa.nombre_corto == "PIET"
+            and self.instance.user.username not in nip_coordinadores
+        ):
+            self.add_error(
+                "estudio",
+                _("Los PIET sólo los pueden solicitar los coordinadores del estudio."),
+            )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

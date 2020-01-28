@@ -169,7 +169,9 @@ class Plan(models.Model):
     )
     esta_activo = models.BooleanField(_("¿Activo?"), default=True)
     centro = models.ForeignKey("Centro", on_delete=models.PROTECT)
-    estudio = models.ForeignKey("Estudio", on_delete=models.PROTECT)
+    estudio = models.ForeignKey(
+        "Estudio", on_delete=models.PROTECT, related_name="planes"
+    )
 
 
 class ParticipanteProyecto(models.Model):
@@ -484,6 +486,7 @@ class Proyecto(models.Model):
         except ParticipanteProyecto.DoesNotExist:
             return None
 
+    # TODO: Soporte para coordinador_principal
     def get_usuario_coordinador(self):
         pp = ParticipanteProyecto.objects.get(
             proyecto_id=self.id, tipo_participacion_id="coordinador"
