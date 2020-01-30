@@ -37,7 +37,7 @@ class ChecksMixin(UserPassesTestMixin):
         proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
         usuario_actual = self.request.user
         coordinadores_participantes = proyecto.participantes.filter(
-            tipo_participacion__in=["coordinador", "coordinador_principal"]
+            tipo_participacion__in=["coordinador", "coordinador_2"]
         ).all()
         usuarios_coordinadores = list(
             map(lambda p: p.usuario, coordinadores_participantes)
@@ -292,16 +292,9 @@ class ProyectoCreateView(LoginRequiredMixin, ChecksMixin, CreateView):
         return form
 
     def _guardar_coordinador(self, proyecto):
-        # Los PIET debe solicitarlos uno de los coordinadores del estudio
-        # ("coordinador principal") quien podrá nombrar a otro coordinador.
-        if proyecto.programa.nombre_corto == "PIET":
-            tipo_participacion = "coordinador_principal"
-        else:
-            tipo_participacion = "coordinador"
-
         pp = ParticipanteProyecto(
             proyecto=proyecto,
-            tipo_participacion=TipoParticipacion(nombre=tipo_participacion),
+            tipo_participacion=TipoParticipacion(nombre="coordinador"),
             usuario=self.request.user,
         )
         pp.save()
@@ -352,13 +345,11 @@ class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        coordinador_principal = self.object.get_participante_or_none(
-            "coordinador_principal"
-        )
-        context["coordinador_principal"] = coordinador_principal
+        pp_coordinador = self.object.get_participante_or_none("coordinador")
+        context["pp_coordinador"] = pp_coordinador
 
-        coordinador = self.object.get_participante_or_none("coordinador")
-        context["coordinador"] = coordinador
+        pp_coordinador_2 = self.object.get_participante_or_none("coordinador_2")
+        context["pp_coordinador_2"] = pp_coordinador_2
 
         participantes = (
             self.object.participantes.filter(tipo_participacion="participante")
@@ -586,7 +577,7 @@ class ProyectosUsuarioView(LoginRequiredMixin, TemplateView):
                 participantes__usuario=usuario,
                 participantes__tipo_participacion_id__in=[
                     "coordinador",
-                    "coordinador_principal",
+                    "coordinador_2",
                 ],
             )
             .exclude(estado="ANULADO")

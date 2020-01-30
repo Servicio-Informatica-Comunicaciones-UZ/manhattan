@@ -56,7 +56,7 @@
             <td>{{proyecto.programa.nombre_corto}}</td>
             <td>{{proyecto.linea.nombre}}</td>
             <td><a href="{% url 'proyecto_detail' proyecto.id %}">{{ proyecto.titulo }}</a></td>
-            <td>{{proyecto.get_usuario_coordinador.get_full_name}}</td>
+            <td>{{proyecto.get_coordinador.get_full_name}}</td>
             <td>{{proyecto.get_estado_display}}</td>
             <td>
               <button
@@ -100,7 +100,7 @@
             <td>{{proyecto.programa.nombre_corto}}</td>
             <td>{{proyecto.linea.nombre}}</td>
             <td><a href="{% url 'proyecto_detail' proyecto.id %}">{{ proyecto.titulo }}</a></td>
-            <td>{{proyecto.get_usuario_coordinador.get_full_name}}</td>
+            <td>{{proyecto.get_coordinador.get_full_name}}</td>
             <td>{{proyecto.get_estado_display}}</td>
             <td>
               <form action="{% url 'participante_aceptar' proyecto_id=proyecto.id %}" id="aceptar-form" method="post">

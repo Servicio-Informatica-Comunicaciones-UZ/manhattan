@@ -188,10 +188,10 @@ class ParticipanteProyecto(models.Model):
     def get_cargo(self):
         if self.tipo_participacion.nombre == "coordinador":
             return _("Coordinadora") if self.usuario.sexo == "F" else _("Coordinador")
-        if self.tipo_participacion.nombre == "coordinador_principal":
+        if self.tipo_participacion.nombre == "coordinador_2":
             if self.usuario.sexo == "F":
-                return _("Coordinadora principal")
-            return _("Coordinador principal")
+                return _("Coordinadora auxiliar")
+            return _("Coordinador auxiliar")
         return _("Participante")
 
 
@@ -486,12 +486,20 @@ class Proyecto(models.Model):
         except ParticipanteProyecto.DoesNotExist:
             return None
 
-    # TODO: Soporte para coordinador_principal
-    def get_usuario_coordinador(self):
-        pp = ParticipanteProyecto.objects.get(
-            proyecto_id=self.id, tipo_participacion_id="coordinador"
-        )
-        return pp.usuario
+    def get_coordinador(self):
+        """Devuelve el usuario coordinador del proyecto"""
+        coordinador = self.get_participante_or_none("coordinador")
+        return coordinador.usuario if coordinador else None
+
+    def get_coordinador_2(self):
+        """Devuelve el segundo coordinador del proyecto (los PIET pueden tener 2)."""
+        coordinador_2 = self.get_participante_or_none("coordinador_2")
+        return coordinador_2.usuario if coordinador_2 else None
+
+    def get_coordinadores(self):
+        """Devuelve los usuarios coordinadores del proyecto."""
+        coordinadores = [self.get_coordinador(), self.get_coordinador_2()]
+        return list(filter(None, coordinadores))
 
     def get_usuarios_vinculados(self):
         """

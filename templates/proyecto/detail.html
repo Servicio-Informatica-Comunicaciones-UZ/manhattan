@@ -47,17 +47,17 @@
         <td>{{ proyecto.estudio.nombre }}</td>
       </tr>
       {% endif %}
-      {% if coordinador_principal %}
-        <tr>
-          <th scope="row"><strong>{{ coordinador_principal.get_cargo }}</strong>:</th>
-          <td>{{ coordinador_principal.usuario.get_full_name }}</td>
-        </tr>
-      {% endif %}
-      {% if coordinador %}
+      {% if pp_coordinador %}
       <tr>
-        <th scope="row"><strong>{{ coordinador.get_cargo }}</strong>:</th>
-        <td>{{ coordinador.usuario.get_full_name }}</td>
+        <th scope="row"><strong>{{ pp_coordinador.get_cargo }}</strong>:</th>
+        <td>{{ pp_coordinador.usuario.get_full_name }}</td>
       </tr>
+      {% endif %}
+      {% if pp_coordinador_2 %}
+        <tr>
+          <th scope="row"><strong>{{ pp_coordinador_2.get_cargo }}</strong>:</th>
+          <td>{{ pp_coordinador_2.usuario.get_full_name }}</td>
+        </tr>
       {% endif %}
       <tr>
         <th scope="row"><strong>{% trans 'Estado' %}</strong>:</th>
