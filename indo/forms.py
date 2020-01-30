@@ -132,9 +132,9 @@ class ProyectoForm(forms.ModelForm):
                 "estudio", _("Los PIET deben estar vinculados a un estudio.")
             )
 
-        nip_coordinadores = list(
-            map(lambda p: f"{p.nip_coordinador}", estudio.planes.all())
-        )
+        nip_coordinadores = [
+            f"{p.nip_coordinador}" for p in estudio.planes.all() if p.nip_coordinador
+        ]
         if (
             programa.nombre_corto == "PIET"
             and self.instance.user.username not in nip_coordinadores
