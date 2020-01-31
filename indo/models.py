@@ -474,7 +474,8 @@ class Proyecto(models.Model):
 
     class Meta:
         permissions = [
-            ("listar_proyectos", _("Puede ver el listado de todos los proyectos."))
+            ("listar_proyectos", _("Puede ver el listado de todos los proyectos.")),
+            ("ver_proyecto", _("Puede ver cualquier proyecto.")),
         ]
 
     def __str__(self):

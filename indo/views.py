@@ -118,8 +118,11 @@ class ChecksMixin(UserPassesTestMixin):
         """
         Devuelve si el usuario actual está vinculado al proyecto indicado
         o es decano o director del centro del proyecto."""
-        esta_autorizado = self.esta_vinculado(proyecto_id) or self.es_decano_o_director(
-            proyecto_id
+        usuario_actual = self.request.user
+        esta_autorizado = (
+            self.esta_vinculado(proyecto_id)
+            or self.es_decano_o_director(proyecto_id)
+            or usuario_actual.has_perm("indo.ver_proyecto")  # Gestores y evaluadores
         )
         self.permission_denied_message = _(
             "Usted no está vinculado a este proyecto, "
@@ -382,7 +385,6 @@ class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
         return context
 
     def test_func(self):
-        # TODO: Los evaluadores y gestores también tendrán que tener acceso.
         proyecto_id = self.kwargs["pk"]
         return self.esta_vinculado_o_es_decano(proyecto_id)
 
