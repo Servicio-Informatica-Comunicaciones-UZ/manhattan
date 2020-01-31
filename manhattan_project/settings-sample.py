@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     # 3rd Party
     "crispy_forms",  # https://github.com/django-crispy-forms/django-crispy-forms
     "django_summernote",  # https://github.com/summernote/django-summernote
+    "django_tables2",  # https://github.com/jieter/django-tables2
     "social_django",  # https://github.com/python-social-auth/social-app-django
 ]
 

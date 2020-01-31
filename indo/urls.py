@@ -13,6 +13,7 @@ from .views import (
     ProyectoAnularView,
     ProyectoCreateView,
     ProyectoDetailView,
+    ProyectoListView,
     ProyectoPresentarView,
     ProyectoUpdateFieldView,
     ProyectosUsuarioView,
@@ -23,6 +24,11 @@ urlpatterns = [
     path("", HomePageView.as_view(), name="home"),
     path("summernote/", include("django_summernote.urls")),
     path("ayuda/", AyudaView.as_view(), name="ayuda"),
+    path(
+        "gestion/proyecto/list/<int:anyo>",
+        ProyectoListView.as_view(),
+        name="proyecto_list",
+    ),
     path(
         "participante-proyecto/aceptar_invitacion/<int:proyecto_id>",
         ParticipanteAceptarView.as_view(),

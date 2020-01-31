@@ -4,7 +4,11 @@ from datetime import date
 import pypandoc
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import (
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    UserPassesTestMixin,
+)
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.forms.models import modelform_factory
@@ -15,6 +19,7 @@ from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, RedirectView, TemplateView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django_summernote.widgets import SummernoteWidget
+from django_tables2.views import SingleTableView
 from templated_email import send_templated_mail
 
 from .forms import InvitacionForm, ProyectoForm
@@ -27,6 +32,7 @@ from .models import (
     Registro,
     TipoParticipacion,
 )
+from .tables import ProyectosTable
 
 
 class ChecksMixin(UserPassesTestMixin):
@@ -379,6 +385,27 @@ class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
         # TODO: Los evaluadores y gestores también tendrán que tener acceso.
         proyecto_id = self.kwargs["pk"]
         return self.esta_vinculado_o_es_decano(proyecto_id)
+
+
+class ProyectoListView(LoginRequiredMixin, PermissionRequiredMixin, SingleTableView):
+    """Muestra una tabla de todos los proyectos presentados en una convocatoria."""
+
+    permission_required = "indo.listar_proyectos"
+    permission_denied_message = _("Sólo los gestores pueden acceder a esta página.")
+    table_class = ProyectosTable
+    template_name = "gestion/proyecto/tabla.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["anyo"] = self.kwargs["anyo"]
+        return context
+
+    def get_queryset(self):
+        return (
+            Proyecto.objects.filter(convocatoria__id=self.kwargs["anyo"])
+            .exclude(estado__in=["BORRADOR", "ANULADO"])
+            .order_by("programa__nombre_corto", "linea__nombre", "titulo")
+        )
 
 
 class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):

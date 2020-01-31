@@ -17,6 +17,7 @@ cx-oracle = "*"
 django-annoying = "*"
 django-crispy-forms = "==1.8.1"
 django-summernote = "*"
+django-tables2 = "==2.2.1"
 django-templated-email = "*"
 pypandoc = "*"
 

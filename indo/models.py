@@ -55,12 +55,12 @@ class Centro(models.Model):
     )
     esta_activo = models.BooleanField(_("¿Activo?"), default=False)
 
-    def __str__(self):
-        return f"{self.nombre} ({self.academico_id_nk} / {self.rrhh_id_nk})"
-
     class Meta:
         unique_together = ["academico_id_nk", "rrhh_id_nk"]
         ordering = ["nombre"]
+
+    def __str__(self):
+        return f"{self.nombre} ({self.academico_id_nk} / {self.rrhh_id_nk})"
 
 
 class Convocatoria(models.Model):
@@ -97,11 +97,11 @@ class Departamento(models.Model):
         _("unidad de gasto"), blank=True, max_length=3, null=True
     )
 
-    def __str__(self):
-        return f"{self.nombre} ({self.academico_id_nk} / {self.rrhh_id_nk})"
-
     class Meta:
         unique_together = ["academico_id_nk", "rrhh_id_nk"]
+
+    def __str__(self):
+        return f"{self.nombre} ({self.academico_id_nk} / {self.rrhh_id_nk})"
 
 
 class Estudio(models.Model):
@@ -120,11 +120,11 @@ class Estudio(models.Model):
     rama = models.CharField(max_length=1, choices=OPCIONES_RAMA)
     tipo_estudio = models.ForeignKey("TipoEstudio", on_delete=models.PROTECT)
 
-    def __str__(self):
-        return f"{self.nombre} ({self.tipo_estudio.nombre})"
-
     class Meta:
         ordering = ["nombre"]
+
+    def __str__(self):
+        return f"{self.nombre} ({self.tipo_estudio.nombre})"
 
 
 class Evento(models.Model):
@@ -472,11 +472,19 @@ class Proyecto(models.Model):
     programa = models.ForeignKey("Programa", on_delete=models.PROTECT)
     visto_bueno = models.BooleanField(_("Visto bueno"), null=True)
 
-    def en_borrador(self):
-        return self.estado == "BORRADOR"
+    class Meta:
+        permissions = [
+            ("listar_proyectos", _("Puede ver el listado de todos los proyectos."))
+        ]
+
+    def __str__(self):
+        return self.codigo
 
     def get_absolute_url(self):
         return reverse("proyecto_detail", args=[str(self.id)])
+
+    def en_borrador(self):
+        return self.estado == "BORRADOR"
 
     def get_participante_or_none(self, tipo):
         try:
@@ -512,9 +520,6 @@ class Proyecto(models.Model):
         """Devuelve si el proyecto tiene al menos un invitado."""
         num_invitados = self.participantes.filter(tipo_participacion="invitado").count()
         return num_invitados >= 1
-
-    def __str__(self):
-        return self.codigo
 
 
 class Registro(models.Model):
