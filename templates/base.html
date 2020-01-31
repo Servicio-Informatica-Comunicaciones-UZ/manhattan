@@ -79,7 +79,7 @@
         <ul class="navbar-nav ml-auto">
           {% if user.is_authenticated %}
             {% now "Y" as anyo_actual %}
-            {# if user|has_group:"Gestores" #}
+            {% if user|has_group:"Gestores" %}
               <li class="nav-item dropdown">
                 <a
                   class="nav-link dropdown-toggle"
@@ -98,7 +98,7 @@
                   </a>
                 </div>
               </li>
-            {# endif #}
+            {% endif %}
 
             <li class="nav-item">
               <a class="nav-link" href="{% url 'mis_proyectos' anyo_actual %}">
