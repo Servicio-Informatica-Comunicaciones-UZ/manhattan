@@ -1,0 +1,18 @@
+{% block subject %}VºBº del proyecto «{{ titulo_proyecto }}»{% endblock %}
+{% block plain %}
+{{ nombre_coordinador }} ha solicitado el siguiente Proyecto de Innovación Docente:
+
+  Título: {{ titulo_proyecto }}
+  Programa: {{ programa_proyecto }}
+  Descripción: {{ descripcion_proyecto | striptags }}
+
+Para que puedan ser evaluadas, las solicitudes de proyecto de este programa
+deben contar con la aprobación de un coordinador del estudio.
+
+Para dar su visto bueno a dicha solicitud, visite la web <{{ site_url }}>
+e inicie sesión con su NIP y contraseña administrativa.
+
+
+Atentamente,
+    Vicerrectorado de Política Académica
+{% endblock %}

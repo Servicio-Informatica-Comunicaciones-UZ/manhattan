@@ -29,46 +29,61 @@
         <th scope="row"><strong>{% trans 'Programa' %}</strong>:</th>
         <td>{{ proyecto.programa.nombre_corto }} ({{ proyecto.programa.nombre_largo }})</td>
       </tr>
+
       {% if proyecto.linea %}
       <tr>
         <th scope="row"><strong>{% trans 'Línea' %}</strong>:</th>
         <td>{{ proyecto.linea.nombre }}</td>
       </tr>
       {% endif %}
+
       {% if proyecto.centro %}
       <tr>
         <th scope="row"><strong>{% trans 'Centro' %}</strong>:</th>
         <td>{{ proyecto.centro.nombre }}</td>
       </tr>
       {% endif %}
+
       {% if proyecto.estudio %}
       <tr>
         <th scope="row"><strong>{% trans 'Estudio' %}</strong>:</th>
         <td>{{ proyecto.estudio.nombre }}</td>
       </tr>
       {% endif %}
+
       {% if pp_coordinador %}
       <tr>
         <th scope="row"><strong>{{ pp_coordinador.get_cargo }}</strong>:</th>
         <td>{{ pp_coordinador.usuario.get_full_name }}</td>
       </tr>
       {% endif %}
+
       {% if pp_coordinador_2 %}
         <tr>
           <th scope="row"><strong>{{ pp_coordinador_2.get_cargo }}</strong>:</th>
           <td>{{ pp_coordinador_2.usuario.get_full_name }}</td>
         </tr>
       {% endif %}
+
       <tr>
         <th scope="row"><strong>{% trans 'Estado' %}</strong>:</th>
         <td>{{ proyecto.get_estado_display }}</td>
       </tr>
-      {% if proyecto.programa.requiere_visto_bueno %}
+
+      {% if proyecto.programa.requiere_visto_bueno_centro %}
       <tr>
-        <th scope="row"><strong>{% trans 'Visto bueno' %}</strong>:</th>
-        <td>{{ proyecto.visto_bueno | yesno:"Sí,No,—" }}</td>
+        <th scope="row"><strong>{% trans 'Visto bueno del centro' %}</strong>:</th>
+        <td>{{ proyecto.visto_bueno_centro | yesno:"Sí,No,—" }}</td>
       </tr>
       {% endif %}
+
+      {% if proyecto.programa.requiere_visto_bueno_estudio %}
+      <tr>
+        <th scope="row"><strong>{% trans 'Visto bueno del estudio' %}</strong>:</th>
+        <td>{{ proyecto.visto_bueno_estudio | yesno:"Sí,No,—" }}</td>
+      </tr>
+      {% endif %}
+
     </table>
   </div>
   <br />

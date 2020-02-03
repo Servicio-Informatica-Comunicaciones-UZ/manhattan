@@ -209,8 +209,12 @@ class Programa(models.Model):
     )
     campos = models.TextField(null=True)
     convocatoria = models.ForeignKey("Convocatoria", on_delete=models.PROTECT)
-    requiere_visto_bueno = models.BooleanField(
+    requiere_visto_bueno_centro = models.BooleanField(
         _("¿Requiere el visto bueno del director o decano?"), default="False"
+    )
+    requiere_visto_bueno_estudio = models.BooleanField(
+        _("¿Requiere el visto bueno del coordinador del plan de estudios?"),
+        default="False",
     )
 
     def __str__(self):
@@ -470,7 +474,10 @@ class Proyecto(models.Model):
         help_text=_("En su caso."),
     )
     programa = models.ForeignKey("Programa", on_delete=models.PROTECT)
-    visto_bueno = models.BooleanField(_("Visto bueno"), null=True)
+    visto_bueno_centro = models.BooleanField(_("Visto bueno del centro"), null=True)
+    visto_bueno_estudio = models.BooleanField(
+        _("Visto bueno del plan de estudios"), null=True
+    )
 
     class Meta:
         permissions = [

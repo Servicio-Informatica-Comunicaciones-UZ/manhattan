@@ -162,10 +162,50 @@
             <td><a href="{% url 'proyecto_detail' proyecto.id %}">{{ proyecto.titulo }}</a></td>
             <td>{{proyecto.get_usuario_coordinador.get_full_name}}</td>
             <td>{{proyecto.get_estado_display}}</td>
-            <td>{{proyecto.visto_bueno | yesno:"Sí,No,—"}}</td>
+            <td>{{proyecto.visto_bueno_centro | yesno:"Sí,No,—"}}</td>
             <td>
               {% if proyecto.estado == 'SOLICITADO' %}
-                <a href="{% url 'proyecto_update_field' proyecto.id 'visto_bueno' %}" class="btn btn-info btn-sm">
+                <a href="{% url 'proyecto_update_field' proyecto.id 'visto_bueno_centro' %}" class="btn btn-info btn-sm">
+                  <span class="fas fa-pencil-alt" aria-hidden="true"></span>&nbsp; {% trans 'Editar' %}
+                </a>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+  {% endif %}
+  <br /><br />
+
+  {% if proyectos_estudios_coordinados %}
+    <h1 id="del-estudio">{% trans "Proyectos estratégicos de mis estudios" %}</h1>
+    <hr />
+    <br />
+
+    <div class="table-responsive">
+      <table class="table table-hover table-striped table-sm cabecera-azul" aria-describedby="del-estudio">
+        <thead>
+          <tr>
+            <th scope="col">{% trans 'Programa' %}</th>
+            <th scope="col">{% trans 'Línea' %}</th>
+            <th scope="col">{% trans 'Título' %}</th>
+            <th scope="col">{% trans 'Coordinador' %}</th>
+            <th scope="col">{% trans 'Estado' %}</th>
+            <th scope="col">{% trans 'Visto bueno' %}</th>
+            <th scope="col">{% trans 'Acción' %}</th>
+          </tr>
+        </thead>
+        {% for proyecto in proyectos_estudios_coordinados %}
+          <tr>
+            <td>{{proyecto.programa.nombre_corto}}</td>
+            <td>{{proyecto.linea.nombre}}</td>
+            <td><a href="{% url 'proyecto_detail' proyecto.id %}">{{ proyecto.titulo }}</a></td>
+            <td>{{proyecto.get_usuario_coordinador.get_full_name}}</td>
+            <td>{{proyecto.get_estado_display}}</td>
+            <td>{{proyecto.visto_bueno_estudio | yesno:"Sí,No,—"}}</td>
+            <td>
+              {% if proyecto.estado == 'SOLICITADO' %}
+                <a href="{% url 'proyecto_update_field' proyecto.id 'visto_bueno_estudio' %}" class="btn btn-info btn-sm">
                   <span class="fas fa-pencil-alt" aria-hidden="true"></span>&nbsp; {% trans 'Editar' %}
                 </a>
               {% endif %}

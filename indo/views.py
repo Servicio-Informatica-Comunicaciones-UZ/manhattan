@@ -28,6 +28,7 @@ from .models import (
     Convocatoria,
     Evento,
     ParticipanteProyecto,
+    Plan,
     Proyecto,
     Registro,
     TipoParticipacion,
@@ -114,21 +115,41 @@ class ChecksMixin(UserPassesTestMixin):
 
         return usuario_actual.username == str(nip_decano)
 
-    def esta_vinculado_o_es_decano(self, proyecto_id):
+    def esta_vinculado_o_es_decano_o_es_coordinador(self, proyecto_id):
         """
         Devuelve si el usuario actual está vinculado al proyecto indicado
-        o es decano o director del centro del proyecto."""
+        o es decano o director del centro del proyecto
+        o es coordinador del plan de estudios del proyecto."""
         usuario_actual = self.request.user
         esta_autorizado = (
             self.esta_vinculado(proyecto_id)
             or self.es_decano_o_director(proyecto_id)
+            or self.es_coordinador_estudio(proyecto_id)
             or usuario_actual.has_perm("indo.ver_proyecto")  # Gestores y evaluadores
         )
         self.permission_denied_message = _(
             "Usted no está vinculado a este proyecto, "
-            "ni es decano/director del centro del proyecto."
+            "ni es decano/director del centro del proyecto, "
+            "ni es coordinador del plan de estudios del proyecto."
         )
         return esta_autorizado
+
+    def es_coordinador_estudio(self, proyecto_id):
+        """Devuelve si el usuario actual es coordinador del estudio del proyecto."""
+        usuario_actual = self.request.user
+        proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
+        estudio = proyecto.estudio
+        if not estudio:
+            return False
+        nip_coordinadores = [
+            f"{p.nip_coordinador}" for p in estudio.planes.all() if p.nip_coordinador
+        ]
+
+        self.permission_denied_message = _(
+            "Usted no es coordinador del plan de estudios del proyecto."
+        )
+
+        return usuario_actual.username in nip_coordinadores
 
 
 class AyudaView(TemplateView):
@@ -386,7 +407,7 @@ class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
 
     def test_func(self):
         proyecto_id = self.kwargs["pk"]
-        return self.esta_vinculado_o_es_decano(proyecto_id)
+        return self.esta_vinculado_o_es_decano_o_es_coordinador(proyecto_id)
 
 
 class ProyectoListView(LoginRequiredMixin, PermissionRequiredMixin, SingleTableView):
@@ -468,8 +489,13 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
             return super().post(request, *args, **kwargs)
 
         self._enviar_invitaciones(request, proyecto)
-        if proyecto.programa.nombre_corto in ["PIEC", "PRACUZ"]:
-            self._enviar_solicitudes_visto_bueno(request, proyecto)
+
+        if proyecto.programa.requiere_visto_bueno_centro:
+            self._enviar_solicitudes_visto_bueno_centro(request, proyecto)
+
+        if proyecto.programa.requiere_visto_bueno_estudio:
+            self._enviar_solicitudes_visto_bueno_estudio(request, proyecto)
+
         # TODO Enviar "resguardo" al solicitante. PDF?
 
         proyecto.estado = "SOLICITADO"
@@ -500,8 +526,9 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
                 },
             )
 
-    def _enviar_solicitudes_visto_bueno(self, request, proyecto):
+    def _enviar_solicitudes_visto_bueno_centro(self, request, proyecto):
         """Envia un mensaje al responsable del centro solicitando su visto bueno."""
+
         try:
             validate_email(proyecto.centro.email_decano)
         except ValidationError:
@@ -515,13 +542,47 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
             return
 
         send_templated_mail(
-            template_name="solicitud_visto_bueno",
+            template_name="solicitud_visto_bueno_centro",
             from_email=None,  # settings.DEFAULT_FROM_EMAIL
             recipient_list=[proyecto.centro.email_decano],
             context={
                 "nombre_coordinador": request.user.get_full_name(),
                 "nombre_decano": proyecto.centro.nombre_decano,
                 "tratamiento_decano": proyecto.centro.tratamiento_decano,
+                "titulo_proyecto": proyecto.titulo,
+                "programa_proyecto": f"{proyecto.programa.nombre_corto} "
+                f"({proyecto.programa.nombre_largo})",
+                "descripcion_proyecto": pypandoc.convert_text(
+                    proyecto.descripcion, "md", format="html"
+                ).replace("\\\n", "\n"),
+                "site_url": settings.SITE_URL,
+            },
+        )
+
+    def _is_email_valid(self, email):
+        """Validate email address"""
+
+        try:
+            validate_email(email)
+        except ValidationError:
+            return False
+        return True
+
+    def _enviar_solicitudes_visto_bueno_estudio(self, request, proyecto):
+        """Envia mensaje a los coordinadores del plan solicitando su visto bueno."""
+
+        email_coordinadores_estudio = [
+            f"{p.email_coordinador}"
+            for p in proyecto.estudio.planes.all()
+            if self._is_email_valid(p.email_coordinador)
+        ]
+
+        send_templated_mail(
+            template_name="solicitud_visto_bueno_estudio",
+            from_email=None,  # settings.DEFAULT_FROM_EMAIL
+            recipient_list=email_coordinadores_estudio,
+            context={
+                "nombre_coordinador": request.user.get_full_name(),
                 "titulo_proyecto": proyecto.titulo,
                 "programa_proyecto": f"{proyecto.programa.nombre_corto} "
                 f"({proyecto.programa.nombre_largo})",
@@ -557,7 +618,14 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
         ):
             raise Http404(_("No puede editar ese campo."))
 
-        if campo not in ("titulo", "departamento", "licencia", "ayuda", "visto_bueno"):
+        if campo not in (
+            "titulo",
+            "departamento",
+            "licencia",
+            "ayuda",
+            "visto_bueno_centro",
+            "visto_bueno_estudio",
+        ):
             formulario = modelform_factory(
                 Proyecto, fields=(campo,), widgets={campo: SummernoteWidget()}
             )
@@ -585,9 +653,18 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
         return super().get_form_class()
 
     def test_func(self):
-        return self.es_coordinador(self.kwargs["pk"]) or (
-            self.kwargs["campo"] == "visto_bueno"
-            and self.es_decano_o_director(self.kwargs["pk"])
+        """Devuelve si el usuario está autorizado a modificar este campo."""
+
+        return (
+            self.es_coordinador(self.kwargs["pk"])
+            or (
+                self.kwargs["campo"] == "visto_bueno_centro"
+                and self.es_decano_o_director(self.kwargs["pk"])
+            )
+            or (
+                self.kwargs["campo"] == "visto_bueno_estudio"
+                and self.es_coordinador_estudio(self.kwargs["pk"])
+            )
         )
 
 
@@ -633,16 +710,25 @@ class ProyectosUsuarioView(LoginRequiredMixin, TemplateView):
         )
 
         try:
-            nip_decano = int(usuario.username)
+            nip_usuario = int(usuario.username)
         except ValueError:
-            nip_decano = 0
+            nip_usuario = 0
 
-        centros_dirigidos = Centro.objects.filter(nip_decano=nip_decano).all()
+        centros_dirigidos = Centro.objects.filter(nip_decano=nip_usuario).all()
         if centros_dirigidos:
             context["proyectos_centros_dirigidos"] = Proyecto.objects.filter(
                 convocatoria_id=anyo,
-                programa__requiere_visto_bueno=True,
+                programa__requiere_visto_bueno_centro=True,
                 centro__in=centros_dirigidos,
             ).all()
+
+        planes_coordinados = Plan.objects.filter(nip_coordinador=nip_usuario).all()
+        if planes_coordinados:
+            id_estudios_coordinados = set([p.estudio_id for p in planes_coordinados])
+            context["proyectos_estudios_coordinados"] = Proyecto.objects.filter(
+                convocatoria_id=anyo,
+                programa__requiere_visto_bueno_estudio=True,
+                estudio_id__in=id_estudios_coordinados,
+            )
 
         return context

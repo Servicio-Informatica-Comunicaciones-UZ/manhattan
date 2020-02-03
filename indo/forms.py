@@ -132,22 +132,6 @@ class ProyectoForm(forms.ModelForm):
                 "estudio", _("Los PIET deben estar vinculados a un estudio.")
             )
 
-        if estudio:
-            nip_coordinadores = [
-                f"{p.nip_coordinador}"
-                for p in estudio.planes.all()
-                if p.nip_coordinador
-            ]
-
-        if (
-            programa.nombre_corto == "PIET"
-            and self.instance.user.username not in nip_coordinadores
-        ):
-            self.add_error(
-                "estudio",
-                _("Los PIET sólo los pueden solicitar los coordinadores del estudio."),
-            )
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["programa"].widget.choices = tuple(
