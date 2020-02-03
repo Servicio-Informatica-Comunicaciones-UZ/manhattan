@@ -76,14 +76,16 @@
   <h3 id="invitaciones">{% trans 'Invitaciones' %}</h3>
   {% if invitados %}
     <div class="table-responsive">
-      <table class="table table-hover table-striped table-sm" aria-describedby="invitaciones">
-        <tr>
-          <th scope="col">{% trans "Usuario" %}</th>
-          <th scope="col">{% trans "Estado" %}</th>
-	  {% if permitir_edicion %}
-            <th scope="col">{% trans "Acción" %}</th>
-          {% endif %}
-        </tr>
+      <table class="table table-hover table-striped table-sm cabecera-azul" aria-describedby="invitaciones">
+        <thead>
+          <tr>
+            <th scope="col">{% trans "Usuario" %}</th>
+            <th scope="col">{% trans "Estado" %}</th>
+            {% if permitir_edicion %}
+              <th scope="col">{% trans "Acción" %}</th>
+            {% endif %}
+          </tr>
+        </thead>
         {% for invitado in invitados %}
           <tr>
             <td>{{ invitado.usuario.get_full_name }}</td>
@@ -119,13 +121,15 @@
   <h3 id="participantes">{% trans 'Participantes' %}</h3>
   {% if participantes %}
     <div class="table-responsive">
-      <table class="table table-hover table-striped table-sm" aria-describedby="participantes">
-         <tr>
-          <th scope="col">{% trans "Usuario" %}</th>
-          {% if permitir_edicion %}
-            <th scope="col">{% trans "Acción" %}</th>
-          {% endif %}
-        </tr>
+      <table class="table table-hover table-striped table-sm cabecera-azul" aria-describedby="participantes">
+        <thead>
+          <tr>
+            <th scope="col">{% trans "Usuario" %}</th>
+            {% if permitir_edicion %}
+              <th scope="col">{% trans "Acción" %}</th>
+            {% endif %}
+          </tr>
+        </thead>
         {% for participante in participantes %}
           <tr>
             <td>{{ participante.usuario.get_full_name }}</td>
