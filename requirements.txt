@@ -1,5 +1,6 @@
 -i https://pypi.org/simple
 asgiref==3.2.3
+bleach==3.1.0
 certifi==2019.11.28
 chardet==3.0.4
 cx-oracle==7.3.0
@@ -29,5 +30,6 @@ social-auth-app-django==3.1.0
 social-auth-core[saml]==3.2.0
 sqlparse==0.3.0
 urllib3==1.25.8
-wheel==0.34.1
+webencodings==0.5.1
+wheel==0.34.2
 xmlsec==1.3.3

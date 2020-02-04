@@ -1,7 +1,9 @@
 import json
 from datetime import date
 
+import bleach
 import pypandoc
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import (
@@ -15,9 +17,12 @@ from django.forms.models import modelform_factory
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, RedirectView, TemplateView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
+
+from annoying.functions import get_config
 from django_summernote.widgets import SummernoteWidget
 from django_tables2.views import SingleTableView
 from templated_email import send_templated_mail
@@ -648,6 +653,28 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
                 )
 
             formulario.as_p = as_p
+
+            def clean(self):
+                cleaned_data = super(formulario, self).clean()
+                texto = cleaned_data.get(campo)
+                # See <https://bleach.readthedocs.io/en/latest/clean.html>
+                cleaned_data[campo] = mark_safe(
+                    bleach.clean(
+                        texto,
+                        tags=(
+                            bleach.sanitizer.ALLOWED_TAGS
+                            + get_config("ADDITIONAL_ALLOWED_TAGS")
+                        ),
+                        attributes=get_config("ALLOWED_ATTRIBUTES"),
+                        styles=get_config("ALLOWED_STYLES"),
+                        protocols=get_config("ALLOWED_PROTOCOLS"),
+                        strip=True,
+                    )
+                )
+                return cleaned_data
+
+            formulario.clean = clean
+
             return formulario
         self.fields = (campo,)
         return super().get_form_class()

@@ -1,9 +1,13 @@
+# See <https://docs.djangoproject.com/en/3.0/howto/custom-template-tags/>
+
+import bleach
 import urllib.parse
 
 from django import template
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 
+from annoying.functions import get_config
 
 register = template.Library()
 
@@ -60,3 +64,19 @@ def get_attr_verbose_name(obj, attr):
 def has_group(user, group_name):
     """Comprueba si el usuario pertenece al grupo indicado."""
     return user.groups.filter(name=group_name).exists()
+
+
+# See <https://bleach.readthedocs.io/en/latest/clean.html>
+cleaner = bleach.Cleaner(
+    tags=(bleach.sanitizer.ALLOWED_TAGS + get_config("ADDITIONAL_ALLOWED_TAGS")),
+    attributes=get_config("ALLOWED_ATTRIBUTES"),
+    styles=get_config("ALLOWED_STYLES"),
+    protocols=get_config("ALLOWED_PROTOCOLS"),
+    strip=True,
+    strip_comments=True,
+)
+
+
+@register.filter
+def limpiar(text):
+    return mark_safe(cleaner.clean(text))

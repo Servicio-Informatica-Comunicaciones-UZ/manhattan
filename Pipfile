@@ -20,6 +20,7 @@ django-summernote = "*"
 django-tables2 = "==2.2.1"
 django-templated-email = "*"
 pypandoc = "*"
+bleach = "*"
 
 [requires]
 python_version = "3.7"
