@@ -308,4 +308,46 @@ SUMMERNOTE_CONFIG = {
     # },
 }
 
+# BLEACH
+ADDITIONAL_ALLOWED_TAGS = [
+    "br",
+    "del",
+    "div",
+    "dl",
+    "dt",
+    "dd",
+    "em",
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "hr",
+    "img",
+    "ins",
+    "p",
+    "pre",
+    "span",
+    "strike",
+    "sub",
+    "sup",
+    "table",
+    "tbody",
+    "td",
+    "th",
+    "thead",
+    "tr",
+    "u",
+]
+ALLOWED_ATTRIBUTES = {
+    "*": ["class", "id", "style"],
+    "a": ["alt", "href", "target", "title"],
+    "abbr": ["title"],
+    "acronym": ["title"],
+    "img": ["alt", "src"],
+}
+ALLOWED_STYLES = ["background-color", "color", "text-align"]
+ALLOWED_PROTOCOLS = ["data", "http", "https", "mailto"]
+
 X_FRAME_OPTIONS = "SAMEORIGIN"  # Required by SummernoteWidget on Django 3.x
