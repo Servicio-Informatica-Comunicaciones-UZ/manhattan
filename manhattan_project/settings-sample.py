@@ -239,6 +239,7 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 # SUMMERNOTE
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
 SUMMERNOTE_THEME = "bs4"
 
 SUMMERNOTE_CONFIG = {
@@ -259,6 +260,28 @@ SUMMERNOTE_CONFIG = {
         # "print": {
         #     "stylesheetUrl": "/some_static_folder/printable.css",
         # },
+        "codemirror": {
+            "mode": "htmlmixed",
+            "lineNumbers": "true",
+            # You have to include theme file in 'css' or 'css_for_inplace'
+            # before using it.
+            "theme": "monokai",
+        },
+        "placeholder": "Introduzca sus comentarios",
+        "toolbar": [
+            # <https://summernote.org/deep-dive/#custom-toolbar-popover>
+            ["style", ["style"]],
+            [
+                "font",
+                ["bold", "italic", "forecolor", "superscript", "subscript", "clear"],
+            ],
+            ["para", ["ul", "ol", "paragraph"]],
+            ["table", ["table"]],
+            ["insert", ["link", "picture"]],
+            ["view", ["fullscreen", "codeview"]],
+        ],
+        "codeviewFilter": True,
+        "codeviewIframeFilter": True,
     },
     # Need authentication while uploading attachments.
     "attachment_require_authentication": True,
@@ -273,6 +296,14 @@ SUMMERNOTE_CONFIG = {
     # 'disable_attachment': False,
     # Set `True` to return attachment paths in absolute URIs.
     # 'attachment_absolute_uri': False,
+    # test_func in summernote upload view.
+    # (Allow upload images only when user passes the test)
+    # https://docs.djangoproject.com/en/2.2/topics/auth/default/#django.contrib.auth.mixins.UserPassesTestMixin
+    # ```
+    # def example_test_func(request):
+    #    return request.user.groups.filter(name='group_name').exists()
+    # ```
+    # 'test_func_upload_view': example_test_func,
     # You can add custom css/js for SummernoteWidget.
     # 'css': (),
     # 'js': (
@@ -289,17 +320,10 @@ SUMMERNOTE_CONFIG = {
     "css": (
         "//cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/theme/monokai.min.css",
     ),
-    "codemirror": {
-        "mode": "htmlmixed",
-        "lineNumbers": "true",
-        # You have to include theme file in 'css' or 'css_for_inplace' before using it.
-        "theme": "monokai",
-    },
     # Lazy initialize
     # If you want to initialize summernote at the bottom of page, set this as True
     # and call `initSummernote()` on your page.
-    "lazy": True,
-    # 'lazy': False,
+    "lazy": False,
     # To use external plugins,
     # Include them within `css` and `js`.
     # 'js': {
