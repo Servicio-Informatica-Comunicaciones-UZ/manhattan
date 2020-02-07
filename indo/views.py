@@ -192,7 +192,9 @@ class InvitacionView(LoginRequiredMixin, ChecksMixin, CreateView):
 
     def test_func(self):
         # TODO: Comprobar estado del proyecto, fecha.
-        return self.es_coordinador(self.kwargs["proyecto_id"])
+        return self.es_coordinador(
+            self.kwargs["proyecto_id"]
+        ) or self.request.user.has_perm("indo.editar_proyecto")
 
 
 class ParticipanteAceptarView(LoginRequiredMixin, RedirectView):
@@ -298,7 +300,9 @@ class ParticipanteDeleteView(LoginRequiredMixin, ChecksMixin, DeleteView):
         return reverse_lazy("proyecto_detail", args=[self.object.proyecto.id])
 
     def test_func(self):
-        return self.es_coordinador(self.get_object().proyecto.id)
+        return self.es_coordinador(
+            self.get_object().proyecto.id
+        ) or self.request.user.has_perm("indo.editar_proyecto")
 
 
 class ProyectoCreateView(LoginRequiredMixin, ChecksMixin, CreateView):
@@ -406,7 +410,9 @@ class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
 
         context["permitir_edicion"] = (
             self.es_coordinador(self.object.id) and self.object.en_borrador()
-        )
+        ) or self.request.user.has_perm("indo.editar_proyecto")
+
+        context["es_editor"] = self.request.user.has_perm("indo.editar_proyecto")
 
         return context
 
@@ -692,6 +698,7 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
                 self.kwargs["campo"] == "visto_bueno_estudio"
                 and self.es_coordinador_estudio(self.kwargs["pk"])
             )
+            or self.request.user.has_perm("indo.editar_proyecto")
         )
 
 

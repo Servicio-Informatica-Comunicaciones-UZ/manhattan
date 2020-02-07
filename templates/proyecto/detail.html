@@ -216,7 +216,7 @@
       <span class="fas fa-step-backward"></span> {% trans 'Retroceder' %}
     </a>
 
-    {% if permitir_edicion %}
+    {% if permitir_edicion and not es_editor %}
       <button class="btn btn-danger" data-toggle="modal" data-target="#anularModal" type="button">
         <span class="fas fa-trash-alt"></span> {% trans 'Anular' %}
       </button>

@@ -483,6 +483,10 @@ class Proyecto(models.Model):
         permissions = [
             ("listar_proyectos", _("Puede ver el listado de todos los proyectos.")),
             ("ver_proyecto", _("Puede ver cualquier proyecto.")),
+            (
+                "editar_proyecto",
+                _("Puede editar cualquier proyecto en cualquier momento."),
+            ),
         ]
 
     def __str__(self):
