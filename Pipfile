@@ -8,7 +8,7 @@ pylint = "*"
 coverage = "*"
 
 [packages]
-django = "==3.0.2"  # Remember to re-generate `requirements.txt`
+django = "==3.0.3"  # Remember to re-generate `requirements.txt`
 mysqlclient = "*"
 social-auth-app-django = "*"
 social-auth-core = {extras = ["saml"],version = "*"}
