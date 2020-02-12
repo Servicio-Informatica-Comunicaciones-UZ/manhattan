@@ -11,7 +11,7 @@ django-render-block==0.6
 django-summernote==0.8.11.6
 django-tables2==2.2.1
 django-templated-email==2.3.0
-django==3.0.2
+django==3.0.3
 idna==2.8
 isodate==0.6.0
 lxml==4.5.0
