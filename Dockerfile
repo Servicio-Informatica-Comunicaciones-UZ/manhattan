@@ -4,19 +4,17 @@ LABEL maintainer="Enrique Matías Sánchez <quique@unizar.es>"
 
 # Set environment variables
 # Don't write .pyc files
-ENV PYTHONDONTWRITEBYTECODE 1
 # All output to stdout will be flushed immediately
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE 1 \
+    PYTHONUNBUFFERED 1
 
 # Install packages needed to run your application (not build deps):
-#   libao1 -- for Oracle Instant Client
 #   libmariadbclient-client -- for running database commands
 #   libpcre3 -- for uWSGI internal routing support
 #   xmlsec1 -- required for SAML auth
 #   mime-support -- for mime types when serving static files
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-      libaio1 \
       libmariadb3 \
       libpcre3 \
       libxmlsec1-openssl \
@@ -24,16 +22,6 @@ RUN apt-get update \
       pandoc \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
-
-# In order to use this Dockerfile, you should first download the following RPM files:
-#  oracle-instantclient19.3-basiclite_19.3.0.0.0-2_amd64.deb
-#  oracle-instantclient19.3-devel_19.3.0.0.0-2_amd64.deb
-# from <http://www.oracle.com/technetwork/topics/linuxx86-64soft-092277.html>.
-# Then use `alien` to convert them to Debian packages,
-# and put the resulting .deb files in the same directory as this Dockerfile.
-COPY *deb ./
-RUN apt-get install ./*deb \
-  && rm *deb
 
 # Copy the requirements file to the container image
 COPY requirements.txt ./

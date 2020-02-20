@@ -1,7 +1,7 @@
 from datetime import date
 
 from accounts.models import CustomUser
-from accounts.pipeline import UsuarioNoEncontrado, get_identidad
+from accounts.pipeline import get_identidad
 from django import forms
 from django.db.models import BLANK_CHOICE_DASH
 from django.utils.translation import gettext_lazy as _
@@ -15,8 +15,7 @@ class InvitacionForm(forms.ModelForm):
     nip = forms.IntegerField(
         label=_("NIP"),
         help_text=_(
-            "Número de Identificación Personal en la Universidad de Zaragoza "
-            "de la persona a invitar."
+            "Número de Identificación Personal en la Universidad de Zaragoza de la persona a invitar."
         ),
     )
 
@@ -27,30 +26,50 @@ class InvitacionForm(forms.ModelForm):
         self.request = kwargs.pop("request")
         super().__init__(*args, **kwargs)
 
+    def _crear_usuario(self, nip):
+        """Crea un registro de usuario con el nip indicado y los datos de G.I."""
+
+        usuario = CustomUser.objects.create_user(username=nip)
+        try:
+            get_identidad(load_strategy(self.request), None, usuario)
+        except Exception as ex:
+            # Si Gestión de Identidades devuelve un error, borramos el usuario
+            # y finalizamos mostrando el mensaje de error.
+            usuario.delete()
+            raise forms.ValidationError("ERROR: " + str(ex))
+
+        # HACK - Indicamos que la autenticación es vía Single Sign On con SAML.
+        usuario_social = UserSocialAuth(
+            uid=f"lord:{usuario.username}", provider="saml", user=usuario
+        )
+        usuario_social.save()
+
+        return usuario
+
     def clean(self):
         cleaned_data = super().clean()
         nip = cleaned_data.get("nip")
+        # Comprobamos si el usuario ya existe en el sistema.
         usuario = CustomUser.objects.get_or_none(username=nip)
-        if not usuario:
-            usuario = CustomUser.objects.create_user(username=nip)
-            try:
-                get_identidad(load_strategy(self.request), None, usuario)
-            except UsuarioNoEncontrado:
-                usuario.delete()
-                raise forms.ValidationError(
-                    _(f"¡Usuario desconocido! No se ha encontrado el NIP «{nip}».")
-                )
-            # HACK
-            usuario_social = UserSocialAuth(
-                uid=f"lord:{usuario.username}", provider="saml", user=usuario
-            )
-            usuario_social.save()
 
-        get_identidad(load_strategy(self.request), None, usuario)
+        # Si no existe previamente, lo creamos y actualizamos con los datos de Gestión de Identidades.
+        if not usuario:
+            usuario = self._crear_usuario(nip)
+
+        # El usuario existe. Actualizamos sus datos con los de Gestión de Identidades.
+        try:
+            get_identidad(load_strategy(self.request), None, usuario)
+        except Exception as ex:
+            # Si Gestión de Identidades devuelve un error, y finalizamos mostrando el mensaje de error.
+            raise forms.ValidationError('ERROR: ' + str(ex))
+
+        # Si el usuario no está activo, finalizamos explicando esta circunstancia.
         if not usuario.is_active:
             raise forms.ValidationError(
                 _("Usuario inactivo en el sistema de Gestión de Identidades")
             )
+
+        # Si el usuario no tiene un email válido, finalizamos explicando esta circunstancia.
         if not usuario.email:
             raise forms.ValidationError(
                 _(
@@ -76,10 +95,11 @@ class InvitacionForm(forms.ModelForm):
             self.proyecto.programa.nombre_corto != "PIPOUZ"
             and usuario.get_colectivo_principal() == "EST"
         ):
-            estudiantes = []
-            for vinculado in vinculados:
-                if vinculado.get_colectivo_principal() == "EST":
-                    estudiantes.append(vinculado)
+            estudiantes = [
+                vinculado
+                for vinculado in vinculados
+                if vinculado.get_colectivo_principal() == "EST"
+            ]
             if len(estudiantes) >= self.proyecto.programa.max_estudiantes:
                 nombres_estudiantes = ", ".join(
                     list(map(lambda e: e.get_full_name(), estudiantes))

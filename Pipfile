@@ -6,6 +6,7 @@ verify_ssl = true
 [dev-packages]
 pylint = "*"
 coverage = "*"
+rope = "*"
 
 [packages]
 django = "==3.0.3"  # Remember to re-generate `requirements.txt`
@@ -21,6 +22,7 @@ django-tables2 = "==2.2.1"
 django-templated-email = "*"
 pypandoc = "*"
 bleach = "*"
+zeep = "*"
 
 [requires]
 python_version = "3.7"

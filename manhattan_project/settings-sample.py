@@ -114,19 +114,7 @@ DATABASES = {
         "OPTIONS": {
             "charset": "utf8mb4"  # Requires `innodb_default_row_format = dynamic`
         },
-    },
-    "identidades": {
-        "ENGINE": "django.db.backends.oracle",  # Database engine
-        "NAME": "DELFOS",  # Database name
-        "USER": "dodona",  # Database user
-        "PASSWORD": "PopolWuj",  # Database password
-        "HOST": "oraculo.unizar.es",  # Set to empty string for localhost.
-        "PORT": "1521",  # Set to empty string for default.
-        # Additional database options
-        # "OPTIONS": {
-        #     "charset": "WE8ISO8859P1",
-        # }
-    },
+    }
 }
 
 
@@ -375,3 +363,8 @@ ALLOWED_STYLES = ["background-color", "color", "text-align"]
 ALLOWED_PROTOCOLS = ["data", "http", "https", "mailto"]
 
 X_FRAME_OPTIONS = "SAMEORIGIN"  # Required by SummernoteWidget on Django 3.x
+
+# WEB SERVICE DE GESTIÓN DE IDENTIDADES
+WSDL_IDENTIDAD = os.environ.get("WSDL_IDENTIDAD")
+USER_IDENTIDAD = os.environ.get("USER_IDENTIDAD")
+PASS_IDENTIDAD = os.environ.get("PASS_IDENTIDAD")
