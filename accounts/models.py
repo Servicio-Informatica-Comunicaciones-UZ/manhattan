@@ -7,10 +7,10 @@ from django.utils.translation import gettext_lazy as _
 
 class CustomUserManager(UserManager):
     def get_or_none(self, **kwargs):
-        """Devuelve el usuario con las propiedades indicadas.
+        '''Devuelve el usuario con las propiedades indicadas.
 
         Si no se encuentra, devuelve `None`.
-        """
+        '''
         try:
             return self.get(**kwargs)
         except CustomUser.DoesNotExist:
@@ -19,42 +19,26 @@ class CustomUserManager(UserManager):
 
 class CustomUser(AbstractUser):
     # Campos sobrescritos
-    first_name = models.CharField(
-        _("first name"), max_length=50, blank=True  # era: max_length=30
-    )
+    first_name = models.CharField(_('first name'), max_length=50, blank=True)  # era: max_length=30
     # Campos adicionales
     numero_documento = models.CharField(
-        _("número de documento"),
-        max_length=16,
-        blank=True,
-        null=True,
-        help_text=_("DNI, NIE o pasaporte."),
+        _('número de documento'), max_length=16, blank=True, null=True, help_text=_('DNI, NIE o pasaporte.')
     )
     tipo_documento = models.CharField(
-        _("tipo de documento"),
-        max_length=3,
-        blank=True,
-        null=True,
-        help_text=_("DNI, NIE o pasaporte."),
+        _('tipo de documento'), max_length=3, blank=True, null=True, help_text=_('DNI, NIE o pasaporte.')
     )
-    last_name_2 = models.CharField(
-        _("segundo apellido"), max_length=150, blank=True, null=True
-    )
+    last_name_2 = models.CharField(_('segundo apellido'), max_length=150, blank=True, null=True)
     sexo = models.CharField(max_length=1, blank=True, null=True)
     sexo_oficial = models.CharField(max_length=1, blank=True, null=True)
     nombre_oficial = models.CharField(max_length=50, blank=True, null=True)
-    centro_id_nks = models.CharField(
-        _("Cód. centros"), max_length=127, blank=True, null=True
-    )
-    departamento_id_nks = models.CharField(
-        _("Cód. departamentos"), max_length=127, blank=True, null=True
-    )
+    centro_id_nks = models.CharField(_('Cód. centros'), max_length=127, blank=True, null=True)
+    departamento_id_nks = models.CharField(_('Cód. departamentos'), max_length=127, blank=True, null=True)
     colectivos = models.CharField(max_length=127, blank=True, null=True)
 
     # Metodos sobrescritos
     def get_full_name(self):
-        """Devuelve el nombre completo (nombre y los dos apellidos)."""
-        full_name = "%s %s %s" % (self.first_name, self.last_name, self.last_name_2)
+        '''Devuelve el nombre completo (nombre y los dos apellidos).'''
+        full_name = '%s %s %s' % (self.first_name, self.last_name, self.last_name_2)
         return full_name.strip()
 
     # Métodos adicionales
@@ -62,25 +46,25 @@ class CustomUser(AbstractUser):
         return self.username
 
     def get_colectivo_principal(self):
-        """Devuelve el colectivo principal del usuario.
+        '''Devuelve el colectivo principal del usuario.
 
         Se determina usando el orden de prelación PDI > ADS > PAS > EST.
-        """
+        '''
         colectivos_del_usuario = json.loads(self.colectivos) if self.colectivos else []
-        for col in ("PDI", "ADS", "PAS", "EST"):
+        for col in ('PDI', 'ADS', 'PAS', 'EST'):
             if col in colectivos_del_usuario:
                 return col
         return None
 
     def get_num_equipos(self, anyo):
-        """Devuelve el número de equipos de trabajo en los que participa el usuario."""
+        '''Devuelve el número de equipos de trabajo en los que participa el usuario.'''
         num_como_participante = self.vinculaciones.filter(
-            tipo_participacion="participante", proyecto__convocatoria_id=anyo
+            tipo_participacion='participante', proyecto__convocatoria_id=anyo
         ).count()
         num_como_coordinador = self.vinculaciones.filter(
-            tipo_participacion__in=["coordinador", "coordinador_principal"],
+            tipo_participacion__in=['coordinador', 'coordinador_principal'],
             proyecto__convocatoria_id=anyo,
-            proyecto__estado="SOLICITADO",
+            proyecto__estado='SOLICITADO',
         ).count()
         num_equipos = num_como_participante + num_como_coordinador
         return num_equipos

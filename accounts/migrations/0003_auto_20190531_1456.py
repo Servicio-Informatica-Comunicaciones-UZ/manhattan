@@ -6,11 +6,8 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [("accounts", "0002_auto_20190314_0819")]
+    dependencies = [('accounts', '0002_auto_20190314_0819')]
 
     operations = [
-        migrations.AlterModelManagers(
-            name="customuser",
-            managers=[("objects", accounts.models.CustomUserManager())],
-        )
+        migrations.AlterModelManagers(name='customuser', managers=[('objects', accounts.models.CustomUserManager())])
     ]

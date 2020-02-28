@@ -14,18 +14,14 @@ from django.core.validators import ValidationError, validate_email
 
 
 def get_identidad(strategy, response, user, *args, **kwargs):
-    """Actualiza el usuario con los datos obtenidos de Gestión de Identidades."""
+    '''Actualiza el usuario con los datos obtenidos de Gestión de Identidades.'''
 
     wsdl = get_config('WSDL_IDENTIDAD')
     session = Session()
-    session.auth = HTTPBasicAuth(
-        get_config("USER_IDENTIDAD"), get_config("PASS_IDENTIDAD")
-    )
+    session.auth = HTTPBasicAuth(get_config('USER_IDENTIDAD'), get_config('PASS_IDENTIDAD'))
 
     try:
-        client = zeep.Client(
-            wsdl=wsdl, transport=zeep.transports.Transport(session=session)
-        )
+        client = zeep.Client(wsdl=wsdl, transport=zeep.transports.Transport(session=session))
     except RequestConnectionError:
         raise RequestConnectionError('No fue posible conectarse al WS de Identidades.')
     except:  # noqa: E722
@@ -44,12 +40,8 @@ def get_identidad(strategy, response, user, *args, **kwargs):
     user.first_name = identidad.nombre
     user.last_name = identidad.primerApellido
     user.last_name_2 = identidad.segundoApellido
-    correo_personal = (
-        identidad.correoPersonal if is_email_valid(identidad.correoPersonal) else None
-    )
-    correo_principal = (
-        identidad.correoPrincipal if is_email_valid(identidad.correoPrincipal) else None
-    )
+    correo_personal = identidad.correoPersonal if is_email_valid(identidad.correoPersonal) else None
+    correo_principal = identidad.correoPrincipal if is_email_valid(identidad.correoPrincipal) else None
     # El email es un campo NOT NULL en el modelo.
     user.email = correo_personal or correo_principal or ''
     user.is_active = identidad.activo != 'N'
@@ -71,7 +63,7 @@ def get_identidad(strategy, response, user, *args, **kwargs):
 
 
 def is_email_valid(email):
-    """Validate email address"""
+    '''Validate email address'''
     try:
         validate_email(email)
     except ValidationError:
