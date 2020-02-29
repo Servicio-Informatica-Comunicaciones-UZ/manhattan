@@ -14,7 +14,6 @@ mysqlclient = "*"
 social-auth-app-django = "*"
 social-auth-core = {extras = ["saml"],version = "*"}
 python3-saml = "*"
-cx-oracle = "*"
 django-annoying = "*"
 django-crispy-forms = "==1.8.1"
 django-summernote = "*"
