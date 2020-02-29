@@ -26,6 +26,7 @@ before_script:
     - python3.7 -V  # Print out python version for debugging
     # Uncomment next line if your Django app needs a JS runtime:
     # - apt-get update -q && apt-get install nodejs -yqq
+    - apt-get update -q && apt-get install python3.7-dev python3-distutils libxmlsec1-dev pandoc pkg-config
     - cp manhattan_project/settings-sample.py manhattan_project/settings.py
     - pip install --user -r requirements.txt
     - pip install --user coverage
