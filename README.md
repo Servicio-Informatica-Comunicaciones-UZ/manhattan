@@ -7,25 +7,31 @@ Está desarrollada con [Django](https://www.djangoproject.com/) 2, mucho ♥, ba
 
 ## Requisitos
 
-- Python 3.7 o superior. En Debian se puede instalar con el script `compile_python.sh`. En Ubuntu instalar los paquetes python3.7 libpython3.7-dev.
-- [pip](https://pip.pypa.io/en/stable/installing/) (puede venir con la instalación de Python).
-- [pipenv](https://github.com/pypa/pipenv) (se puede instalar con `sudo -H pip3 install pipenv`).
-- Paquetes libxmlsec1-dev pandoc pkg-config
-- Un SGBD aceptado por Django (vg PostgreSQL o MariaDB).
-  Para MariaDB/MySQL instalar el paquete libmariadb-dev-compat o libmysqlclient-dev. La configuración deberá incluir:
+1. Python 3.7 o superior. En Debian o Ubuntu instalar los paquetes `python3.7-dev` y `python3-distutils`.
+2. [pip](https://pip.pypa.io/en/stable/installing/), instalador de paquetes de Python. (Puede venir con la instalación de Python).
+3. [pipenv](https://github.com/pypa/pipenv) para crear un entorno virtual para Python y facilitar el trabajo.
+
+   Se puede instalar con `sudo -H pip3 install pipenv`.
+4. Paquetes `libxmlsec1-dev`, `pandoc` y `pkg-config`.
+5. Un servidor de bases de datos aceptado por Django (vg PostgreSQL o MariaDB).
+
+  Para MariaDB/MySQL instalar el paquete `libmariadb-dev` o `libmysqlclient-dev`.
+
+  La configuración deberá incluir, si es necesario:
 
   ```ini
-  innodb_file_per_table
-  innodb_file_format = Barracuda
-  innodb_large_prefix
-  innodb_default_row_format = dynamic
+  innodb_file_per_table = On  # Default on MariaDB >= 5.5
+  innodb_file_format = Barracuda  # Deprecated in MariaDB 10.2
+  innodb_large_prefix  # Deprecated on MariaDB 10.2, Removed in MariaDB 10.3.1
+  innodb_default_row_format = dynamic  # Default on MariaDB >= 10.2.2
   ```
 
 ## Instalación
 
 ```shell
+git clone https://gitlab.unizar.es/InnovacionDocente/manhattan.git
 cd manhattan
-pipenv --python 3.7 install --dev
+pipenv install [--dev]
 ```
 
 ## Configuración inicial
