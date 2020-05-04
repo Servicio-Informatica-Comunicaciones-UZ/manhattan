@@ -14,7 +14,7 @@ from django.core.validators import ValidationError, validate_email
 
 
 def get_identidad(strategy, response, user, *args, **kwargs):
-    '''Actualiza el usuario con los datos obtenidos de Gestión de Identidades.'''
+    """Actualiza el usuario con los datos obtenidos de Gestión de Identidades."""
 
     wsdl = get_config('WSDL_IDENTIDAD')
     session = Session()
@@ -24,8 +24,9 @@ def get_identidad(strategy, response, user, *args, **kwargs):
         client = zeep.Client(wsdl=wsdl, transport=zeep.transports.Transport(session=session))
     except RequestConnectionError:
         raise RequestConnectionError('No fue posible conectarse al WS de Identidades.')
-    except:  # noqa: E722
-        raise
+    except Exception as e:
+        print(e)
+        raise e
 
     response = client.service.obtenIdentidad(user.username)
     if response.aviso:
@@ -63,7 +64,7 @@ def get_identidad(strategy, response, user, *args, **kwargs):
 
 
 def is_email_valid(email):
-    '''Validate email address'''
+    """Validate email address"""
     try:
         validate_email(email)
     except ValidationError:
