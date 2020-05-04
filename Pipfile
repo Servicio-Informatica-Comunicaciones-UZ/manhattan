@@ -9,15 +9,15 @@ coverage = "*"
 rope = "*"
 
 [packages]
-django = "==3.0.3"  # Remember to re-generate `requirements.txt`
+django = "==3.0.6"  # Remember to re-generate `requirements.txt`
 mysqlclient = "*"
 social-auth-app-django = "*"
 social-auth-core = {extras = ["saml"],version = "*"}
 python3-saml = "*"
 django-annoying = "*"
-django-crispy-forms = "==1.8.1"
+django-crispy-forms = "==1.9.0"
 django-summernote = "*"
-django-tables2 = "==2.2.1"
+django-tables2 = "==2.3.1"
 django-templated-email = "*"
 pypandoc = "*"
 bleach = "*"
