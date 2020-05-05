@@ -352,7 +352,7 @@ class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
             self.es_coordinador(self.object.id) and self.object.en_borrador()
         ) or self.request.user.has_perm('indo.editar_proyecto')
 
-        context['es_editor'] = self.request.user.has_perm('indo.editar_proyecto')
+        context['es_coordinador'] = self.es_coordinador(self.object.id) and self.object.en_borrador()
 
         return context
 
