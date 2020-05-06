@@ -14,8 +14,13 @@
   </div>
   {% endif %}
 
-  <h1 id="titulo">{{ proyecto.titulo }}</h1>
   {# DetailView proporciona el objeto de contexto `proyecto` #}
+  <h1 id="titulo">{{ proyecto.titulo }}
+    {% if permitir_edicion %}
+    <a href="{% url 'proyecto_update_field' proyecto.id 'titulo' %}" class="btn btn-info btn-sm">
+      <span class="fas fa-pencil-alt" aria-hidden="true"></span>&nbsp; {% trans 'Modificar' %}
+    </a>
+    {% endif %}</h1>
   <hr />
   <br />
 
