@@ -92,11 +92,21 @@
                   <span class="fas fa-cog"></span>&nbsp; {% trans "Gestión" %}
                 </a>
                 <div class="dropdown-menu" aria-labelledby="gestionMenu">
-
-                  <a class="dropdown-item" href="{% url 'proyecto_list' anyo_actual %}">
+                  <a class="dropdown-item" href="{% url 'proyectos_table' anyo_actual %}">
                     <span class="fas fa-th-list"></span>&nbsp; {% trans "Proyectos presentados" %}
                   </a>
+                  <a class="dropdown-item" href="{% url 'evaluadores_table' anyo_actual %}">
+                    <span class="fas fa-th-list"></span>&nbsp; {% trans "Evaluadores de los proyectos" %}
+                  </a>
                 </div>
+              </li>
+            {% endif %}
+
+            {% if user|has_group:"Evaluadores" %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'proyectos_evaluados_table' anyo_actual %}">
+                  <span class="fas fa-balance-scale"></span>&nbsp; {% trans "Evaluaciones" %}
+                </a>
               </li>
             {% endif %}
 

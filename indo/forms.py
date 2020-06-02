@@ -1,20 +1,28 @@
+# Standard library
 from datetime import date
 
-from accounts.models import CustomUser
-from accounts.pipeline import get_identidad
-from django import forms
-from django.db.models import BLANK_CHOICE_DASH
-from django.utils.translation import gettext_lazy as _
+# Third-party
 from social_django.models import UserSocialAuth
 from social_django.utils import load_strategy
 
+# Django
+from django import forms
+from django.contrib.auth.models import Group
+from django.db.models import BLANK_CHOICE_DASH
+from django.utils.translation import gettext_lazy as _
+
+# Local Django
+from accounts.models import CustomUser
+from accounts.pipeline import get_identidad
 from .models import Linea, ParticipanteProyecto, Programa, Proyecto, TipoParticipacion
 
 
 class InvitacionForm(forms.ModelForm):
     nip = forms.IntegerField(
         label=_('NIP'),
-        help_text=_('Número de Identificación Personal en la Universidad de Zaragoza de la persona a invitar.'),
+        help_text=_(
+            'Número de Identificación Personal en la Universidad de Zaragoza de la persona a invitar.'
+        ),
     )
 
     def __init__(self, *args, **kwargs):
@@ -37,7 +45,9 @@ class InvitacionForm(forms.ModelForm):
             raise forms.ValidationError('ERROR: ' + str(ex))
 
         # HACK - Indicamos que la autenticación es vía Single Sign On con SAML.
-        usuario_social = UserSocialAuth(uid=f'lord:{usuario.username}', provider='saml', user=usuario)
+        usuario_social = UserSocialAuth(
+            uid=f'lord:{usuario.username}', provider='saml', user=usuario
+        )
         usuario_social.save()
 
         return usuario
@@ -61,7 +71,9 @@ class InvitacionForm(forms.ModelForm):
 
         # Si el usuario no está activo, finalizamos explicando esta circunstancia.
         if not usuario.is_active:
-            raise forms.ValidationError(_('Usuario inactivo en el sistema de Gestión de Identidades'))
+            raise forms.ValidationError(
+                _('Usuario inactivo en el sistema de Gestión de Identidades')
+            )
 
         # Si el usuario no tiene un email válido, finalizamos explicando esta circunstancia.
         if not usuario.email:
@@ -78,14 +90,26 @@ class InvitacionForm(forms.ModelForm):
         vinculados = self.proyecto.get_usuarios_vinculados()
         if usuario in vinculados:
             raise forms.ValidationError(
-                _(f'No puede invitar a {usuario.get_full_name()} ' 'porque ya está vinculado a este proyecto.')
+                _(
+                    f'No puede invitar a {usuario.get_full_name()} '
+                    'porque ya está vinculado a este proyecto.'
+                )
             )
         # La participación de los estudiantes estará limitada a dos por proyecto
         # (excepto en los PIPOUZ).
-        if self.proyecto.programa.nombre_corto != 'PIPOUZ' and usuario.get_colectivo_principal() == 'EST':
-            estudiantes = [vinculado for vinculado in vinculados if vinculado.get_colectivo_principal() == 'EST']
+        if (
+            self.proyecto.programa.nombre_corto != 'PIPOUZ'
+            and usuario.get_colectivo_principal() == 'EST'
+        ):
+            estudiantes = [
+                vinculado
+                for vinculado in vinculados
+                if vinculado.get_colectivo_principal() == 'EST'
+            ]
             if len(estudiantes) >= self.proyecto.programa.max_estudiantes:
-                nombres_estudiantes = ', '.join(list(map(lambda e: e.get_full_name(), estudiantes)))
+                nombres_estudiantes = ', '.join(
+                    list(map(lambda e: e.get_full_name(), estudiantes))
+                )
                 raise forms.ValidationError(
                     _(
                         'Ya se ha alcanzado el máximo de participación de '
@@ -116,7 +140,9 @@ class ProyectoForm(forms.ModelForm):
         estudio = cleaned_data.get('estudio')
 
         if linea and linea.programa_id != programa.id:
-            self.add_error('linea', _('La línea seleccionada no pertenece al programa seleccionado.'))
+            self.add_error(
+                'linea', _('La línea seleccionada no pertenece al programa seleccionado.')
+            )
 
         if lineas_del_programa and not linea:
             self.add_error('linea', _('Este programa requiere seleccionar una línea.'))
@@ -131,13 +157,34 @@ class ProyectoForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['programa'].widget.choices = tuple(
             BLANK_CHOICE_DASH
-            + list(Programa.objects.filter(convocatoria_id=date.today().year).values_list('id', 'nombre_corto').all())
+            + list(
+                Programa.objects.filter(convocatoria_id=date.today().year)
+                .values_list('id', 'nombre_corto')
+                .all()
+            )
         )
         self.fields['linea'].widget.choices = tuple(
             BLANK_CHOICE_DASH
-            + list(Linea.objects.filter(programa__convocatoria_id=date.today().year).values_list('id', 'nombre').all())
+            + list(
+                Linea.objects.filter(programa__convocatoria_id=date.today().year)
+                .values_list('id', 'nombre')
+                .all()
+            )
         )
 
     class Meta:
         fields = ['titulo', 'descripcion', 'programa', 'linea', 'centro', 'estudio']
+        model = Proyecto
+
+
+class EvaluadorForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['evaluador'].widget.choices = tuple(
+            BLANK_CHOICE_DASH
+            + [(u.id, u.full_name) for u in Group.objects.get(name="Evaluadores").user_set.all()]
+        )
+
+    class Meta:
+        fields = ('evaluador',)
         model = Proyecto

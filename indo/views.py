@@ -1,38 +1,56 @@
+# Standard library
 import json
 from datetime import date
 
+# Third-party
+from annoying.functions import get_config, get_object_or_None
+from django_summernote.widgets import SummernoteWidget
+from django_tables2.views import SingleTableView
+from templated_email import send_templated_mail
 import bleach
 import pypandoc
 
+# Django
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
+from django.contrib.auth import get_user_model
+from django.contrib.auth.mixins import (
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    UserPassesTestMixin,
+)
+from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.forms.models import modelform_factory
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, RedirectView, TemplateView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
-from annoying.functions import get_config
-from django_summernote.widgets import SummernoteWidget
-from django_tables2.views import SingleTableView
-from templated_email import send_templated_mail
-
-from .forms import InvitacionForm, ProyectoForm
-from .models import Centro, Convocatoria, Evento, ParticipanteProyecto, Plan, Proyecto, Registro, TipoParticipacion
-from .tables import ProyectosTable
+# Local Django
+from .forms import EvaluadorForm, InvitacionForm, ProyectoForm
+from .models import (
+    Centro,
+    Convocatoria,
+    Evento,
+    ParticipanteProyecto,
+    Plan,
+    Proyecto,
+    Registro,
+    TipoParticipacion,
+)
+from .tables import EvaluadoresTable, ProyectosEvaluadosTable, ProyectosTable
 
 
 class ChecksMixin(UserPassesTestMixin):
-    '''Proporciona comprobaciones para autorizar o no una acción a un usuario.'''
+    """Proporciona comprobaciones para autorizar o no una acción a un usuario."""
 
     def es_coordinador(self, proyecto_id):
-        '''Devuelve si el usuario actual es coordinador del proyecto indicado.'''
+        """Devuelve si el usuario actual es coordinador del proyecto indicado."""
         proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
         usuario_actual = self.request.user
         coordinadores_participantes = proyecto.participantes.filter(
@@ -44,25 +62,29 @@ class ChecksMixin(UserPassesTestMixin):
         return usuario_actual in usuarios_coordinadores
 
     def es_participante(self, proyecto_id):
-        '''Devuelve si el usuario actual es participante del proyecto indicado.'''
+        """Devuelve si el usuario actual es participante del proyecto indicado."""
         proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
         usuario_actual = self.request.user
-        pp = proyecto.participantes.filter(usuario=usuario_actual, tipo_participacion='participante').all()
+        pp = proyecto.participantes.filter(
+            usuario=usuario_actual, tipo_participacion='participante'
+        ).all()
         self.permission_denied_message = _('Usted no es participante de este proyecto.')
 
         return True if pp else False
 
     def es_invitado(self, proyecto_id):
-        '''Devuelve si el usuario actual es invitado del proyecto indicado.'''
+        """Devuelve si el usuario actual es invitado del proyecto indicado."""
         proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
         usuario_actual = self.request.user
-        pp = proyecto.participantes.filter(usuario=usuario_actual, tipo_participacion='invitado').all()
+        pp = proyecto.participantes.filter(
+            usuario=usuario_actual, tipo_participacion='invitado'
+        ).all()
         self.permission_denied_message = _('Usted no está invitado a este proyecto.')
 
         return True if pp else False
 
     def esta_vinculado(self, proyecto_id):
-        '''Devuelve si el usuario actual está vinculado al proyecto indicado.'''
+        """Devuelve si el usuario actual está vinculado al proyecto indicado."""
         proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
         usuario_actual = self.request.user
         pp = (
@@ -75,17 +97,17 @@ class ChecksMixin(UserPassesTestMixin):
         return True if pp else False
 
     def es_pas_o_pdi(self):
-        '''
-        Devuelve si el usuario actual es PAS o PDI de la UZ o de sus centros adscritos.
-        '''
+        """Devuelve si el usuario actual es PAS o PDI de la UZ o de sus centros adscritos."""
         usuario_actual = self.request.user
         colectivos_del_usuario = json.loads(usuario_actual.colectivos)
         self.permission_denied_message = _('Usted no es PAS ni PDI.')
 
-        return any(col_autorizado in colectivos_del_usuario for col_autorizado in ['PAS', 'ADS', 'PDI'])
+        return any(
+            col_autorizado in colectivos_del_usuario for col_autorizado in ['PAS', 'ADS', 'PDI']
+        )
 
     def es_decano_o_director(self, proyecto_id):
-        '''Devuelve si el usuario actual es decano/director del centro del proyecto.'''
+        """Devuelve si el usuario actual es decano/director del centro del proyecto."""
         usuario_actual = self.request.user
         proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
         centro = proyecto.centro
@@ -97,10 +119,10 @@ class ChecksMixin(UserPassesTestMixin):
         return usuario_actual.username == str(nip_decano)
 
     def esta_vinculado_o_es_decano_o_es_coordinador(self, proyecto_id):
-        '''
+        """
         Devuelve si el usuario actual está vinculado al proyecto indicado
         o es decano o director del centro del proyecto
-        o es coordinador del plan de estudios del proyecto.'''
+        o es coordinador del plan de estudios del proyecto."""
         usuario_actual = self.request.user
         esta_autorizado = (
             self.esta_vinculado(proyecto_id)
@@ -116,15 +138,19 @@ class ChecksMixin(UserPassesTestMixin):
         return esta_autorizado
 
     def es_coordinador_estudio(self, proyecto_id):
-        '''Devuelve si el usuario actual es coordinador del estudio del proyecto.'''
+        """Devuelve si el usuario actual es coordinador del estudio del proyecto."""
         usuario_actual = self.request.user
         proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
         estudio = proyecto.estudio
         if not estudio:
             return False
-        nip_coordinadores = [f'{p.nip_coordinador}' for p in estudio.planes.all() if p.nip_coordinador]
+        nip_coordinadores = [
+            f'{p.nip_coordinador}' for p in estudio.planes.all() if p.nip_coordinador
+        ]
 
-        self.permission_denied_message = _('Usted no es coordinador del plan de estudios del proyecto.')
+        self.permission_denied_message = _(
+            'Usted no es coordinador del plan de estudios del proyecto.'
+        )
 
         return usuario_actual.username in nip_coordinadores
 
@@ -133,12 +159,90 @@ class AyudaView(TemplateView):
     template_name = 'ayuda.html'
 
 
+class ProyectoEvaluadorTableView(LoginRequiredMixin, PermissionRequiredMixin, SingleTableView):
+    """Muestra una tabla con las solicitudes de proyectos presentadas y el evaluador asignado."""
+
+    permission_required = 'indo.listar_evaluadores'
+    permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
+    table_class = EvaluadoresTable
+    template_name = 'gestion/proyecto/tabla_evaluadores.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['anyo'] = self.kwargs['anyo']
+        return context
+
+    def get_queryset(self):
+        return (
+            Proyecto.objects.filter(convocatoria__id=self.kwargs['anyo'])
+            .exclude(estado__in=['BORRADOR', 'ANULADO'])
+            .order_by('programa__nombre_corto', 'linea__nombre', 'titulo')
+        )
+
+
+class ProyectosEvaluadosTableView(LoginRequiredMixin, UserPassesTestMixin, SingleTableView):
+    """Lista los proyectos asignados al usuario (evaluador) actual."""
+
+    permission_denied_message = _('Sólo los evaluadores pueden acceder a esta página.')
+    table_class = ProyectosEvaluadosTable
+    template_name = 'evaluador/mis_proyectos.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['anyo'] = self.kwargs['anyo']
+        return context
+
+    def get_queryset(self):
+        return (
+            Proyecto.objects.filter(convocatoria__id=self.kwargs['anyo'])
+            .filter(evaluador=self.request.user)
+            .order_by('programa__nombre_corto', 'linea__nombre', 'titulo')
+        )
+
+    def test_func(self):
+        return self.request.user.groups.filter(name='Evaluadores').exists()
+
+
+class ProyectoEvaluadorUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    """Actualizar el evaluador de un proyecto."""
+
+    permission_required = 'indo.editar_evaluador'
+    permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
+    model = Proyecto
+    template_name = 'gestion/proyecto/editar_evaluador.html'
+    form_class = EvaluadorForm
+
+    def get(self, request, *args, **kwargs):
+        # Obtenemos los NIPs de los usuarios con vinculación «Evaluador externo innovacion ACPUA».
+        nip_evaluadores = [136040, 327618, 329639, 370109]  # FIXME - WS G.I.
+        # Creamos los usuarios que no existan ya en la aplicación.
+        User = get_user_model()
+        evaluadores = Group.objects.get(name='Evaluadores')
+        for nip in nip_evaluadores:
+            usuario = get_object_or_None(User, username=nip)
+            if not usuario:
+                usuario = User.crear_usuario(request, nip)
+            # Añadimos los usuarios al grupo Evaluadores.
+            evaluadores.user_set.add(usuario)  # or usuario.groups.add(evaluadores)
+
+        # Quitamos del grupo Evaluadores a los usuarios que ya no tengan esa vinculación.
+        for usuario in evaluadores.user_set.all():
+            nip_evaluadores = [str(nip) for nip in nip_evaluadores]
+            if usuario.username not in nip_evaluadores:
+                evaluadores.user_set.remove(usuario)  # or usuario.groups.remove(evaluadores)
+
+        return super().get(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse('evaluadores_table', kwargs={'anyo': self.object.convocatoria})
+
+
 class HomePageView(TemplateView):
     template_name = 'home.html'
 
 
 class InvitacionView(LoginRequiredMixin, ChecksMixin, CreateView):
-    '''Muestra un formulario para invitar a una persona a un proyecto determinado.'''
+    """Muestra un formulario para invitar a una persona a un proyecto determinado."""
 
     form_class = InvitacionForm
     model = ParticipanteProyecto
@@ -162,11 +266,13 @@ class InvitacionView(LoginRequiredMixin, ChecksMixin, CreateView):
 
     def test_func(self):
         # TODO: Comprobar estado del proyecto, fecha.
-        return self.es_coordinador(self.kwargs['proyecto_id']) or self.request.user.has_perm('indo.editar_proyecto')
+        return self.es_coordinador(self.kwargs['proyecto_id']) or self.request.user.has_perm(
+            'indo.editar_proyecto'
+        )
 
 
 class ParticipanteAceptarView(LoginRequiredMixin, RedirectView):
-    '''Aceptar la invitación a participar en un proyecto.'''
+    """Aceptar la invitación a participar en un proyecto."""
 
     def get_redirect_url(self, *args, **kwargs):
         return reverse_lazy('mis_proyectos', kwargs={'anyo': date.today().year})
@@ -191,17 +297,22 @@ class ParticipanteAceptarView(LoginRequiredMixin, RedirectView):
             return super().post(request, *args, **kwargs)
 
         pp = get_object_or_404(
-            ParticipanteProyecto, proyecto_id=proyecto_id, usuario=usuario_actual, tipo_participacion='invitado'
+            ParticipanteProyecto,
+            proyecto_id=proyecto_id,
+            usuario=usuario_actual,
+            tipo_participacion='invitado',
         )
         pp.tipo_participacion_id = 'participante'
         pp.save()
 
-        messages.success(request, _(f'Ha pasado a ser participante del proyecto «{proyecto.titulo}».'))
+        messages.success(
+            request, _(f'Ha pasado a ser participante del proyecto «{proyecto.titulo}».')
+        )
         return super().post(request, *args, **kwargs)
 
 
 class ParticipanteDeclinarView(LoginRequiredMixin, RedirectView):
-    '''Declinar la invitación a participar en un proyecto.'''
+    """Declinar la invitación a participar en un proyecto."""
 
     def get_redirect_url(self, *args, **kwargs):
         return reverse_lazy('mis_proyectos', kwargs={'anyo': date.today().year})
@@ -211,17 +322,22 @@ class ParticipanteDeclinarView(LoginRequiredMixin, RedirectView):
         proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
         usuario_actual = self.request.user
         pp = get_object_or_404(
-            ParticipanteProyecto, proyecto_id=proyecto_id, usuario=usuario_actual, tipo_participacion='invitado'
+            ParticipanteProyecto,
+            proyecto_id=proyecto_id,
+            usuario=usuario_actual,
+            tipo_participacion='invitado',
         )
         pp.tipo_participacion_id = 'invitacion_rehusada'
         pp.save()
 
-        messages.success(request, _(f'Ha rehusado ser participante del proyecto «{proyecto.titulo}».'))
+        messages.success(
+            request, _(f'Ha rehusado ser participante del proyecto «{proyecto.titulo}».')
+        )
         return super().post(request, *args, **kwargs)
 
 
 class ParticipanteRenunciarView(LoginRequiredMixin, RedirectView):
-    '''Renunciar a participar en un proyecto.'''
+    """Renunciar a participar en un proyecto."""
 
     def get_redirect_url(self, *args, **kwargs):
         return reverse_lazy('mis_proyectos', kwargs={'anyo': date.today().year})
@@ -231,17 +347,22 @@ class ParticipanteRenunciarView(LoginRequiredMixin, RedirectView):
         proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
         usuario_actual = self.request.user
         pp = get_object_or_404(
-            ParticipanteProyecto, proyecto_id=proyecto_id, usuario=usuario_actual, tipo_participacion='participante'
+            ParticipanteProyecto,
+            proyecto_id=proyecto_id,
+            usuario=usuario_actual,
+            tipo_participacion='participante',
         )
         pp.tipo_participacion_id = 'invitacion_rehusada'
         pp.save()
 
-        messages.success(request, _(f'Ha renunciado a participar en el proyecto «{proyecto.titulo}».'))
+        messages.success(
+            request, _(f'Ha renunciado a participar en el proyecto «{proyecto.titulo}».')
+        )
         return super().post(request, *args, **kwargs)
 
 
 class ParticipanteDeleteView(LoginRequiredMixin, ChecksMixin, DeleteView):
-    '''Borra un registro de ParticipanteProyecto'''
+    """Borra un registro de ParticipanteProyecto"""
 
     model = ParticipanteProyecto
     template_name = 'participante-proyecto/confirm_delete.html'
@@ -250,11 +371,13 @@ class ParticipanteDeleteView(LoginRequiredMixin, ChecksMixin, DeleteView):
         return reverse_lazy('proyecto_detail', args=[self.object.proyecto.id])
 
     def test_func(self):
-        return self.es_coordinador(self.get_object().proyecto.id) or self.request.user.has_perm('indo.editar_proyecto')
+        return self.es_coordinador(self.get_object().proyecto.id) or self.request.user.has_perm(
+            'indo.editar_proyecto'
+        )
 
 
 class ProyectoCreateView(LoginRequiredMixin, ChecksMixin, CreateView):
-    '''Crea una nueva solicitud de proyecto'''
+    """Crea una nueva solicitud de proyecto"""
 
     model = Proyecto
     template_name = 'proyecto/new.html'
@@ -269,10 +392,10 @@ class ProyectoCreateView(LoginRequiredMixin, ChecksMixin, CreateView):
         return redirect('proyecto_detail', proyecto.id)
 
     def get_form(self, form_class=None):
-        '''
+        """
         Devuelve el formulario añadiendo automáticamente el campo Convocatoria,
         que es requerido, y el usuario, para comprobar si tiene los permisos necesarios.
-        '''
+        """
         form = super(ProyectoCreateView, self).get_form(form_class)
         form.instance.user = self.request.user
         form.instance.convocatoria = Convocatoria(date.today().year)
@@ -280,13 +403,17 @@ class ProyectoCreateView(LoginRequiredMixin, ChecksMixin, CreateView):
 
     def _guardar_coordinador(self, proyecto):
         pp = ParticipanteProyecto(
-            proyecto=proyecto, tipo_participacion=TipoParticipacion(nombre='coordinador'), usuario=self.request.user
+            proyecto=proyecto,
+            tipo_participacion=TipoParticipacion(nombre='coordinador'),
+            usuario=self.request.user,
         )
         pp.save()
 
     def _registrar_creacion(self, proyecto):
         evento = Evento.objects.get(nombre='creacion_solicitud')
-        registro = Registro(descripcion='Creación inicial de la solicitud', evento=evento, proyecto=proyecto)
+        registro = Registro(
+            descripcion='Creación inicial de la solicitud', evento=evento, proyecto=proyecto
+        )
         registro.save()
 
     def test_func(self):
@@ -296,9 +423,7 @@ class ProyectoCreateView(LoginRequiredMixin, ChecksMixin, CreateView):
 
 
 class ProyectoAnularView(LoginRequiredMixin, ChecksMixin, RedirectView):
-    '''
-    Cambia el estado de una solicitud de proyecto a Anulada.
-    '''
+    """Cambia el estado de una solicitud de proyecto a Anulada."""
 
     model = Proyecto
 
@@ -318,7 +443,7 @@ class ProyectoAnularView(LoginRequiredMixin, ChecksMixin, RedirectView):
 
 
 class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
-    '''Muestra una solicitud de proyecto.'''
+    """Muestra una solicitud de proyecto."""
 
     model = Proyecto
     template_name = 'proyecto/detail.html'
@@ -340,7 +465,9 @@ class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
         context['participantes'] = participantes
 
         invitados = (
-            self.object.participantes.filter(tipo_participacion__in=['invitado', 'invitacion_rehusada'])
+            self.object.participantes.filter(
+                tipo_participacion__in=['invitado', 'invitacion_rehusada']
+            )
             .order_by('tipo_participacion', 'usuario__first_name', 'usuario__last_name')
             .all()
         )
@@ -352,7 +479,9 @@ class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
             self.es_coordinador(self.object.id) and self.object.en_borrador()
         ) or self.request.user.has_perm('indo.editar_proyecto')
 
-        context['es_coordinador'] = self.es_coordinador(self.object.id) and self.object.en_borrador()
+        context['es_coordinador'] = (
+            self.es_coordinador(self.object.id) and self.object.en_borrador()
+        )
 
         return context
 
@@ -361,13 +490,13 @@ class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
         return self.esta_vinculado_o_es_decano_o_es_coordinador(proyecto_id)
 
 
-class ProyectoListView(LoginRequiredMixin, PermissionRequiredMixin, SingleTableView):
-    '''Muestra una tabla de todos los proyectos presentados en una convocatoria.'''
+class ProyectoTableView(LoginRequiredMixin, PermissionRequiredMixin, SingleTableView):
+    """Muestra una tabla de todos los proyectos presentados en una convocatoria."""
 
     permission_required = 'indo.listar_proyectos'
     permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
     table_class = ProyectosTable
-    template_name = 'gestion/proyecto/tabla.html'
+    template_name = 'gestion/proyecto/tabla_proyectos.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -383,11 +512,11 @@ class ProyectoListView(LoginRequiredMixin, PermissionRequiredMixin, SingleTableV
 
 
 class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
-    '''Presenta una solicitud de proyecto.
+    """Presenta una solicitud de proyecto.
 
     El proyecto pasa de estado «Borrador» a estado «Solicitado».
     Se envían correos a los agentes involucrados.
-    '''
+    """
 
     def get_redirect_url(self, *args, **kwargs):
         return reverse_lazy('proyecto_detail', args=[kwargs.get('pk')])
@@ -415,7 +544,10 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
         if request.user.get_colectivo_principal() == 'ADS' and proyecto.ayuda != 0:
             messages.error(
                 request,
-                _('Los profesores de los centros adscritos no pueden coordinar ' 'proyectos con financiación.'),
+                _(
+                    'Los profesores de los centros adscritos no pueden coordinar '
+                    'proyectos con financiación.'
+                ),
             )
             return super().post(request, *args, **kwargs)
 
@@ -430,7 +562,9 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
             return super().post(request, *args, **kwargs)
 
         if not proyecto.tiene_invitados():
-            messages.error(request, _('La solicitud debe incluir al menos un invitado a participar.'))
+            messages.error(
+                request, _('La solicitud debe incluir al menos un invitado a participar.')
+            )
             return super().post(request, *args, **kwargs)
 
         self._enviar_invitaciones(request, proyecto)
@@ -451,7 +585,7 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
         return super().post(request, *args, **kwargs)
 
     def _enviar_invitaciones(self, request, proyecto):
-        '''Envia un mensaje a cada uno de los invitados al proyecto.'''
+        """Envia un mensaje a cada uno de los invitados al proyecto."""
         for invitado in proyecto.participantes.filter(tipo_participacion='invitado'):
             send_templated_mail(
                 template_name='invitacion',
@@ -462,22 +596,26 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
                     'nombre_invitado': invitado.usuario.get_full_name(),
                     'sexo_invitado': invitado.usuario.sexo,
                     'titulo_proyecto': proyecto.titulo,
-                    'programa_proyecto': f'{proyecto.programa.nombre_corto} ' + f'({proyecto.programa.nombre_largo})',
-                    'descripcion_proyecto': pypandoc.convert_text(proyecto.descripcion, 'md', format='html').replace(
-                        '\\\n', '  \n'
-                    ),
+                    'programa_proyecto': f'{proyecto.programa.nombre_corto} '
+                    + f'({proyecto.programa.nombre_largo})',
+                    'descripcion_proyecto': pypandoc.convert_text(
+                        proyecto.descripcion, 'md', format='html'
+                    ).replace('\\\n', '  \n'),
                     'site_url': settings.SITE_URL,
                 },
             )
 
     def _enviar_solicitudes_visto_bueno_centro(self, request, proyecto):
-        '''Envia un mensaje al responsable del centro solicitando su visto bueno.'''
-
+        """Envia un mensaje al responsable del centro solicitando su visto bueno."""
         try:
             validate_email(proyecto.centro.email_decano)
         except ValidationError:
             messages.warning(
-                request, _('La dirección de correo electrónico del director o decano ' 'del centro no es válida.')
+                request,
+                _(
+                    'La dirección de correo electrónico del director o decano '
+                    'del centro no es válida.'
+                ),
             )
             return
 
@@ -490,17 +628,17 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
                 'nombre_decano': proyecto.centro.nombre_decano,
                 'tratamiento_decano': proyecto.centro.tratamiento_decano,
                 'titulo_proyecto': proyecto.titulo,
-                'programa_proyecto': f'{proyecto.programa.nombre_corto} ' f'({proyecto.programa.nombre_largo})',
-                'descripcion_proyecto': pypandoc.convert_text(proyecto.descripcion, 'md', format='html').replace(
-                    '\\\n', '\n'
-                ),
+                'programa_proyecto': f'{proyecto.programa.nombre_corto} '
+                f'({proyecto.programa.nombre_largo})',
+                'descripcion_proyecto': pypandoc.convert_text(
+                    proyecto.descripcion, 'md', format='html'
+                ).replace('\\\n', '\n'),
                 'site_url': settings.SITE_URL,
             },
         )
 
     def _is_email_valid(self, email):
-        '''Validate email address'''
-
+        """Validate email address"""
         try:
             validate_email(email)
         except ValidationError:
@@ -508,8 +646,7 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
         return True
 
     def _enviar_solicitudes_visto_bueno_estudio(self, request, proyecto):
-        '''Envia mensaje a los coordinadores del plan solicitando su visto bueno.'''
-
+        """Envia mensaje a los coordinadores del plan solicitando su visto bueno."""
         email_coordinadores_estudio = [
             f'{p.email_coordinador}'
             for p in proyecto.estudio.planes.all()
@@ -523,10 +660,11 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
             context={
                 'nombre_coordinador': request.user.get_full_name(),
                 'titulo_proyecto': proyecto.titulo,
-                'programa_proyecto': f'{proyecto.programa.nombre_corto} ' f'({proyecto.programa.nombre_largo})',
-                'descripcion_proyecto': pypandoc.convert_text(proyecto.descripcion, 'md', format='html').replace(
-                    '\\\n', '\n'
-                ),
+                'programa_proyecto': f'{proyecto.programa.nombre_corto} '
+                f'({proyecto.programa.nombre_largo})',
+                'descripcion_proyecto': pypandoc.convert_text(
+                    proyecto.descripcion, 'md', format='html'
+                ).replace('\\\n', '\n'),
                 'site_url': settings.SITE_URL,
             },
         )
@@ -537,7 +675,7 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
 
 
 class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
-    '''Actualiza un campo de una solicitud de proyecto.'''
+    """Actualiza un campo de una solicitud de proyecto."""
 
     # TODO: Comprobar estado/fecha
     model = Proyecto
@@ -548,14 +686,23 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
         if campo in ('centro', 'codigo', 'convocatoria', 'estado', 'estudio', 'linea', 'programa'):
             raise Http404(_('No puede editar ese campo.'))
 
-        if campo not in ('titulo', 'departamento', 'licencia', 'ayuda', 'visto_bueno_centro', 'visto_bueno_estudio'):
-            formulario = modelform_factory(Proyecto, fields=(campo,), widgets={campo: SummernoteWidget()})
+        if campo not in (
+            'titulo',
+            'departamento',
+            'licencia',
+            'ayuda',
+            'visto_bueno_centro',
+            'visto_bueno_estudio',
+        ):
+            formulario = modelform_factory(
+                Proyecto, fields=(campo,), widgets={campo: SummernoteWidget()}
+            )
 
             def as_p(self):
-                '''
+                """
                 Return this form rendered as HTML <p>s,
                 with the helptext over the textarea.
-                '''
+                """
                 return self._html_output(
                     normal_row='''<p%(html_class_attr)s>
                     %(label)s
@@ -577,7 +724,9 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
                 cleaned_data[campo] = mark_safe(
                     bleach.clean(
                         texto,
-                        tags=(bleach.sanitizer.ALLOWED_TAGS + get_config('ADDITIONAL_ALLOWED_TAGS')),
+                        tags=(
+                            bleach.sanitizer.ALLOWED_TAGS + get_config('ADDITIONAL_ALLOWED_TAGS')
+                        ),
                         attributes=get_config('ALLOWED_ATTRIBUTES'),
                         styles=get_config('ALLOWED_STYLES'),
                         protocols=get_config('ALLOWED_PROTOCOLS'),
@@ -593,18 +742,23 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
         return super().get_form_class()
 
     def test_func(self):
-        '''Devuelve si el usuario está autorizado a modificar este campo.'''
-
+        """Devuelve si el usuario está autorizado a modificar este campo."""
         return (
             self.es_coordinador(self.kwargs['pk'])
-            or (self.kwargs['campo'] == 'visto_bueno_centro' and self.es_decano_o_director(self.kwargs['pk']))
-            or (self.kwargs['campo'] == 'visto_bueno_estudio' and self.es_coordinador_estudio(self.kwargs['pk']))
+            or (
+                self.kwargs['campo'] == 'visto_bueno_centro'
+                and self.es_decano_o_director(self.kwargs['pk'])
+            )
+            or (
+                self.kwargs['campo'] == 'visto_bueno_estudio'
+                and self.es_coordinador_estudio(self.kwargs['pk'])
+            )
             or self.request.user.has_perm('indo.editar_proyecto')
         )
 
 
 class ProyectosUsuarioView(LoginRequiredMixin, TemplateView):
-    '''Lista los proyectos a los que está vinculado el usuario actual.'''
+    """Lista los proyectos a los que está vinculado el usuario actual."""
 
     template_name = 'proyecto/mis-proyectos.html'
 
@@ -633,7 +787,9 @@ class ProyectosUsuarioView(LoginRequiredMixin, TemplateView):
         )
         context['proyectos_invitado'] = (
             Proyecto.objects.filter(
-                convocatoria__id=anyo, participantes__usuario=usuario, participantes__tipo_participacion_id='invitado'
+                convocatoria__id=anyo,
+                participantes__usuario=usuario,
+                participantes__tipo_participacion_id='invitado',
             )
             .order_by('programa__nombre_corto', 'linea__nombre', 'titulo')
             .all()
@@ -647,7 +803,9 @@ class ProyectosUsuarioView(LoginRequiredMixin, TemplateView):
         centros_dirigidos = Centro.objects.filter(nip_decano=nip_usuario).all()
         if centros_dirigidos:
             context['proyectos_centros_dirigidos'] = Proyecto.objects.filter(
-                convocatoria_id=anyo, programa__requiere_visto_bueno_centro=True, centro__in=centros_dirigidos
+                convocatoria_id=anyo,
+                programa__requiere_visto_bueno_centro=True,
+                centro__in=centros_dirigidos,
             ).all()
 
         planes_coordinados = Plan.objects.filter(nip_coordinador=nip_usuario).all()

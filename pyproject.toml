@@ -1,6 +1,6 @@
 [tool.black]
 skip-string-normalization = true
-line-length = 119
+line-length = 99
 target-version = ['py37']
 include = '\.pyi?$'
 exclude = '''
@@ -22,3 +22,16 @@ exclude = '''
                      # the root of the project
 )
 '''
+
+[tool.isort]
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+line_length = 99
+
+[tool.pylint.messages_control]
+disable = "C0330, C0326"
+
+[tool.pylint.format]
+max-line-length = "99"

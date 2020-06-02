@@ -15,19 +15,27 @@ class Centro(models.Model):
     email = models.EmailField(_('email address'), blank=True, null=True)
     url = models.URLField('URL', max_length=255, blank=True, null=True)
     nip_decano = models.PositiveIntegerField(_('NIP del decano o director'), blank=True, null=True)
-    nombre_decano = models.CharField(_('nombre del decano o director'), max_length=255, blank=True, null=True)
+    nombre_decano = models.CharField(
+        _('nombre del decano o director'), max_length=255, blank=True, null=True
+    )
     email_decano = models.EmailField(_('email del decano o director'), blank=True, null=True)
     tratamiento_decano = models.CharField(
         _('cargo'), max_length=25, blank=True, null=True, help_text=_('Decano/a ó director(a).')
     )
     nip_secretario = models.PositiveIntegerField(_('NIP del secretario'), blank=True, null=True)
-    nombre_secretario = models.CharField(_('nombre del secretario'), max_length=255, blank=True, null=True)
+    nombre_secretario = models.CharField(
+        _('nombre del secretario'), max_length=255, blank=True, null=True
+    )
     email_secretario = models.EmailField(_('email del secretario'), blank=True, null=True)
-    nips_coord_pou = models.CharField(_('NIPs de los coordinadores POU'), blank=True, max_length=255, null=True)
+    nips_coord_pou = models.CharField(
+        _('NIPs de los coordinadores POU'), blank=True, max_length=255, null=True
+    )
     nombres_coords_pou = models.CharField(
         _('nombres de los coordinadores POU'), blank=True, max_length=1023, null=True
     )
-    emails_coords_pou = models.CharField(_('emails de los coordinadores POU'), blank=True, max_length=1023, null=True)
+    emails_coords_pou = models.CharField(
+        _('emails de los coordinadores POU'), blank=True, max_length=1023, null=True
+    )
     unidad_gasto = models.CharField(_('unidad de gasto'), blank=True, max_length=3, null=True)
     esta_activo = models.BooleanField(_('¿Activo?'), default=False)
 
@@ -59,7 +67,9 @@ class Departamento(models.Model):
     email = models.EmailField(_('email del departamento'), blank=True, null=True)
     email_secretaria = models.EmailField(_('email de la secretaría'), blank=True, null=True)
     nip_director = models.PositiveIntegerField(_('NIP del director'), blank=True, null=True)
-    nombre_director = models.CharField(_('nombre del director'), max_length=255, blank=True, null=True)
+    nombre_director = models.CharField(
+        _('nombre del director'), max_length=255, blank=True, null=True
+    )
     email_director = models.EmailField(_('email del director'), blank=True, null=True)
     unidad_gasto = models.CharField(_('unidad de gasto'), blank=True, max_length=3, null=True)
 
@@ -98,10 +108,12 @@ class Evento(models.Model):
 
 
 class Licencia(models.Model):
-    '''Licencia de publicación de la memoria'''
+    """Licencia de publicación de la memoria"""
 
     identificador = models.CharField(
-        max_length=255, primary_key=True, help_text=_('Ver los identificadores estándar en https://spdx.org/licenses/')
+        max_length=255,
+        primary_key=True,
+        help_text=_('Ver los identificadores estándar en https://spdx.org/licenses/'),
     )
     nombre = models.CharField(max_length=255)
     url = models.URLField('URL', max_length=255, blank=True, null=True)
@@ -121,7 +133,9 @@ class Linea(models.Model):
 class Plan(models.Model):
     id_nk = models.PositiveSmallIntegerField(_('Cód. plan'))
     nip_coordinador = models.PositiveIntegerField(_('NIP del coordinador'), blank=True, null=True)
-    nombre_coordinador = models.CharField(_('nombre del coordinador'), max_length=255, blank=True, null=True)
+    nombre_coordinador = models.CharField(
+        _('nombre del coordinador'), max_length=255, blank=True, null=True
+    )
     email_coordinador = models.EmailField(_('email del coordinador'), blank=True, null=True)
     esta_activo = models.BooleanField(_('¿Activo?'), default=True)
     centro = models.ForeignKey('Centro', on_delete=models.PROTECT)
@@ -129,9 +143,13 @@ class Plan(models.Model):
 
 
 class ParticipanteProyecto(models.Model):
-    proyecto = models.ForeignKey('Proyecto', on_delete=models.PROTECT, related_name='participantes')
+    proyecto = models.ForeignKey(
+        'Proyecto', on_delete=models.PROTECT, related_name='participantes'
+    )
     tipo_participacion = models.ForeignKey('TipoParticipacion', on_delete=models.PROTECT)
-    usuario = models.ForeignKey('accounts.CustomUser', on_delete=models.PROTECT, related_name='vinculaciones')
+    usuario = models.ForeignKey(
+        'accounts.CustomUser', on_delete=models.PROTECT, related_name='vinculaciones'
+    )
 
     def get_cargo(self):
         if self.tipo_participacion.nombre == 'coordinador':
@@ -148,8 +166,12 @@ class Programa(models.Model):
     nombre_largo = models.CharField(
         max_length=127, help_text=_('Ejemplo: Programa de Recursos en Abierto para Centros')
     )
-    max_ayuda = models.PositiveSmallIntegerField(_('Cuantía máxima que se puede solicitar de ayuda'), null=True)
-    max_estudiantes = models.PositiveSmallIntegerField(_('Número máximo de estudiantes por programa'), null=True)
+    max_ayuda = models.PositiveSmallIntegerField(
+        _('Cuantía máxima que se puede solicitar de ayuda'), null=True
+    )
+    max_estudiantes = models.PositiveSmallIntegerField(
+        _('Número máximo de estudiantes por programa'), null=True
+    )
     campos = models.TextField(null=True)
     convocatoria = models.ForeignKey('Convocatoria', on_delete=models.PROTECT)
     requiere_visto_bueno_centro = models.BooleanField(
@@ -171,7 +193,7 @@ class Proyecto(models.Model):
         _('Resumen'),
         null=True,
         max_length=4095,
-        help_text=_('Resumen sucinto del proyecto. Máximo recomendable: ' 'un párrafo de 10 líneas.'),
+        help_text=_('Resumen sucinto del proyecto. Máximo recomendable: un párrafo de 10 líneas.'),
     )
     estado = models.CharField(
         choices=(
@@ -203,7 +225,7 @@ class Proyecto(models.Model):
         ),
     )
     mejoras = models.TextField(
-        _('Mejoras esperadas en el proceso de enseñanza-aprendizaje ' 'y cómo se comprobarán.'),
+        _('Mejoras esperadas en el proceso de enseñanza-aprendizaje y cómo se comprobarán.'),
         blank=True,
         null=True,
         help_text=_('Método de evaluación, Resultados, Impacto (Eficiencia y Eficacia)'),
@@ -215,7 +237,10 @@ class Proyecto(models.Model):
         help_text=_('Transferibilidad, Sostenibilidad, Difusión prevista'),
     )
     tipo = models.TextField(
-        _('Tipo de proyecto'), blank=True, null=True, help_text=_('Experiencia, Estudio o Desarrollo')
+        _('Tipo de proyecto'),
+        blank=True,
+        null=True,
+        help_text=_('Experiencia, Estudio o Desarrollo'),
     )
     contexto_aplicacion = models.TextField(
         _('Contexto de aplicación/Público objetivo'),
@@ -225,7 +250,9 @@ class Proyecto(models.Model):
     )
     metodos = models.TextField(_('Métodos/Técnicas/Actividades utilizadas'), blank=True, null=True)
     tecnologias = models.TextField(_('Tecnologías utilizadas'), blank=True, null=True)
-    aplicacion = models.TextField(_('Posible aplicación a otros centros/áreas de conocimiento'), blank=True, null=True)
+    aplicacion = models.TextField(
+        _('Posible aplicación a otros centros/áreas de conocimiento'), blank=True, null=True
+    )
     proyectos_anteriores = models.TextField(
         _('Proyectos anteriores'),
         blank=True,
@@ -237,19 +264,28 @@ class Proyecto(models.Model):
     )
     impacto = models.TextField(_('Impacto del proyecto'), blank=True, null=True)
     innovacion = models.TextField(_('Tipo de innovación introducida'), blank=True, null=True)
-    interes = models.TextField(_('Interés y oportunidad para la institución/titulación/centro'), blank=True, null=True)
+    interes = models.TextField(
+        _('Interés y oportunidad para la institución/titulación/centro'), blank=True, null=True
+    )
     justificacion_equipo = models.TextField(
         _('Justificación del equipo docente que conforma la solicitud'),
         blank=True,
         null=True,
-        help_text=_('Experiencia común conjunta, experiencia previa en el tipo de curso ' 'solicitado, etc.'),
+        help_text=_(
+            'Experiencia común conjunta, experiencia previa en el tipo de curso '
+            'solicitado, etc.'
+        ),
     )
-    caracter_estrategico = models.TextField(_('Carácter estratégico del curso para la UZ'), blank=True, null=True)
-    seminario = models.TextField(_('Asignatura, curso, seminario o equivalente'), blank=True, null=True)
+    caracter_estrategico = models.TextField(
+        _('Carácter estratégico del curso para la UZ'), blank=True, null=True
+    )
+    seminario = models.TextField(
+        _('Asignatura, curso, seminario o equivalente'), blank=True, null=True
+    )
     idioma = models.TextField(_('Idioma de publicación'), blank=True, null=True)
     ramas = models.TextField(_('Ramas de conocimiento'), blank=True, null=True)
     mejoras_pou = models.TextField(
-        _('Mejoras esperadas en el Plan de Orientación Universitaria ' 'y cómo se comprobarán.'),
+        _('Mejoras esperadas en el Plan de Orientación Universitaria y cómo se comprobarán.'),
         blank=True,
         null=True,
         help_text=_('Método de evaluación, Resultados, Impacto (Eficiencia y Eficacia)'),
@@ -269,9 +305,13 @@ class Proyecto(models.Model):
         _('Breve descripción de los contenidos'),
         blank=True,
         null=True,
-        help_text=_('Para OCW indicar los temas, que incluirán teoría, problemas, ' 'autoevaluación, etc.'),
+        help_text=_(
+            'Para OCW indicar los temas, que incluirán teoría, problemas, autoevaluación, etc.'
+        ),
     )
-    afectadas = models.TextField(_('Asignatura/s y Titulación/es afectadas'), blank=True, null=True)
+    afectadas = models.TextField(
+        _('Asignatura/s y Titulación/es afectadas'), blank=True, null=True
+    )
     formatos = models.TextField(_('Formatos de los materiales incluidos.'), blank=True, null=True)
     enlace = models.TextField(
         _('Enlace'),
@@ -293,31 +333,42 @@ class Proyecto(models.Model):
             'objeto del curso.'
         ),
     )
-    material_previo = models.TextField(_('Indicar si se cuenta con algún material previo'), blank=True, null=True)
+    material_previo = models.TextField(
+        _('Indicar si se cuenta con algún material previo'), blank=True, null=True
+    )
     duracion = models.TextField(
         _('Duración del curso'),
         blank=True,
         null=True,
         help_text=_(
-            'Número de semanas y número de horas de estudio y trabajo autónomo ' 'del participante en todo el curso.'
+            'Número de semanas y número de horas de estudio y trabajo autónomo '
+            'del participante en todo el curso.'
         ),
     )
     multimedia = models.TextField(
         _('Elementos multimedia e innovadores'),
         blank=True,
         null=True,
-        help_text=_('Elementos multimedia e innovadores que va a utilizar ' 'en la elaboración del curso.'),
+        help_text=_(
+            'Elementos multimedia e innovadores que va a utilizar en la elaboración del curso.'
+        ),
     )
-    indicadores = models.TextField(_('Indicadores para el seguimiento y evaluación del curso'), blank=True, null=True)
+    indicadores = models.TextField(
+        _('Indicadores para el seguimiento y evaluación del curso'), blank=True, null=True
+    )
     actividades = models.TextField(
-        _('Actividades de dinamización previstas'), blank=True, null=True, help_text=_('Sólo obligatorias para MOOCs.')
+        _('Actividades de dinamización previstas'),
+        blank=True,
+        null=True,
+        help_text=_('Sólo obligatorias para MOOCs.'),
     )
     financiacion = models.TextField(
         _('Financiación'),
         blank=True,
         null=True,
         help_text=_(
-            'Justificar la necesidad de lo solicitado. ' 'Añadir información sobre otras fuentes de financiación.'
+            'Justificar la necesidad de lo solicitado. '
+            'Añadir información sobre otras fuentes de financiación.'
         ),
     )
     ayuda = models.PositiveIntegerField(
@@ -325,7 +376,8 @@ class Proyecto(models.Model):
         blank=True,
         null=True,
         help_text=_(
-            'Las normas de la convocatoria establecen el importe máximo ' 'que se puede solicitar según el programa.'
+            'Las normas de la convocatoria establecen el importe máximo '
+            'que se puede solicitar según el programa.'
         ),
         default=0,
     )
@@ -349,17 +401,30 @@ class Proyecto(models.Model):
     )
     licencia = models.ForeignKey('Licencia', on_delete=models.PROTECT, null=True)
     linea = models.ForeignKey(
-        'Linea', on_delete=models.PROTECT, blank=True, null=True, verbose_name=_('Línea'), help_text=_('En su caso.')
+        'Linea',
+        on_delete=models.PROTECT,
+        blank=True,
+        null=True,
+        verbose_name=_('Línea'),
+        help_text=_('En su caso.'),
     )
     programa = models.ForeignKey('Programa', on_delete=models.PROTECT)
     visto_bueno_centro = models.BooleanField(_('Visto bueno del centro'), null=True)
     visto_bueno_estudio = models.BooleanField(_('Visto bueno del plan de estudios'), null=True)
+    evaluador = models.ForeignKey(
+        'accounts.CustomUser',
+        null=True,
+        on_delete=models.PROTECT,
+        related_name='proyectos_evaluados',
+    )
 
     class Meta:
         permissions = [
             ('listar_proyectos', _('Puede ver el listado de todos los proyectos.')),
             ('ver_proyecto', _('Puede ver cualquier proyecto.')),
             ('editar_proyecto', _('Puede editar cualquier proyecto en cualquier momento.')),
+            ('listar_evaluadores', _('Puede ver el listado de evaluadores.')),
+            ('editar_evaluador', _('Puede editar el evaluador de un proyecto.')),
         ]
 
     def __str__(self):
@@ -373,7 +438,9 @@ class Proyecto(models.Model):
 
     def get_participante_or_none(self, tipo):
         try:
-            return ParticipanteProyecto.objects.get(proyecto_id=self.id, tipo_participacion_id=tipo)
+            return ParticipanteProyecto.objects.get(
+                proyecto_id=self.id, tipo_participacion_id=tipo
+            )
         except ParticipanteProyecto.DoesNotExist:
             return None
 

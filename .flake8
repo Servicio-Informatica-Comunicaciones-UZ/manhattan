@@ -1,6 +1,0 @@
-[flake8]
-exclude=**/settings*.py,**/__init__.py,**/migrations/*.py
-ignore = W503
-max-line-length = 119
-max-complexity = 10
-select = B,C,E,F,W
