@@ -11,7 +11,7 @@ rope = "*"
 
 [packages]
 bleach = "*"
-django = "==3.0.6"  # Remember to re-generate `requirements.txt`
+django = "==3.0.7"  # Remember to re-generate `requirements.txt`
 django-annoying = "*"
 django-crispy-forms = "==1.9.0"
 django-summernote = "*"
