@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load custom_tags i18n %}
+
+{% block title %}{% trans "Evaluación" %}: {{ proyecto.titulo }}{% endblock title %}
+
+{% block content %}
+<div class='container-blanco'>
+    <h1 id="cabecera">{% trans "Evaluación" %} <small>{{ proyecto.titulo }}</small></h1>
+    <hr />
+    <br />
+
+    <div class="alert-info alert fade-in">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+
+        <span class="fas fa-info-circle"></span>
+        {% trans 'Aquí puede ver/editar la evaluación del proyecto.' %}
+        {% trans 'Pulse el botón «Guardar» para almacenar sus cambios.' %}
+    </div><br />
+
+    <form action="" method="post">
+        {% csrf_token %}
+
+        {% for criterio in criterios %}
+        <p><strong>{{ criterio.descripcion }}</strong></p>
+
+        {% with valoracion=dict_valoraciones|get_item:criterio.id %}
+
+        {% if criterio.tipo == 'opcion' %}
+        <select name="{{ criterio.id }}">
+            <option value="" {% if not valoracion %}selected{% endif %}>---------</option>
+            {% for opcion in criterio.opciones.all %}
+            <option value="{{ opcion.id }}" {% if opcion.id == valoracion.opcion_id %} selected {% endif %}>
+                {{ opcion.descripcion }}
+            </option>
+            {% endfor %}
+        </select>
+        {% elif criterio.tipo == 'texto' %}
+        <textarea class="textarea form-control" name="{{ criterio.id }}"
+            placeholder="{% trans 'Introduzca sus comentarios.' %}" rows="10"
+            cols="80">{% if valoracion %}{{ valoracion.texto }}{% endif %}</textarea>
+        {% endif %}
+
+        {% endwith %}
+
+        <p></p><br />
+        {% endfor %}
+
+        <button class="btn btn-primary" type="submit" title="{% trans 'Guardar evaluación' %}">
+            <span class="fas fa-check"></span> {% trans 'Guardar' %}
+        </button>
+    </form>
+
+</div>
+{% endblock content %}

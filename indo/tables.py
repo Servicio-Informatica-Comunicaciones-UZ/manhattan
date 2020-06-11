@@ -43,7 +43,7 @@ class ProyectosEvaluadosTable(tables.Table):
     boton_evaluar = tables.Column(empty_values=(), orderable=False, verbose_name='')
 
     def render_boton_evaluar(self, record):
-        enlace = reverse('proyecto_detail', args=[record.id])  # FIXME Hacer página de evaluación
+        enlace = reverse('evaluacion', args=[record.id])
         return mark_safe(
             f'''<a href="{enlace}" title={_("Evaluar el proyecto")}
           aria-label={_('Evaluar el proyecto')} class="btn btn-info btn-sm">

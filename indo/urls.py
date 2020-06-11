@@ -4,6 +4,7 @@ from django.urls import include, path
 
 from .views import (
     AyudaView,
+    EvaluacionView,
     HomePageView,
     InvitacionView,
     ParticipanteAceptarView,
@@ -32,6 +33,7 @@ urlpatterns = [
         ProyectosEvaluadosTableView.as_view(),
         name='proyectos_evaluados_table',
     ),
+    path('evaluador/<int:pk>/evaluacion/', EvaluacionView.as_view(), name='evaluacion'),
     path('gestion/proyecto/<int:anyo>/', ProyectoTableView.as_view(), name='proyectos_table'),
     path(
         'gestion/proyecto/<int:anyo>/evaluadores',

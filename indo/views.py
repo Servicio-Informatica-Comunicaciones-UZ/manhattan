@@ -36,12 +36,14 @@ from .forms import EvaluadorForm, InvitacionForm, ProyectoForm
 from .models import (
     Centro,
     Convocatoria,
+    Criterio,
     Evento,
     ParticipanteProyecto,
     Plan,
     Proyecto,
     Registro,
     TipoParticipacion,
+    Valoracion,
 )
 from .tables import EvaluadoresTable, ProyectosEvaluadosTable, ProyectosTable
 
@@ -51,40 +53,41 @@ class ChecksMixin(UserPassesTestMixin):
 
     def es_coordinador(self, proyecto_id):
         """Devuelve si el usuario actual es coordinador del proyecto indicado."""
+        self.permission_denied_message = _('Usted no es coordinador de este proyecto.')
         proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
         usuario_actual = self.request.user
         coordinadores_participantes = proyecto.participantes.filter(
             tipo_participacion__in=['coordinador', 'coordinador_2']
         ).all()
         usuarios_coordinadores = list(map(lambda p: p.usuario, coordinadores_participantes))
-        self.permission_denied_message = _('Usted no es coordinador de este proyecto.')
 
         return usuario_actual in usuarios_coordinadores
 
     def es_participante(self, proyecto_id):
         """Devuelve si el usuario actual es participante del proyecto indicado."""
+        self.permission_denied_message = _('Usted no es participante de este proyecto.')
         proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
         usuario_actual = self.request.user
         pp = proyecto.participantes.filter(
             usuario=usuario_actual, tipo_participacion='participante'
         ).all()
-        self.permission_denied_message = _('Usted no es participante de este proyecto.')
 
         return True if pp else False
 
     def es_invitado(self, proyecto_id):
         """Devuelve si el usuario actual es invitado del proyecto indicado."""
+        self.permission_denied_message = _('Usted no está invitado a este proyecto.')
         proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
         usuario_actual = self.request.user
         pp = proyecto.participantes.filter(
             usuario=usuario_actual, tipo_participacion='invitado'
         ).all()
-        self.permission_denied_message = _('Usted no está invitado a este proyecto.')
 
         return True if pp else False
 
     def esta_vinculado(self, proyecto_id):
         """Devuelve si el usuario actual está vinculado al proyecto indicado."""
+        self.permission_denied_message = _('Usted no está vinculado a este proyecto.')
         proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
         usuario_actual = self.request.user
         pp = (
@@ -92,15 +95,14 @@ class ChecksMixin(UserPassesTestMixin):
             .exclude(tipo_participacion='invitacion_rehusada')
             .all()
         )
-        self.permission_denied_message = _('Usted no está vinculado a este proyecto.')
 
         return True if pp else False
 
     def es_pas_o_pdi(self):
         """Devuelve si el usuario actual es PAS o PDI de la UZ o de sus centros adscritos."""
+        self.permission_denied_message = _('Usted no es PAS ni PDI.')
         usuario_actual = self.request.user
         colectivos_del_usuario = json.loads(usuario_actual.colectivos)
-        self.permission_denied_message = _('Usted no es PAS ni PDI.')
 
         return any(
             col_autorizado in colectivos_del_usuario for col_autorizado in ['PAS', 'ADS', 'PDI']
@@ -108,14 +110,14 @@ class ChecksMixin(UserPassesTestMixin):
 
     def es_decano_o_director(self, proyecto_id):
         """Devuelve si el usuario actual es decano/director del centro del proyecto."""
-        usuario_actual = self.request.user
+        self.permission_denied_message = _('Usted no es decano/director del centro del proyecto.')
         proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
+        usuario_actual = self.request.user
         centro = proyecto.centro
         if not centro:
             return False
-        nip_decano = centro.nip_decano
-        self.permission_denied_message = _('Usted no es decano/director del centro del proyecto.')
 
+        nip_decano = centro.nip_decano
         return usuario_actual.username == str(nip_decano)
 
     def esta_vinculado_o_es_decano_o_es_coordinador(self, proyecto_id):
@@ -123,6 +125,11 @@ class ChecksMixin(UserPassesTestMixin):
         Devuelve si el usuario actual está vinculado al proyecto indicado
         o es decano o director del centro del proyecto
         o es coordinador del plan de estudios del proyecto."""
+        self.permission_denied_message = _(
+            'Usted no está vinculado a este proyecto, '
+            'ni es decano/director del centro del proyecto, '
+            'ni es coordinador del plan de estudios del proyecto.'
+        )
         usuario_actual = self.request.user
         esta_autorizado = (
             self.esta_vinculado(proyecto_id)
@@ -130,33 +137,76 @@ class ChecksMixin(UserPassesTestMixin):
             or self.es_coordinador_estudio(proyecto_id)
             or usuario_actual.has_perm('indo.ver_proyecto')  # Gestores y evaluadores
         )
-        self.permission_denied_message = _(
-            'Usted no está vinculado a este proyecto, '
-            'ni es decano/director del centro del proyecto, '
-            'ni es coordinador del plan de estudios del proyecto.'
-        )
+
         return esta_autorizado
 
     def es_coordinador_estudio(self, proyecto_id):
         """Devuelve si el usuario actual es coordinador del estudio del proyecto."""
-        usuario_actual = self.request.user
-        proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
-        estudio = proyecto.estudio
-        if not estudio:
-            return False
-        nip_coordinadores = [
-            f'{p.nip_coordinador}' for p in estudio.planes.all() if p.nip_coordinador
-        ]
-
         self.permission_denied_message = _(
             'Usted no es coordinador del plan de estudios del proyecto.'
         )
+        proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
+        usuario_actual = self.request.user
+        estudio = proyecto.estudio
+        if not estudio:
+            return False
 
+        nip_coordinadores = [
+            f'{p.nip_coordinador}' for p in estudio.planes.all() if p.nip_coordinador
+        ]
         return usuario_actual.username in nip_coordinadores
+
+    def es_evaluador_del_proyecto(self, proyecto_id):
+        """Devuelve si el usuario actual es evaluador del proyecto indicado."""
+        self.permission_denied_message = _('Usted no es evaluador de este proyecto.')
+        proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
+        usuario_actual = self.request.user
+
+        return usuario_actual == proyecto.evaluador
 
 
 class AyudaView(TemplateView):
     template_name = 'ayuda.html'
+
+
+class EvaluacionView(LoginRequiredMixin, ChecksMixin, TemplateView):
+    """Muestra y permite editar las valoraciones de un proyecto."""
+
+    template_name = 'evaluador/evaluacion.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        proyecto = get_object_or_404(Proyecto, pk=kwargs['pk'])
+        context['proyecto'] = proyecto
+        context['criterios'] = Criterio.objects.filter(
+            convocatoria_id=proyecto.convocatoria_id
+        ).all()
+        context['dict_valoraciones'] = proyecto.get_dict_valoraciones()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        proyecto = get_object_or_404(Proyecto, pk=kwargs['pk'])
+        criterios = Criterio.objects.filter(convocatoria_id=proyecto.convocatoria_id).all()
+        dict_valoraciones = proyecto.get_dict_valoraciones()
+
+        for criterio in criterios:
+            valoracion = dict_valoraciones.get(criterio.id)
+            if not valoracion:
+                valoracion = Valoracion(proyecto_id=proyecto.id, criterio_id=criterio.id)
+
+            if criterio.tipo == 'opcion':
+                valoracion.opcion_id = request.POST.get(str(criterio.id))
+            elif criterio.tipo == 'texto':
+                valoracion.texto = request.POST.get(str(criterio.id))
+            valoracion.save()
+
+        return redirect('evaluacion', proyecto.id)
+
+    def test_func(self):
+        return self.es_evaluador_del_proyecto(self.kwargs['pk'])
 
 
 class ProyectoEvaluadorTableView(LoginRequiredMixin, PermissionRequiredMixin, SingleTableView):

@@ -41,7 +41,7 @@ def alert_style(tag):
 
 @register.simple_tag
 def lord_url():
-    '''Devuelve la URL del Single Sign On.'''
+    """Devuelve la URL del Single Sign On."""
     return '{base}?{params}'.format(
         base=reverse('social:begin', kwargs={'backend': 'saml'}),
         params=urllib.parse.urlencode({'next': '/', 'idp': 'lord'}),
@@ -49,20 +49,26 @@ def lord_url():
 
 
 @register.filter
+def get_item(dictionary, key):
+    """Devuelve el valor de la clave `key` en el diccionario `dictionary`."""
+    return dictionary.get(key)
+
+
+@register.filter
 def get_obj_attr(obj, attr):
-    '''Devuelve el valor del atributo `attr` del objeto `obj`.'''
+    """Devuelve el valor del atributo `attr` del objeto `obj`."""
     return getattr(obj, attr)
 
 
 @register.filter
 def get_attr_verbose_name(obj, attr):
-    '''Devuelve el nombre prolijo del atributo indicado.'''
+    """Devuelve el nombre prolijo del atributo indicado."""
     return obj._meta.get_field(attr).verbose_name
 
 
 @register.filter(name='has_group')
 def has_group(user, group_name):
-    '''Comprueba si el usuario pertenece al grupo indicado.'''
+    """Comprueba si el usuario pertenece al grupo indicado."""
     return user.groups.filter(name=group_name).exists()
 
 

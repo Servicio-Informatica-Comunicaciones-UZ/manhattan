@@ -59,6 +59,34 @@ class Convocatoria(models.Model):
         return str(self.id)
 
 
+class Criterio(models.Model):
+    """Criterios para evaluar proyectos por la ACPUA."""
+
+    class Tipo(models.TextChoices):
+        """Tipo de criterio.
+
+        Los criterios pueden ser de dos tipos:
+
+        * Opción - Se debe elegir una de las opciones predefinidas, con su puntuación asignada.
+        * Texto libre - El evaluador puede introducir un texto con sus comentarios.
+        """
+
+        OPCION = 'opcion', _('Opción')
+        TEXTO = 'texto', _('Texto libre')
+
+    convocatoria = models.ForeignKey('Convocatoria', on_delete=models.PROTECT)
+    parte = models.PositiveSmallIntegerField(_('parte'))
+    peso = models.PositiveSmallIntegerField(_('peso'))
+    descripcion = models.CharField(max_length=255)
+    tipo = models.CharField(_('tipo'), max_length=15, choices=Tipo.choices)
+
+    class Meta:
+        ordering = ('convocatoria', 'parte', 'peso')
+
+    def __str__(self):
+        return self.descripcion
+
+
 class Departamento(models.Model):
     id = models.AutoField(primary_key=True)
     academico_id_nk = models.IntegerField('cód. académico', blank=True, db_index=True, null=True)
@@ -82,18 +110,18 @@ class Departamento(models.Model):
 
 class Estudio(models.Model):
     OPCIONES_RAMA = (
-        ('B', 'Formación básica sin rama'),
-        ('H', 'Artes y Humanidades'),
-        ('J', 'Ciencias Sociales y Jurídicas'),
-        ('P', 'Títulos Propios'),
-        ('S', 'Ciencias de la Salud'),
-        ('T', 'Ingeniería y Arquitectura'),
-        ('X', 'Ciencias'),
+        ('B', _('Formación básica sin rama')),
+        ('H', _('Artes y Humanidades')),
+        ('J', _('Ciencias Sociales y Jurídicas')),
+        ('P', _('Títulos Propios')),
+        ('S', _('Ciencias de la Salud')),
+        ('T', _('Ingeniería y Arquitectura')),
+        ('X', _('Ciencias')),
     )
     id = models.PositiveSmallIntegerField(_('Cód. estudio'), primary_key=True)
     nombre = models.CharField(max_length=255)
     esta_activo = models.BooleanField(_('¿Activo?'), default=True)
-    rama = models.CharField(max_length=1, choices=OPCIONES_RAMA)
+    rama = models.CharField(_('rama'), max_length=1, choices=OPCIONES_RAMA)
     tipo_estudio = models.ForeignKey('TipoEstudio', on_delete=models.PROTECT)
 
     class Meta:
@@ -445,31 +473,51 @@ class Proyecto(models.Model):
             return None
 
     def get_coordinador(self):
-        '''Devuelve el usuario coordinador del proyecto'''
+        """Devuelve el usuario coordinador del proyecto"""
         coordinador = self.get_participante_or_none('coordinador')
         return coordinador.usuario if coordinador else None
 
     def get_coordinador_2(self):
-        '''Devuelve el segundo coordinador del proyecto (los PIET pueden tener 2).'''
+        """Devuelve el segundo coordinador del proyecto (los PIET pueden tener 2)."""
         coordinador_2 = self.get_participante_or_none('coordinador_2')
         return coordinador_2.usuario if coordinador_2 else None
 
     def get_coordinadores(self):
-        '''Devuelve los usuarios coordinadores del proyecto.'''
+        """Devuelve los usuarios coordinadores del proyecto."""
         coordinadores = [self.get_coordinador(), self.get_coordinador_2()]
         return list(filter(None, coordinadores))
 
+    def get_dict_valoraciones(self):
+        """Devuelve un diccionario criterio_id => valoración con las valoraciones del proyecto."""
+        return {valoracion.criterio_id: valoracion for valoracion in self.valoraciones.all()}
+
     def get_usuarios_vinculados(self):
-        '''
+        """
         Devuelve todos los usuarios vinculados al proyecto
         (invitados, participantes, etc).
-        '''
+        """
         return list(map(lambda p: p.usuario, self.participantes.all()))
 
     def tiene_invitados(self):
-        '''Devuelve si el proyecto tiene al menos un invitado.'''
+        """Devuelve si el proyecto tiene al menos un invitado."""
         num_invitados = self.participantes.filter(tipo_participacion='invitado').count()
         return num_invitados >= 1
+
+
+class Opcion(models.Model):
+    """Respuestas posibles a los criterios, cada una con una puntuación."""
+
+    criterio = models.ForeignKey('Criterio', on_delete=models.PROTECT, related_name='opciones')
+    puntuacion = models.PositiveSmallIntegerField(_('puntuación'))
+    descripcion = models.CharField(_('descripción'), max_length=255)
+
+    class Meta:
+        ordering = ('criterio__parte', 'criterio__peso', 'puntuacion')
+        verbose_name = _('opción')
+        verbose_name_plural = _('opciones')
+
+    def __str__(self):
+        return self.descripcion
 
 
 class Registro(models.Model):
@@ -486,3 +534,16 @@ class TipoEstudio(models.Model):
 
 class TipoParticipacion(models.Model):
     nombre = models.CharField(primary_key=True, max_length=63)
+
+
+class Valoracion(models.Model):
+    """Valoración de un proyecto, atendiendo a los criterios establecidos en la convocatoria."""
+
+    proyecto = models.ForeignKey('Proyecto', on_delete=models.PROTECT, related_name='valoraciones')
+    criterio = models.ForeignKey('Criterio', on_delete=models.PROTECT)
+    opcion = models.ForeignKey('Opcion', null=True, on_delete=models.PROTECT)
+    texto = models.TextField(_('texto'), blank=True, null=True)
+
+    class Meta:
+        verbose_name = _('valoración')
+        verbose_name_plural = _('valoraciones')
