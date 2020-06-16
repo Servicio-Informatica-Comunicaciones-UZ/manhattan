@@ -4,6 +4,7 @@ from django.urls import include, path
 
 from .views import (
     AyudaView,
+    EvaluacionVerView,
     EvaluacionView,
     HomePageView,
     InvitacionView,
@@ -14,6 +15,7 @@ from .views import (
     ProyectoAnularView,
     ProyectoCreateView,
     ProyectoDetailView,
+    ProyectoEvaluacionesTableView,
     ProyectoEvaluadorTableView,
     ProyectoEvaluadorUpdateView,
     ProyectoTableView,
@@ -34,9 +36,14 @@ urlpatterns = [
         name='proyectos_evaluados_table',
     ),
     path('evaluador/<int:pk>/evaluacion/', EvaluacionView.as_view(), name='evaluacion'),
-    path('gestion/proyecto/<int:anyo>/', ProyectoTableView.as_view(), name='proyectos_table'),
+    path('gestion/proyectos/<int:anyo>/', ProyectoTableView.as_view(), name='proyectos_table'),
     path(
-        'gestion/proyecto/<int:anyo>/evaluadores',
+        'gestion/proyectos/<int:anyo>/evaluaciones/',
+        ProyectoEvaluacionesTableView.as_view(),
+        name='evaluaciones_table',
+    ),
+    path(
+        'gestion/proyectos/<int:anyo>/evaluadores/',
         ProyectoEvaluadorTableView.as_view(),
         name='evaluadores_table',
     ),
@@ -44,6 +51,9 @@ urlpatterns = [
         'gestion/proyecto/<int:pk>/editar_evaluador/',
         ProyectoEvaluadorUpdateView.as_view(),
         name='evaluador_update',
+    ),
+    path(
+        'gestion/proyecto/<int:pk>/evaluacion/', EvaluacionVerView.as_view(), name='ver_evaluacion'
     ),
     path(
         'participante-proyecto/aceptar_invitacion/<int:proyecto_id>/',

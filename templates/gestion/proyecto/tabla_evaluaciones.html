@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load render_table from django_tables2 %}
+
+{% block title %}{% trans "Evaluaciones de los proyectos" %}{% endblock title %}
+
+{% block content %}
+<div class='container-blanco'>
+    <h1 id="presentados">{% trans "Evaluaciones de los proyectos" %} <small>{{ anyo }}</small></h1>
+    <hr />
+    <br />
+
+    <div class="alert-info alert fade-in">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+
+        <span class="fas fa-info-circle"></span>
+        {% blocktrans %}
+        Desde esta página puede ver las evaluaciones de los proyectos presentados en esta convocatoria,
+        así como introducir la resolución de la Comisión Evaluadora.
+        {% endblocktrans %}
+    </div><br />
+
+    {% render_table table %}
+</div>
+{% endblock content %}

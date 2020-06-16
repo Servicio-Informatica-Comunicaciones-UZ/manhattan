@@ -96,7 +96,10 @@
                     <span class="fas fa-th-list"></span>&nbsp; {% trans "Proyectos presentados" %}
                   </a>
                   <a class="dropdown-item" href="{% url 'evaluadores_table' anyo_actual %}">
-                    <span class="fas fa-th-list"></span>&nbsp; {% trans "Evaluadores de los proyectos" %}
+                    <span class="fas fa-balance-scale"></span>&nbsp; {% trans "Evaluadores de los proyectos" %}
+                  </a>
+                  <a class="dropdown-item" href="{% url 'evaluaciones_table' anyo_actual %}">
+                   <span class="fas fa-gavel"></span>&nbsp; {% trans "Evaluaciones de los proyectos" %}
                   </a>
                 </div>
               </li>

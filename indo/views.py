@@ -45,7 +45,12 @@ from .models import (
     TipoParticipacion,
     Valoracion,
 )
-from .tables import EvaluadoresTable, ProyectosEvaluadosTable, ProyectosTable
+from .tables import (
+    EvaluadoresTable,
+    EvaluacionProyectosTable,
+    ProyectosEvaluadosTable,
+    ProyectosTable,
+)
 
 
 class ChecksMixin(UserPassesTestMixin):
@@ -167,6 +172,25 @@ class ChecksMixin(UserPassesTestMixin):
 
 class AyudaView(TemplateView):
     template_name = 'ayuda.html'
+
+
+class EvaluacionVerView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
+    """Muestra la evaluación del proyecto indicado."""
+
+    permission_required = 'indo.ver_evaluacion'
+    permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
+    template_name = 'gestion/evaluacion.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        proyecto = get_object_or_404(Proyecto, pk=kwargs['pk'])
+        context['proyecto'] = proyecto
+        context['criterios'] = Criterio.objects.filter(
+            convocatoria_id=proyecto.convocatoria_id
+        ).all()
+        context['dict_valoraciones'] = proyecto.get_dict_valoraciones()
+        return context
 
 
 class EvaluacionView(LoginRequiredMixin, ChecksMixin, TemplateView):
@@ -538,6 +562,27 @@ class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
     def test_func(self):
         proyecto_id = self.kwargs['pk']
         return self.esta_vinculado_o_es_decano_o_es_coordinador(proyecto_id)
+
+
+class ProyectoEvaluacionesTableView(LoginRequiredMixin, PermissionRequiredMixin, SingleTableView):
+    """Muestra los proyectos presentados y enlaces a su evaluación y resolución de la Comisión."""
+
+    permission_required = 'indo.listar_evaluaciones'
+    permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
+    table_class = EvaluacionProyectosTable
+    template_name = 'gestion/proyecto/tabla_evaluaciones.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['anyo'] = self.kwargs['anyo']
+        return context
+
+    def get_queryset(self):
+        return (
+            Proyecto.objects.filter(convocatoria__id=self.kwargs['anyo'])
+            .exclude(estado__in=['BORRADOR', 'ANULADO'])
+            .order_by('programa__nombre_corto', 'linea__nombre', 'titulo')
+        )
 
 
 class ProyectoTableView(LoginRequiredMixin, PermissionRequiredMixin, SingleTableView):

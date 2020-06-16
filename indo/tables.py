@@ -33,6 +33,39 @@ class EvaluadoresTable(tables.Table):
         per_page = 20
 
 
+class EvaluacionProyectosTable(tables.Table):
+    """Muestra los proyectos presentados y enlaces a su evaluación y resolución de la Comisión."""
+
+    def render_titulo(self, record):
+        enlace = reverse('proyecto_detail', args=[record.id])
+        return mark_safe(f'<a href="{enlace}">{record.titulo}</a>')
+
+    evaluacion = tables.Column(empty_values=(), orderable=False, verbose_name=_('Evaluación'))
+    resolucion = tables.Column(empty_values=(), orderable=False, verbose_name=_('Resolución'))
+
+    def render_evaluacion(self, record):
+        enlace = reverse('ver_evaluacion', args=[record.id])
+        return mark_safe(
+            f'''<a href="{enlace}" title={_('Ver la evaluación')}
+                aria-label={_('Ver la evaluación')}>
+                  <span class="far fa-eye"></span>
+                </a>'''
+            if record.valoraciones.first()
+            else '—'
+        )
+
+    def render_resolucion(self, record):
+        return 'FIXME'
+
+    class Meta:
+        attrs = {'class': 'table table-striped table-hover cabecera-azul'}
+        model = Proyecto
+        fields = ('programa', 'linea', 'titulo', 'evaluacion', 'resolucion')
+        empty_text = _('Por el momento no se ha presentado ninguna solicitud de proyecto.')
+        template_name = 'django_tables2/bootstrap4.html'
+        per_page = 20
+
+
 class ProyectosEvaluadosTable(tables.Table):
     """Muestra los proyectos asignados a un usuario evaluador."""
 
