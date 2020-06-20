@@ -13,7 +13,7 @@ def add_permissions_to_group(apps, schema_editor):
     gestores = group.objects.get(name='Gestores')
     permiso = permission.objects.get(codename='listar_evaluadores')
     gestores.permissions.add(permiso)
-    permiso = permission.objects.get(codename='editar_evaluadores')
+    permiso = permission.objects.get(codename='editar_evaluador')
     gestores.permissions.add(permiso)
 
 
