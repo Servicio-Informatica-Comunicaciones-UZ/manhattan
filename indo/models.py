@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import connection, models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
@@ -547,3 +547,49 @@ class Valoracion(models.Model):
     class Meta:
         verbose_name = _('valoración')
         verbose_name_plural = _('valoraciones')
+
+    @classmethod
+    def get_todas(cls, anyo):
+        """Devuelve las valoraciones de todos los proyectos presentados en el año indicado."""
+        criterios = Criterio.objects.filter(convocatoria_id=anyo).all()
+
+        with connection.cursor() as cursor:
+            cursor.execute(
+                f'''
+                SELECT DISTINCT prog.nombre_corto, l.nombre, p.id, p.titulo
+                FROM indo_valoracion v
+                JOIN indo_proyecto p ON v.proyecto_id = p.id
+                JOIN indo_programa prog ON p.programa_id = prog.id
+                JOIN indo_linea l ON p.linea_id = l.id
+                WHERE prog.convocatoria_id = {anyo}
+                ORDER BY proyecto_id;
+                '''
+            )
+            rows = cursor.fetchall()
+            valoraciones = list(zip(*rows))
+
+            for criterio in criterios:
+                cursor.execute(
+                    f'''
+                    SELECT CASE
+                    WHEN c.tipo = 'opcion' THEN o.puntuacion
+                    WHEN c.tipo = 'texto' THEN v.texto
+                    ELSE NULL
+                    END AS valoracion
+                    FROM indo_valoracion v
+                    JOIN indo_criterio c ON v.criterio_id = c.id
+                    LEFT JOIN indo_opcion o ON v.opcion_id = o.id
+                    WHERE v.criterio_id = {criterio.id}
+                    ORDER BY v.proyecto_id, c.parte, c.peso;
+                    '''
+                )
+                rows = cursor.fetchall()
+                fila_plana = [row[0] for row in rows]
+                valoraciones.append(fila_plana)
+
+        valoraciones = list(zip(*valoraciones))
+
+        cabeceras = [('Programa'), _('Línea'), _('ID'), _('Título')]
+        cabeceras.extend([criterio.descripcion for criterio in criterios])
+        valoraciones.insert(0, cabeceras)
+        return valoraciones

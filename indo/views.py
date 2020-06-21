@@ -1,4 +1,5 @@
 # Standard library
+import csv
 import json
 from datetime import date
 
@@ -23,11 +24,12 @@ from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.forms.models import modelform_factory
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
+from django.views import View
 from django.views.generic import DetailView, RedirectView, TemplateView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
@@ -288,7 +290,7 @@ class ProyectoEvaluadorUpdateView(LoginRequiredMixin, PermissionRequiredMixin, U
 
     def get(self, request, *args, **kwargs):
         # Obtenemos los NIPs de los usuarios con vinculación «Evaluador externo innovacion ACPUA».
-        nip_evaluadores = [136040, 327618, 329639, 370109]  # FIXME - WS G.I.
+        nip_evaluadores = [136_040, 327_618, 329_639, 370_109]  # FIXME - WS G.I.
         # Creamos los usuarios que no existan ya en la aplicación.
         User = get_user_model()
         evaluadores = Group.objects.get(name='Evaluadores')
@@ -564,6 +566,21 @@ class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
         return self.esta_vinculado_o_es_decano_o_es_coordinador(proyecto_id)
 
 
+class ProyectoEvaluacionesCsvView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    """Devuelve un fichero CSV con las valoraciones de todos los proyectos presentados."""
+
+    permission_required = 'indo.listar_evaluaciones'
+    permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
+
+    def get(self, request, *args, **kwargs):
+        valoraciones = Valoracion.get_todas(kwargs.get('anyo'))
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="valoraciones.csv"'
+        writer = csv.writer(response)
+        writer.writerows(valoraciones)
+        return response
+
+
 class ProyectoEvaluacionesTableView(LoginRequiredMixin, PermissionRequiredMixin, SingleTableView):
     """Muestra los proyectos presentados y enlaces a su evaluación y resolución de la Comisión."""
 
@@ -629,9 +646,9 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
                 request,
                 _(
                     f'''No puede presentar esta solicitud porque ya forma parte
-                del número máximo de equipos de trabajo permitido ({num_max_equipos}).
-                Para poder presentar esta solicitud de proyecto, antes debería renunciar
-                a participar en algún otro proyecto.'''
+                    del número máximo de equipos de trabajo permitido ({num_max_equipos}).
+                    Para poder presentar esta solicitud de proyecto, antes debería renunciar
+                    a participar en algún otro proyecto.'''
                 ),
             )
             return super().post(request, *args, **kwargs)

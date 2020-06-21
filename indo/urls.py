@@ -15,6 +15,7 @@ from .views import (
     ProyectoAnularView,
     ProyectoCreateView,
     ProyectoDetailView,
+    ProyectoEvaluacionesCsvView,
     ProyectoEvaluacionesTableView,
     ProyectoEvaluadorTableView,
     ProyectoEvaluadorUpdateView,
@@ -41,6 +42,11 @@ urlpatterns = [
         'gestion/proyectos/<int:anyo>/evaluaciones/',
         ProyectoEvaluacionesTableView.as_view(),
         name='evaluaciones_table',
+    ),
+    path(
+        'gestion/proyectos/<int:anyo>/csv_evaluaciones/',
+        ProyectoEvaluacionesCsvView.as_view(),
+        name='csv_evaluaciones',
     ),
     path(
         'gestion/proyectos/<int:anyo>/evaluadores/',

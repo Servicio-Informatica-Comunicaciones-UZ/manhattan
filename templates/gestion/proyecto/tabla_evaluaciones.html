@@ -14,12 +14,20 @@
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 
         <span class="fas fa-info-circle"></span>
-        {% blocktrans %}
-        Desde esta página puede ver las evaluaciones de los proyectos presentados en esta convocatoria,
-        así como introducir la resolución de la Comisión Evaluadora.
-        {% endblocktrans %}
+        <p>{% trans 'Desde esta página puede:' %}</p>
+        <ul>
+        <li>{% trans 'Ver las evaluaciones de los proyectos presentados en esta convocatoria' %}</li>
+        <li>{% trans 'Introducir la resolución de la Comisión Evaluadora' %}</li>
+        <li>{% trans 'Descargar una hoja de cálculo con todas las evaluaciones' %}</li>
+        </ul>
     </div><br />
 
     {% render_table table %}
+
+    <div>
+      <a href="{% url 'csv_evaluaciones' anyo %}" class="btn btn-info">
+        <span class="fas fa-file-csv"></span>&nbsp; {% trans "Descargar evaluaciones" %}
+      </a>
+    </div
 </div>
 {% endblock content %}
