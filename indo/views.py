@@ -229,7 +229,10 @@ class EvaluacionView(LoginRequiredMixin, ChecksMixin, TemplateView):
                 valoracion.texto = request.POST.get(str(criterio.id))
             valoracion.save()
 
-        return redirect('evaluacion', proyecto.id)
+        messages.success(
+            request, _(f'Se ha guardado la evaluación del proyecto «{proyecto.titulo}».')
+        )
+        return redirect('proyectos_evaluados_table', proyecto.convocatoria_id)
 
     def test_func(self):
         return self.es_evaluador_del_proyecto(self.kwargs['pk'])

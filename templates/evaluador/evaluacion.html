@@ -45,9 +45,15 @@
         <p></p><br />
         {% endfor %}
 
-        <button class="btn btn-primary" type="submit" title="{% trans 'Guardar evaluación' %}">
-            <span class="fas fa-check"></span> {% trans 'Guardar' %}
-        </button>
+        <div class="btn-group" role="group" aria-label="Botones">
+            <a href="{% url 'proyectos_evaluados_table' proyecto.convocatoria_id %}"
+              class="btn btn-info" title="{% trans 'Retroceder' %}">
+                <span class="fas fa-step-backward"></span> {% trans 'Retroceder' %}
+            </a>
+            <button class="btn btn-primary" type="submit" title="{% trans 'Guardar evaluación' %}">
+                <span class="fas fa-check"></span> {% trans 'Guardar' %}
+            </button>
+        </div>
     </form>
 
 </div>
