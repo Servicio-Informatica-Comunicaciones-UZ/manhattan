@@ -21,6 +21,7 @@ from django.contrib.auth.mixins import (
     UserPassesTestMixin,
 )
 from django.contrib.auth.models import Group
+from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.forms.models import modelform_factory
@@ -34,7 +35,7 @@ from django.views.generic import DetailView, RedirectView, TemplateView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 # Local Django
-from .forms import EvaluadorForm, InvitacionForm, ProyectoForm
+from .forms import EvaluadorForm, InvitacionForm, ProyectoForm, ResolucionForm
 from .models import (
     Centro,
     Convocatoria,
@@ -314,6 +315,27 @@ class ProyectoEvaluadorUpdateView(LoginRequiredMixin, PermissionRequiredMixin, U
 
     def get_success_url(self):
         return reverse('evaluadores_table', kwargs={'anyo': self.object.convocatoria})
+
+
+class ProyectoResolucionUpdateView(
+    LoginRequiredMixin, PermissionRequiredMixin, SuccessMessageMixin, UpdateView
+):
+    """Actualizar la resolución de la Comisión Evaluadora sobre un proyecto."""
+
+    permission_required = 'indo.editar_resolucion'
+    permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
+    model = Proyecto
+    success_message = _(
+        'Se ha guardado la resolución de la comisión sobre el proyecto «%(titulo)s».'
+    )
+    template_name = 'gestion/proyecto/editar_resolucion.html'
+    form_class = ResolucionForm
+
+    def get_success_message(self, cleaned_data):
+        return self.success_message % dict(cleaned_data, titulo=self.object.titulo)
+
+    def get_success_url(self):
+        return reverse_lazy('evaluaciones_table', args=[self.object.convocatoria_id])
 
 
 class HomePageView(TemplateView):

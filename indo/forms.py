@@ -188,3 +188,9 @@ class EvaluadorForm(forms.ModelForm):
     class Meta:
         fields = ('evaluador',)
         model = Proyecto
+
+
+class ResolucionForm(forms.ModelForm):
+    class Meta:
+        fields = ('aceptacion_comision', 'ayuda_concedida', 'tipo_gasto', 'observaciones')
+        model = Proyecto

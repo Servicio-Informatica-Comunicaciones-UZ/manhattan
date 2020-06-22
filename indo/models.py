@@ -445,6 +445,15 @@ class Proyecto(models.Model):
         on_delete=models.PROTECT,
         related_name='proyectos_evaluados',
     )
+    # Aprobación de la Comisión Evaluadora
+    aceptacion_comision = models.BooleanField(_('Aceptación por la comisión'), null=True)
+    ayuda_concedida = models.PositiveIntegerField(_('Ayuda económica concedida'), null=True)
+    tipo_gasto = models.TextField(
+        _('Tipo de gasto posible'),
+        help_text=_('Indicar los gastos autorizados indicados por la Comisión.'),
+        null=True,
+    )
+    observaciones = models.TextField(_('Observaciones para comunicar al coordinador'), null=True)
 
     class Meta:
         permissions = [
@@ -453,6 +462,7 @@ class Proyecto(models.Model):
             ('editar_proyecto', _('Puede editar cualquier proyecto en cualquier momento.')),
             ('listar_evaluadores', _('Puede ver el listado de evaluadores.')),
             ('editar_evaluador', _('Puede editar el evaluador de un proyecto.')),
+            ('editar_aceptacion', _('Puede editar la decisión de la Comisión Evaluadora.')),
         ]
 
     def __str__(self):

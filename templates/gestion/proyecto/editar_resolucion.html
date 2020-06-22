@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% trans 'Actualizar la resolución de la Comisión sobre el proyecto' %}{% endblock title %}
+{% block description %}{% trans 'Actualizar la resolución de la Comisión sobre el proyecto' %}{% endblock description %}
+
+{% block extracss %}<style>
+    label {
+        display: block;
+        font-size: 1.75rem;
+        font-weight: 500;
+        line-height: 1.2;
+        margin-bottom: 0.5rem;
+        margin-top: 0;
+    }
+
+    .helptext {
+        color: #6c757d !important;
+        display: block;
+    }
+</style>
+{% endblock extracss %}
+
+{% block content %}
+<div class="container-blanco">
+    <h1>{% trans 'Actualizar la resolución de la comisión sobre el proyecto' %}</h1>
+    <hr />
+    <br />
+
+    <div class="alert-info alert fade-in">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+
+        <span class="fas fa-info-circle"></span>
+        <p>{% trans 'Aquí puede editar la resolución de la Comisión Evaluadora sobre el proyecto.' %}</p>
+    </div><br />
+
+    <p><label>Proyecto:</label> {{ proyecto.titulo }}</p>
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <br style="clear: both;" />
+        <div class="btn-group" role="group" aria-label="Botones">
+            <a href="{% url 'evaluaciones_table' proyecto.convocatoria_id %}" class="btn btn-info">
+                <span class="fas fa-step-backward"></span> {% trans 'Retroceder' %}
+            </a>
+            <button class="btn btn-warning" type="submit">
+                <span class="fas fa-check"></span> {% trans 'Actualizar' %}
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock content %}

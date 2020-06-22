@@ -18,8 +18,8 @@ class EvaluadoresTable(tables.Table):
     def render_editar(self, record):
         enlace = reverse('evaluador_update', args=[record.id])
         return mark_safe(
-            f'''<a href="{enlace}" title={_("Editar el evaluador")}
-                aria-label={_("Editar el evaluador")}>
+            f'''<a href="{enlace}" title="{_('Editar el evaluador')}"
+                aria-label="{_('Editar el evaluador')}">
                   <span class="fas fa-pencil-alt"></span>
                 </a>'''
         )
@@ -46,8 +46,8 @@ class EvaluacionProyectosTable(tables.Table):
     def render_evaluacion(self, record):
         enlace = reverse('ver_evaluacion', args=[record.id])
         return mark_safe(
-            f'''<a href="{enlace}" title={_('Ver la evaluación')}
-                aria-label={_('Ver la evaluación')}>
+            f'''<a href="{enlace}" title="{_('Ver la evaluación')}"
+                aria-label="{_('Ver la evaluación')}">
                   <span class="far fa-eye"></span>
                 </a>'''
             if record.valoraciones.first()
@@ -55,7 +55,15 @@ class EvaluacionProyectosTable(tables.Table):
         )
 
     def render_resolucion(self, record):
-        return 'FIXME'
+        enlace = reverse('resolucion_update', args=[record.id])
+        return mark_safe(
+            f'''<a href="{enlace}" title="{_('Editar la resolución de la Comisión')}"
+                aria-label="{_('Editar la resolución')}">
+                  <span class="fas fa-pencil-alt"></span>
+                </a>'''
+            if record.valoraciones.first()
+            else '—'
+        )
 
     class Meta:
         attrs = {'class': 'table table-striped table-hover cabecera-azul'}
@@ -78,8 +86,8 @@ class ProyectosEvaluadosTable(tables.Table):
     def render_boton_evaluar(self, record):
         enlace = reverse('evaluacion', args=[record.id])
         return mark_safe(
-            f'''<a href="{enlace}" title={_("Evaluar el proyecto")}
-          aria-label={_('Evaluar el proyecto')} class="btn btn-info btn-sm">
+            f'''<a href="{enlace}" title="{_('Evaluar el proyecto')}"
+          aria-label="{_('Evaluar el proyecto')}" class="btn btn-info btn-sm">
             <span class="fas fa-balance-scale" aria-hidden="true" style="display: inline;"></span>
             &nbsp;{_('Evaluar')}
           </a>'''
@@ -99,7 +107,7 @@ class ProyectosTable(tables.Table):
 
     def render_titulo(self, record):
         enlace = reverse('proyecto_detail', args=[record.id])
-        return mark_safe(f"<a href='{enlace}'>{record.titulo}</a>")
+        return mark_safe(f'<a href="{enlace}">{record.titulo}</a>')
 
     coordinadores = tables.Column(
         empty_values=(), orderable=False, verbose_name=_('Coordinador(es)')
@@ -107,7 +115,7 @@ class ProyectosTable(tables.Table):
 
     def render_coordinadores(self, record):
         coordinadores = record.get_coordinadores()
-        enlaces = [f"<a href='mailto:{c.email}'>{c.get_full_name()}</a>" for c in coordinadores]
+        enlaces = [f'<a href="mailto:{c.email}">{c.get_full_name()}</a>' for c in coordinadores]
         return mark_safe(', '.join(enlaces))
 
     class Meta:

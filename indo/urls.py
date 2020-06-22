@@ -19,6 +19,7 @@ from .views import (
     ProyectoEvaluacionesTableView,
     ProyectoEvaluadorTableView,
     ProyectoEvaluadorUpdateView,
+    ProyectoResolucionUpdateView,
     ProyectoTableView,
     ProyectoPresentarView,
     ProyectoUpdateFieldView,
@@ -57,6 +58,11 @@ urlpatterns = [
         'gestion/proyecto/<int:pk>/editar_evaluador/',
         ProyectoEvaluadorUpdateView.as_view(),
         name='evaluador_update',
+    ),
+    path(
+        'gestion/proyecto/<int:pk>/editar_resolucion/',
+        ProyectoResolucionUpdateView.as_view(),
+        name='resolucion_update',
     ),
     path(
         'gestion/proyecto/<int:pk>/evaluacion/', EvaluacionVerView.as_view(), name='ver_evaluacion'
