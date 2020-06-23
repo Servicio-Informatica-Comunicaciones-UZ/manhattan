@@ -293,10 +293,13 @@ class ProyectoEvaluadorUpdateView(LoginRequiredMixin, PermissionRequiredMixin, U
     form_class = EvaluadorForm
 
     def get(self, request, *args, **kwargs):
-        # Obtenemos los NIPs de los usuarios con vinculación «Evaluador externo innovacion ACPUA».
-        nip_evaluadores = [136_040, 327_618, 329_639, 370_109]  # FIXME - WS G.I.
-        # Creamos los usuarios que no existan ya en la aplicación.
         User = get_user_model()
+        # Obtenemos los NIPs de los usuarios con vinculación «Evaluador externo innovacion ACPUA».
+        nip_evaluadores = User.get_nips_vinculacion(60)
+        nip_evaluadores = [str(nip) for nip in nip_evaluadores]
+        # nip_evaluadores = ['136040', '327618', '329639', '370109']  # XXX - Desarrollo
+
+        # Creamos los usuarios que no existan ya en la aplicación.
         evaluadores = Group.objects.get(name='Evaluadores')
         for nip in nip_evaluadores:
             usuario = get_object_or_None(User, username=nip)
@@ -307,7 +310,6 @@ class ProyectoEvaluadorUpdateView(LoginRequiredMixin, PermissionRequiredMixin, U
 
         # Quitamos del grupo Evaluadores a los usuarios que ya no tengan esa vinculación.
         for usuario in evaluadores.user_set.all():
-            nip_evaluadores = [str(nip) for nip in nip_evaluadores]
             if usuario.username not in nip_evaluadores:
                 evaluadores.user_set.remove(usuario)  # or usuario.groups.remove(evaluadores)
 

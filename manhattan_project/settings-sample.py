@@ -24,7 +24,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'xk6ujnt_zj7xlnt@c&$jc9f_=u3io5e!87imbqz4)=li*$tu%w')
+SECRET_KEY = os.environ.get(
+    'DJANGO_SECRET_KEY', 'xk6ujnt_zj7xlnt@c&$jc9f_=u3io5e!87imbqz4)=li*$tu%w'
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', False) == 'True'
@@ -118,7 +120,7 @@ DATABASES = {
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},  # noqa: E501
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
     {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
@@ -156,7 +158,10 @@ LOGOUT_REDIRECT_URL = 'home'
 # ## SAML with Python Social Auth ## #
 # https://python-social-auth.readthedocs.io/en/latest/backends/saml.html
 
-AUTHENTICATION_BACKENDS = ('social_core.backends.saml.SAMLAuth', 'django.contrib.auth.backends.ModelBackend')
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.saml.SAMLAuth',
+    'django.contrib.auth.backends.ModelBackend',
+)
 # When using PostgreSQL,
 # it’s recommended to use the built-in JSONB field to store the extracted extra_data.
 # To enable it define the setting:
@@ -166,9 +171,16 @@ SOCIAL_AUTH_SAML_SP_ENTITY_ID = 'https://manhattan.local/accounts/metadata'
 SOCIAL_AUTH_SAML_SP_PUBLIC_CERT = '''Spam, ham and eggs'''
 SOCIAL_AUTH_SAML_SP_PRIVATE_KEY = '''Spam, sausages and bacon'''
 SOCIAL_AUTH_SAML_ORG_INFO = {
-    'en-US': {'name': 'manhattan', 'displayname': 'Proyectos de Innovación Docente', 'url': 'http://manhattan.local'}
+    'en-US': {
+        'name': 'manhattan',
+        'displayname': 'Proyectos de Innovación Docente',
+        'url': 'http://manhattan.local',
+    }
 }
-SOCIAL_AUTH_SAML_TECHNICAL_CONTACT = {'givenName': 'Quique', 'emailAddress': 'quique@manhattan.local'}
+SOCIAL_AUTH_SAML_TECHNICAL_CONTACT = {
+    'givenName': 'Quique',
+    'emailAddress': 'quique@manhattan.local',
+}
 SOCIAL_AUTH_SAML_SUPPORT_CONTACT = {
     'givenName': 'Vicerrectorado de Política Académica',
     'emailAddress': 'innova.docen@manhattan.local',
@@ -347,3 +359,7 @@ X_FRAME_OPTIONS = 'SAMEORIGIN'  # Required by SummernoteWidget on Django 3.x
 WSDL_IDENTIDAD = os.environ.get('WSDL_IDENTIDAD')
 USER_IDENTIDAD = os.environ.get('USER_IDENTIDAD')
 PASS_IDENTIDAD = os.environ.get('PASS_IDENTIDAD')
+
+WSDL_VINCULACIONES = os.environ.get('WSDL_VINCULACIONES')
+USER_VINCULACIONES = os.environ.get('USER_VINCULACIONES')
+PASS_VINCULACIONES = os.environ.get('PASS_VINCULACIONES')

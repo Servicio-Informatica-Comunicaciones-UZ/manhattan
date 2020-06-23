@@ -182,7 +182,12 @@ class EvaluadorForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['evaluador'].widget.choices = tuple(
             BLANK_CHOICE_DASH
-            + [(u.id, u.full_name) for u in Group.objects.get(name="Evaluadores").user_set.all()]
+            + [
+                (u.id, u.full_name)
+                for u in Group.objects.get(name="Evaluadores")
+                .user_set.order_by('first_name', 'last_name', 'last_name_2')
+                .all()
+            ]
         )
 
     class Meta:

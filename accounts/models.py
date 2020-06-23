@@ -2,8 +2,13 @@
 import json
 
 # Third-party
+from annoying.functions import get_config
+from requests import Session
+from requests.auth import HTTPBasicAuth
+from requests.exceptions import ConnectionError as RequestConnectionError
 from social_django.models import UserSocialAuth
 from social_django.utils import load_strategy
+import zeep
 
 # Django
 from django.contrib.auth.models import AbstractUser, UserManager
@@ -119,6 +124,34 @@ class CustomUser(AbstractUser):
         usuario_social.save()
 
         return usuario
+
+    @classmethod
+    def get_nips_vinculacion(cls, cod_vinculacion):
+        """Devuelve los NIPs que tengan el código de vinculación indicado."""
+        wsdl = get_config('WSDL_VINCULACIONES')
+        session = Session()
+        session.auth = HTTPBasicAuth(
+            get_config('USER_VINCULACIONES'), get_config('PASS_VINCULACIONES')
+        )
+
+        try:
+            client = zeep.Client(wsdl=wsdl, transport=zeep.transports.Transport(session=session))
+        except RequestConnectionError:
+            raise RequestConnectionError('No fue posible conectarse al WS de Vinculaciones.')
+        except Exception as e:
+            print(e)
+            raise e
+
+        response = client.service.mostrarVinculaciones(cod_vinculacion)
+        if response.aviso:
+            # El WS produjo una advertencia. La mostramos y seguimos.
+            messages.warning(strategy.request, response.descripcionAviso)
+
+        if response.error:
+            # La comunicación con el WS fue correcta, pero éste devolvió un error. Finalizamos.
+            raise Exception(response.descripcionResultado)
+
+        return response.nipsInteger
 
     # Custom Manager
     objects = CustomUserManager()
