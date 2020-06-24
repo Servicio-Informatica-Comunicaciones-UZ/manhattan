@@ -295,7 +295,9 @@ class ProyectoEvaluadorUpdateView(LoginRequiredMixin, PermissionRequiredMixin, U
     def get(self, request, *args, **kwargs):
         User = get_user_model()
         # Obtenemos los NIPs de los usuarios con vinculación «Evaluador externo innovacion ACPUA».
-        nip_evaluadores = User.get_nips_vinculacion(60)
+        advertencia, nip_evaluadores = User.get_nips_vinculacion(60)
+        if advertencia:
+            messages.warning(request, advertencia)
         nip_evaluadores = [str(nip) for nip in nip_evaluadores]
         # nip_evaluadores = ['136040', '327618', '329639', '370109']  # XXX - Desarrollo
 

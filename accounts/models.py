@@ -127,7 +127,9 @@ class CustomUser(AbstractUser):
 
     @classmethod
     def get_nips_vinculacion(cls, cod_vinculacion):
-        """Devuelve los NIPs que tengan el código de vinculación indicado."""
+        """Devuelve los NIPs que tengan el código de vinculación indicado.
+
+        También devuelve la descripción de la advertencia en caso de producirse."""
         wsdl = get_config('WSDL_VINCULACIONES')
         session = Session()
         session.auth = HTTPBasicAuth(
@@ -143,15 +145,15 @@ class CustomUser(AbstractUser):
             raise e
 
         response = client.service.mostrarVinculaciones(cod_vinculacion)
-        if response.aviso:
-            # El WS produjo una advertencia. La mostramos y seguimos.
-            messages.warning(strategy.request, response.descripcionAviso)
+
+        # Si el WS produce una advertencia, la devolveremos con el resultado para mostrarla.
+        advertencia = response.descripcionAviso if response.aviso else None
 
         if response.error:
             # La comunicación con el WS fue correcta, pero éste devolvió un error. Finalizamos.
             raise Exception(response.descripcionResultado)
 
-        return response.nipsInteger
+        return advertencia, response.nipsInteger
 
     # Custom Manager
     objects = CustomUserManager()
