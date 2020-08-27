@@ -27,7 +27,7 @@ class EvaluadoresTable(tables.Table):
     class Meta:
         attrs = {'class': 'table table-striped table-hover cabecera-azul'}
         model = Proyecto
-        fields = ('programa', 'linea', 'titulo', 'evaluador.full_name', 'editar')
+        fields = ('programa', 'linea', 'titulo', 'evaluador__full_name', 'editar')
         empty_text = _('Por el momento no se ha presentado ninguna solicitud de proyecto.')
         template_name = 'django_tables2/bootstrap4.html'
         per_page = 20
