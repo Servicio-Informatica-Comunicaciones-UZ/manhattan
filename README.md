@@ -15,16 +15,16 @@ Está desarrollada con [Django](https://www.djangoproject.com/) 3, mucho ♥, ba
 4. Paquetes `libxmlsec1-dev`, `pandoc` y `pkg-config`.
 5. Un servidor de bases de datos aceptado por Django (vg PostgreSQL o MariaDB).
 
-  Para MariaDB/MySQL instalar el paquete `libmariadb-dev` o `libmysqlclient-dev`.
+   Para MariaDB/MySQL instalar el paquete `libmariadb-dev` o `libmysqlclient-dev`.
 
-  La configuración deberá incluir, si es necesario:
+   En versiones antiguas de MariaDB/MySQL, la configuración deberá incluir, si es necesario:
 
-  ```ini
-  innodb_file_per_table = On  # Default on MariaDB >= 5.5
-  innodb_file_format = Barracuda  # Deprecated in MariaDB 10.2
-  innodb_large_prefix  # Deprecated on MariaDB 10.2, Removed in MariaDB 10.3.1
-  innodb_default_row_format = dynamic  # Default on MariaDB >= 10.2.2
-  ```
+   ```ini
+   innodb_file_per_table = On  # Default on MariaDB >= 5.5
+   innodb_file_format = Barracuda  # Deprecated in MariaDB 10.2
+   innodb_large_prefix  # Deprecated on MariaDB 10.2, Removed in MariaDB 10.3.1
+   innodb_default_row_format = dynamic  # Default on MariaDB >= 10.2.2
+   ```
 
 ## Instalación
 
@@ -36,10 +36,23 @@ pipenv install [--dev]
 
 ## Configuración inicial
 
-1. Configurar las bases de datos en el fichero `.env` y la sección `DATABASES` de `manhattan_project/settings.py`.
-2. Configurar los datos para el correo, y la URL del sitio.
-3. Configurar los datos para el _Single Sign On_ (SAML).
-4. Ejecutar
+1. Crear una base de datos.  
+   En MariaDB/MySQL sería algo así:
+
+   ```sh
+   sudo mysql -u root
+   ```
+
+   ```sql
+   CREATE DATABASE nombre CHARACTER SET = 'utf8mb4' COLLATE utf8mb4_unicode_ci;
+   GRANT ALL PRIVILEGES ON nombre.* TO usuario@localhost IDENTIFIED BY 'abretesesamo';
+   quit
+   ```
+
+2. Copiar los ficheros de ejemplo `.env-sample` y `manhattan_project/settings-sample.py`.  Configurar las bases de datos en el fichero `.env` y la sección `DATABASES` de `settings.py`.
+3. Configurar en `settings.py` los datos para el correo, y la URL del sitio (`SITE_URL`).
+4. Configurar los datos para el _Single Sign On_ (SAML).
+5. Ejecutar
 
     ```shell
     source .env
@@ -55,3 +68,5 @@ pipenv install [--dev]
 pipenv shell
 ./manage.py runserver [<IP>[:<puerto>]]
 ```
+
+Abrir la URL con el navegador web, autenticarse como superusuario y, en la interfaz de administración de Django, añadir al superusuario al grupo `Gestores`.
