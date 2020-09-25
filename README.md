@@ -48,13 +48,13 @@ Configuración inicial
    ```
 
    ```sql
-   CREATE DATABASE nombre CHARACTER SET = 'utf8mb4' COLLATE utf8mb4_unicode_ci;
+   CREATE DATABASE nombre CHARACTER SET='utf8mb4' COLLATE utf8mb4_unicode_ci;
    GRANT ALL PRIVILEGES ON nombre.* TO usuario@localhost IDENTIFIED BY 'abretesesamo';
    quit
    ```
 
-2. Copiar los ficheros de ejemplo `.env-sample` y `manhattan_project/settings-sample.py`.  Configurar las bases de datos en el fichero `.env` y la sección `DATABASES` de `settings.py`.
-3. Configurar en `settings.py` los datos para el correo, y la URL del sitio (`SITE_URL`).
+2. Copiar el fichero de ejemplo `.env-sample`.  Configurar las bases de datos en el fichero `.env`.
+3. Copiar el fichero de ejemplo `manhattan_project/settings-sample.py`.  Configurar en `settings.py` los datos para el correo, y la URL del sitio (`SITE_URL`).
 4. Configurar los datos para el _Single Sign On_ (SAML).
 5. Ejecutar
 
@@ -79,7 +79,6 @@ Abrir la URL con el navegador web, autenticarse como superusuario y, en la inter
 También podemos indicar que el superusuario pertenece al colectivo PAS, para que pueda crear proyectos:
 
 ```sql
-
 UPDATE accounts_customuser
 SET colectivos = '["PAS"]'
 WHERE is_superuser = 1;
