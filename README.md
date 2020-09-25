@@ -1,11 +1,13 @@
-# Proyecto Manhattan
+Proyecto Manhattan
+==================
 
 > First we take Manhattan, then we take Berlin.
 
 Manhattan es una aplicación web para gestionar los proyectos de Innovación Docente.
 Está desarrollada con [Django](https://www.djangoproject.com/) 3, mucho ♥, bastante ☕ y un poco de magia 🧙.
 
-## Requisitos
+Requisitos
+----------
 
 1. Python 3.7 o superior. En Debian o Ubuntu instalar los paquetes `python3.7-dev` y `python3-distutils`.
 2. [pip](https://pip.pypa.io/en/stable/installing/), instalador de paquetes de Python. (Puede venir con la instalación de Python).
@@ -26,7 +28,8 @@ Está desarrollada con [Django](https://www.djangoproject.com/) 3, mucho ♥, ba
    innodb_default_row_format = dynamic  # Default on MariaDB >= 10.2.2
    ```
 
-## Instalación
+Instalación
+-----------
 
 ```shell
 git clone https://gitlab.unizar.es/InnovacionDocente/manhattan.git
@@ -34,7 +37,8 @@ cd manhattan
 pipenv install [--dev]
 ```
 
-## Configuración inicial
+Configuración inicial
+---------------------
 
 1. Crear una base de datos.  
    En MariaDB/MySQL sería algo así:
@@ -44,8 +48,8 @@ pipenv install [--dev]
    ```
 
    ```sql
-   CREATE DATABASE nombre CHARACTER SET = 'utf8mb4' COLLATE utf8mb4_unicode_ci;
-   GRANT ALL PRIVILEGES ON nombre.* TO usuario@localhost IDENTIFIED BY 'abretesesamo';
+   CREATE DATABASE nombre CHARACTER SET = 'utf8mb4' COLLATE utf8mb4_unicode_ci;
+   GRANT ALL PRIVILEGES ON nombre.* TO usuario@localhost IDENTIFIED BY 'abretesesamo';
    quit
    ```
 
@@ -62,7 +66,8 @@ pipenv install [--dev]
     ./manage.py loaddata seed
     ```
 
-## Servidor web para desarrollo
+Servidor web para desarrollo
+----------------------------
 
 ```shell
 pipenv shell
@@ -70,3 +75,12 @@ pipenv shell
 ```
 
 Abrir la URL con el navegador web, autenticarse como superusuario y, en la interfaz de administración de Django, añadir al superusuario al grupo `Gestores`.
+
+También podemos indicar que el superusuario pertenece al colectivo PAS, para que pueda crear proyectos:
+
+```sql
+
+UPDATE accounts_customuser
+SET colectivos = '["PAS"]'
+WHERE is_superuser = 1;
+```
