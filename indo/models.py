@@ -570,7 +570,7 @@ class Valoracion(models.Model):
                 FROM indo_valoracion v
                 JOIN indo_proyecto p ON v.proyecto_id = p.id
                 JOIN indo_programa prog ON p.programa_id = prog.id
-                JOIN indo_linea l ON p.linea_id = l.id
+                LEFT JOIN indo_linea l ON p.linea_id = l.id
                 WHERE prog.convocatoria_id = {anyo}
                 ORDER BY proyecto_id;
                 '''
