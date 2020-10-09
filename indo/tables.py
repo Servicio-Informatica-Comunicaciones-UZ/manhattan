@@ -56,8 +56,16 @@ class EvaluacionProyectosTable(tables.Table):
 
     def render_resolucion(self, record):
         enlace = reverse('resolucion_update', args=[record.id])
+        aceptacion = (
+            f'''<span class="fas fa-check-circle text-success" title="{_('Aceptado')}"></span>'''
+            if record.aceptacion_comision is True
+            else f'''<span class="fas fa-times-circle text-danger" title="{_('Denegado')}">
+                 </span>'''
+            if record.aceptacion_comision is False
+            else ''
+        )
         return mark_safe(
-            f'''<a href="{enlace}" title="{_('Editar la resolución de la Comisión')}"
+            f'''{aceptacion} <a href="{enlace}" title="{_('Editar la resolución de la Comisión')}"
                 aria-label="{_('Editar la resolución')}">
                   <span class="fas fa-pencil-alt"></span>
                 </a>'''
