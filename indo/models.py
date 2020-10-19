@@ -50,10 +50,34 @@ class Centro(models.Model):
 class Convocatoria(models.Model):
     id = models.PositiveSmallIntegerField(_('año'), primary_key=True)
     num_max_equipos = models.PositiveSmallIntegerField(default=4)
-    fecha_min_solicitudes = models.DateField()
-    fecha_max_solicitudes = models.DateField()
-    fecha_max_aceptos = models.DateField()
-    fecha_max_visto_buenos = models.DateField()
+    fecha_min_solicitudes = models.DateField(
+        'fecha en que se empiezan a aceptar solicitudes', blank=True, null=True
+    )
+    fecha_max_solicitudes = models.DateField(
+        'fecha límite para presentar solicitudes', blank=True, null=True
+    )
+    fecha_max_aceptos = models.DateField(
+        'fecha límite para aceptar participar en un proyecto', blank=True, null=True
+    )
+    fecha_max_visto_buenos = models.DateField(
+        'fecha límite para que el decano/director dé el visto bueno a un proyecto',
+        blank=True,
+        null=True,
+    )
+    fecha_max_alegaciones = models.DateField(
+        _('fecha límite para presentar alegaciones a la resolución de la comisión'),
+        blank=True,
+        null=True,
+    )
+    fecha_max_aceptacion_resolucion = models.DateField(
+        _('fecha límite para confirmar la aceptación del proyecto admitido'), blank=True, null=True
+    )
+    fecha_max_memorias = models.DateField(
+        _('fecha límite para remitir la memoria final'), blank=True, null=True
+    )
+    fecha_max_gastos = models.DateField(
+        _('fecha límite para incorporar los gastos'), blank=True, null=True
+    )
 
     def __str__(self):
         return str(self.id)
