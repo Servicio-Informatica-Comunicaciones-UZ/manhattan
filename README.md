@@ -17,7 +17,12 @@ Requisitos
 4. Paquetes `libxmlsec1-dev`, `pandoc` y `pkg-config`.
 5. Un servidor de bases de datos aceptado por Django (vg PostgreSQL o MariaDB).
 
-   Para MariaDB/MySQL instalar el paquete `libmariadb-dev` o `libmysqlclient-dev`.
+   En Debian/Ubuntu:  
+   `apt install postgresql`  
+   o  
+   `apt install mariadb-server mariadb-client libmariadb-dev`  
+   o  
+   `apt install mysql-server mysql-client libmysqlclient-dev`
 
    En versiones antiguas de MariaDB/MySQL, la configuración deberá incluir, si es necesario:
 
@@ -54,7 +59,8 @@ Configuración inicial
    ```
 
 2. Copiar el fichero de ejemplo `.env-sample`.  Configurar las bases de datos en el fichero `.env`.
-3. Copiar el fichero de ejemplo `manhattan_project/settings-sample.py`.  Configurar en `settings.py` los datos para el correo, y la URL del sitio (`SITE_URL`).
+3. Copiar el fichero de ejemplo `manhattan_project/settings-sample.py`.  
+   Configurar en `settings.py` los datos para el correo, y la URL del sitio (`SITE_URL`).
 4. Configurar los datos para el _Single Sign On_ (SAML).
 5. Ejecutar
 
