@@ -631,6 +631,50 @@ class ProyectoEvaluacionesTableView(LoginRequiredMixin, PermissionRequiredMixin,
         )
 
 
+class ProyectosNotificarView(LoginRequiredMixin, PermissionRequiredMixin, RedirectView):
+    """Envía a los coordinadores de los proyectos la resolución de la Comisión de Evaluación"""
+
+    permission_required = 'indo.listar_evaluaciones'
+    permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
+
+    def get_redirect_url(self, *args, **kwargs):
+        return reverse_lazy('evaluaciones_table', kwargs={'anyo': kwargs.get('anyo')})
+
+    def post(self, request, *args, **kwargs):
+        proyectos_con_dotacion = (
+            Proyecto.objects.filter(convocatoria__id=self.kwargs['anyo'])
+            .filter(aceptacion_comision=True, ayuda_concedida__gt=0)
+            .all()
+        )
+        for proyecto in proyectos_con_dotacion:
+            self._enviar_notificaciones(proyecto, 'notificacion_con_dotacion')
+
+        proyectos_sin_dotacion = (
+            Proyecto.objects.filter(convocatoria__id=self.kwargs['anyo'])
+            .filter(aceptacion_comision=True, ayuda_concedida=0)
+            .all()
+        )
+        for proyecto in proyectos_sin_dotacion:
+            self._enviar_notificaciones(proyecto, 'notificacion_sin_dotacion')
+
+        messages.success(request, _('Se han enviado las notificaciones.'))
+        return super().post(request, *args, **kwargs)
+
+    def _enviar_notificaciones(self, proyecto, plantilla):
+        emails_coordinadores = [c.email for c in proyecto.get_coordinadores()]
+        send_templated_mail(
+            template_name=plantilla,
+            from_email=None,  # settings.DEFAULT_FROM_EMAIL
+            recipient_list=emails_coordinadores,  # TODO: Añadir Cc
+            context={
+                'proyecto': proyecto,
+                'coordinador': proyecto.get_coordinador(),
+                'coordinador_2': proyecto.get_coordinador_2(),
+                'site_url': settings.SITE_URL,
+            },
+        )
+
+
 class ProyectoTableView(LoginRequiredMixin, PermissionRequiredMixin, SingleTableView):
     """Muestra una tabla de todos los proyectos presentados en una convocatoria."""
 

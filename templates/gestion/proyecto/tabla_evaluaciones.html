@@ -6,28 +6,70 @@
 
 {% block content %}
 <div class='container-blanco'>
-    <h1 id="presentados">{% trans "Evaluaciones de los proyectos" %} <small>{{ anyo }}</small></h1>
-    <hr />
-    <br />
+  <h1 id="presentados">{% trans "Evaluaciones de los proyectos" %} <small>{{ anyo }}</small></h1>
+  <hr />
+  <br />
 
-    <div class="alert-info alert fade-in">
-        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+  <div class="alert-info alert fade-in">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 
-        <span class="fas fa-info-circle"></span>
-        <p>{% trans 'Desde esta página puede:' %}</p>
-        <ul>
-        <li>{% trans 'Ver las evaluaciones de los proyectos presentados en esta convocatoria' %}</li>
-        <li>{% trans 'Introducir la resolución de la Comisión Evaluadora' %}</li>
-        <li>{% trans 'Descargar una hoja de cálculo con todas las evaluaciones' %}</li>
-        </ul>
-    </div><br />
+    <span class="fas fa-info-circle"></span>
+    <p>{% trans 'Desde esta página puede:' %}</p>
+    <ul>
+      <li>{% trans 'Ver las evaluaciones de los proyectos presentados en esta convocatoria' %}</li>
+      <li>{% trans 'Introducir la resolución de la Comisión Evaluadora' %}</li>
+      <li>{% trans 'Descargar una hoja de cálculo con todas las evaluaciones' %}</li>
+      <li>{% trans 'Enviar las notificaciones de aprobación a los coordinadores' %}</li>
+    </ul>
+  </div><br />
 
-    {% render_table table %}
+  {% render_table table %}
 
-    <div>
-      <a href="{% url 'csv_evaluaciones' anyo %}" class="btn btn-info">
-        <span class="fas fa-file-csv"></span>&nbsp; {% trans "Descargar evaluaciones" %}
-      </a>
-    </div
+
+  <br style="clear: both;" />
+  <div class="btn-group" role="group" aria-label="Botones">
+
+    <a href="{% url 'csv_evaluaciones' anyo %}" class="btn btn-info">
+      <span class="fas fa-file-csv"></span>&nbsp; {% trans "Descargar evaluaciones" %}
+    </a>
+
+    <button class="btn btn-danger" data-toggle="modal" data-target="#enviarModal" type="button">
+      <span class="fas fa-paper-plane"></span>&nbsp; {% trans 'Enviar notificaciones' %}
+    </button>
+
+  </div>
+
 </div>
+
+<div class="modal fade" id="enviarModal" tabindex="-1" role="dialog" aria-labelledby="enviarModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="enviarModalLabel">{% trans "¿Seguro que desea enviar las notificaciones?" %}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>
+          {% blocktrans %}Se enviarán notificaciones a los coordinadores de <b>todos</b> los proyectos
+          aprobados por la Comisión.{% endblocktrans %}
+        </p>
+      </div>
+      <div class="modal-footer">
+        <form action="{% url 'notificar_proyectos' anyo=anyo %}" id="notificar-form" method="post">
+          {% csrf_token %}
+          <button type="button" class="btn btn-info" data-dismiss="modal">
+            <span class="fas fa-times"></span> {% trans "Cancelar" %}
+          </button>
+          <button type="submit" class="btn btn-danger">
+            <span class="fas fa-paper-plane"></span> {% trans "Enviar" %}
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock content %}
