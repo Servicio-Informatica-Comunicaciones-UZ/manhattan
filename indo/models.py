@@ -482,6 +482,8 @@ class Proyecto(models.Model):
         null=True,
     )
     observaciones = models.TextField(_('Observaciones para comunicar al coordinador'), null=True)
+    # Aceptación por el coordinador de las condiciones decididas por la Comisión
+    aceptacion_coordinador = models.BooleanField(_('Aceptación por el coordinador'), null=True)
 
     class Meta:
         permissions = [
