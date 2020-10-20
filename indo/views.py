@@ -662,6 +662,8 @@ class ProyectosNotificarView(LoginRequiredMixin, PermissionRequiredMixin, Redire
 
     def _enviar_notificaciones(self, proyecto, plantilla):
         emails_coordinadores = [c.email for c in proyecto.get_coordinadores()]
+        gestores = Group.objects.get(name='Gestores').user_set.all()
+        emails_gestores = [gestor.email for gestor in gestores]
         send_templated_mail(
             template_name=plantilla,
             from_email=None,  # settings.DEFAULT_FROM_EMAIL
@@ -671,7 +673,9 @@ class ProyectosNotificarView(LoginRequiredMixin, PermissionRequiredMixin, Redire
                 'coordinador': proyecto.get_coordinador(),
                 'coordinador_2': proyecto.get_coordinador_2(),
                 'site_url': settings.SITE_URL,
+                'vicerrector': settings.VICERRECTOR,
             },
+            cc=emails_gestores,
         )
 
 

@@ -363,3 +363,6 @@ PASS_IDENTIDAD = os.environ.get('PASS_IDENTIDAD')
 WSDL_VINCULACIONES = os.environ.get('WSDL_VINCULACIONES')
 USER_VINCULACIONES = os.environ.get('USER_VINCULACIONES')
 PASS_VINCULACIONES = os.environ.get('PASS_VINCULACIONES')
+
+# Titular actual del Vicerrectorado de Política Académica
+VICERRECTOR = os.environ.get('VICERRECTOR')
