@@ -335,6 +335,22 @@ class ProyectoResolucionUpdateView(
     template_name = 'gestion/proyecto/editar_resolucion.html'
     form_class = ResolucionForm
 
+    def form_valid(self, form):
+        # This method is called when valid form data has been POSTed.
+        # It should return an HttpResponse.
+        proyecto = self.object
+        resolucion = self.request.POST.get('aceptacion_comision')
+
+        if resolucion == 'true':
+            proyecto.estado = 'APROBADO'
+        elif resolucion == 'false':
+            proyecto.estado = 'DENEGADO'
+        else:  # unknown
+            proyecto.estado = 'SOLICITADO'
+        proyecto.save()
+
+        return super().form_valid(form)
+
     def get_success_message(self, cleaned_data):
         return self.success_message % dict(cleaned_data, titulo=self.object.titulo)
 
