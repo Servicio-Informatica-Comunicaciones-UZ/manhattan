@@ -677,21 +677,20 @@ class ProyectosNotificarView(LoginRequiredMixin, PermissionRequiredMixin, Redire
         return super().post(request, *args, **kwargs)
 
     def _enviar_notificaciones(self, proyecto, plantilla):
-        emails_coordinadores = [c.email for c in proyecto.get_coordinadores()]
+        # emails_coordinadores = [c.email for c in proyecto.get_coordinadores()]
         # gestores = Group.objects.get(name='Gestores').user_set.all()
         # emails_gestores = [gestor.email for gestor in gestores]
         send_templated_mail(
             template_name=plantilla,
             from_email=None,  # settings.DEFAULT_FROM_EMAIL
-            recipient_list=emails_coordinadores,  # TODO: Añadir Cc
+            recipient_list=(proyecto.get_coordinador().email,),
             context={
                 'proyecto': proyecto,
                 'coordinador': proyecto.get_coordinador(),
-                'coordinador_2': proyecto.get_coordinador_2(),
                 'site_url': settings.SITE_URL,
                 'vicerrector': settings.VICERRECTOR,
             },
-            cc=(settings.DEFAULT_FROM_EMAIL,),
+            cc=(settings.DEFAULT_FROM_EMAIL,),  # Enviar copia al vicerrectorado
         )
 
 

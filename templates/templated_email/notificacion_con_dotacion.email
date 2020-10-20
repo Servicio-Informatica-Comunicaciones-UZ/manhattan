@@ -6,16 +6,10 @@ Resolución Convocatoria de Innovación Docente {{proyecto.convocatoria.id}}/{{p
 {% if coordinador.sexo == 'F' %}Estimada {{coordinador.full_name}}:
 {% elif coordinador.sexo == 'M' %}Estimado {{coordinador.full_name}}:
 {% else %}Estimad@ {{coordinador.full_name}}:{% endif %}
-{% if coordinador_2 %}{% if coordinador_2.sexo == 'F' %}Estimada {{coordinador_2.full_name}}:
-{% elif coordinador_2.sexo == 'M' %}Estimado {{coordinador_2.full_name}}:
-{% else %}Estimad@ {{coordinador_2.full_name}}:{% endif %}{% endif %}
-{% if not coordinador_2 %}Me complace comunicarte la concesión del proyecto
+Me complace comunicarte la concesión del proyecto
 «{{proyecto.titulo}}»,
 en el que constas como {% if coordinador.sexo == 'F' %}coordinadora{% else %}coordinador{% endif %}.
-{% else %}Me complace comunicaros la concesión del proyecto
-«{{proyecto.titulo}}»,
-en el que constais como coordinadores.
-{% endif %}
+
 El importe de la ayuda concedida para la realización del proyecto es de
 {{proyecto.ayuda_concedida}} euros,
 que deberán destinarse exclusivamente a los siguientes conceptos:
