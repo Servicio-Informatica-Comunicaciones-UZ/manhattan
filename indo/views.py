@@ -213,8 +213,6 @@ class EvaluacionView(LoginRequiredMixin, ChecksMixin, TemplateView):
         return context
 
     def post(self, request, *args, **kwargs):
-        context = super().get_context_data(**kwargs)
-
         proyecto = get_object_or_404(Proyecto, pk=kwargs['pk'])
         criterios = Criterio.objects.filter(convocatoria_id=proyecto.convocatoria_id).all()
         dict_valoraciones = proyecto.get_dict_valoraciones()
@@ -633,6 +631,23 @@ class ProyectoEvaluacionesTableView(LoginRequiredMixin, PermissionRequiredMixin,
     permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
     table_class = EvaluacionProyectosTable
     template_name = 'gestion/proyecto/tabla_evaluaciones.html'
+
+    def get(self, request, *args, **kwargs):
+        convocatoria = Convocatoria.objects.get(id=self.kwargs.get('anyo'))
+
+        hitos = [
+            'fecha_max_alegaciones',
+            'fecha_max_aceptacion_resolucion',
+            'fecha_max_memorias',
+            'fecha_max_gastos',
+        ]
+        for hito in hitos:
+            if not getattr(convocatoria, hito):
+                fecha_faltante = convocatoria._meta.get_field(hito).verbose_name
+                messages.warning(
+                    request, _(f'Recuerde introducir en la convocatoria la {fecha_faltante}.')
+                )
+        return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
