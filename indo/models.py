@@ -49,18 +49,20 @@ class Centro(models.Model):
 
 class Convocatoria(models.Model):
     id = models.PositiveSmallIntegerField(_('año'), primary_key=True)
-    num_max_equipos = models.PositiveSmallIntegerField(default=4)
+    num_max_equipos = models.PositiveSmallIntegerField(
+        _('número máximo de equipos en que puede participar una persona'), default=4
+    )
     fecha_min_solicitudes = models.DateField(
-        'fecha en que se empiezan a aceptar solicitudes', blank=True, null=True
+        _('fecha en que se empiezan a aceptar solicitudes'), blank=True, null=True
     )
     fecha_max_solicitudes = models.DateField(
-        'fecha límite para presentar solicitudes', blank=True, null=True
+        _('fecha límite para presentar solicitudes'), blank=True, null=True
     )
     fecha_max_aceptos = models.DateField(
-        'fecha límite para aceptar participar en un proyecto', blank=True, null=True
+        _('fecha límite para aceptar participar en un proyecto'), blank=True, null=True
     )
     fecha_max_visto_buenos = models.DateField(
-        'fecha límite para que el decano/director dé el visto bueno a un proyecto',
+        _('fecha límite para que el decano/director dé el visto bueno a un proyecto'),
         blank=True,
         null=True,
     )
@@ -78,6 +80,9 @@ class Convocatoria(models.Model):
     fecha_max_gastos = models.DateField(
         _('fecha límite para incorporar los gastos'), blank=True, null=True
     )
+
+    class Meta:
+        ordering = ('-id',)
 
     def __str__(self):
         return str(self.id)
@@ -101,7 +106,7 @@ class Criterio(models.Model):
     convocatoria = models.ForeignKey('Convocatoria', on_delete=models.PROTECT)
     parte = models.PositiveSmallIntegerField(_('parte'))
     peso = models.PositiveSmallIntegerField(_('peso'))
-    descripcion = models.CharField(max_length=255)
+    descripcion = models.CharField(_('descripción'), max_length=255)
     tipo = models.CharField(_('tipo'), max_length=15, choices=Tipo.choices)
 
     class Meta:

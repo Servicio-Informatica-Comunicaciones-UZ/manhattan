@@ -10,7 +10,8 @@ Requisitos
 ----------
 
 1. Python 3.7 o superior. En Debian o Ubuntu instalar los paquetes `python3.7-dev` y `python3-distutils`.
-2. [pip](https://pip.pypa.io/en/stable/installing/), instalador de paquetes de Python. (Puede venir con la instalación de Python).
+2. [pip](https://pip.pypa.io/en/stable/installing/), instalador de paquetes de Python.
+   (Puede venir con la instalación de Python).
 3. [pipenv](https://github.com/pypa/pipenv) para crear un entorno virtual para Python y facilitar el trabajo.
 
    Se puede instalar con `sudo -H pip3 install pipenv`.
@@ -72,6 +73,12 @@ Configuración inicial
     ./manage.py loaddata seed
     ```
 
+6. Abrir la URL con el navegador web, autenticarse como superusuario y,
+   en la interfaz de administración de Django, añadir usuarios al grupo `Gestores`
+   (incluyendo al superusuario).
+7. Activar a los usuarios gestores el atributo `is_staff` para que puedan acceder
+   a la interfaz de administración.
+
 Servidor web para desarrollo
 ----------------------------
 
@@ -80,9 +87,7 @@ pipenv shell
 ./manage.py runserver [<IP>[:<puerto>]]
 ```
 
-Abrir la URL con el navegador web, autenticarse como superusuario y, en la interfaz de administración de Django, añadir al superusuario al grupo `Gestores`.
-
-También podemos indicar que el superusuario pertenece al colectivo PAS, para que pueda crear proyectos:
+Podemos indicar que el superusuario pertenece al colectivo PAS, para que pueda crear proyectos:
 
 ```sql
 UPDATE accounts_customuser
