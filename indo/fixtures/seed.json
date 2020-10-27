@@ -7,8 +7,104 @@
             "fecha_min_solicitudes": "2019-01-01",
             "fecha_max_solicitudes": "2019-06-01",
             "fecha_max_aceptos": "2019-06-06",
-            "fecha_max_visto_buenos": "2019-06-06"
+            "fecha_max_visto_buenos": "2019-06-06",
+            "fecha_max_alegaciones": null,
+            "fecha_max_aceptacion_resolucion": null,
+            "fecha_max_memorias": null,
+            "fecha_max_gastos": null
         }
+    },
+    {
+        "model": "indo.criterio",
+        "pk": 11,
+        "fields": {
+            "convocatoria": 2019,
+            "parte": 1,
+            "peso": 1,
+            "descripcion": "Claridad de la propuesta en todos los campos definidos en la aplicación informática.",
+            "tipo": "opcion"
+        }
+    },
+    {
+        "model": "indo.criterio",
+        "pk": 12,
+        "fields": {
+            "convocatoria": 2019,
+            "parte": 1,
+            "peso": 2,
+            "descripcion": "Relevancia e impacto previsto de la propuesta en el proceso de enseñanza/aprendizaje",
+            "tipo": "opcion"
+        }
+    },
+    {
+        "model": "indo.criterio",
+        "pk": 13,
+        "fields": {
+            "convocatoria": 2019,
+            "parte": 1,
+            "peso": 3,
+            "descripcion": "Definición y justificación de los métodos y técnicas que se utilizarán para desarrollar la innovación.",
+            "tipo": "opcion"
+        }
+    },
+    {
+        "model": "indo.criterio",
+        "pk": 14,
+        "fields": {
+            "convocatoria": 2019,
+            "parte": 1,
+            "peso": 4,
+            "descripcion": "Procedimiento/instrumentos propuestos para la evaluación del propio proceso de innovación.",
+            "tipo": "opcion"
+        }
+    },
+    {
+        "model": "indo.criterio",
+        "pk": 15,
+        "fields": {
+            "convocatoria": 2019,
+            "parte": 1,
+            "peso": 5,
+            "descripcion": "Transferibilidad a otros entornos de enseñanza/aprendizaje.",
+            "tipo": "opcion"
+        }
+    },
+    {
+        "model": "indo.criterio",
+        "pk": 16,
+        "fields": { "convocatoria": 2019, "parte": 1, "peso": 6, "descripcion": "Sostenibilidad", "tipo": "opcion" }
+    },
+    {
+        "model": "indo.criterio",
+        "pk": 17,
+        "fields": { "convocatoria": 2019, "parte": 1, "peso": 7, "descripcion": "Comentarios", "tipo": "texto" }
+    },
+    {
+        "model": "indo.criterio",
+        "pk": 18,
+        "fields": {
+            "convocatoria": 2019,
+            "parte": 2,
+            "peso": 1,
+            "descripcion": "Adecuación del presupuesto al desarrollo de las actuaciones propuestas.",
+            "tipo": "opcion"
+        }
+    },
+    {
+        "model": "indo.criterio",
+        "pk": 19,
+        "fields": {
+            "convocatoria": 2019,
+            "parte": 2,
+            "peso": 2,
+            "descripcion": "En su caso, adecuación del uso de las TIC, relevancia de los contenidos en abierto, etc.",
+            "tipo": "opcion"
+        }
+    },
+    {
+        "model": "indo.criterio",
+        "pk": 20,
+        "fields": { "convocatoria": 2019, "parte": 2, "peso": 3, "descripcion": "Comentarios", "tipo": "texto" }
     },
     { "model": "indo.evento", "pk": "creacion_solicitud", "fields": {} },
     {
@@ -49,7 +145,7 @@
         "pk": 1,
         "fields": {
             "nombre_corto": "PIIDUZ",
-            "nombre_largo": "Programa de Incentivaci\u00f3n de la Innovaci\u00f3n Docente en la UZ",
+            "nombre_largo": "Programa de Incentivación de la Innovación Docente en la UZ",
             "max_ayuda": 3000,
             "max_estudiantes": 2,
             "campos": "[\"contexto\", \"objetivos\", \"metodos_estudio\", \"mejoras\", \"continuidad\", \"tipo\", \"contexto_aplicacion\", \"metodos\", \"tecnologias\", \"aplicacion\", \"proyectos_anteriores\", \"impacto\", \"innovacion\", \"interes\"]",
@@ -77,7 +173,7 @@
         "pk": 3,
         "fields": {
             "nombre_corto": "PIET",
-            "nombre_largo": "Programa de Innovaci\u00f3n Estrat\u00e9gica de Titulaciones",
+            "nombre_largo": "Programa de Innovación Estratégica de Titulaciones",
             "max_ayuda": 3000,
             "max_estudiantes": 2,
             "campos": "[\"contexto\", \"objetivos\", \"metodos_estudio\", \"mejoras\", \"continuidad\", \"enlace\", \"tipo\", \"contexto_aplicacion\", \"metodos\", \"tecnologias\", \"aplicacion\", \"proyectos_anteriores\", \"impacto\", \"innovacion\", \"interes\"]",
@@ -91,7 +187,7 @@
         "pk": 4,
         "fields": {
             "nombre_corto": "PIEC",
-            "nombre_largo": "Programa de Innovaci\u00f3n Estrat\u00e9gica de Centros",
+            "nombre_largo": "Programa de Innovación Estratégica de Centros",
             "max_ayuda": 1500,
             "max_estudiantes": 2,
             "campos": "[\"contexto\", \"objetivos\", \"metodos_estudio\", \"mejoras\", \"continuidad\", \"tipo\", \"contexto_aplicacion\", \"metodos\", \"tecnologias\", \"aplicacion\", \"proyectos_anteriores\", \"impacto\", \"innovacion\", \"interes\"]",
@@ -119,7 +215,7 @@
         "pk": 6,
         "fields": {
             "nombre_corto": "PIPOUZ",
-            "nombre_largo": "Programa de Incentivaci\u00f3n del Plan de Orientaci\u00f3n Universitaria en la UZ",
+            "nombre_largo": "Programa de Incentivación del Plan de Orientación Universitaria en la UZ",
             "max_ayuda": 3000,
             "max_estudiantes": null,
             "campos": "[\"contexto\", \"objetivos\", \"metodos_estudio\", \"mejoras\", \"continuidad\", \"tipo\", \"contexto_aplicacion\", \"metodos\", \"tecnologias\", \"aplicacion\", \"proyectos_anteriores\", \"impacto\", \"innovacion\", \"interes\"]",
@@ -128,6 +224,590 @@
             "requiere_visto_bueno_estudio": false
         }
     },
+    {
+        "model": "indo.memoriaapartado",
+        "pk": 1,
+        "fields": {
+            "convocatoria": 2019,
+            "numero": 5,
+            "descripcion": "Rellene, de forma esquemática, los siguientes campos a modo de ficha-resumen del proyecto"
+        }
+    },
+    {
+        "model": "indo.memoriaapartado",
+        "pk": 2,
+        "fields": { "convocatoria": 2019, "numero": 6, "descripcion": "Contexto del proyecto" }
+    },
+    {
+        "model": "indo.memoriaapartado",
+        "pk": 3,
+        "fields": { "convocatoria": 2019, "numero": 7, "descripcion": "Objetivos iniciales del proyecto" }
+    },
+    {
+        "model": "indo.memoriaapartado",
+        "pk": 4,
+        "fields": {
+            "convocatoria": 2019,
+            "numero": 8,
+            "descripcion": "Métodos de estudio/experimentación y trabajo de campo"
+        }
+    },
+    {
+        "model": "indo.memoriaapartado",
+        "pk": 5,
+        "fields": { "convocatoria": 2019, "numero": 9, "descripcion": "Conclusiones del proyecto" }
+    },
+    {
+        "model": "indo.memoriaapartado",
+        "pk": 6,
+        "fields": { "convocatoria": 2019, "numero": 10, "descripcion": "Continuidad y Expansión" }
+    },
+    {
+        "model": "indo.memoriaapartado",
+        "pk": 7,
+        "fields": {
+            "convocatoria": 2019,
+            "numero": 11,
+            "descripcion": "Resultados del proyecto indicando si son acordes con los objetivos planteados en la propuesta y cómo se han comprobado"
+        }
+    },
+    {
+        "model": "indo.memoriasubapartado",
+        "pk": 15,
+        "fields": {
+            "apartado": 1,
+            "peso": 1,
+            "descripcion": "Otras fuentes de financiación sin detallar cuantía",
+            "ayuda": "",
+            "tipo": "texto"
+        }
+    },
+    {
+        "model": "indo.memoriasubapartado",
+        "pk": 16,
+        "fields": {
+            "apartado": 1,
+            "peso": 2,
+            "descripcion": "Tipo de proyecto (Experiencia, Estudio o Desarrollo)",
+            "ayuda": "",
+            "tipo": "texto"
+        }
+    },
+    {
+        "model": "indo.memoriasubapartado",
+        "pk": 17,
+        "fields": {
+            "apartado": 1,
+            "peso": 3,
+            "descripcion": "Contexto de aplicación/Público objetivo (titulación,curso...)",
+            "ayuda": "",
+            "tipo": "texto"
+        }
+    },
+    {
+        "model": "indo.memoriasubapartado",
+        "pk": 18,
+        "fields": {
+            "apartado": 1,
+            "peso": 4,
+            "descripcion": "Curso académico en que se empezó a aplicar este proyecto",
+            "ayuda": "",
+            "tipo": "texto"
+        }
+    },
+    {
+        "model": "indo.memoriasubapartado",
+        "pk": 19,
+        "fields": {
+            "apartado": 1,
+            "peso": 5,
+            "descripcion": "Interés y oportunidad para la institución/titulación",
+            "ayuda": "",
+            "tipo": "texto"
+        }
+    },
+    {
+        "model": "indo.memoriasubapartado",
+        "pk": 20,
+        "fields": {
+            "apartado": 1,
+            "peso": 6,
+            "descripcion": "Métodos/Técnicas/Actividades utilizadas",
+            "ayuda": "",
+            "tipo": "texto"
+        }
+    },
+    {
+        "model": "indo.memoriasubapartado",
+        "pk": 21,
+        "fields": { "apartado": 1, "peso": 7, "descripcion": "Tecnologías utilizadas", "ayuda": "", "tipo": "texto" }
+    },
+    {
+        "model": "indo.memoriasubapartado",
+        "pk": 22,
+        "fields": {
+            "apartado": 1,
+            "peso": 8,
+            "descripcion": "Tipo de innovación introducida: qué soluciones nuevas o creativas desarrolla",
+            "ayuda": "",
+            "tipo": "texto"
+        }
+    },
+    {
+        "model": "indo.memoriasubapartado",
+        "pk": 23,
+        "fields": { "apartado": 1, "peso": 9, "descripcion": "Impacto del proyecto", "ayuda": "", "tipo": "texto" }
+    },
+    {
+        "model": "indo.memoriasubapartado",
+        "pk": 24,
+        "fields": {
+            "apartado": 1,
+            "peso": 10,
+            "descripcion": "Características que lo hacen sostenible",
+            "ayuda": "",
+            "tipo": "texto"
+        }
+    },
+    {
+        "model": "indo.memoriasubapartado",
+        "pk": 25,
+        "fields": {
+            "apartado": 1,
+            "peso": 11,
+            "descripcion": "Posible aplicación a otras áreas de conocimiento",
+            "ayuda": "",
+            "tipo": "texto"
+        }
+    },
+    {
+        "model": "indo.memoriasubapartado",
+        "pk": 26,
+        "fields": {
+            "apartado": 2,
+            "peso": 1,
+            "descripcion": "Necesidad a la que responde el proyecto, mejoras obtenidas respecto al estado del arte, conocimiento que se genera.",
+            "ayuda": "",
+            "tipo": "texto"
+        }
+    },
+    {
+        "model": "indo.memoriasubapartado",
+        "pk": 27,
+        "fields": {
+            "apartado": 3,
+            "peso": 1,
+            "descripcion": "Qué se pretendía obtener cuando se solicitó el proyecto.",
+            "ayuda": "",
+            "tipo": "texto"
+        }
+    },
+    {
+        "model": "indo.memoriasubapartado",
+        "pk": 28,
+        "fields": {
+            "apartado": 4,
+            "peso": 1,
+            "descripcion": "Métodos/técnicas utilizadas, características de la muestra, actividades realizadas por los estudiantes y el equipo, calendario de actividades.",
+            "ayuda": "",
+            "tipo": "texto"
+        }
+    },
+    {
+        "model": "indo.memoriasubapartado",
+        "pk": 29,
+        "fields": {
+            "apartado": 5,
+            "peso": 1,
+            "descripcion": "Conclusiones:lecciones aprendidas, impacto. ",
+            "ayuda": "(Eficacia:grado en que se han alcanzado los objetivos previstos, Eficiencia: relación entre los objetivos logrados y los recursos implicados (p.e. se han alcanzado los mismos logros con menos coste (tiempo, esfuerzo, etc.))",
+            "tipo": "texto"
+        }
+    },
+    {
+        "model": "indo.memoriasubapartado",
+        "pk": 30,
+        "fields": {
+            "apartado": 6,
+            "peso": 1,
+            "descripcion": "Transferibilidad (que sirva como modelo para otros contextos), Sostenibilidad (que pueda mantenerse por sí mismo), Difusión realizada .",
+            "ayuda": "",
+            "tipo": "texto"
+        }
+    },
+    {
+        "model": "indo.memoriasubapartado",
+        "pk": 31,
+        "fields": {
+            "apartado": 7,
+            "peso": 1,
+            "descripcion": "Método de evaluación, Resultados.",
+            "ayuda": "Se pueden añadir,detrás de los resultados, las gráficas y tablas referenciadas en el texto.",
+            "tipo": "fichero"
+        }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 1,
+        "fields": { "criterio": 1, "puntuacion": 0, "descripcion": "No está definida claramente" }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 2,
+        "fields": { "criterio": 1, "puntuacion": 1, "descripcion": "Está definida claramente solo en parte" }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 3,
+        "fields": { "criterio": 1, "puntuacion": 2, "descripcion": "Está claramente definida en todos los campos" }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 4,
+        "fields": {
+            "criterio": 2,
+            "puntuacion": 0,
+            "descripcion": "No se describe su originalidad/novedad ni su impacto"
+        }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 5,
+        "fields": {
+            "criterio": 2,
+            "puntuacion": 1,
+            "descripcion": "Es una propuesta original y novedosa, pero no define su impacto ni la forma de evaluarlo"
+        }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 6,
+        "fields": {
+            "criterio": 2,
+            "puntuacion": 2,
+            "descripcion": "Es una propuesta original y novedosa, define su impacto y aporta la forma de evaluar el impacto"
+        }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 7,
+        "fields": {
+            "criterio": 3,
+            "puntuacion": 0,
+            "descripcion": "No se definen ni justifican los métodos/técnicas científicos que se utilizarán para desarrollar su innovación"
+        }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 8,
+        "fields": {
+            "criterio": 3,
+            "puntuacion": 1,
+            "descripcion": "Define, pero no justifica, los métodos/técnicas científicos que se utilizarán para desarrollar la innovación"
+        }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 9,
+        "fields": {
+            "criterio": 3,
+            "puntuacion": 2,
+            "descripcion": "Define y justifica los métodos/técnicas científicos que se utilizarán para desarrollar la innovación"
+        }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 10,
+        "fields": {
+            "criterio": 4,
+            "puntuacion": 0,
+            "descripcion": "No define el procedimiento y tampoco los instrumentos para la evaluación del propio proceso de innovación"
+        }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 11,
+        "fields": {
+            "criterio": 4,
+            "puntuacion": 1,
+            "descripcion": "Define el procedimiento para la evaluación del propio proceso de innovación pero no los instrumentos (o viceversa)"
+        }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 12,
+        "fields": {
+            "criterio": 4,
+            "puntuacion": 2,
+            "descripcion": "Define el procedimiento y los instrumentos para la evaluación del propio proceso de innovación"
+        }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 13,
+        "fields": { "criterio": 5, "puntuacion": 0, "descripcion": "No es transferible" }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 14,
+        "fields": {
+            "criterio": 5,
+            "puntuacion": 1,
+            "descripcion": "Es transferible pero no da pautas para implantarlo"
+        }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 15,
+        "fields": { "criterio": 5, "puntuacion": 2, "descripcion": "Es transferible dando pautas para implantarlo" }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 16,
+        "fields": { "criterio": 6, "puntuacion": 0, "descripcion": "No es sostenible" }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 17,
+        "fields": { "criterio": 6, "puntuacion": 1, "descripcion": "Es sostenible pero no aporta razones" }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 18,
+        "fields": { "criterio": 6, "puntuacion": 2, "descripcion": "Es sostenible y aporta razones al respecto" }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 19,
+        "fields": {
+            "criterio": 8,
+            "puntuacion": 0,
+            "descripcion": "Los gastos no están justificados/Correspondería a otro programa de financiación"
+        }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 20,
+        "fields": { "criterio": 8, "puntuacion": 1, "descripcion": "Solo algunos gastos están justificados" }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 21,
+        "fields": { "criterio": 8, "puntuacion": 2, "descripcion": "Los gastos están justificados" }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 22,
+        "fields": {
+            "criterio": 9,
+            "puntuacion": 0,
+            "descripcion": "No están descritas las tecnologías utilizadas / NP (no procede)"
+        }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 23,
+        "fields": {
+            "criterio": 9,
+            "puntuacion": 1,
+            "descripcion": "La utilización de las tecnologías propuestas no es coherente o no es procedente"
+        }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 24,
+        "fields": {
+            "criterio": 9,
+            "puntuacion": 2,
+            "descripcion": "La utilización de las tecnologías propuestas es coherente y procedente"
+        }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 25,
+        "fields": { "criterio": 11, "puntuacion": 0, "descripcion": "No está definida claramente" }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 26,
+        "fields": { "criterio": 11, "puntuacion": 1, "descripcion": "Está definida claramente solo en parte" }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 27,
+        "fields": { "criterio": 11, "puntuacion": 2, "descripcion": "Está claramente definida en todos los campos" }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 28,
+        "fields": {
+            "criterio": 12,
+            "puntuacion": 0,
+            "descripcion": "No se describe su originalidad/novedad ni su impacto"
+        }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 29,
+        "fields": {
+            "criterio": 12,
+            "puntuacion": 1,
+            "descripcion": "Es una propuesta original y novedosa, pero no define su impacto ni la forma de evaluarlo"
+        }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 30,
+        "fields": {
+            "criterio": 12,
+            "puntuacion": 2,
+            "descripcion": "Es una propuesta original y novedosa, define su impacto y aporta la forma de evaluar el impacto"
+        }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 31,
+        "fields": {
+            "criterio": 13,
+            "puntuacion": 0,
+            "descripcion": "No se definen ni justifican los métodos/técnicas científicos que se utilizarán para desarrollar su innovación"
+        }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 32,
+        "fields": {
+            "criterio": 13,
+            "puntuacion": 1,
+            "descripcion": "Define, pero no justifica, los métodos/técnicas científicos que se utilizarán para desarrollar la innovación"
+        }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 33,
+        "fields": {
+            "criterio": 13,
+            "puntuacion": 2,
+            "descripcion": "Define y justifica los métodos/técnicas científicos que se utilizarán para desarrollar la innovación"
+        }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 34,
+        "fields": {
+            "criterio": 14,
+            "puntuacion": 0,
+            "descripcion": "No define el procedimiento y tampoco los instrumentos para la evaluación del propio proceso de innovación"
+        }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 35,
+        "fields": {
+            "criterio": 14,
+            "puntuacion": 1,
+            "descripcion": "Define el procedimiento para la evaluación del propio proceso de innovación pero no los instrumentos (o viceversa)"
+        }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 36,
+        "fields": {
+            "criterio": 14,
+            "puntuacion": 2,
+            "descripcion": "Define el procedimiento y los instrumentos para la evaluación del propio proceso de innovación"
+        }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 37,
+        "fields": { "criterio": 15, "puntuacion": 0, "descripcion": "No es transferible" }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 38,
+        "fields": {
+            "criterio": 15,
+            "puntuacion": 1,
+            "descripcion": "Es transferible pero no da pautas para implantarlo"
+        }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 39,
+        "fields": { "criterio": 15, "puntuacion": 2, "descripcion": "Es transferible dando pautas para implantarlo" }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 40,
+        "fields": { "criterio": 16, "puntuacion": 0, "descripcion": "No es sostenible" }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 41,
+        "fields": { "criterio": 16, "puntuacion": 1, "descripcion": "Es sostenible pero no aporta razones" }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 42,
+        "fields": { "criterio": 16, "puntuacion": 2, "descripcion": "Es sostenible y aporta razones al respecto" }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 43,
+        "fields": {
+            "criterio": 18,
+            "puntuacion": 0,
+            "descripcion": "Los gastos no están justificados/Correspondería a otro programa de financiación"
+        }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 44,
+        "fields": { "criterio": 18, "puntuacion": 1, "descripcion": "Solo algunos gastos están justificados" }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 45,
+        "fields": { "criterio": 18, "puntuacion": 2, "descripcion": "Los gastos están justificados" }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 46,
+        "fields": {
+            "criterio": 19,
+            "puntuacion": 0,
+            "descripcion": "No están descritas las tecnologías utilizadas / NP (no procede)"
+        }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 47,
+        "fields": {
+            "criterio": 19,
+            "puntuacion": 1,
+            "descripcion": "La utilización de las tecnologías propuestas no es coherente o no es procedente"
+        }
+    },
+    {
+        "model": "indo.opcion",
+        "pk": 48,
+        "fields": {
+            "criterio": 19,
+            "puntuacion": 2,
+            "descripcion": "La utilización de las tecnologías propuestas es coherente y procedente"
+        }
+    },
+    { "model": "indo.tipoestudio", "pk": 1, "fields": { "nombre": "Diplomatura o equivalente" } },
+    { "model": "indo.tipoestudio", "pk": 2, "fields": { "nombre": "Licenciatura o equivalente" } },
+    { "model": "indo.tipoestudio", "pk": 3, "fields": { "nombre": "Doctorado" } },
+    { "model": "indo.tipoestudio", "pk": 4, "fields": { "nombre": "Estudios Propios" } },
+    { "model": "indo.tipoestudio", "pk": 5, "fields": { "nombre": "Grado" } },
+    { "model": "indo.tipoestudio", "pk": 6, "fields": { "nombre": "Máster" } },
+    { "model": "indo.tipoestudio", "pk": 7, "fields": { "nombre": "Doctorado" } },
+    { "model": "indo.tipoestudio", "pk": 8, "fields": { "nombre": "Máster y Doctorado" } },
+    { "model": "indo.tipoestudio", "pk": 10, "fields": { "nombre": "Acceso a la Universidad" } },
+    { "model": "indo.tipoestudio", "pk": 11, "fields": { "nombre": "Tit. Extranjero No Homologado" } },
     { "model": "indo.tipoparticipacion", "pk": "coordinador", "fields": {} },
     { "model": "indo.tipoparticipacion", "pk": "coordinador_2", "fields": {} },
     { "model": "indo.tipoparticipacion", "pk": "invitacion_rehusada", "fields": {} },

@@ -85,7 +85,7 @@ class Convocatoria(models.Model):
         ordering = ('-id',)
 
     def __str__(self):
-        return str(self.id)
+        return str(f'{self.id}-{self.id + 1}')
 
 
 class Criterio(models.Model):
@@ -489,6 +489,11 @@ class Proyecto(models.Model):
     observaciones = models.TextField(_('Observaciones para comunicar al coordinador'), null=True)
     # Aceptación por el coordinador de las condiciones decididas por la Comisión
     aceptacion_coordinador = models.BooleanField(_('Aceptación por el coordinador'), null=True)
+    # Aceptación por el corrector/consultor de las memorias
+    aceptacion_corrector = models.BooleanField(_('Aceptación por el corrector'), null=True)
+    observaciones_corrector = models.TextField(
+        _('Observaciones del corrector de la memoria'), null=True
+    )
 
     class Meta:
         permissions = [
@@ -547,6 +552,81 @@ class Proyecto(models.Model):
         """Devuelve si el proyecto tiene al menos un invitado."""
         num_invitados = self.participantes.filter(tipo_participacion='invitado').count()
         return num_invitados >= 1
+
+
+class MemoriaApartado(models.Model):
+    """Apartados de la memoria"""
+
+    convocatoria = models.ForeignKey(
+        'Convocatoria', on_delete=models.PROTECT, related_name='apartados_memoria'
+    )
+    numero = models.PositiveSmallIntegerField(_('número'))
+    descripcion = models.CharField(_('descripción'), max_length=255)
+
+    class Meta:
+        ordering = ('convocatoria__id', 'numero')
+        verbose_name = _('apartado de la memoria')
+        verbose_name_plural = _('apartados de la memoria')
+
+    def __str__(self):
+        return self.descripcion
+
+
+class MemoriaSubapartado(models.Model):
+    """Subapartados de la memoria"""
+
+    class Tipo(models.TextChoices):
+        """Tipo de subapartado.
+
+        Los subapartados pueden ser de dos tipos:
+
+        * Texto libre - El coordinador puede introducir un texto con sus comentarios.
+        * Fichero - El coordinador puede adjuntar un fichero PDF.
+        """
+
+        TEXTO = 'texto', _('Texto libre')
+        FICHERO = 'fichero', _('Fichero')
+
+    apartado = models.ForeignKey(
+        'MemoriaApartado', on_delete=models.PROTECT, related_name='subapartados'
+    )
+    peso = models.PositiveSmallIntegerField(_('peso'))
+    descripcion = models.CharField(_('descripción'), max_length=255)
+    ayuda = models.CharField(_('texto de ayuda'), max_length=255)
+    tipo = models.CharField(_('tipo'), max_length=15, choices=Tipo.choices)
+
+    class Meta:
+        ordering = ('apartado__numero', 'peso')
+        verbose_name = _('subapartado de la memoria')
+        verbose_name_plural = _('subapartados de la memoria')
+
+    def __str__(self):
+        return self.descripcion
+
+    @property
+    def numero_apartado(self):
+        return self.apartado.numero
+
+
+class MemoriaRespuesta(models.Model):
+    """Respuestas a los subapartados de la memoria"""
+
+    proyecto = models.ForeignKey(
+        'Proyecto', on_delete=models.PROTECT, related_name='respuestas_memoria'
+    )
+    subapartado = models.ForeignKey(
+        'MemoriaSubapartado', on_delete=models.PROTECT, related_name='respuestas'
+    )
+    texto = models.TextField(_('texto'), blank=True, null=True)
+    fichero = models.FileField('fichero PDF', upload_to='anexos_memoria', blank=True, null=True)
+
+    class Meta:
+        ordering = ('-proyecto__id', 'subapartado')
+        verbose_name = _('respuesta de la memoria')
+        verbose_name_plural = _('respuestas de la memoria')
+
+    def __str__(self):
+        return self.texto
 
 
 class Opcion(models.Model):
