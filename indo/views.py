@@ -237,6 +237,42 @@ class EvaluacionView(LoginRequiredMixin, ChecksMixin, TemplateView):
         return self.es_evaluador_del_proyecto(self.kwargs['pk'])
 
 
+class ProyectoAceptarView(LoginRequiredMixin, ChecksMixin, SuccessMessageMixin, UpdateView):
+    """Aceptación por el coordinador de las condiciones concedidas para un proyecto."""
+
+    fields = ('aceptacion_coordinador',)
+    model = Proyecto
+    success_message = _(
+        'Se ha guardado su decisión sobre las condiciones concedidas '
+        'para el proyecto «%(titulo)s».'
+    )
+    template_name = 'proyecto/aceptar_condiciones.html'
+
+    def form_valid(self, form):
+        # This method is called when valid form data has been POSTed.
+        # It should return an HttpResponse.
+        proyecto = self.object
+        aceptacion = self.request.POST.get('aceptacion_coordinador')
+
+        if aceptacion == 'false':
+            proyecto.estado = 'RECHAZADO'
+        elif aceptacion:
+            proyecto.estado = 'ACEPTADO'
+        proyecto.save()
+
+        return super().form_valid(form)
+
+    def get_success_message(self, cleaned_data):
+        return self.success_message % dict(cleaned_data, titulo=self.object.titulo)
+
+    def get_success_url(self):
+        return reverse_lazy('proyecto_detail', args=[self.object.id])
+
+    def test_func(self):
+        # TODO: Comprobar estado del proyecto, fecha.
+        return self.es_coordinador(self.kwargs['pk'])
+
+
 class ProyectoEvaluadorTableView(LoginRequiredMixin, PermissionRequiredMixin, SingleTableView):
     """Muestra una tabla con las solicitudes de proyectos presentadas y el evaluador asignado."""
 

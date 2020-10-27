@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% trans 'Declaración de aceptación de la realización de un proyecto' %}{% endblock title %}
+{% block description %}{% trans 'Declaración de aceptación de la realización de un proyecto' %}{% endblock description %}
+
+{% block content %}
+<div class="container-blanco">
+  <h1>{% trans 'Declaración de aceptación de la realización de un proyecto' %}</h1>
+  <hr />
+  <br />
+
+  <p>{% if proyecto.get_coordinador.sexo == 'F' %}Doña{% else %}Don{% endif %}
+  {{proyecto.get_coordinador.full_name}}, con NIF {{proyecto.get_coordinador.numero_documento}},
+  como {% if proyecto.get_coordinador.sexo == 'F' %}coordinadora{% else %}coordinador{% endif %}
+  responsable, solicitante del proyecto con título «{{proyecto.titulo}}»</p>
+
+  <p>ACEPTA:</p>
+
+  <p>Llevar a cabo el proyecto en las condiciones en las que ha sido aprobado
+  por la Comisión Evaluadora,
+  {% if proyecto.ayuda_concedida %}
+    con una ayuda económica asignada de <strong>{{proyecto.ayuda_concedida}}</strong>
+    euros para {{proyecto.tipo_gasto}}.
+  {% else %}
+    sin financiación.
+  {% endif %}</p>
+
+  {% if proyecto.estado == 'APROBADO' %}
+  <form action="" method="post">
+    {% csrf_token %}
+
+    <fieldset>
+      <input type="radio" name="aceptacion_coordinador" id="acepto" value="true" required="required" />
+      <label for="acepto">{% trans 'Acepto' %}</label>
+      <input type="radio" name = "aceptacion_coordinador" id="rechazo" value="false" />
+      <label for="rechazo">{% trans 'Rechazo' %}</label>
+    </fieldset>
+
+    <br style="clear: both;" />
+    <div class="btn-group" role="group" aria-label="Botones">
+      <a href="{% url 'proyecto_detail' proyecto.id %}" class="btn btn-info">
+        <span class="fas fa-step-backward"></span> {% trans 'Retroceder' %}
+      </a>
+      <button class="btn btn-warning" type="submit">
+        <span class="fas fa-check"></span> {% trans 'Declarar' %}
+      </button>
+    </div>
+  </form>
+  {% endif %}
+</div>
+{% endblock content %}
