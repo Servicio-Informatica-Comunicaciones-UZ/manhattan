@@ -16,7 +16,7 @@
     },
     {
         "model": "indo.criterio",
-        "pk": 11,
+        "pk": 1,
         "fields": {
             "convocatoria": 2019,
             "parte": 1,
@@ -27,7 +27,7 @@
     },
     {
         "model": "indo.criterio",
-        "pk": 12,
+        "pk": 2,
         "fields": {
             "convocatoria": 2019,
             "parte": 1,
@@ -38,7 +38,7 @@
     },
     {
         "model": "indo.criterio",
-        "pk": 13,
+        "pk": 3,
         "fields": {
             "convocatoria": 2019,
             "parte": 1,
@@ -49,7 +49,7 @@
     },
     {
         "model": "indo.criterio",
-        "pk": 14,
+        "pk": 4,
         "fields": {
             "convocatoria": 2019,
             "parte": 1,
@@ -60,7 +60,7 @@
     },
     {
         "model": "indo.criterio",
-        "pk": 15,
+        "pk": 5,
         "fields": {
             "convocatoria": 2019,
             "parte": 1,
@@ -71,17 +71,17 @@
     },
     {
         "model": "indo.criterio",
-        "pk": 16,
+        "pk": 6,
         "fields": { "convocatoria": 2019, "parte": 1, "peso": 6, "descripcion": "Sostenibilidad", "tipo": "opcion" }
     },
     {
         "model": "indo.criterio",
-        "pk": 17,
+        "pk": 7,
         "fields": { "convocatoria": 2019, "parte": 1, "peso": 7, "descripcion": "Comentarios", "tipo": "texto" }
     },
     {
         "model": "indo.criterio",
-        "pk": 18,
+        "pk": 8,
         "fields": {
             "convocatoria": 2019,
             "parte": 2,
@@ -92,7 +92,7 @@
     },
     {
         "model": "indo.criterio",
-        "pk": 19,
+        "pk": 9,
         "fields": {
             "convocatoria": 2019,
             "parte": 2,
@@ -103,7 +103,7 @@
     },
     {
         "model": "indo.criterio",
-        "pk": 20,
+        "pk": 10,
         "fields": { "convocatoria": 2019, "parte": 2, "peso": 3, "descripcion": "Comentarios", "tipo": "texto" }
     },
     { "model": "indo.evento", "pk": "creacion_solicitud", "fields": {} },
@@ -618,182 +618,6 @@
         "pk": 24,
         "fields": {
             "criterio": 9,
-            "puntuacion": 2,
-            "descripcion": "La utilización de las tecnologías propuestas es coherente y procedente"
-        }
-    },
-    {
-        "model": "indo.opcion",
-        "pk": 25,
-        "fields": { "criterio": 11, "puntuacion": 0, "descripcion": "No está definida claramente" }
-    },
-    {
-        "model": "indo.opcion",
-        "pk": 26,
-        "fields": { "criterio": 11, "puntuacion": 1, "descripcion": "Está definida claramente solo en parte" }
-    },
-    {
-        "model": "indo.opcion",
-        "pk": 27,
-        "fields": { "criterio": 11, "puntuacion": 2, "descripcion": "Está claramente definida en todos los campos" }
-    },
-    {
-        "model": "indo.opcion",
-        "pk": 28,
-        "fields": {
-            "criterio": 12,
-            "puntuacion": 0,
-            "descripcion": "No se describe su originalidad/novedad ni su impacto"
-        }
-    },
-    {
-        "model": "indo.opcion",
-        "pk": 29,
-        "fields": {
-            "criterio": 12,
-            "puntuacion": 1,
-            "descripcion": "Es una propuesta original y novedosa, pero no define su impacto ni la forma de evaluarlo"
-        }
-    },
-    {
-        "model": "indo.opcion",
-        "pk": 30,
-        "fields": {
-            "criterio": 12,
-            "puntuacion": 2,
-            "descripcion": "Es una propuesta original y novedosa, define su impacto y aporta la forma de evaluar el impacto"
-        }
-    },
-    {
-        "model": "indo.opcion",
-        "pk": 31,
-        "fields": {
-            "criterio": 13,
-            "puntuacion": 0,
-            "descripcion": "No se definen ni justifican los métodos/técnicas científicos que se utilizarán para desarrollar su innovación"
-        }
-    },
-    {
-        "model": "indo.opcion",
-        "pk": 32,
-        "fields": {
-            "criterio": 13,
-            "puntuacion": 1,
-            "descripcion": "Define, pero no justifica, los métodos/técnicas científicos que se utilizarán para desarrollar la innovación"
-        }
-    },
-    {
-        "model": "indo.opcion",
-        "pk": 33,
-        "fields": {
-            "criterio": 13,
-            "puntuacion": 2,
-            "descripcion": "Define y justifica los métodos/técnicas científicos que se utilizarán para desarrollar la innovación"
-        }
-    },
-    {
-        "model": "indo.opcion",
-        "pk": 34,
-        "fields": {
-            "criterio": 14,
-            "puntuacion": 0,
-            "descripcion": "No define el procedimiento y tampoco los instrumentos para la evaluación del propio proceso de innovación"
-        }
-    },
-    {
-        "model": "indo.opcion",
-        "pk": 35,
-        "fields": {
-            "criterio": 14,
-            "puntuacion": 1,
-            "descripcion": "Define el procedimiento para la evaluación del propio proceso de innovación pero no los instrumentos (o viceversa)"
-        }
-    },
-    {
-        "model": "indo.opcion",
-        "pk": 36,
-        "fields": {
-            "criterio": 14,
-            "puntuacion": 2,
-            "descripcion": "Define el procedimiento y los instrumentos para la evaluación del propio proceso de innovación"
-        }
-    },
-    {
-        "model": "indo.opcion",
-        "pk": 37,
-        "fields": { "criterio": 15, "puntuacion": 0, "descripcion": "No es transferible" }
-    },
-    {
-        "model": "indo.opcion",
-        "pk": 38,
-        "fields": {
-            "criterio": 15,
-            "puntuacion": 1,
-            "descripcion": "Es transferible pero no da pautas para implantarlo"
-        }
-    },
-    {
-        "model": "indo.opcion",
-        "pk": 39,
-        "fields": { "criterio": 15, "puntuacion": 2, "descripcion": "Es transferible dando pautas para implantarlo" }
-    },
-    {
-        "model": "indo.opcion",
-        "pk": 40,
-        "fields": { "criterio": 16, "puntuacion": 0, "descripcion": "No es sostenible" }
-    },
-    {
-        "model": "indo.opcion",
-        "pk": 41,
-        "fields": { "criterio": 16, "puntuacion": 1, "descripcion": "Es sostenible pero no aporta razones" }
-    },
-    {
-        "model": "indo.opcion",
-        "pk": 42,
-        "fields": { "criterio": 16, "puntuacion": 2, "descripcion": "Es sostenible y aporta razones al respecto" }
-    },
-    {
-        "model": "indo.opcion",
-        "pk": 43,
-        "fields": {
-            "criterio": 18,
-            "puntuacion": 0,
-            "descripcion": "Los gastos no están justificados/Correspondería a otro programa de financiación"
-        }
-    },
-    {
-        "model": "indo.opcion",
-        "pk": 44,
-        "fields": { "criterio": 18, "puntuacion": 1, "descripcion": "Solo algunos gastos están justificados" }
-    },
-    {
-        "model": "indo.opcion",
-        "pk": 45,
-        "fields": { "criterio": 18, "puntuacion": 2, "descripcion": "Los gastos están justificados" }
-    },
-    {
-        "model": "indo.opcion",
-        "pk": 46,
-        "fields": {
-            "criterio": 19,
-            "puntuacion": 0,
-            "descripcion": "No están descritas las tecnologías utilizadas / NP (no procede)"
-        }
-    },
-    {
-        "model": "indo.opcion",
-        "pk": 47,
-        "fields": {
-            "criterio": 19,
-            "puntuacion": 1,
-            "descripcion": "La utilización de las tecnologías propuestas no es coherente o no es procedente"
-        }
-    },
-    {
-        "model": "indo.opcion",
-        "pk": 48,
-        "fields": {
-            "criterio": 19,
             "puntuacion": 2,
             "descripcion": "La utilización de las tecnologías propuestas es coherente y procedente"
         }
