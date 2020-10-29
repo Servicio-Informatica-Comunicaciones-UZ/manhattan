@@ -41,6 +41,7 @@ from .models import (
     Convocatoria,
     Criterio,
     Evento,
+    MemoriaApartado,
     ParticipanteProyecto,
     Plan,
     Proyecto,
@@ -352,7 +353,7 @@ class ProyectoEvaluadorUpdateView(LoginRequiredMixin, PermissionRequiredMixin, U
         return super().get(request, *args, **kwargs)
 
     def get_success_url(self):
-        return reverse('evaluadores_table', kwargs={'anyo': self.object.convocatoria})
+        return reverse('evaluadores_table', kwargs={'anyo': self.object.convocatoria.id})
 
 
 class ProyectoResolucionUpdateView(
@@ -594,6 +595,35 @@ class ProyectoAnularView(LoginRequiredMixin, ChecksMixin, RedirectView):
         return super().post(request, *args, **kwargs)
 
     def test_func(self):
+        return self.es_coordinador(self.kwargs['pk'])
+
+
+class MemoriaDetailView(LoginRequiredMixin, TemplateView):  # TODO: permisos
+    """Muestra la memoria del proyecto indicado."""
+
+    template_name = 'memoria/detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        proyecto = get_object_or_404(Proyecto, pk=kwargs['pk'])
+        context['proyecto'] = proyecto
+        context['apartados'] = proyecto.convocatoria.apartados_memoria.all()
+        context['dict_respuestas'] = proyecto.get_dict_respuestas_memoria()
+        return context
+
+
+class MemoriaPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
+    """Presenta la memoria final de proyecto.
+
+    El proyecto pasa de estado «Aceptado» a estado «Memoria presentada».
+    TODO: ¿Enviar correos al corrector y al coordinador?
+    """
+
+    pass
+
+    def test_func(self):
+        # TODO: Comprobar fecha y estado
         return self.es_coordinador(self.kwargs['pk'])
 
 

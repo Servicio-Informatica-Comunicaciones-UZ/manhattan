@@ -14,10 +14,12 @@ import zeep
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 
 # local Django
 from .pipeline import get_identidad
+from indo.models import Centro, Departamento
 
 
 class CustomUserManager(UserManager):
@@ -63,6 +65,22 @@ class CustomUser(AbstractUser):
         _('Cód. departamentos'), max_length=127, blank=True, null=True
     )
     colectivos = models.CharField(max_length=127, blank=True, null=True)
+
+    @property
+    def nombres_centros(self):
+        """Devuelve una cadena con los nombres de los centros del usuario."""
+        id_nk_centros = json.loads(self.centro_id_nks) if self.centro_id_nks else []
+        centros = [get_object_or_404(Centro, academico_id_nk=id_nk) for id_nk in id_nk_centros]
+        return ', '.join([centro.nombre for centro in centros])
+
+    @property
+    def nombres_departamentos(self):
+        """Devuelve una cadena con los nombres de los departamentos del usuario."""
+        id_nk_depts = json.loads(self.departamento_id_nks) if self.departamento_id_nks else []
+        departamentos = [
+            get_object_or_404(Departamento, academico_id_nk=id_nk) for id_nk in id_nk_depts
+        ]
+        return ', '.join([departamento.nombre for departamento in departamentos])
 
     @property
     def full_name(self):

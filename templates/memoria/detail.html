@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+{% load custom_tags i18n %}
+
+{% block title %}{% trans 'Memoria final' %}: {{ proyecto.titulo }}{% endblock title %}
+
+{% block content %}
+<div class="container-blanco">
+  <h1 id="cabecera">{% trans 'Memoria final' %}</h1>
+  <h2><small>{% trans 'Proyectos de Innovación Docente' %} {{proyecto.convocatoria}}</small></h2>
+  <hr />
+  <br />
+
+  <div class="alert-info alert fade-in noprint">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+
+    <span class="fas fa-info-circle"></span>
+    {% trans 'Aquí puede ver y editar la memoria del proyecto.' %}<br />
+    {% trans 'Pulse el botón «<strong>Guardar</strong>» para almacenar sus cambios.' %}
+    {% trans 'Puede editar su memoria tantas veces como desee.' %}<br />
+    {% trans 'Cuando esté satisfecho, pulse el botón «<strong>Presentar</strong>».' %}
+    {% trans 'Una vez haya presentado la memoria, ya no podrá modificarla.' %}
+    </div>
+  <br />
+
+  <h3>1. {% trans 'Identificación del proyecto' %}</h3>
+
+  <div class="table-responsive">
+    <table class="table table-hover table-striped table-sm" aria-describedby="datos del proyecto">
+      <tr>
+        <th scope="row"><strong>{% trans 'Título' %}</strong>:</th>
+        <td>{{ proyecto.titulo }}</td>
+      </tr>
+
+      <tr>
+        <th scope="row"><strong>{% trans 'Programa' %}</strong>:</th>
+        <td>{{ proyecto.programa.nombre_corto }} ({{ proyecto.programa.nombre_largo }})</td>
+      </tr>
+
+      {% if proyecto.linea %}
+      <tr>
+        <th scope="row"><strong>{% trans 'Línea' %}</strong>:</th>
+        <td>{{ proyecto.linea.nombre }}</td>
+      </tr>
+      {% endif %}
+
+      {% if proyecto.centro %}
+      <tr>
+        <th scope="row"><strong>{% trans 'Centro' %}</strong>:</th>
+        <td>{{ proyecto.centro.nombre }}</td>
+      </tr>
+      {% endif %}
+
+      {% if proyecto.estudio %}
+      <tr>
+        <th scope="row"><strong>{% trans 'Estudio' %}</strong>:</th>
+        <td>{{ proyecto.estudio.nombre }}</td>
+      </tr>
+      {% endif %}
+
+    </table>
+  </div>
+  <br />
+
+  <h3>2. {% trans 'Coordinadores del proyecto' %}</h3>
+
+  <div class="table-responsive">
+    {% if proyecto.coordinador %}
+    <table class="table table-hover table-striped table-sm"
+      aria-describedby="coordinador">
+      <tr>
+        <th scope="row" style="font-weight: bold;">{% trans 'Coordinador' %}</th>
+        <td>{{ proyecto.coordinador.full_name }}</td>
+      </tr>
+      <tr>
+        <th scope="row" style="font-weight: bold;">{% trans 'Correo electrónico' %}</th>
+        <td>{{ proyecto.coordinador.email }}</td>
+      </tr>
+      <tr>
+        <th scope="row" style="font-weight: bold;">{% trans 'Departamento' %}</th>
+        <td>{{ proyecto.coordinador.nombres_departamentos }}</td>
+      </tr>
+      <tr>
+        <th scope="row" style="font-weight: bold;">{% trans 'Centro' %}</th>
+        <td>{{ proyecto.coordinador.nombres_centros }}</td>
+      </tr>
+    </table>
+    {% endif %}
+    {% if proyecto.coordinador_2 %}
+    <table class="table table-hover table-striped table-sm"
+      aria-describedby="coordinador 2">
+      <tr>
+        <th scope="row" style="font-weight: bold;">{% trans 'Coordinador 2' %}</th>
+        <td>{{ proyecto.coordinador_2.full_name }}</td>
+      </tr>
+      <tr>
+        <th scope="row" style="font-weight: bold;">{% trans 'Correo electrónico' %}</th>
+        <td>{{ proyecto.coordinador_2.email }}</td>
+      </tr>
+      <tr>
+        <th scope="row" style="font-weight: bold;">{% trans 'Departamento' %}</th>
+        <td>{{ proyecto.coordinador_2.nombres_departamentos }}</td>
+      </tr>
+      <tr>
+        <th scope="row" style="font-weight: bold;">{% trans 'Centro' %}</th>
+        <td>{{ proyecto.coordinador_2.nombres_centros }}</td>
+      </tr>
+    </table>
+    {% endif %}
+  </div>
+  <br />
+
+  <h3>3. {% trans 'Resumen del proyecto' %}</h3>
+
+  <div>{{ proyecto.descripcion | limpiar }}</div>
+  <br />
+
+  <h3>4. {% trans 'Participantes en el proyecto' %}</h3>
+
+  <div class="table-responsive">
+    <table class="table table-hover table-striped table-sm cabecera-azul"
+      aria-describedby="participantes">
+      <thead>
+        <tr>
+          <th scope="col">{% trans "Nombre y apellidos" %}</th>
+          <th scope="col">{% trans "Correo electrónico" %}</th>
+          <th scope="col">{% trans "Departamento" %}</th>
+          <th scope="col">{% trans "Centro" %}</th>
+        </tr>
+      </thead>
+      {% for participante in proyecto.usuarios_participantes %}
+        <tr>
+          <td>{{ participante.full_name }}</td>
+          <td>{{ participante.email }}</td>
+          <td>{{ participante.nombres_departamentos }}</td>
+          <td>{{ participante.nombres_centros }}</td>
+        </tr>
+      {% endfor %}
+
+    </table>
+  </div>
+  <br />
+
+  <form action="" method="post">
+    {% csrf_token %}
+    {% for apartado in apartados %}
+      <h3>{{ apartado.numero }}. {{ apartado.descripcion }}</h3>
+
+      {% for subapartado in apartado.subapartados.all %}
+        <p><strong>{{ subapartado.descripcion }}</strong></p>
+        <p class="noprint" style="color: gray;">{{ subapartado.ayuda }}</p>
+        {% with respuesta=dict_respuestas|get_item:subapartado.id %}
+          {% if subapartado.tipo == 'texto' %}
+            <textarea class="textarea form-control" name="{{ subapartado.id }}"
+              placeholder="{% trans 'Introduzca sus comentarios.' %}" rows="10"
+              cols="80">{% if respuesta %}{{ respuesta.texto }}{% endif %}</textarea>
+          {% elif subapartado.tipo == 'fichero' %}
+            TODO: Enviar PDF
+          {% endif %}
+        {% endwith %}
+        <br />
+      {% endfor %}
+    {% endfor %}
+
+    <!-- Botones -->
+    <br style="clear: both;" />
+    <div class="btn-group noprint" role="group" aria-label="Botones">
+      <a href="{% url 'proyecto_detail' proyecto.id %}" class="btn btn-info"
+        title="{% trans 'Cancelar' %}">
+        <span class="fas fa-times"></span> {% trans 'Cancelar' %}
+      </a>
+
+      {# TODO if permitir_edicion #}
+      <button class="btn btn-success" type="button">
+        <span class="far fa-save"></span> {% trans 'Guardar' %}
+      </button>
+      {# endif #}
+      {# TODO if es_coordinador #}
+      <button class="btn btn-warning" data-toggle="modal" data-target="#presentarModal"
+        type="button">
+        <span class="fas fa-file-export"></span> {% trans 'Presentar' %}
+      </button>
+      {# endif #}
+    </div>
+  </form>
+</div>
+
+<div class="modal fade" id="presentarModal" tabindex="-1" role="dialog"
+  aria-labelledby="presentarModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="presentarModalLabel">
+          {% trans "¿Seguro que desea presentar la memoria?" %}
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>{% trans "Una vez presentada ya no podrá hacer ningún cambio." %}</p>
+        <p>
+          {% blocktrans %}Se generará el PDF final de la memoria, y el corrector
+          podrá aprobarla o rechazarla.{% endblocktrans %}
+        </p>
+      </div>
+      <div class="modal-footer">
+        <form action="{% url 'memoria_presentar' pk=proyecto.id %}"
+          id="presentar-form" method="post">
+          {% csrf_token %}
+          <button type="button" class="btn btn-info" data-dismiss="modal">
+            <span class="fas fa-times"></span> {% trans "Cancelar" %}
+          </button>
+          <button type="submit" class="btn btn-warning">
+            <span class="fas fa-check"></span> {% trans "Presentar" %}
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

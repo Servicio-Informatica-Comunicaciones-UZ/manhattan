@@ -8,6 +8,8 @@ from .views import (
     EvaluacionView,
     HomePageView,
     InvitacionView,
+    MemoriaDetailView,
+    MemoriaPresentarView,
     ParticipanteAceptarView,
     ParticipanteDeclinarView,
     ParticipanteDeleteView,
@@ -99,6 +101,8 @@ urlpatterns = [
         ParticipanteDeleteView.as_view(),
         name='participante_delete',
     ),
+    path('memoria/<int:pk>/', MemoriaDetailView.as_view(), name='memoria_detail'),
+    path('memoria/<int:pk>/presentar/', MemoriaPresentarView.as_view(), name='memoria_presentar'),
     path('proyecto/new/', ProyectoCreateView.as_view(), name='proyecto_new'),
     path('proyecto/<int:pk>/', ProyectoDetailView.as_view(), name='proyecto_detail'),
     path(

@@ -14,6 +14,10 @@ h1 > small {
     color: gray;
 }
 
+h2 > small {
+    color: gray;
+}
+
 /*** Navbar ***/
 .bg-azul {
     background-color: #213c71;
@@ -238,4 +242,22 @@ h1 > small {
 
 .dataTables_length {
     margin-bottom: 1em;
+}
+
+
+@media print {
+    .nav, .breadcrumb, .footer, .navbar, .noprint {
+        display: none !important;
+    }
+
+    /* Sobrescribo esta propiedad de Bootstrap para que
+     * al imprimir no se añada la URL a los enlaces.
+     */
+    a[href]:after {
+        content: "";
+    }
+
+    @page {
+        size: A4;
+    }
 }

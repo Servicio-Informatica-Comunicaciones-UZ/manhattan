@@ -522,24 +522,48 @@ class Proyecto(models.Model):
         except ParticipanteProyecto.DoesNotExist:
             return None
 
-    def get_coordinador(self):
+    @property
+    def coordinador(self):
         """Devuelve el usuario coordinador del proyecto"""
         coordinador = self.get_participante_or_none('coordinador')
         return coordinador.usuario if coordinador else None
 
-    def get_coordinador_2(self):
+    def get_coordinador(self):
+        """Devuelve el usuario coordinador del proyecto"""
+        return self.coordinador
+
+    @property
+    def coordinador_2(self):
         """Devuelve el segundo coordinador del proyecto (los PIET pueden tener 2)."""
         coordinador_2 = self.get_participante_or_none('coordinador_2')
         return coordinador_2.usuario if coordinador_2 else None
 
+    def get_coordinador_2(self):
+        """Devuelve el segundo coordinador del proyecto (los PIET pueden tener 2)."""
+        return self.coordinador_2
+
     def get_coordinadores(self):
         """Devuelve los usuarios coordinadores del proyecto."""
-        coordinadores = [self.get_coordinador(), self.get_coordinador_2()]
+        coordinadores = [self.coordinador, self.coordinador_2]
         return list(filter(None, coordinadores))
 
     def get_dict_valoraciones(self):
         """Devuelve un diccionario criterio_id => valoración con las valoraciones del proyecto."""
         return {valoracion.criterio_id: valoracion for valoracion in self.valoraciones.all()}
+
+    def get_dict_respuestas_memoria(self):
+        """Devuelve un diccionario subapartado_id => respuesta de la memoria del proyecto."""
+        return {respuesta.subapartado_id: respuesta for respuesta in self.respuestas_memoria.all()}
+
+    @property
+    def usuarios_participantes(self):
+        """Devuelve una lista de los usuarios participantes en el proyecto."""
+        participantes_proyecto = (
+            self.participantes.filter(tipo_participacion='participante')
+            .order_by('usuario__first_name', 'usuario__last_name')
+            .all()
+        )
+        return [pp.usuario for pp in participantes_proyecto]
 
     def get_usuarios_vinculados(self):
         """
