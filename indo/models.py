@@ -1,3 +1,4 @@
+from django.core.validators import FileExtensionValidator
 from django.db import connection, models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -642,7 +643,13 @@ class MemoriaRespuesta(models.Model):
         'MemoriaSubapartado', on_delete=models.PROTECT, related_name='respuestas'
     )
     texto = models.TextField(_('texto'), blank=True, null=True)
-    fichero = models.FileField('fichero PDF', upload_to='anexos_memoria', blank=True, null=True)
+    fichero = models.FileField(
+        'fichero PDF',
+        upload_to='anexos_memoria/%Y/',
+        blank=True,
+        null=True,
+        validators=[FileExtensionValidator(allowed_extensions=['pdf'])],
+    )
 
     class Meta:
         ordering = ('-proyecto__id', 'subapartado')

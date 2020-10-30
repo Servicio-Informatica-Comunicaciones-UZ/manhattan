@@ -23,6 +23,7 @@ python3-saml = "*"
 social-auth-app-django = "*"
 social-auth-core = {extras = ["saml"],version = "*"}
 zeep = "*"
+python-magic = "*"
 
 [requires]
 python_version = "3.7"

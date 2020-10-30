@@ -18,7 +18,16 @@
     {% trans 'Pulse el botón «<strong>Guardar</strong>» para almacenar sus cambios.' %}
     {% trans 'Puede editar su memoria tantas veces como desee.' %}<br />
     {% trans 'Cuando esté satisfecho, pulse el botón «<strong>Presentar</strong>».' %}
-    {% trans 'Una vez haya presentado la memoria, ya no podrá modificarla.' %}
+    {% trans 'Una vez haya presentado la memoria para su corrección, ya no podrá modificarla.' %}<br /><br />
+    {% blocktrans with fecha=proyecto.convocatoria.fecha_max_memorias %}
+    Recuerde que la fecha límite para la presentación de memorias es el {{ fecha }}.
+    {% endblocktrans %}<br />
+    <strong>{% trans 'No se admitirá ninguna memoria fuera de plazo.' %}</strong>
+    <!--
+    <strong>{% trans '¡No espere hasta el último momento para presentar la memoria!' %}</strong><br />
+    {% blocktrans %}En caso de que el corrector rechace la memoria, podrá subsanar sus defectos
+    <strong>sólo</strong> mientras esté dentro del plazo de presentación.{% endblocktrans %}
+    -->
     </div>
   <br />
 
@@ -140,23 +149,29 @@
   </div>
   <br />
 
-  <form action="" method="post">
+  <form action="" enctype="multipart/form-data" method="post">
     {% csrf_token %}
+
     {% for apartado in apartados %}
       <h3>{{ apartado.numero }}. {{ apartado.descripcion }}</h3>
 
       {% for subapartado in apartado.subapartados.all %}
         <p><strong>{{ subapartado.descripcion }}</strong></p>
         <p class="noprint" style="color: gray;">{{ subapartado.ayuda }}</p>
+
         {% with respuesta=dict_respuestas|get_item:subapartado.id %}
           {% if subapartado.tipo == 'texto' %}
             <textarea class="textarea form-control" name="{{ subapartado.id }}"
               placeholder="{% trans 'Introduzca sus comentarios.' %}" rows="10"
               cols="80">{% if respuesta %}{{ respuesta.texto }}{% endif %}</textarea>
           {% elif subapartado.tipo == 'fichero' %}
-            TODO: Enviar PDF
+            {% if respuesta.fichero %}
+              <p><a href="{{ respuesta.fichero.url }}">{% trans 'PDF actual' %}</a></p>
+            {% endif %}
+            <input type="file" name="fichero" accept=".pdf">
           {% endif %}
         {% endwith %}
+
         <br />
       {% endfor %}
     {% endfor %}
@@ -164,18 +179,18 @@
     <!-- Botones -->
     <br style="clear: both;" />
     <div class="btn-group noprint" role="group" aria-label="Botones">
-      <a href="{% url 'proyecto_detail' proyecto.id %}" class="btn btn-info"
-        title="{% trans 'Cancelar' %}">
+      <a href="{% url 'proyecto_detail' proyecto.id %}" class="btn btn-warning"
+        title="{% trans 'Cancelar - Se perderán los cambios no guardados' %}">
         <span class="fas fa-times"></span> {% trans 'Cancelar' %}
       </a>
 
       {# TODO if permitir_edicion #}
-      <button class="btn btn-success" type="button">
+      <button class="btn btn-success" type="submit" title="{% trans 'Guardar cambios' %}">
         <span class="far fa-save"></span> {% trans 'Guardar' %}
       </button>
       {# endif #}
       {# TODO if es_coordinador #}
-      <button class="btn btn-warning" data-toggle="modal" data-target="#presentarModal"
+      <button class="btn btn-danger" data-toggle="modal" data-target="#presentarModal"
         type="button">
         <span class="fas fa-file-export"></span> {% trans 'Presentar' %}
       </button>

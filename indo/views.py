@@ -1,7 +1,9 @@
 # Standard library
 import csv
 import json
+import magic
 from datetime import date
+from os.path import splitext
 
 # Third-party
 from annoying.functions import get_config, get_object_or_None
@@ -42,6 +44,8 @@ from .models import (
     Criterio,
     Evento,
     MemoriaApartado,
+    MemoriaRespuesta,
+    MemoriaSubapartado,
     ParticipanteProyecto,
     Plan,
     Proyecto,
@@ -598,7 +602,7 @@ class ProyectoAnularView(LoginRequiredMixin, ChecksMixin, RedirectView):
         return self.es_coordinador(self.kwargs['pk'])
 
 
-class MemoriaDetailView(LoginRequiredMixin, TemplateView):  # TODO: permisos
+class MemoriaDetailView(LoginRequiredMixin, ChecksMixin, TemplateView):
     """Muestra la memoria del proyecto indicado."""
 
     template_name = 'memoria/detail.html'
@@ -611,6 +615,49 @@ class MemoriaDetailView(LoginRequiredMixin, TemplateView):  # TODO: permisos
         context['apartados'] = proyecto.convocatoria.apartados_memoria.all()
         context['dict_respuestas'] = proyecto.get_dict_respuestas_memoria()
         return context
+
+    def post(self, request, *args, **kwargs):
+        proyecto = get_object_or_404(Proyecto, pk=kwargs['pk'])
+        subapartados = MemoriaSubapartado.objects.filter(
+            apartado__convocatoria_id=proyecto.convocatoria_id
+        ).all()
+        dict_respuestas = proyecto.get_dict_respuestas_memoria()
+
+        for subapartado in subapartados:
+            respuesta = dict_respuestas.get(subapartado.id)
+            if not respuesta:
+                respuesta = MemoriaRespuesta(
+                    proyecto_id=proyecto.id, subapartado_id=subapartado.id
+                )
+
+            if subapartado.tipo == 'texto':
+                respuesta.texto = request.POST.get(str(subapartado.id))
+            elif subapartado.tipo == 'fichero':
+                fichero = request.FILES.get('fichero')
+
+                if fichero:
+                    ext = splitext(fichero.name)[1].lower()
+                    if ext != '.pdf':
+                        raise ValidationError(_('El fichero debe tener extensión .pdf .'))
+
+                    filetype = magic.from_buffer(fichero.read(2048), mime=True)
+                    fichero.seek(0)
+                    if 'pdf' not in filetype:  # application/pdf, x-pdf, x-bzpdf, x-gzpdf
+                        raise ValidationError(_('El fichero no es un PDF.'))
+                    # fichero.name = f'{proyecto.id}.pdf'
+
+                    respuesta.fichero = fichero
+
+            respuesta.save()
+
+        messages.success(
+            request, _(f'Se ha guardado la memoria del proyecto «{proyecto.titulo}».')
+        )
+        return redirect('proyecto_detail', proyecto.id)
+
+    def test_func(self):
+        # TODO: Comprobar fecha y estado
+        return self.es_coordinador(self.kwargs['pk'])  # TODO: Permitir a los correctores?
 
 
 class MemoriaPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
