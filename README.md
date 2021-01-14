@@ -94,3 +94,28 @@ UPDATE accounts_customuser
 SET colectivos = '["PAS"]'
 WHERE is_superuser = 1;
 ```
+
+Nueva convocatoria
+------------------
+
+Se puede crear una nueva convocatoria desde la interfaz de administración.
+
+Se pueden clonar los programas y líneas de la convocatoria anterior con estas órdenes:
+
+```sql
+INSERT INTO indo_programa (nombre_corto, nombre_largo, max_ayuda, max_estudiantes, campos, requiere_visto_bueno_centro, convocatoria_id, requiere_visto_bueno_estudio)
+SELECT nombre_corto, nombre_largo, max_ayuda, max_estudiantes, campos, requiere_visto_bueno_centro, convocatoria_id + 1, requiere_visto_bueno_estudio
+FROM indo_programa
+WHERE convocatoria_id = 2020
+ORDER BY id
+;
+
+INSERT INTO indo_linea (nombre, programa_id)
+SELECT l.nombre, p2.id
+FROM indo_linea l
+JOIN indo_programa p ON l.programa_id = p.id
+JOIN indo_programa p2 ON p.nombre_corto = p2.nombre_corto
+WHERE p.convocatoria_id = 2020 AND p2.convocatoria_id = p.convocatoria_id + 1
+ORDER BY l.id
+;
+```
