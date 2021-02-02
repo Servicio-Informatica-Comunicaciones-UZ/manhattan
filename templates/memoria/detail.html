@@ -15,7 +15,6 @@
 
     <span class="fas fa-info-circle"></span>
     {% trans 'Aquí puede ver y editar la memoria del proyecto.' %}<br />
-    {% trans 'Pulse el botón «<strong>Guardar</strong>» para almacenar sus cambios.' %}
     {% trans 'Puede editar su memoria tantas veces como desee.' %}<br />
     {% trans 'Cuando esté satisfecho, pulse el botón «<strong>Presentar</strong>».' %}
     {% trans 'Una vez haya presentado la memoria para su corrección, ya no podrá modificarla.' %}<br /><br />
@@ -149,8 +148,8 @@
   </div>
   <br />
 
-  <form action="" enctype="multipart/form-data" method="post">
-    {% csrf_token %}
+  {# <form action="" enctype="multipart/form-data" method="post"> #}
+    {# {% csrf_token %} #}
 
     {% for apartado in apartados %}
       <h3>{{ apartado.numero }}. {{ apartado.descripcion }}</h3>
@@ -160,6 +159,7 @@
         <p class="noprint" style="color: gray;">{{ subapartado.ayuda }}</p>
 
         {% with respuesta=dict_respuestas|get_item:subapartado.id %}
+          {% comment %}
           {% if subapartado.tipo == 'texto' %}
             <textarea class="textarea form-control" name="{{ subapartado.id }}"
               placeholder="{% trans 'Introduzca sus comentarios.' %}" rows="10"
@@ -170,6 +170,15 @@
             {% endif %}
             <input type="file" name="fichero" accept=".pdf">
           {% endif %}
+          {% endcomment %}
+          <p>{{ respuesta.texto | default:'' | limpiar }}</p>
+          {% if permitir_edicion %}
+            <p>
+              <a href="{% url 'memoria_update_field' proyecto.id subapartado.id %}" class="btn btn-info btn-sm">
+                <span class="fas fa-pencil-alt" aria-hidden="true"></span>&nbsp; {% trans 'Editar' %}
+              </a>
+            </p>
+          {% endif %}
         {% endwith %}
 
         <br />
@@ -178,25 +187,28 @@
 
     <!-- Botones -->
     <br style="clear: both;" />
-    <div class="btn-group noprint" role="group" aria-label="Botones">
-      <a href="{% url 'proyecto_detail' proyecto.id %}" class="btn btn-warning"
-        title="{% trans 'Cancelar - Se perderán los cambios no guardados' %}">
-        <span class="fas fa-times"></span> {% trans 'Cancelar' %}
+    <div class="btn-group noprint" role="group" aria-label="{{ _('Botones') }}">
+      <a href="{% url 'proyecto_detail' proyecto.id %}" class="btn btn-info"
+        title="{% trans 'Volver al proyecto' %}">
+        <span class="fas fa-step-backward"></span> {% trans 'Retroceder' %}
       </a>
 
-      {# TODO if permitir_edicion #}
+      {% comment %}
+      {% if permitir_edicion %}
       <button class="btn btn-success" type="submit" title="{% trans 'Guardar cambios' %}">
         <span class="far fa-save"></span> {% trans 'Guardar' %}
       </button>
-      {# endif #}
-      {# TODO if es_coordinador #}
+      {% endif %}
+      {% endcomment %}
+
+      {% if permitir_edicion %}
       <button class="btn btn-danger" data-toggle="modal" data-target="#presentarModal"
         type="button">
         <span class="fas fa-file-export"></span> {% trans 'Presentar' %}
       </button>
-      {# endif #}
+      {% endif %}
     </div>
-  </form>
+  {# </form> #}
 </div>
 
 <div class="modal fade" id="presentarModal" tabindex="-1" role="dialog"

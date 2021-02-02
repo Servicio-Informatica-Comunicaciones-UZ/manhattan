@@ -1,9 +1,11 @@
 # Standard library
 import csv
 import json
-import magic
+
+# import magic
 from datetime import date
-from os.path import splitext
+
+# from os.path import splitext
 
 # Third-party
 from annoying.functions import get_config, get_object_or_None
@@ -37,15 +39,20 @@ from django.views.generic import DetailView, RedirectView, TemplateView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 # Local Django
-from .forms import EvaluadorForm, InvitacionForm, ProyectoForm, ResolucionForm
+from .forms import (
+    EvaluadorForm,
+    InvitacionForm,
+    MemoriaRespuestaForm,
+    ProyectoForm,
+    ResolucionForm,
+)
 from .models import (
     Centro,
     Convocatoria,
     Criterio,
     Evento,
-    MemoriaApartado,
     MemoriaRespuesta,
-    MemoriaSubapartado,
+    # MemoriaSubapartado,
     ParticipanteProyecto,
     Plan,
     Proyecto,
@@ -614,8 +621,14 @@ class MemoriaDetailView(LoginRequiredMixin, ChecksMixin, TemplateView):
         context['proyecto'] = proyecto
         context['apartados'] = proyecto.convocatoria.apartados_memoria.all()
         context['dict_respuestas'] = proyecto.get_dict_respuestas_memoria()
+
+        context['permitir_edicion'] = (
+            self.es_coordinador(proyecto.id) and proyecto.estado == 'ACEPTADO'
+        )
+
         return context
 
+    """
     def post(self, request, *args, **kwargs):
         proyecto = get_object_or_404(Proyecto, pk=kwargs['pk'])
         subapartados = MemoriaSubapartado.objects.filter(
@@ -654,6 +667,7 @@ class MemoriaDetailView(LoginRequiredMixin, ChecksMixin, TemplateView):
             request, _(f'Se ha guardado la memoria del proyecto «{proyecto.titulo}».')
         )
         return redirect('proyecto_detail', proyecto.id)
+    """
 
     def test_func(self):
         # TODO: Comprobar fecha y estado
@@ -672,6 +686,29 @@ class MemoriaPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
     def test_func(self):
         # TODO: Comprobar fecha y estado
         return self.es_coordinador(self.kwargs['pk'])
+
+
+class MemoriaUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
+    """Actualiza la respuesta a un subapartado de una memoria."""
+
+    model = MemoriaRespuesta
+    template_name = 'memoria/update.html'
+    form_class = MemoriaRespuestaForm  # Definido en `forms.py`
+
+    def get_object(self, queryset=None):
+        """Return the object the view is displaying."""
+        proyecto_id = self.kwargs.get('proyecto_id')
+        subapartado_id = self.kwargs.get('sub_pk')
+        return MemoriaRespuesta.get_or_create(proyecto_id, subapartado_id)
+
+    def get_success_url(self):
+        return reverse_lazy('memoria_detail', args=[self.object.proyecto_id])
+
+    def test_func(self):
+        # TODO: Comprobar estado del proyecto, fecha.
+        return self.es_coordinador(self.kwargs['proyecto_id']) or self.request.user.has_perm(
+            'indo.editar_proyecto'
+        )
 
 
 class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):

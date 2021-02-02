@@ -2,6 +2,8 @@
 from datetime import date
 
 # Third-party
+from django_summernote.fields import SummernoteTextField
+from django_summernote.widgets import SummernoteWidget
 from social_django.models import UserSocialAuth
 from social_django.utils import load_strategy
 
@@ -14,14 +16,22 @@ from django.utils.translation import gettext_lazy as _
 # Local Django
 from accounts.models import CustomUser
 from accounts.pipeline import get_identidad
-from .models import Linea, ParticipanteProyecto, Programa, Proyecto, TipoParticipacion
+from .models import (
+    Linea,
+    MemoriaRespuesta,
+    ParticipanteProyecto,
+    Programa,
+    Proyecto,
+    TipoParticipacion,
+)
 
 
 class InvitacionForm(forms.ModelForm):
     nip = forms.IntegerField(
         label=_('NIP'),
         help_text=_(
-            'Número de Identificación Personal en la Universidad de Zaragoza de la persona a invitar.'
+            'Número de Identificación Personal en la Universidad de Zaragoza'
+            ' de la persona a invitar.'
         ),
     )
 
@@ -58,7 +68,7 @@ class InvitacionForm(forms.ModelForm):
         # Comprobamos si el usuario ya existe en el sistema.
         usuario = CustomUser.objects.get_or_none(username=nip)
 
-        # Si no existe previamente, lo creamos y actualizamos con los datos de Gestión de Identidades.
+        # Si no existe previamente, lo creamos y actualizamos con los datos de Identidades.
         if not usuario:
             usuario = self._crear_usuario(nip)
 
@@ -66,7 +76,7 @@ class InvitacionForm(forms.ModelForm):
         try:
             get_identidad(load_strategy(self.request), None, usuario)
         except Exception as ex:
-            # Si Gestión de Identidades devuelve un error, y finalizamos mostrando el mensaje de error.
+            # Si Identidades devuelve un error, finalizamos mostrando el mensaje de error.
             raise forms.ValidationError('ERROR: ' + str(ex))
 
         # Si el usuario no está activo, finalizamos explicando esta circunstancia.
@@ -193,6 +203,25 @@ class EvaluadorForm(forms.ModelForm):
     class Meta:
         fields = ('evaluador',)
         model = Proyecto
+
+
+class MemoriaRespuestaForm(forms.ModelForm):
+    texto = SummernoteTextField()
+
+    class Meta:
+        fields = ('texto',)
+        model = MemoriaRespuesta
+        widgets = {'texto': SummernoteWidget()}
+
+    def as_p(self):
+        "Return this form rendered as HTML <p>s, without showing the label."
+        return self._html_output(
+            normal_row='<p%(html_class_attr)s><!-- %(label)s --> %(field)s%(help_text)s</p>',
+            error_row='%s',
+            row_ender='</p>',
+            help_text_html=' <span class="helptext">%s</span>',
+            errors_on_separate_row=True,
+        )
 
 
 class ResolucionForm(forms.ModelForm):

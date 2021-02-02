@@ -351,7 +351,7 @@ ALLOWED_ATTRIBUTES = {
     'acronym': ['title'],
     'img': ['alt', 'src'],
 }
-ALLOWED_STYLES = ['background-color', 'color', 'text-align']
+ALLOWED_STYLES = ['background-color', 'color', 'text-align', 'width']
 ALLOWED_PROTOCOLS = ['data', 'http', 'https', 'mailto']
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'  # Required by SummernoteWidget on Django 3.x

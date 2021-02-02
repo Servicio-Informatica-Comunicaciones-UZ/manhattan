@@ -41,7 +41,11 @@ class Centro(models.Model):
     esta_activo = models.BooleanField(_('¿Activo?'), default=False)
 
     class Meta:
-        unique_together = ['academico_id_nk', 'rrhh_id_nk']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['academico_id_nk', 'rrhh_id_nk'], name="centro-unique-academico-rrhh"
+            )
+        ]
         ordering = ['nombre']
 
     def __str__(self):
@@ -132,7 +136,11 @@ class Departamento(models.Model):
     unidad_gasto = models.CharField(_('unidad de gasto'), blank=True, max_length=3, null=True)
 
     class Meta:
-        unique_together = ['academico_id_nk', 'rrhh_id_nk']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['academico_id_nk', 'rrhh_id_nk'], name="departamento-unique-academico-rrhh"
+            )
+        ]
 
     def __str__(self):
         return f'{self.nombre} ({self.academico_id_nk} / {self.rrhh_id_nk})'
@@ -653,11 +661,29 @@ class MemoriaRespuesta(models.Model):
 
     class Meta:
         ordering = ('-proyecto__id', 'subapartado')
+        constraints = [
+            models.UniqueConstraint(
+                fields=['proyecto_id', 'subapartado_id'], name="unique-proyecto-subapartado"
+            )
+        ]
         verbose_name = _('respuesta de la memoria')
         verbose_name_plural = _('respuestas de la memoria')
 
     def __str__(self):
         return self.texto
+
+    @classmethod
+    def get_or_create(cls, proyecto_id, subapartado_id):
+        """Devuelve la respuesta al supapartado de la memoria y proyecto indicados."""
+        try:
+            respuesta = MemoriaRespuesta.objects.get(
+                proyecto_id=proyecto_id, subapartado_id=subapartado_id
+            )
+        except MemoriaRespuesta.DoesNotExist:
+            respuesta = MemoriaRespuesta.objects.create(
+                proyecto_id=proyecto_id, subapartado_id=subapartado_id
+            )
+        return respuesta
 
 
 class Opcion(models.Model):

@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% load custom_tags i18n %}
 
+{% block title %}{% trans 'Solicitud de proyecto' %}: {{ proyecto.titulo }}{% endblock title %}
+
 {% block content %}
 <div class="container-blanco">
   {% if permitir_edicion %}
