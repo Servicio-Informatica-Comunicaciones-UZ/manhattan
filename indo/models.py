@@ -499,6 +499,12 @@ class Proyecto(models.Model):
     # Aceptación por el coordinador de las condiciones decididas por la Comisión
     aceptacion_coordinador = models.BooleanField(_('Aceptación por el coordinador'), null=True)
     # Aceptación por el corrector/consultor de las memorias
+    corrector = models.ForeignKey(
+        'accounts.CustomUser',
+        null=True,
+        on_delete=models.PROTECT,
+        related_name='proyectos_corregidos',
+    )
     aceptacion_corrector = models.BooleanField(_('Aceptación por el corrector'), null=True)
     observaciones_corrector = models.TextField(
         _('Observaciones del corrector de la memoria'), null=True
@@ -512,6 +518,8 @@ class Proyecto(models.Model):
             ('listar_evaluadores', _('Puede ver el listado de evaluadores.')),
             ('editar_evaluador', _('Puede editar el evaluador de un proyecto.')),
             ('editar_aceptacion', _('Puede editar la decisión de la Comisión Evaluadora.')),
+            ('listar_correctores', _('Puede ver el listado de correctores.')),
+            ('editar_corrector', _('Puede modificar el corrector de un proyecto.')),
         ]
 
     def __str__(self):
