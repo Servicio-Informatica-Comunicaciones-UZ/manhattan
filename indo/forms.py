@@ -214,9 +214,16 @@ class MemoriaRespuestaForm(forms.ModelForm):
         widgets = {'texto': SummernoteWidget()}
 
     def as_p(self):
-        "Return this form rendered as HTML <p>s, without showing the label."
+        """
+        Return this form rendered as HTML <p>s, without showing the label and showing the help for this subitem.
+
+        Overrides `BaseForm.as_p()`.
+        """
+
         return self._html_output(
-            normal_row='<p%(html_class_attr)s><!-- %(label)s --> %(field)s%(help_text)s</p>',
+            normal_row='<p%(html_class_attr)s> %(field)s'
+            + self.instance.subapartado.ayuda
+            + '</p>',
             error_row='%s',
             row_ender='</p>',
             help_text_html=' <span class="helptext">%s</span>',

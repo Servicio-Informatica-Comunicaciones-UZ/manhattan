@@ -110,6 +110,18 @@
     </a></p>
   {% endif %}
 
+  {% if proyecto.aceptacion_coordinador %}
+    <h3>{% trans 'Memoria' %}</h3>
+
+    <p><a href="{%url 'memoria_detail' proyecto.id %}" class="btn btn-info btn-sm">
+      {% if proyecto.estado == 'ACEPTADO' %}
+        <span class="fas fa-pencil-alt" aria-hidden="true"></span>&nbsp; {% trans 'Editar la memoria' %}
+      {% else %}
+        <span class="far fa-eye" aria-hidden="true"></span>&nbsp; {% trans 'Ver la memoria' %}
+      {% endif %}
+    </a></p>
+  {% endif %}
+
   <h3 id="invitaciones">{% trans 'Invitaciones' %}</h3>
   {% if invitados %}
   <div class="table-responsive">

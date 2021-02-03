@@ -419,8 +419,8 @@
         "fields": {
             "apartado": 5,
             "peso": 1,
-            "descripcion": "Conclusiones:lecciones aprendidas, impacto. ",
-            "ayuda": "(Eficacia:grado en que se han alcanzado los objetivos previstos, Eficiencia: relación entre los objetivos logrados y los recursos implicados (p.e. se han alcanzado los mismos logros con menos coste (tiempo, esfuerzo, etc.))",
+            "descripcion": "Conclusiones: lecciones aprendidas, impacto.",
+            "ayuda": "Eficacia: grado en que se han alcanzado los objetivos previstos. Eficiencia: relación entre los objetivos logrados y los recursos implicados (p.e. se han alcanzado los mismos logros con menos coste (tiempo, esfuerzo, etc).",
             "tipo": "texto"
         }
     },
@@ -442,8 +442,8 @@
             "apartado": 7,
             "peso": 1,
             "descripcion": "Método de evaluación, Resultados.",
-            "ayuda": "Se pueden añadir,detrás de los resultados, las gráficas y tablas referenciadas en el texto.",
-            "tipo": "fichero"
+            "ayuda": "",
+            "tipo": "texto"
         }
     },
     {
