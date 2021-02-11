@@ -515,6 +515,7 @@ class Proyecto(models.Model):
             ('listar_proyectos', _('Puede ver el listado de todos los proyectos.')),
             ('ver_proyecto', _('Puede ver cualquier proyecto.')),
             ('editar_proyecto', _('Puede editar cualquier proyecto en cualquier momento.')),
+            ('listar_evaluaciones', _('Puede ver el listado de evaluaciones de los proyectos.')),
             ('listar_evaluadores', _('Puede ver el listado de evaluadores.')),
             ('editar_evaluador', _('Puede editar el evaluador de un proyecto.')),
             ('editar_aceptacion', _('Puede editar la decisión de la Comisión Evaluadora.')),
