@@ -42,6 +42,7 @@ repos:
       - id: debug-statements  # Check for debugger imports and py37+ breakpoint() calls in Python source.
       - id: detect-private-key
       - id: end-of-file-fixer
+        exclude: '.svg$'
       - id: mixed-line-ending
       - id: name-tests-test
         args:
@@ -80,4 +81,4 @@ repos:
     rev: 1.2.4
     hooks:
       - id: forbid-executables
-        exclude: manage.py|setup.py|docker-entrypoint.sh
+        exclude: manage.py|setup.py|docker-entrypoint.sh|compile_python.sh

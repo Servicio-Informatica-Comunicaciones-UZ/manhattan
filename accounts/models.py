@@ -124,7 +124,7 @@ class CustomUser(AbstractUser):
 
     @classmethod
     def crear_usuario(cls, request, nip):
-        """Crea un registro de usuario con el NIP indicado y los datos de Gestión de Identidades."""
+        """Crea un registro de usuario con el NIP indicado y los datos de Gestión Identidades."""
 
         usuario = cls.objects.create_user(username=nip)
         try:

@@ -215,7 +215,7 @@ class MemoriaRespuestaForm(forms.ModelForm):
 
     def as_p(self):
         """
-        Return this form rendered as HTML <p>s, without showing the label and showing the help for this subitem.
+        Return this form rendered as HTML <p>s, without label but with help for this subitem.
 
         Overrides `BaseForm.as_p()`.
         """
