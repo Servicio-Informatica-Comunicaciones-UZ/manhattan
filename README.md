@@ -98,7 +98,8 @@ WHERE is_superuser = 1;
 Nueva convocatoria
 ------------------
 
-Se puede crear una nueva convocatoria desde la interfaz de administración.
+Se puede crear una nueva convocatoria desde la interfaz de administración (los usuarios gestores, además de pertenecer
+al grupo `Gestores` deben tener activado el atributo `is_staff` para que puedan acceder a esta interfaz).
 
 Se pueden clonar los programas y líneas de la convocatoria anterior con estas órdenes:
 
