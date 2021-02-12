@@ -563,7 +563,7 @@ class ProyectoCreateView(LoginRequiredMixin, ChecksMixin, CreateView):
         Devuelve el formulario añadiendo automáticamente el campo Convocatoria,
         que es requerido, y el usuario, para comprobar si tiene los permisos necesarios.
         """
-        form = super(ProyectoCreateView, self).get_form(form_class)
+        form = super().get_form(form_class)
         form.instance.user = self.request.user
         form.instance.convocatoria = Convocatoria(date.today().year)
         return form
@@ -1179,7 +1179,7 @@ class ProyectosUsuarioView(LoginRequiredMixin, TemplateView):
 
         planes_coordinados = Plan.objects.filter(nip_coordinador=nip_usuario).all()
         if planes_coordinados:
-            id_estudios_coordinados = set([p.estudio_id for p in planes_coordinados])
+            id_estudios_coordinados = {p.estudio_id for p in planes_coordinados}
             context['proyectos_estudios_coordinados'] = Proyecto.objects.filter(
                 convocatoria_id=anyo,
                 programa__requiere_visto_bueno_estudio=True,
