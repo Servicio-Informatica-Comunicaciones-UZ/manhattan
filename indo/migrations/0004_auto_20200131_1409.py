@@ -14,14 +14,14 @@ def add_permission_to_group(apps, schema_editor):
 
 
 def geo_post_migrate_signal(apps, schema_editor):
-    '''Emit the post-migrate signal during the migration.
+    """Emit the post-migrate signal during the migration.
 
     Permissions are not actually created during or after an individual migration,
     but are triggered by a post-migrate signal which is sent after the
     `python manage.py migrate` command completes successfully.
 
     This is necessary because this permission is used later in this migration.
-    '''
+    """
     indo_config = django_apps.get_app_config('indo')
     models.signals.post_migrate.send(
         sender=indo_config,
@@ -41,7 +41,10 @@ class Migration(migrations.Migration):
             name='proyecto',
             options={
                 'permissions': [
-                    ('listar_proyectos', 'Puede ver el listado de todos los proyectos presentados.'),
+                    (
+                        'listar_proyectos',
+                        'Puede ver el listado de todos los proyectos presentados.',
+                    ),
                     ('ver_proyecto', 'Puede ver cualquier proyecto.'),
                 ]
             },

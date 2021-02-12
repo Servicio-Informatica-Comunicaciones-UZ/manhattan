@@ -16,79 +16,147 @@ class Migration(migrations.Migration):
             name='Centro',
             fields=[
                 ('id', models.AutoField(primary_key=True, serialize=False)),
-                ('academico_id_nk', models.IntegerField(blank=True, null=True, verbose_name='cód. académico')),
-                ('rrhh_id_nk', models.CharField(blank=True, max_length=4, null=True, verbose_name='cód. RRHH')),
+                (
+                    'academico_id_nk',
+                    models.IntegerField(blank=True, null=True, verbose_name='cód. académico'),
+                ),
+                (
+                    'rrhh_id_nk',
+                    models.CharField(
+                        blank=True, max_length=4, null=True, verbose_name='cód. RRHH'
+                    ),
+                ),
                 ('nombre', models.CharField(max_length=255)),
-                ('tipo_centro', models.CharField(blank=True, max_length=30, null=True, verbose_name='tipo de centro')),
-                ('direccion', models.CharField(blank=True, max_length=140, null=True, verbose_name='dirección')),
+                (
+                    'tipo_centro',
+                    models.CharField(
+                        blank=True, max_length=30, null=True, verbose_name='tipo de centro'
+                    ),
+                ),
+                (
+                    'direccion',
+                    models.CharField(
+                        blank=True, max_length=140, null=True, verbose_name='dirección'
+                    ),
+                ),
                 ('municipio', models.CharField(blank=True, max_length=100, null=True)),
-                ('telefono', models.CharField(blank=True, max_length=30, null=True, verbose_name='teléfono')),
-                ('email', models.EmailField(blank=True, max_length=254, null=True, verbose_name='email address')),
-                ('url', models.URLField(blank=True, max_length=255, null=True, verbose_name='URL')),
+                (
+                    'telefono',
+                    models.CharField(
+                        blank=True, max_length=30, null=True, verbose_name='teléfono'
+                    ),
+                ),
+                (
+                    'email',
+                    models.EmailField(
+                        blank=True, max_length=254, null=True, verbose_name='email address'
+                    ),
+                ),
+                (
+                    'url',
+                    models.URLField(blank=True, max_length=255, null=True, verbose_name='URL'),
+                ),
                 (
                     'nip_decano',
-                    models.PositiveIntegerField(blank=True, null=True, verbose_name='NIP del decano o director'),
+                    models.PositiveIntegerField(
+                        blank=True, null=True, verbose_name='NIP del decano o director'
+                    ),
                 ),
                 (
                     'nombre_decano',
                     models.CharField(
-                        blank=True, max_length=255, null=True, verbose_name='nombre del decano o director'
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name='nombre del decano o director',
                     ),
                 ),
                 (
                     'email_decano',
                     models.EmailField(
-                        blank=True, max_length=254, null=True, verbose_name='email del decano o director'
+                        blank=True,
+                        max_length=254,
+                        null=True,
+                        verbose_name='email del decano o director',
                     ),
                 ),
                 (
                     'tratamiento_decano',
                     models.CharField(
-                        blank=True, help_text='Decano/a ó director(a).', max_length=25, null=True, verbose_name='cargo'
+                        blank=True,
+                        help_text='Decano/a ó director(a).',
+                        max_length=25,
+                        null=True,
+                        verbose_name='cargo',
                     ),
                 ),
                 (
                     'nip_secretario',
-                    models.PositiveIntegerField(blank=True, null=True, verbose_name='NIP del secretario'),
+                    models.PositiveIntegerField(
+                        blank=True, null=True, verbose_name='NIP del secretario'
+                    ),
                 ),
                 (
                     'nombre_secretario',
-                    models.CharField(blank=True, max_length=255, null=True, verbose_name='nombre del secretario'),
+                    models.CharField(
+                        blank=True, max_length=255, null=True, verbose_name='nombre del secretario'
+                    ),
                 ),
                 (
                     'email_secretario',
-                    models.EmailField(blank=True, max_length=254, null=True, verbose_name='email del secretario'),
+                    models.EmailField(
+                        blank=True, max_length=254, null=True, verbose_name='email del secretario'
+                    ),
                 ),
                 (
                     'nips_coord_pou',
                     models.CharField(
-                        blank=True, max_length=255, null=True, verbose_name='NIPs de los coordinadores POU'
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name='NIPs de los coordinadores POU',
                     ),
                 ),
                 (
                     'nombres_coords_pou',
                     models.CharField(
-                        blank=True, max_length=1023, null=True, verbose_name='nombres de los coordinadores POU'
+                        blank=True,
+                        max_length=1023,
+                        null=True,
+                        verbose_name='nombres de los coordinadores POU',
                     ),
                 ),
                 (
                     'emails_coords_pou',
                     models.CharField(
-                        blank=True, max_length=1023, null=True, verbose_name='emails de los coordinadores POU'
+                        blank=True,
+                        max_length=1023,
+                        null=True,
+                        verbose_name='emails de los coordinadores POU',
                     ),
                 ),
                 (
                     'unidad_gasto',
-                    models.CharField(blank=True, max_length=3, null=True, verbose_name='unidad de gasto'),
+                    models.CharField(
+                        blank=True, max_length=3, null=True, verbose_name='unidad de gasto'
+                    ),
                 ),
                 ('esta_activo', models.BooleanField(default=False, verbose_name='¿Activo?')),
             ],
-            options={'ordering': ['nombre'], 'unique_together': {('academico_id_nk', 'rrhh_id_nk')}},
+            options={
+                'ordering': ['nombre'],
+                'unique_together': {('academico_id_nk', 'rrhh_id_nk')},
+            },
         ),
         migrations.CreateModel(
             name='Convocatoria',
             fields=[
-                ('id', models.PositiveSmallIntegerField(primary_key=True, serialize=False, verbose_name='año')),
+                (
+                    'id',
+                    models.PositiveSmallIntegerField(
+                        primary_key=True, serialize=False, verbose_name='año'
+                    ),
+                ),
                 ('num_max_equipos', models.PositiveSmallIntegerField(default=4)),
                 ('fecha_min_solicitudes', models.DateField()),
                 ('fecha_max_solicitudes', models.DateField()),
@@ -102,30 +170,58 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(primary_key=True, serialize=False)),
                 (
                     'academico_id_nk',
-                    models.IntegerField(blank=True, db_index=True, null=True, verbose_name='cód. académico'),
+                    models.IntegerField(
+                        blank=True, db_index=True, null=True, verbose_name='cód. académico'
+                    ),
                 ),
-                ('rrhh_id_nk', models.CharField(blank=True, max_length=4, null=True, verbose_name='cód. RRHH')),
+                (
+                    'rrhh_id_nk',
+                    models.CharField(
+                        blank=True, max_length=4, null=True, verbose_name='cód. RRHH'
+                    ),
+                ),
                 ('nombre', models.CharField(blank=True, max_length=255, null=True)),
                 (
                     'email',
-                    models.EmailField(blank=True, max_length=254, null=True, verbose_name='email del departamento'),
+                    models.EmailField(
+                        blank=True,
+                        max_length=254,
+                        null=True,
+                        verbose_name='email del departamento',
+                    ),
                 ),
                 (
                     'email_secretaria',
-                    models.EmailField(blank=True, max_length=254, null=True, verbose_name='email de la secretaría'),
+                    models.EmailField(
+                        blank=True,
+                        max_length=254,
+                        null=True,
+                        verbose_name='email de la secretaría',
+                    ),
                 ),
-                ('nip_director', models.PositiveIntegerField(blank=True, null=True, verbose_name='NIP del director')),
+                (
+                    'nip_director',
+                    models.PositiveIntegerField(
+                        blank=True, null=True, verbose_name='NIP del director'
+                    ),
+                ),
                 (
                     'nombre_director',
-                    models.CharField(blank=True, max_length=255, null=True, verbose_name='nombre del director'),
+                    models.CharField(
+                        blank=True, max_length=255, null=True, verbose_name='nombre del director'
+                    ),
                 ),
                 (
                     'email_director',
-                    models.EmailField(blank=True, max_length=254, null=True, verbose_name='email del director'),
+                    models.EmailField(
+                        blank=True, max_length=254, null=True, verbose_name='email del director'
+                    ),
                 ),
                 (
                     'unidad_gasto',
-                    models.CharField(blank=True, max_length=3, null=True, verbose_name='unidad de gasto'),
+                    models.CharField(
+                        blank=True, max_length=3, null=True, verbose_name='unidad de gasto'
+                    ),
                 ),
             ],
             options={'unique_together': {('academico_id_nk', 'rrhh_id_nk')}},
@@ -135,7 +231,9 @@ class Migration(migrations.Migration):
             fields=[
                 (
                     'id',
-                    models.PositiveSmallIntegerField(primary_key=True, serialize=False, verbose_name='Cód. estudio'),
+                    models.PositiveSmallIntegerField(
+                        primary_key=True, serialize=False, verbose_name='Cód. estudio'
+                    ),
                 ),
                 ('nombre', models.CharField(max_length=255)),
                 ('esta_activo', models.BooleanField(default=True, verbose_name='¿Activo?')),
@@ -158,7 +256,10 @@ class Migration(migrations.Migration):
             options={'ordering': ['nombre']},
         ),
         migrations.CreateModel(
-            name='Evento', fields=[('nombre', models.CharField(max_length=31, primary_key=True, serialize=False))]
+            name='Evento',
+            fields=[
+                ('nombre', models.CharField(max_length=31, primary_key=True, serialize=False))
+            ],
         ),
         migrations.CreateModel(
             name='Licencia',
@@ -173,25 +274,39 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 ('nombre', models.CharField(max_length=255)),
-                ('url', models.URLField(blank=True, max_length=255, null=True, verbose_name='URL')),
+                (
+                    'url',
+                    models.URLField(blank=True, max_length=255, null=True, verbose_name='URL'),
+                ),
             ],
         ),
         migrations.CreateModel(
             name='Linea',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.AutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name='ID'
+                    ),
+                ),
                 ('nombre', models.CharField(max_length=31)),
             ],
         ),
         migrations.CreateModel(
             name='Programa',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.AutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name='ID'
+                    ),
+                ),
                 ('nombre_corto', models.CharField(help_text='Ejemplo: PRACUZ', max_length=15)),
                 (
                     'nombre_largo',
                     models.CharField(
-                        help_text='Ejemplo: Programa de Recursos en Abierto para Centros', max_length=127
+                        help_text='Ejemplo: Programa de Recursos en Abierto para Centros',
+                        max_length=127,
                     ),
                 ),
                 (
@@ -210,12 +325,15 @@ class Migration(migrations.Migration):
                 (
                     'requiere_visto_bueno',
                     models.BooleanField(
-                        default='False', verbose_name='¿Requiere el visto bueno del director o decano?'
+                        default='False',
+                        verbose_name='¿Requiere el visto bueno del director o decano?',
                     ),
                 ),
                 (
                     'convocatoria',
-                    models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='indo.Convocatoria'),
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT, to='indo.Convocatoria'
+                    ),
                 ),
             ],
         ),
@@ -255,7 +373,10 @@ class Migration(migrations.Migration):
                         verbose_name='Contexto del proyecto',
                     ),
                 ),
-                ('objetivos', models.TextField(blank=True, null=True, verbose_name='Objetivos del Proyecto')),
+                (
+                    'objetivos',
+                    models.TextField(blank=True, null=True, verbose_name='Objetivos del Proyecto'),
+                ),
                 (
                     'metodos_estudio',
                     models.TextField(
@@ -303,13 +424,22 @@ class Migration(migrations.Migration):
                 ),
                 (
                     'metodos',
-                    models.TextField(blank=True, null=True, verbose_name='Métodos/Técnicas/Actividades utilizadas'),
+                    models.TextField(
+                        blank=True,
+                        null=True,
+                        verbose_name='Métodos/Técnicas/Actividades utilizadas',
+                    ),
                 ),
-                ('tecnologias', models.TextField(blank=True, null=True, verbose_name='Tecnologías utilizadas')),
+                (
+                    'tecnologias',
+                    models.TextField(blank=True, null=True, verbose_name='Tecnologías utilizadas'),
+                ),
                 (
                     'aplicacion',
                     models.TextField(
-                        blank=True, null=True, verbose_name='Posible aplicación a otros centros/áreas de conocimiento'
+                        blank=True,
+                        null=True,
+                        verbose_name='Posible aplicación a otros centros/áreas de conocimiento',
                     ),
                 ),
                 (
@@ -321,8 +451,16 @@ class Migration(migrations.Migration):
                         verbose_name='Proyectos anteriores',
                     ),
                 ),
-                ('impacto', models.TextField(blank=True, null=True, verbose_name='Impacto del proyecto')),
-                ('innovacion', models.TextField(blank=True, null=True, verbose_name='Tipo de innovación introducida')),
+                (
+                    'impacto',
+                    models.TextField(blank=True, null=True, verbose_name='Impacto del proyecto'),
+                ),
+                (
+                    'innovacion',
+                    models.TextField(
+                        blank=True, null=True, verbose_name='Tipo de innovación introducida'
+                    ),
+                ),
                 (
                     'interes',
                     models.TextField(
@@ -342,14 +480,28 @@ class Migration(migrations.Migration):
                 ),
                 (
                     'caracter_estrategico',
-                    models.TextField(blank=True, null=True, verbose_name='Carácter estratégico del curso para la UZ'),
+                    models.TextField(
+                        blank=True,
+                        null=True,
+                        verbose_name='Carácter estratégico del curso para la UZ',
+                    ),
                 ),
                 (
                     'seminario',
-                    models.TextField(blank=True, null=True, verbose_name='Asignatura, curso, seminario o equivalente'),
+                    models.TextField(
+                        blank=True,
+                        null=True,
+                        verbose_name='Asignatura, curso, seminario o equivalente',
+                    ),
                 ),
-                ('idioma', models.TextField(blank=True, null=True, verbose_name='Idioma de publicación')),
-                ('ramas', models.TextField(blank=True, null=True, verbose_name='Ramas de conocimiento')),
+                (
+                    'idioma',
+                    models.TextField(blank=True, null=True, verbose_name='Idioma de publicación'),
+                ),
+                (
+                    'ramas',
+                    models.TextField(blank=True, null=True, verbose_name='Ramas de conocimiento'),
+                ),
                 (
                     'mejoras_pou',
                     models.TextField(
@@ -379,11 +531,17 @@ class Migration(migrations.Migration):
                 ),
                 (
                     'afectadas',
-                    models.TextField(blank=True, null=True, verbose_name='Asignatura/s y Titulación/es afectadas'),
+                    models.TextField(
+                        blank=True,
+                        null=True,
+                        verbose_name='Asignatura/s y Titulación/es afectadas',
+                    ),
                 ),
                 (
                     'formatos',
-                    models.TextField(blank=True, null=True, verbose_name='Formatos de los materiales incluidos.'),
+                    models.TextField(
+                        blank=True, null=True, verbose_name='Formatos de los materiales incluidos.'
+                    ),
                 ),
                 (
                     'enlace',
@@ -406,7 +564,9 @@ class Migration(migrations.Migration):
                 (
                     'material_previo',
                     models.TextField(
-                        blank=True, null=True, verbose_name='Indicar si se cuenta con algún material previo'
+                        blank=True,
+                        null=True,
+                        verbose_name='Indicar si se cuenta con algún material previo',
                     ),
                 ),
                 (
@@ -430,7 +590,9 @@ class Migration(migrations.Migration):
                 (
                     'indicadores',
                     models.TextField(
-                        blank=True, null=True, verbose_name='Indicadores para el seguimiento y evaluación del curso'
+                        blank=True,
+                        null=True,
+                        verbose_name='Indicadores para el seguimiento y evaluación del curso',
                     ),
                 ),
                 (
@@ -475,11 +637,17 @@ class Migration(migrations.Migration):
                 ),
                 (
                     'convocatoria',
-                    models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='indo.Convocatoria'),
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT, to='indo.Convocatoria'
+                    ),
                 ),
                 (
                     'departamento',
-                    models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, to='indo.Departamento'),
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to='indo.Departamento',
+                    ),
                 ),
                 (
                     'estudio',
@@ -494,7 +662,9 @@ class Migration(migrations.Migration):
                 ),
                 (
                     'licencia',
-                    models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, to='indo.Licencia'),
+                    models.ForeignKey(
+                        null=True, on_delete=django.db.models.deletion.PROTECT, to='indo.Licencia'
+                    ),
                 ),
                 (
                     'linea',
@@ -507,7 +677,12 @@ class Migration(migrations.Migration):
                         verbose_name='Línea',
                     ),
                 ),
-                ('programa', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='indo.Programa')),
+                (
+                    'programa',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT, to='indo.Programa'
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
@@ -524,53 +699,103 @@ class Migration(migrations.Migration):
         ),
         migrations.CreateModel(
             name='TipoParticipacion',
-            fields=[('nombre', models.CharField(max_length=63, primary_key=True, serialize=False))],
+            fields=[
+                ('nombre', models.CharField(max_length=63, primary_key=True, serialize=False))
+            ],
         ),
         migrations.CreateModel(
             name='Registro',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.AutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name='ID'
+                    ),
+                ),
                 ('fecha', models.DateTimeField(auto_now_add=True)),
                 ('descripcion', models.CharField(max_length=255)),
-                ('evento', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='indo.Evento')),
-                ('proyecto', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='indo.Proyecto')),
+                (
+                    'evento',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT, to='indo.Evento'
+                    ),
+                ),
+                (
+                    'proyecto',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT, to='indo.Proyecto'
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
             name='Plan',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.AutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name='ID'
+                    ),
+                ),
                 ('id_nk', models.PositiveSmallIntegerField(verbose_name='Cód. plan')),
                 (
                     'nip_coordinador',
-                    models.PositiveIntegerField(blank=True, null=True, verbose_name='NIP del coordinador'),
+                    models.PositiveIntegerField(
+                        blank=True, null=True, verbose_name='NIP del coordinador'
+                    ),
                 ),
                 (
                     'nombre_coordinador',
-                    models.CharField(blank=True, max_length=255, null=True, verbose_name='nombre del coordinador'),
+                    models.CharField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name='nombre del coordinador',
+                    ),
                 ),
                 (
                     'email_coordinador',
-                    models.EmailField(blank=True, max_length=254, null=True, verbose_name='email del coordinador'),
+                    models.EmailField(
+                        blank=True, max_length=254, null=True, verbose_name='email del coordinador'
+                    ),
                 ),
                 ('esta_activo', models.BooleanField(default=True, verbose_name='¿Activo?')),
-                ('centro', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='indo.Centro')),
-                ('estudio', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='indo.Estudio')),
+                (
+                    'centro',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT, to='indo.Centro'
+                    ),
+                ),
+                (
+                    'estudio',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT, to='indo.Estudio'
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
             name='ParticipanteProyecto',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.AutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name='ID'
+                    ),
+                ),
                 (
                     'proyecto',
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.PROTECT, related_name='participantes', to='indo.Proyecto'
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name='participantes',
+                        to='indo.Proyecto',
                     ),
                 ),
                 (
                     'tipo_participacion',
-                    models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='indo.TipoParticipacion'),
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT, to='indo.TipoParticipacion'
+                    ),
                 ),
                 (
                     'usuario',
@@ -586,12 +811,16 @@ class Migration(migrations.Migration):
             model_name='linea',
             name='programa',
             field=models.ForeignKey(
-                on_delete=django.db.models.deletion.PROTECT, related_name='lineas', to='indo.Programa'
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name='lineas',
+                to='indo.Programa',
             ),
         ),
         migrations.AddField(
             model_name='estudio',
             name='tipo_estudio',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='indo.TipoEstudio'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT, to='indo.TipoEstudio'
+            ),
         ),
     ]

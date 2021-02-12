@@ -11,20 +11,28 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='customuser',
             name='centro_id_nks',
-            field=models.CharField(blank=True, max_length=127, null=True, verbose_name='Cód. centros'),
+            field=models.CharField(
+                blank=True, max_length=127, null=True, verbose_name='Cód. centros'
+            ),
         ),
         migrations.AddField(
-            model_name='customuser', name='colectivos', field=models.CharField(blank=True, max_length=127, null=True)
+            model_name='customuser',
+            name='colectivos',
+            field=models.CharField(blank=True, max_length=127, null=True),
         ),
         migrations.AddField(
             model_name='customuser',
             name='departamento_id_nks',
-            field=models.CharField(blank=True, max_length=127, null=True, verbose_name='Cód. departamentos'),
+            field=models.CharField(
+                blank=True, max_length=127, null=True, verbose_name='Cód. departamentos'
+            ),
         ),
         migrations.AddField(
             model_name='customuser',
             name='last_name_2',
-            field=models.CharField(blank=True, max_length=150, null=True, verbose_name='segundo apellido'),
+            field=models.CharField(
+                blank=True, max_length=150, null=True, verbose_name='segundo apellido'
+            ),
         ),
         migrations.AddField(
             model_name='customuser',
@@ -43,10 +51,14 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AddField(
-            model_name='customuser', name='sexo', field=models.CharField(blank=True, max_length=1, null=True)
+            model_name='customuser',
+            name='sexo',
+            field=models.CharField(blank=True, max_length=1, null=True),
         ),
         migrations.AddField(
-            model_name='customuser', name='sexo_oficial', field=models.CharField(blank=True, max_length=1, null=True)
+            model_name='customuser',
+            name='sexo_oficial',
+            field=models.CharField(blank=True, max_length=1, null=True),
         ),
         migrations.AddField(
             model_name='customuser',

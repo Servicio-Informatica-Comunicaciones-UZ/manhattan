@@ -6,14 +6,14 @@ import django.db.models.deletion
 
 
 def geo_post_migrate_signal(apps, schema_editor):
-    '''Emit the post-migrate signal during the migration.
+    """Emit the post-migrate signal during the migration.
 
     Permissions are not actually created during or after an individual migration,
     but are triggered by a post-migrate signal which is sent after the
     `python manage.py migrate` command completes successfully.
 
     This is necessary because this permission is used in the next migration.
-    '''
+    """
     indo_config = django_apps.get_app_config('indo')
     models.signals.post_migrate.send(
         sender=indo_config,
@@ -31,20 +31,29 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='proyecto',
-            options={'permissions': [('listar_proyectos', 'Puede ver el listado de todos los proyectos.')]},
+            options={
+                'permissions': [
+                    ('listar_proyectos', 'Puede ver el listado de todos los proyectos.')
+                ]
+            },
         ),
         migrations.AlterField(
             model_name='plan',
             name='estudio',
             field=models.ForeignKey(
-                on_delete=django.db.models.deletion.PROTECT, related_name='planes', to='indo.Estudio'
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name='planes',
+                to='indo.Estudio',
             ),
         ),
         migrations.AlterField(
             model_name='proyecto',
             name='descripcion',
             field=models.TextField(
-                help_text=('Resumen sucinto del proyecto. ' 'Máximo recomendable: un párrafo de 10 líneas.'),
+                help_text=(
+                    'Resumen sucinto del proyecto. '
+                    'Máximo recomendable: un párrafo de 10 líneas.'
+                ),
                 max_length=4095,
                 null=True,
                 verbose_name='Resumen',

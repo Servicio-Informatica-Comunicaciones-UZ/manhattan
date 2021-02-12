@@ -18,14 +18,17 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.RenameField(
-            model_name='programa', old_name='requiere_visto_bueno', new_name='requiere_visto_bueno_centro'
+            model_name='programa',
+            old_name='requiere_visto_bueno',
+            new_name='requiere_visto_bueno_centro',
         ),
         migrations.RemoveField(model_name='proyecto', name='visto_bueno'),
         migrations.AddField(
             model_name='programa',
             name='requiere_visto_bueno_estudio',
             field=models.BooleanField(
-                default='False', verbose_name='¿Requiere el visto bueno del coordinador del plan de estudios?'
+                default='False',
+                verbose_name='¿Requiere el visto bueno del coordinador del plan de estudios?',
             ),
         ),
         migrations.AddField(
