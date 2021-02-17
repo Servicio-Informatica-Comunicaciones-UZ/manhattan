@@ -1,3 +1,5 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
 # Apply to all files without commiting:
 #   pre-commit run --all-files
 # Update this file:

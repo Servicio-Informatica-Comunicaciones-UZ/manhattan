@@ -827,16 +827,34 @@ class ProyectosNotificarView(LoginRequiredMixin, PermissionRequiredMixin, Redire
             .filter(aceptacion_comision=True, ayuda_concedida__gt=0)
             .all()
         )
-        for proyecto in proyectos_con_dotacion:
-            self._enviar_notificaciones(proyecto, 'notificacion_con_dotacion')
+        try:
+            for proyecto in proyectos_con_dotacion:
+                self._enviar_notificaciones(proyecto, 'notificacion_con_dotacion')
+        except Exception as err:  # smtplib.SMTPAuthenticationError etc
+            messages.warning(
+                request,
+                _(
+                    'No se enviaron por correo las notificaciones de la resolución '
+                    f'a los proyectos con dotación: {err}'
+                ),
+            )
 
         proyectos_sin_dotacion = (
             Proyecto.objects.filter(convocatoria__id=self.kwargs['anyo'])
             .filter(aceptacion_comision=True, ayuda_concedida=0)
             .all()
         )
-        for proyecto in proyectos_sin_dotacion:
-            self._enviar_notificaciones(proyecto, 'notificacion_sin_dotacion')
+        try:
+            for proyecto in proyectos_sin_dotacion:
+                self._enviar_notificaciones(proyecto, 'notificacion_sin_dotacion')
+        except Exception as err:  # smtplib.SMTPAuthenticationError etc
+            messages.warning(
+                request,
+                _(
+                    'No se enviaron por correo las notificaciones de la resolución '
+                    f'a los proyectos sin dotación: {err}'
+                ),
+            )
 
         messages.success(request, _('Se han enviado las notificaciones.'))
         return super().post(request, *args, **kwargs)
@@ -955,23 +973,32 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
 
     def _enviar_invitaciones(self, request, proyecto):
         """Envia un mensaje a cada uno de los invitados al proyecto."""
-        for invitado in proyecto.participantes.filter(tipo_participacion='invitado'):
-            send_templated_mail(
-                template_name='invitacion',
-                from_email=None,  # settings.DEFAULT_FROM_EMAIL
-                recipient_list=[invitado.usuario.email],
-                context={
-                    'nombre_coordinador': request.user.get_full_name(),
-                    'nombre_invitado': invitado.usuario.get_full_name(),
-                    'sexo_invitado': invitado.usuario.sexo,
-                    'titulo_proyecto': proyecto.titulo,
-                    'programa_proyecto': f'{proyecto.programa.nombre_corto} '
-                    + f'({proyecto.programa.nombre_largo})',
-                    'descripcion_proyecto': pypandoc.convert_text(
-                        proyecto.descripcion, 'md', format='html'
-                    ).replace('\\\n', '  \n'),
-                    'site_url': settings.SITE_URL,
-                },
+        try:
+            for invitado in proyecto.participantes.filter(tipo_participacion='invitado'):
+                send_templated_mail(
+                    template_name='invitacion',
+                    from_email=None,  # settings.DEFAULT_FROM_EMAIL
+                    recipient_list=[invitado.usuario.email],
+                    context={
+                        'nombre_coordinador': request.user.get_full_name(),
+                        'nombre_invitado': invitado.usuario.get_full_name(),
+                        'sexo_invitado': invitado.usuario.sexo,
+                        'titulo_proyecto': proyecto.titulo,
+                        'programa_proyecto': f'{proyecto.programa.nombre_corto} '
+                        + f'({proyecto.programa.nombre_largo})',
+                        'descripcion_proyecto': pypandoc.convert_text(
+                            proyecto.descripcion, 'md', format='html'
+                        ).replace('\\\n', '  \n'),
+                        'site_url': settings.SITE_URL,
+                    },
+                )
+        except Exception as err:  # smtplib.SMTPAuthenticationError etc
+            messages.warning(
+                request,
+                _(
+                    'No se enviaron por correo las invitaciones a participar en el proyecto: '
+                    f'{err}'
+                ),
             )
 
     def _enviar_solicitudes_visto_bueno_centro(self, request, proyecto):
@@ -988,23 +1015,29 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
             )
             return
 
-        send_templated_mail(
-            template_name='solicitud_visto_bueno_centro',
-            from_email=None,  # settings.DEFAULT_FROM_EMAIL
-            recipient_list=[proyecto.centro.email_decano],
-            context={
-                'nombre_coordinador': request.user.get_full_name(),
-                'nombre_decano': proyecto.centro.nombre_decano,
-                'tratamiento_decano': proyecto.centro.tratamiento_decano,
-                'titulo_proyecto': proyecto.titulo,
-                'programa_proyecto': f'{proyecto.programa.nombre_corto} '
-                f'({proyecto.programa.nombre_largo})',
-                'descripcion_proyecto': pypandoc.convert_text(
-                    proyecto.descripcion, 'md', format='html'
-                ).replace('\\\n', '\n'),
-                'site_url': settings.SITE_URL,
-            },
-        )
+        try:
+            send_templated_mail(
+                template_name='solicitud_visto_bueno_centro',
+                from_email=None,  # settings.DEFAULT_FROM_EMAIL
+                recipient_list=[proyecto.centro.email_decano],
+                context={
+                    'nombre_coordinador': request.user.get_full_name(),
+                    'nombre_decano': proyecto.centro.nombre_decano,
+                    'tratamiento_decano': proyecto.centro.tratamiento_decano,
+                    'titulo_proyecto': proyecto.titulo,
+                    'programa_proyecto': f'{proyecto.programa.nombre_corto} '
+                    f'({proyecto.programa.nombre_largo})',
+                    'descripcion_proyecto': pypandoc.convert_text(
+                        proyecto.descripcion, 'md', format='html'
+                    ).replace('\\\n', '\n'),
+                    'site_url': settings.SITE_URL,
+                },
+            )
+        except Exception as err:  # smtplib.SMTPAuthenticationError etc
+            messages.warning(
+                request,
+                _(f'No se envió por correo la solicitud de Visto Bueno del centro: {err}'),
+            )
 
     def _is_email_valid(self, email):
         """Validate email address"""
@@ -1022,21 +1055,27 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
             if self._is_email_valid(p.email_coordinador)
         ]
 
-        send_templated_mail(
-            template_name='solicitud_visto_bueno_estudio',
-            from_email=None,  # settings.DEFAULT_FROM_EMAIL
-            recipient_list=email_coordinadores_estudio,
-            context={
-                'nombre_coordinador': request.user.get_full_name(),
-                'titulo_proyecto': proyecto.titulo,
-                'programa_proyecto': f'{proyecto.programa.nombre_corto} '
-                f'({proyecto.programa.nombre_largo})',
-                'descripcion_proyecto': pypandoc.convert_text(
-                    proyecto.descripcion, 'md', format='html'
-                ).replace('\\\n', '\n'),
-                'site_url': settings.SITE_URL,
-            },
-        )
+        try:
+            send_templated_mail(
+                template_name='solicitud_visto_bueno_estudio',
+                from_email=None,  # settings.DEFAULT_FROM_EMAIL
+                recipient_list=email_coordinadores_estudio,
+                context={
+                    'nombre_coordinador': request.user.get_full_name(),
+                    'titulo_proyecto': proyecto.titulo,
+                    'programa_proyecto': f'{proyecto.programa.nombre_corto} '
+                    f'({proyecto.programa.nombre_largo})',
+                    'descripcion_proyecto': pypandoc.convert_text(
+                        proyecto.descripcion, 'md', format='html'
+                    ).replace('\\\n', '\n'),
+                    'site_url': settings.SITE_URL,
+                },
+            )
+        except Exception as err:  # smtplib.SMTPAuthenticationError etc
+            messages.warning(
+                request,
+                _(f'No se envió por correo la solicitud de Visto Bueno del estudio: {err}'),
+            )
 
     def test_func(self):
         # TODO: Comprobar fecha
