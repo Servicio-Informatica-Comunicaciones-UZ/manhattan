@@ -163,6 +163,18 @@ class ProyectoForm(forms.ModelForm):
         if programa.nombre_corto == 'PIET' and not estudio:
             self.add_error('estudio', _('Los PIET deben estar vinculados a un estudio.'))
 
+        if programa.nombre_corto == 'PIPOUZ':
+            if not hasattr(centro, 'nips_coord_pou'):
+                self.add_error('centro', _('El centro carece de coordinador del POU.'))
+            elif self.instance.user.username not in centro.nips_coord_pou:
+                self.add_error(
+                    'programa',
+                    _(
+                        'En los proyectos PIPOUZ el coordinador deberá ser '
+                        'el coordinador del POU del centro.'
+                    ),
+                )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['programa'].widget.choices = tuple(

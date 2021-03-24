@@ -341,6 +341,9 @@ class ProyectoEvaluadorUpdateView(LoginRequiredMixin, PermissionRequiredMixin, U
     def get(self, request, *args, **kwargs):
         User = get_user_model()
         # Obtenemos los NIPs de los usuarios con vinculación «Evaluador externo innovacion ACPUA».
+        # Las vinculaciones las crea la administrativa del Secretariado de Calidad
+        # e Innovación Docente
+        # <https://ayudica.unizar.es/otrs/public.pl?Action=PublicFAQZoom;ItemID=127>
         advertencia, nip_evaluadores = User.get_nips_vinculacion(60)
         if advertencia:
             messages.warning(request, advertencia)
@@ -584,7 +587,6 @@ class ProyectoCreateView(LoginRequiredMixin, ChecksMixin, CreateView):
         registro.save()
 
     def test_func(self):
-        # TODO: Comprobar usuario para Proyectos de titulación y POU.
         # TODO: Comprobar fecha
         return self.es_pas_o_pdi()
 
