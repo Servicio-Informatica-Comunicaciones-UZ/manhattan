@@ -58,6 +58,11 @@
       </tr>
       {% endif %}
 
+      <tr>
+        <th scope="row"><strong>{% trans 'Unidad de gasto' %}</strong>:</th>
+        <td>{{ proyecto.get_unidad_gasto | default:"—"}}</td>
+      </tr>
+
       {% if pp_coordinador %}
       <tr>
         <th scope="row"><strong>{{ pp_coordinador.get_cargo }}</strong>:</th>

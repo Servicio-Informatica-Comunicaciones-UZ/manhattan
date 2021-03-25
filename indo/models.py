@@ -540,6 +540,17 @@ class Proyecto(models.Model):
         except ParticipanteProyecto.DoesNotExist:
             return None
 
+    def get_unidad_gasto(self):
+        """Devuelve el id de la Unidad de gasto del proyecto"""
+        if self.programa.nombre_corto in ('PIEC', 'PIPOUZ'):
+            return self.centro.unidad_gasto
+
+        return (
+            self.coordinador.departamentos[0].unidad_gasto
+            if self.coordinador.departamentos
+            else None
+        )
+
     @property
     def coordinador(self):
         """Devuelve el usuario coordinador del proyecto"""
