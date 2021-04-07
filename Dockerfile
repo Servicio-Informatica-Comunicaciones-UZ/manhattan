@@ -47,10 +47,6 @@ RUN set -ex \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
-# Provisional hasta que se publique una nueva versión de python-social-auth/social-core
-ADD https://raw.githubusercontent.com/python-social-auth/social-core/master/social_core/backends/saml.py /usr/local/lib/python3.7/site-packages/social_core/backends/
-RUN chmod a+r /usr/local/lib/python3.7/site-packages/social_core/backends/saml.py
-
 # Copy your application code to the container image
 # (make sure you create a .dockerignore file if any large files or directories should be excluded)
 WORKDIR /code
