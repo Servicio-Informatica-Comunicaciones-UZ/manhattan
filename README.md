@@ -9,7 +9,7 @@ Está desarrollada con [Django](https://www.djangoproject.com/) 3, mucho ♥, ba
 Requisitos
 ----------
 
-1. Python 3.7 o superior. En Debian o Ubuntu instalar los paquetes `python3.7-dev` y `python3-distutils`.
+1. Python 3.8 o superior. En Debian o Ubuntu instalar los paquetes `python3.8-dev` y `python3-distutils`.
 2. [pip](https://pip.pypa.io/en/stable/installing/), instalador de paquetes de Python.
    (Puede venir con la instalación de Python).
 3. [pipenv](https://github.com/pypa/pipenv) para crear un entorno virtual para Python y facilitar el trabajo.

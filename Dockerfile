@@ -1,5 +1,5 @@
 # Pull base image
-FROM python:3.7-slim-buster
+FROM python:3-slim-buster
 LABEL maintainer="Enrique Matías Sánchez <quique@unizar.es>"
 
 # Set environment variables
