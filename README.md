@@ -15,7 +15,7 @@ Requisitos
 3. [pipenv](https://github.com/pypa/pipenv) para crear un entorno virtual para Python y facilitar el trabajo.
 
    Se puede instalar con `sudo -H pip3 install pipenv`.
-4. Paquetes `libxmlsec1-dev`, `pandoc` y `pkg-config`.
+4. Paquetes `fonts-texgyre`, `libxmlsec1-dev`, `pandoc` y `pkg-config`.
 5. Un servidor de bases de datos aceptado por Django (vg PostgreSQL o MariaDB).
 
    En Debian/Ubuntu:  
@@ -84,6 +84,7 @@ Servidor web para desarrollo
 
 ```shell
 pipenv shell
+nohup ./manage.py run_huey &
 ./manage.py runserver [<IP>[:<puerto>]]
 ```
 

@@ -1,6 +1,7 @@
 # Standard library
 import csv
 import json
+import os
 
 # import magic
 from datetime import date
@@ -32,6 +33,7 @@ from django.forms.models import modelform_factory
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
+from django.utils.formats import localize
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.views import View
@@ -66,6 +68,7 @@ from .tables import (
     ProyectosEvaluadosTable,
     ProyectosTable,
 )
+from .tasks import generar_pdf
 
 
 class ChecksMixin(UserPassesTestMixin):
@@ -611,8 +614,10 @@ class ProyectoAnularView(LoginRequiredMixin, ChecksMixin, RedirectView):
         return self.es_coordinador(self.kwargs['pk'])
 
 
-class MemoriaDetailView(LoginRequiredMixin, ChecksMixin, TemplateView):
+class MemoriaDetailView(TemplateView):
     """Muestra la memoria del proyecto indicado."""
+
+    # TODO: ¿Limitar el acceso al coordinador, corrector y generador PDF?
 
     template_name = 'memoria/detail.html'
 
@@ -671,22 +676,63 @@ class MemoriaDetailView(LoginRequiredMixin, ChecksMixin, TemplateView):
         return redirect('proyecto_detail', proyecto.id)
     """
 
-    def test_func(self):
-        # TODO: Comprobar fecha y estado
-        return self.es_coordinador(self.kwargs['pk'])  # TODO: Permitir a los correctores?
-
 
 class MemoriaPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
     """Presenta la memoria final de proyecto.
 
     El proyecto pasa de estado «Aceptado» a estado «Memoria presentada».
+    Se genera (en segundo plano) un documento PDF que podrá archivarse en Zaguán.
+
     TODO: ¿Enviar correos al corrector y al coordinador?
     """
 
-    pass
+    def get_redirect_url(self, *args, **kwargs):
+        return reverse_lazy('proyecto_detail', args=[kwargs.get('pk')])
+
+    def post(self, request, *args, **kwargs):
+        proyecto_id = kwargs.get('pk')
+        proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
+        if proyecto.estado != 'ACEPTADO':
+            messages.error(
+                request,
+                _(
+                    f'El estado actual del proyecto ({proyecto.get_estado_display()})'
+                    ' no permite presentar memorias.'
+                ),
+            )
+            return super().post(request, *args, **kwargs)
+
+        fecha_limite = proyecto.convocatoria.fecha_max_memorias
+        if date.today() > fecha_limite:
+            fecha_limite_str = localize(fecha_limite)
+            messages.error(
+                request,
+                _(f'Se ha superado la fecha límite ({fecha_limite_str}) para presentar memorias.'),
+            )
+            return super().post(request, *args, **kwargs)
+
+        proyecto.estado = 'MEM_PRESENTADA'
+        proyecto.save()
+
+        # url_origen = request.build_absolute_uri().removesuffix('presentar/')  # Python 3.9
+        url_origen = request.build_absolute_uri()[: -len('presentar/')]
+
+        # Generar ruta tipo `BASE_DIR/media/2021/PIIDUZ_42.pdf`
+        pdf_destino = os.path.join(
+            settings.MEDIA_ROOT,
+            'memoria',
+            str(proyecto.convocatoria_id),
+            f'{proyecto.programa.nombre_corto}_{proyecto_id}.pdf',
+        )
+
+        generar_pdf(url_origen, pdf_destino)
+
+        messages.success(
+            request, _('La memoria de su proyecto ha sido presentada para su corrección.')
+        )
+        return super().post(request, *args, **kwargs)
 
     def test_func(self):
-        # TODO: Comprobar fecha y estado
         return self.es_coordinador(self.kwargs['pk'])
 
 
@@ -1037,8 +1083,7 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
             )
         except Exception as err:  # smtplib.SMTPAuthenticationError etc
             messages.warning(
-                request,
-                _(f'No se envió por correo la solicitud de Visto Bueno del centro: {err}'),
+                request, _(f'No se envió por correo la solicitud de Visto Bueno del centro: {err}')
             )
 
     def _is_email_valid(self, email):

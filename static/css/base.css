@@ -260,4 +260,82 @@ h2 > small {
     @page {
         size: A4;
     }
+
+    html {
+        margin: 0px;
+        padding: 0px;
+        width: 17cm;
+        /* position: absolute; */
+
+    }
+
+    body {
+        background: none;
+        font-size: 12pt;
+        /* Debian packages: fonts-texgyre libgs9-common fonts-sil-gentium fonts-ebgaramond-extra fonts-liberation */
+        font-family: 'TeX Gyre Bonum', 'URW Bookman L', 'Bookman Old Style', 'Bookman', 'TeX Gyre Pagella', 'URW Palladio L', Palatino, 'Gentium', 'EB Garamond 12', 'Garamond', 'Liberation Serif', 'Times New Roman', Times, serif;
+        line-height: normal;
+        margin: 0cm;
+        padding: 0px;
+        width: 17cm;
+    }
+
+    .container-blanco {
+        padding: 0px;
+        margin: 0px;
+        width: 17cm;
+    }
+
+    .listado { margin-left: -3rem; }
+    .listado li, .listado li::before { font-size: 1.2rem; }
+    .listado li::before { top: 0rem; left: -1rem; }
+
+    h1, h2, h3, h4, table, table {
+        font-family: 'LatoLatinWeb', sans-serif;
+        font-size: 80%;
+    }
+    h1 { font-size: 20pt; }
+    h2 { font-size: 18pt; color: #000080; }
+    h3 { font-size: 16pt; color: #000080; }
+    h4 { font-size: 14pt; }
+
+    .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12 {
+        float: left;
+    }
+    .col-sm-12 {
+        width: 100%;
+    }
+    .col-sm-11 {
+        width: 91.66666667%;
+    }
+    .col-sm-10 {
+        width: 83.33333333%;
+    }
+    .col-sm-9 {
+        width: 75%;
+    }
+    .col-sm-8 {
+        width: 66.66666667%;
+    }
+    .col-sm-7 {
+        width: 58.33333333%;
+    }
+    .col-sm-6 {
+        width: 50%;
+    }
+    .col-sm-5 {
+        width: 41.66666667%;
+    }
+    .col-sm-4 {
+        width: 33.33333333%;
+    }
+    .col-sm-3 {
+        width: 25%;
+    }
+    .col-sm-2 {
+        width: 16.66666667%;
+    }
+    .col-sm-1 {
+        width: 8.33333333%;
+    }
 }

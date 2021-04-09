@@ -25,7 +25,6 @@ mysqlclient = "*"
 pypandoc = "*"
 python-magic = "*"
 python3-saml = "*"
-redis = "*"
 social-auth-app-django = "*"
 social-auth-core = {extras = ["saml"],version = "*"}
 weasyprint = "*"

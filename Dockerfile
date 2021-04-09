@@ -9,12 +9,22 @@ ENV PYTHONDONTWRITEBYTECODE 1 \
     PYTHONUNBUFFERED 1
 
 # Install packages needed to run your application (not build deps):
+#   fonts-ebgaramond-extra -- EB Garamond 12
+#   fonts-liberation -- Fonts with the same metrics as Times, Arial and Courier
+#   fonts-sil-gentium  -- Gentium
+#   fonts-texgyre -- TeX Gyre Bonum (~ URW Bookman L) and TeX Gyre Pagella (~ URW Palladio L)
+#   libgs9-common -- URWBookman
 #   libmariadbclient-client -- for running database commands
 #   libpcre3 -- for uWSGI internal routing support
 #   xmlsec1 -- required for SAML auth
 #   mime-support -- for mime types when serving static files
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
+      # fonts-ebgaramond-extra \
+      # fonts-liberation \
+      # fonts-sil-gentium \
+      fonts-texgyre \
+      # libgs9-common \
       libmariadb3 \
       libpcre3 \
       libxmlsec1-openssl \
