@@ -13,6 +13,7 @@ from annoying.functions import get_config, get_object_or_None
 from django_summernote.widgets import SummernoteWidget
 from django_tables2.views import SingleTableView
 from templated_email import send_templated_mail
+from weasyprint import HTML  # https://weasyprint.org/
 import bleach
 import pypandoc
 
@@ -32,6 +33,7 @@ from django.core.validators import validate_email
 from django.forms.models import modelform_factory
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
+from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
 from django.utils.formats import localize
 from django.utils.safestring import mark_safe
@@ -614,10 +616,8 @@ class ProyectoAnularView(LoginRequiredMixin, ChecksMixin, RedirectView):
         return self.es_coordinador(self.kwargs['pk'])
 
 
-class MemoriaDetailView(TemplateView):
+class MemoriaDetailView(LoginRequiredMixin, ChecksMixin, TemplateView):
     """Muestra la memoria del proyecto indicado."""
-
-    # TODO: ¿Limitar el acceso al coordinador, corrector y generador PDF?
 
     template_name = 'memoria/detail.html'
 
@@ -676,6 +676,10 @@ class MemoriaDetailView(TemplateView):
         return redirect('proyecto_detail', proyecto.id)
     """
 
+    def test_func(self):
+        # TODO: Permitir acceso al corrector de la memoria
+        return self.es_coordinador(self.kwargs['pk'])
+
 
 class MemoriaPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
     """Presenta la memoria final de proyecto.
@@ -685,6 +689,13 @@ class MemoriaPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
 
     TODO: ¿Enviar correos al corrector y al coordinador?
     """
+
+    def create_context(self, proyecto):
+        return {
+            'proyecto': proyecto,
+            'apartados': proyecto.convocatoria.apartados_memoria.all(),
+            'dict_respuestas': proyecto.get_dict_respuestas_memoria(),
+        }
 
     def get_redirect_url(self, *args, **kwargs):
         return reverse_lazy('proyecto_detail', args=[kwargs.get('pk')])
@@ -714,8 +725,15 @@ class MemoriaPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
         proyecto.estado = 'MEM_PRESENTADA'
         proyecto.save()
 
-        # url_origen = request.build_absolute_uri().removesuffix('presentar/')  # Python 3.9
-        url_origen = request.build_absolute_uri()[: -len('presentar/')]
+        contexto = self.create_context(proyecto)
+        # base_url = request.build_absolute_uri().removesuffix('presentar/')  # Requiere Python 3.9
+        base_url = request.build_absolute_uri()[: -len('presentar/')]
+        documento_html = HTML(
+            string=render_to_string('memoria/detail.html', context=contexto, request=request),
+            # En la plantilla, las URL de los CSS y las imágenes son relativas.
+            # Al usar `HTML(string=...)` WeasyPrint no sabe cuál es la URL base, hay que dársela.
+            base_url=base_url,
+        )
 
         # Generar ruta tipo `BASE_DIR/media/2021/PIIDUZ_42.pdf`
         pdf_destino = os.path.join(
@@ -725,7 +743,7 @@ class MemoriaPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
             f'{proyecto.programa.nombre_corto}_{proyecto_id}.pdf',
         )
 
-        generar_pdf(url_origen, pdf_destino)
+        generar_pdf(documento_html, pdf_destino)  # Proceso lento, lo ejecutamos en segundo plano.
 
         messages.success(
             request, _('La memoria de su proyecto ha sido presentada para su corrección.')
