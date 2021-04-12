@@ -30,6 +30,14 @@ RUN apt-get update \
       libxmlsec1-openssl \
       mime-support \
       pandoc \
+      # Weasyprint:
+      libcairo2 \
+      libffi-dev \
+      libgdk-pixbuf2.0-0 \
+      libpango-1.0-0 \
+      libpangocairo-1.0-0 \
+      python3-cffi \
+      shared-mime-info \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
