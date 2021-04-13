@@ -120,7 +120,8 @@ DATABASES = {
         'OPTIONS': {'charset': 'utf8mb4'},  # Requires `innodb_default_row_format = dynamic`
     }
 }
-
+# https://docs.djangoproject.com/en/3.2/releases/3.2/#customizing-type-of-auto-created-primary-keys
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -375,4 +376,4 @@ VICERRECTOR = os.environ.get('VICERRECTOR')
 # Tareas en segundo plano
 # pool = ConnectionPool(host='localhost', port=6379, max_connections=20)
 # HUEY = RedisHuey('manhattan', connection_pool=pool)
-HUEY = SqliteHuey()
+HUEY = SqliteHuey(filename='cola/huey.db')

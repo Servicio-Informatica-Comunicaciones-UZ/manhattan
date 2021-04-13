@@ -13,7 +13,9 @@ from annoying.functions import get_config, get_object_or_None
 from django_summernote.widgets import SummernoteWidget
 from django_tables2.views import SingleTableView
 from templated_email import send_templated_mail
-from weasyprint import HTML  # https://weasyprint.org/
+
+# Alternativa: Usar Headless Chromium con <https://github.com/pyppeteer/pyppeteer>
+from weasyprint import HTML  # https://weasyprint.org/ - No soporta Javascript
 import bleach
 import pypandoc
 
@@ -686,8 +688,6 @@ class MemoriaPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
 
     El proyecto pasa de estado «Aceptado» a estado «Memoria presentada».
     Se genera (en segundo plano) un documento PDF que podrá archivarse en Zaguán.
-
-    TODO: ¿Enviar correos al corrector y al coordinador?
     """
 
     def create_context(self, proyecto):
