@@ -5,7 +5,7 @@
 
 {% block content %}
 <div class="container-blanco">
-  {% if permitir_edicion %}
+  {% if permitir_edicion and proyecto.en_borrador %}
   <div class="alert alert-info">
     <span class="fas fa-info-circle"></span>
     <div>
