@@ -164,7 +164,7 @@ class ProyectoForm(forms.ModelForm):
             self.add_error('estudio', _('Los PIET deben estar vinculados a un estudio.'))
 
         if programa.nombre_corto == 'PIPOUZ':
-            if not hasattr(centro, 'nips_coord_pou'):
+            if not centro.nips_coord_pou:
                 self.add_error('centro', _('El centro carece de coordinador del POU.'))
             elif self.instance.user.username not in centro.nips_coord_pou:
                 self.add_error(
