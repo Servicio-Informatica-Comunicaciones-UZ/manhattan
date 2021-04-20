@@ -29,6 +29,10 @@
   <div class="table-responsive">
     <table class="table table-hover table-striped table-sm" aria-describedby="titulo">
       <tr>
+        <th scope="row"><strong>{% trans 'ID del proyecto' %}</strong>:</th>
+        <td>{{ proyecto.id }}</td>
+      </tr>
+      <tr>
         <th scope="row"><strong>{% trans 'Convocatoria' %}</strong>:</th>
         <td>{{ proyecto.convocatoria_id }}</td>
       </tr>
