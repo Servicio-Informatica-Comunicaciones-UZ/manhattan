@@ -46,6 +46,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 # Local Django
 from .forms import (
+    CorrectorForm,
     EvaluadorForm,
     InvitacionForm,
     MemoriaRespuestaForm,
@@ -67,6 +68,7 @@ from .models import (
     Valoracion,
 )
 from .tables import (
+    CorrectoresTable,
     EvaluadoresTable,
     EvaluacionProyectosTable,
     ProyectosEvaluadosTable,
@@ -194,6 +196,67 @@ class ChecksMixin(UserPassesTestMixin):
 
 class AyudaView(TemplateView):
     template_name = 'ayuda.html'
+
+
+class CorrectorTableView(LoginRequiredMixin, PermissionRequiredMixin, SingleTableView):
+    """Muestra los usuarios del grupo Correctores y un formulario para añadir más."""
+
+    permission_required = 'indo.gestionar_correctores'
+    permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
+    table_class = CorrectoresTable
+    template_name = 'gestion/corrector/tabla_correctores.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = CorrectorForm()
+        return context
+
+    def get_queryset(self):
+        correctores = Group.objects.get(name='Correctores')
+        return correctores.user_set.all()
+
+
+class CorrectorAnyadirView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    """Añade un usuario al grupo Correctores."""
+
+    permission_required = 'indo.gestionar_correctores'
+    permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
+
+    def post(self, request, *args, **kwargs):
+        nip = request.POST.get('nip')
+
+        # Comprobamos si el usuario ya existe en el sistema.
+        # Si no existe previamente, lo creamos.
+        User = get_user_model()
+        usuario = get_object_or_None(User, username=nip)
+        if not usuario:
+            try:
+                usuario = User.crear_usuario(request, nip)
+            except Exception as ex:
+                messages.error(request, ex.args[0])
+                return redirect('correctores_table')
+
+        grupo_correctores = Group.objects.get(name='Correctores')
+        grupo_correctores.user_set.add(usuario)
+        messages.success(request, _('Se ha añadido al usuario como corrector.'))
+
+        return redirect('correctores_table')
+
+
+class CorrectorCesarView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    """Saca a un usuario del grupo Correctores."""
+
+    permission_required = 'indo.gestionar_correctores'
+    permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
+
+    def post(self, request, *args, **kwargs):
+        User = get_user_model()
+        usuario = get_object_or_None(User, pk=request.POST.get('user_id'))
+        grupo_correctores = Group.objects.get(name='Correctores')
+        grupo_correctores.user_set.remove(usuario)  # o usuario.groups.remove(grupo_correctores)
+        messages.success(request, _('Se ha cesado al usuario como corrector.'))
+
+        return redirect('correctores_table')
 
 
 class EvaluacionVerView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):

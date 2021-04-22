@@ -1,9 +1,46 @@
 import django_tables2 as tables
+from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from .models import Proyecto
+
+
+class CorrectoresTable(tables.Table):
+    """Muestra los usuarios del grupo Correctores."""
+
+    full_name = tables.Column(orderable=False, verbose_name=_('Nombre completo'))
+    eliminar = tables.Column(empty_values=(), orderable=False, verbose_name='')
+
+    def render_eliminar(self, record):
+        return mark_safe(
+            f'''<button
+                    class="btn-no-button prepararCesar"
+                    data-id="{record.id}"
+                    data-nombre="{record.full_name}"
+                    data-toggle="modal"
+                    data-target="#cesarModal"
+                >
+                    <span
+                        class="fas fa-trash-alt text-danger"
+                        title="{_('Cesar al corrector')}"
+                        aria-label="{_('Cesar al corrector')}"
+                    ></span>
+                </button>
+            '''
+        )
+
+    class Meta:
+        attrs = {'class': 'table table-striped table-hover cabecera-azul'}
+        model = get_user_model()
+        fields = (
+            'username',
+            'full_name',
+        )
+        empty_text = _('Por el momento no hay ningún corrector.')
+        template_name = 'django_tables2/bootstrap4.html'
+        per_page = 20
 
 
 class EvaluadoresTable(tables.Table):

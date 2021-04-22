@@ -66,6 +66,13 @@ class CustomUser(AbstractUser):
     )
     colectivos = models.CharField(max_length=127, blank=True, null=True)
 
+    class Meta:
+        ordering = (
+            'last_name',
+            'last_name_2',
+            'first_name',
+        )
+
     @property
     def nombres_centros(self):
         """Devuelve una cadena con los nombres de los centros del usuario."""

@@ -2,6 +2,9 @@
 from datetime import date
 
 # Third-party
+from crispy_forms.bootstrap import StrictButton
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import ButtonHolder, Layout
 from django_summernote.fields import SummernoteTextField
 from django_summernote.widgets import SummernoteWidget
 from social_django.models import UserSocialAuth
@@ -24,6 +27,42 @@ from .models import (
     Proyecto,
     TipoParticipacion,
 )
+
+
+class CorrectorForm(forms.Form):
+    nip = forms.IntegerField(
+        label=_('NIP'),
+        help_text=_(
+            'Número de Identificación Personal en la Universidad de Zaragoza'
+            ' de la persona a añadir al grupo de correctores de memorias.'
+        ),
+        min_value=0,
+        max_value=999999,
+        required=True,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+
+        self.helper.form_action = 'corrector_anyadir'
+        self.helper.form_class = 'form-inline'
+        # self.helper.wrapper_class = 'col-7'
+        # self.helper.label_class = 'margin-right-1'
+        # self.helper.field_class = 'margin-right-1'
+        self.helper.field_template = 'bootstrap4/layout/inline_field.html'
+        self.helper.layout = Layout(
+            'nip',
+            ButtonHolder(
+                StrictButton(
+                    f"<span class='fas fa-user-plus'></span> {_('Añadir')}",
+                    css_class='btn btn-warning',
+                    title=_('Añadir al titular de este NIP como corrector'),
+                    type='submit',
+                ),
+                css_class='margin-left-1',
+            ),
+        )
 
 
 class InvitacionForm(forms.ModelForm):

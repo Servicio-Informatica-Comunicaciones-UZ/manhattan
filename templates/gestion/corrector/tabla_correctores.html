@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags i18n %}
+{% load render_table from django_tables2 %}
+
+{% block title %}{% trans "Correctores de las memorias" %}{% endblock title %}
+
+{% block content %}
+<div class='container-blanco'>
+    <h1 id="presentados">{% trans "Correctores de las memorias" %}</h1>
+    <hr />
+    <br />
+
+    <div class="alert-info alert fade-in">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+
+        <span class="fas fa-info-circle"></span>
+        {% trans "Aquí puede gestionar los usuarios que pueden corregir memorias." %}
+    </div><br />
+
+    {% render_table table %}
+    <br /><br />
+
+    <h2 id="anyadir_corrector">{% trans "Añadir corrector" %}</h2>
+    <hr /><br />
+
+    {% crispy form %}
+
+</div>
+
+
+<div
+  class="modal fade"
+  id="cesarModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="cesarModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="cesarModalLabel">{% trans "¿Seguro que desea cesar al corrector?" %}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="advertencia"></div> {# Rellenado por Javascript #}
+      </div>
+
+      <div class="modal-footer">
+        <form action="{% url 'corrector_cesar' %}" id="cesar-form" method="post">
+          {% csrf_token %}
+          <div class="campo-oculto"></div> {# Rellenado por Javascript #}
+          <button type="button" class="btn btn-info" data-dismiss="modal">
+            <span class="fas fa-times"></span> {% trans 'Cancelar' %}
+          </button>
+          <button type="submit" class="btn btn-warning">
+            <span class="fas fa-user-times"></span> {% trans 'Cesar' %}
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block extrajs %}
+<script type="text/javascript">
+  $(".prepararCesar").click(function(e) {
+    $("#cesarModal .advertencia").html(
+      "<p>¿Seguro que desea cesar a " + $(this).data("nombre") + " como corrector?</p>"
+    );
+    $("#cesarModal .campo-oculto").html(
+      "<input type='hidden' id='user_id' name='user_id' value='" + $(this).data("id") + "'>"
+    );
+  });
+</script>
+{% endblock extrajs %}

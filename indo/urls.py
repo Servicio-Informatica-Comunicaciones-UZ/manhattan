@@ -4,6 +4,9 @@ from django.urls import include, path
 
 from .views import (
     AyudaView,
+    CorrectorAnyadirView,
+    CorrectorCesarView,
+    CorrectorTableView,
     EvaluacionVerView,
     EvaluacionView,
     HomePageView,
@@ -43,6 +46,13 @@ urlpatterns = [
         name='proyectos_evaluados_table',
     ),
     path('evaluador/<int:pk>/evaluacion/', EvaluacionView.as_view(), name='evaluacion'),
+    path('gestion/corrector/', CorrectorTableView.as_view(), name='correctores_table'),
+    path('gestion/corrector/anyadir/', CorrectorAnyadirView.as_view(), name='corrector_anyadir'),
+    path(
+        'gestion/corrector/cesar/',
+        CorrectorCesarView.as_view(),
+        name='corrector_cesar',
+    ),
     path('gestion/proyectos/<int:anyo>/', ProyectoTableView.as_view(), name='proyectos_table'),
     path(
         'gestion/proyectos/<int:anyo>/evaluaciones/',

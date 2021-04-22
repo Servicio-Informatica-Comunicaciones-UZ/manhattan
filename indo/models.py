@@ -732,6 +732,19 @@ class Registro(models.Model):
     proyecto = models.ForeignKey('Proyecto', on_delete=models.PROTECT)
 
 
+class RightsSupport(models.Model):
+    """Dummy auxiliary model in order to create global permissions not related to a model."""
+
+    class Meta:
+        # No database table creation or deletion operations will be performed for this model.
+        managed = False
+
+        permissions = (
+            ('gestionar_correctores', _('Puede añadir/quitar usuarios al grupo Correctores')),
+            ('asignar_correctores', _('Puede asignar un corrector de memoria a un proyecto')),
+        )
+
+
 class TipoEstudio(models.Model):
     id = models.PositiveSmallIntegerField(_('Cód. tipo estudio'), primary_key=True)
     nombre = models.CharField(max_length=63)
