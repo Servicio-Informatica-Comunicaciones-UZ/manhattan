@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load render_table from django_tables2 %}
+
+{% block title %}{% trans "Correctores de las memorias" %}{% endblock title %}
+
+{% block content %}
+<div class='container-blanco'>
+    <h1 id="correctores">{% trans "Correctores de las memorias" %} <small>{{ anyo }}</small></h1>
+    <hr />
+    <br />
+
+    <div class="alert-info alert fade-in">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+
+        <span class="fas fa-info-circle"></span>
+        {% trans "Aquí puede ver los correctores de memorias de los proyectos aceptados en esta convocatoria." %}
+    </div><br />
+
+    {% render_table table %}
+</div>
+{% endblock content %}

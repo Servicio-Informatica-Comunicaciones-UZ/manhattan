@@ -22,6 +22,8 @@ from .views import (
     ProyectoAnularView,
     ProyectoCreateView,
     ProyectoDetailView,
+    ProyectoCorrectorTableView,
+    ProyectoCorrectorUpdateView,
     ProyectoEvaluacionesCsvView,
     ProyectoEvaluacionesTableView,
     ProyectoEvaluadorTableView,
@@ -68,6 +70,16 @@ urlpatterns = [
         'gestion/proyectos/<int:anyo>/notificar/',
         ProyectosNotificarView.as_view(),
         name='notificar_proyectos',
+    ),
+    path(
+        'gestion/proyectos/<int:anyo>/correctores/',
+        ProyectoCorrectorTableView.as_view(),
+        name='proyecto_corrector_table',
+    ),
+    path(
+        'gestion/proyecto/<int:pk>/editar_corrector/',
+        ProyectoCorrectorUpdateView.as_view(),
+        name='corrector_update',
     ),
     path(
         'gestion/proyectos/<int:anyo>/evaluadores/',

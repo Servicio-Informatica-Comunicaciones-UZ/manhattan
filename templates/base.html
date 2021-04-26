@@ -96,10 +96,16 @@
                     <span class="fas fa-th-list"></span>&nbsp; {% trans "Proyectos presentados" %}
                   </a>
                   <a class="dropdown-item" href="{% url 'evaluadores_table' anyo_actual %}">
-                    <span class="fas fa-balance-scale"></span>&nbsp; {% trans "Evaluadores de los proyectos" %}
+                    <span class="fas fa-balance-scale"></span>&nbsp; {% trans "Asignación de evaluadores" %}
                   </a>
                   <a class="dropdown-item" href="{% url 'evaluaciones_table' anyo_actual %}">
                    <span class="fas fa-gavel"></span>&nbsp; {% trans "Evaluaciones de los proyectos" %}
+                  </a>
+                  <a class="dropdown-item" href="{% url 'correctores_table' %}">
+                    <span class="fas fa-users"></span>&nbsp; {% trans "Correctores de las memorias" %}
+                  </a>
+                  <a class="dropdown-item" href="{% url 'proyecto_corrector_table' anyo_actual %}">
+                    <span class="fas fa-balance-scale"></span>&nbsp; {% trans "Asignación de correctores" %}
                   </a>
                   <div class="dropdown-divider"></div>
                   <a class="dropdown-item" href="{% url 'admin:indo_convocatoria_changelist' %}">

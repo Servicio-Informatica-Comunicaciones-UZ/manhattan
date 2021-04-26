@@ -29,6 +29,24 @@ from .models import (
 )
 
 
+class AsignarCorrectorForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['corrector'].widget.choices = tuple(
+            BLANK_CHOICE_DASH
+            + [
+                (u.id, u.full_name)
+                for u in Group.objects.get(name='Correctores')
+                .user_set.order_by('first_name', 'last_name', 'last_name_2')
+                .all()
+            ]
+        )
+
+    class Meta:
+        fields = ('corrector',)
+        model = Proyecto
+
+
 class CorrectorForm(forms.Form):
     nip = forms.IntegerField(
         label=_('NIP'),

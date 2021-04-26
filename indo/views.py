@@ -46,6 +46,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 # Local Django
 from .forms import (
+    AsignarCorrectorForm,
     CorrectorForm,
     EvaluadorForm,
     InvitacionForm,
@@ -73,6 +74,7 @@ from .tables import (
     EvaluacionProyectosTable,
     ProyectosEvaluadosTable,
     ProyectosTable,
+    ProyectoCorrectorTable,
 )
 from .tasks import generar_pdf
 
@@ -353,6 +355,40 @@ class ProyectoAceptarView(LoginRequiredMixin, ChecksMixin, SuccessMessageMixin, 
     def test_func(self):
         # TODO: Comprobar estado del proyecto, fecha.
         return self.es_coordinador(self.kwargs['pk'])
+
+
+class ProyectoCorrectorTableView(LoginRequiredMixin, PermissionRequiredMixin, SingleTableView):
+    """Muestra los proyectos aceptados por su coordinador y el corrector de memorias asignado."""
+
+    permission_required = 'indo.asignar_correctores'
+    permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
+    table_class = ProyectoCorrectorTable
+    template_name = 'gestion/proyecto/tabla_correctores.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['anyo'] = self.kwargs['anyo']
+        return context
+
+    def get_queryset(self):
+        return (
+            Proyecto.objects.filter(convocatoria__id=self.kwargs['anyo'])
+            .filter(aceptacion_coordinador=True)
+            .order_by('programa__nombre_corto', 'linea__nombre', 'titulo')
+        )
+
+
+class ProyectoCorrectorUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    """Actualizar el corrector de la memoria de un proyecto."""
+
+    permission_required = 'indo.asignar_correctores'
+    permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
+    model = Proyecto
+    template_name = 'gestion/proyecto/editar_corrector.html'
+    form_class = AsignarCorrectorForm
+
+    def get_success_url(self):
+        return reverse('proyecto_corrector_table', kwargs={'anyo': self.object.convocatoria.id})
 
 
 class ProyectoEvaluadorTableView(LoginRequiredMixin, PermissionRequiredMixin, SingleTableView):

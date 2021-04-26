@@ -43,6 +43,33 @@ class CorrectoresTable(tables.Table):
         per_page = 20
 
 
+class ProyectoCorrectorTable(tables.Table):
+    """Muestra los proyectos aceptados y el corrector de memorias asignado a ellos."""
+
+    def render_titulo(self, record):
+        enlace = reverse('proyecto_detail', args=[record.id])
+        return mark_safe(f'<a href="{enlace}">{record.titulo}</a>')
+
+    editar = tables.Column(empty_values=(), orderable=False, verbose_name='')
+
+    def render_editar(self, record):
+        enlace = reverse('corrector_update', args=[record.id])
+        return mark_safe(
+            f'''<a href="{enlace}" title="{_('Editar el corrector')}"
+                aria-label="{_('Editar el corrector')}">
+                  <span class="fas fa-pencil-alt"></span>
+                </a>'''
+        )
+
+    class Meta:
+        attrs = {'class': 'table table-striped table-hover cabecera-azul'}
+        model = Proyecto
+        fields = ('programa', 'linea', 'titulo', 'corrector__full_name', 'editar')
+        empty_text = _('Por el momento ningún coordinador ha aceptado ningún proyecto.')
+        template_name = 'django_tables2/bootstrap4.html'
+        per_page = 20
+
+
 class EvaluadoresTable(tables.Table):
     """Muestra los proyectos solicitados y el evaluador asignado a ellos."""
 
