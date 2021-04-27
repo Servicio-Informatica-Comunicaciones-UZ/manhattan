@@ -146,6 +146,38 @@ class EvaluacionProyectosTable(tables.Table):
         per_page = 20
 
 
+class MemoriasAsignadasTable(tables.Table):
+    """Muestra las memorias asignadas a un usuario corrector."""
+
+    def render_titulo(self, record):
+        enlace = reverse('proyecto_detail', args=[record.id])
+        return mark_safe(f"<a href='{enlace}'>{record.titulo}</a>")
+
+    aceptacion_corrector = tables.BooleanColumn(null=True, verbose_name='Admitida')
+    boton_valorar = tables.Column(empty_values=(), orderable=False, verbose_name='')
+
+    def render_boton_valorar(self, record):
+        if record.aceptacion_corrector is not None:
+            return ''
+
+        enlace = reverse('corregir', args=[record.id])
+        return mark_safe(
+            f'''<a href="{enlace}" title="{_('Valorar la memoria')}"
+          aria-label="{_('Valorar la memoria')}" class="btn btn-info btn-sm">
+            <span class="fas fa-balance-scale" aria-hidden="true" style="display: inline;"></span>
+            &nbsp;{_('Valorar')}
+          </a>'''
+        )
+
+    class Meta:
+        attrs = {'class': 'table table-striped table-hover cabecera-azul'}
+        model = Proyecto
+        fields = ('programa', 'linea', 'titulo', 'aceptacion_corrector', 'boton_valorar')
+        empty_text = _('Por el momento no se le ha asignado ninguna memoria.')
+        template_name = 'django_tables2/bootstrap4.html'
+        per_page = 20
+
+
 class ProyectosEvaluadosTable(tables.Table):
     """Muestra los proyectos asignados a un usuario evaluador."""
 

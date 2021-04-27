@@ -509,6 +509,7 @@ class Proyecto(models.Model):
         related_name='proyectos_corregidos',
     )
     aceptacion_corrector = models.BooleanField(_('Aceptación por el corrector'), null=True)
+    es_publicable = models.BooleanField(_('¿Publicar la memoria?'), null=True)
     observaciones_corrector = models.TextField(
         _('Observaciones del corrector de la memoria'), null=True
     )

@@ -47,6 +47,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 # Local Django
 from .forms import (
     AsignarCorrectorForm,
+    CorreccionForm,
     CorrectorForm,
     EvaluadorForm,
     InvitacionForm,
@@ -72,6 +73,7 @@ from .tables import (
     CorrectoresTable,
     EvaluadoresTable,
     EvaluacionProyectosTable,
+    MemoriasAsignadasTable,
     ProyectosEvaluadosTable,
     ProyectosTable,
     ProyectoCorrectorTable,
@@ -195,9 +197,31 @@ class ChecksMixin(UserPassesTestMixin):
 
         return usuario_actual == proyecto.evaluador
 
+    def es_corrector_del_proyecto(self, proyecto_id):
+        """Devuelve si el usuario actual es corrector de la memoria del proyecto indicado."""
+        self.permission_denied_message = _('Usted no es corrector de la memoria de este proyecto.')
+        proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
+        usuario_actual = self.request.user
+
+        return usuario_actual == proyecto.corrector
+
 
 class AyudaView(TemplateView):
     template_name = 'ayuda.html'
+
+
+class MemoriaCorreccionUpdateView(LoginRequiredMixin, ChecksMixin, UpdateView):
+    """Muestra y permite editar la corrección de la memoria un proyecto."""
+
+    model = Proyecto
+    template_name = 'corrector/correccion.html'
+    form_class = CorreccionForm
+
+    def get_success_url(self):
+        return reverse('memorias_asignadas_table', kwargs={'anyo': self.object.convocatoria.id})
+
+    def test_func(self):
+        return self.es_corrector_del_proyecto(self.kwargs['pk'])
 
 
 class CorrectorTableView(LoginRequiredMixin, PermissionRequiredMixin, SingleTableView):
@@ -319,6 +343,29 @@ class EvaluacionView(LoginRequiredMixin, ChecksMixin, TemplateView):
 
     def test_func(self):
         return self.es_evaluador_del_proyecto(self.kwargs['pk'])
+
+
+class MemoriasAsignadasTableView(LoginRequiredMixin, UserPassesTestMixin, SingleTableView):
+    """Lista las memorias asignadas al usuario (corrector) actual."""
+
+    permission_denied_message = _('Sólo los correctores pueden acceder a esta página.')
+    table_class = MemoriasAsignadasTable
+    template_name = 'corrector/mis_memorias.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['anyo'] = self.kwargs['anyo']
+        return context
+
+    def get_queryset(self):
+        return (
+            Proyecto.objects.filter(convocatoria__id=self.kwargs['anyo'])
+            .filter(corrector=self.request.user)
+            .order_by('programa__nombre_corto', 'linea__nombre', 'titulo')
+        )
+
+    def test_func(self):
+        return self.request.user.groups.filter(name='Correctores').exists()
 
 
 class ProyectoAceptarView(LoginRequiredMixin, ChecksMixin, SuccessMessageMixin, UpdateView):

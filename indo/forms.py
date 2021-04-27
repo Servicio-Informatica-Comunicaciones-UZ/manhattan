@@ -47,6 +47,22 @@ class AsignarCorrectorForm(forms.ModelForm):
         model = Proyecto
 
 
+class CorreccionForm(forms.ModelForm):
+    BOOL_CHOICES = ((True, _('Sí')), (False, _('No')))
+    aceptacion_corrector = forms.ChoiceField(
+        label=_('Se admite'), widget=forms.RadioSelect, choices=BOOL_CHOICES
+    )
+    es_publicable = forms.ChoiceField(widget=forms.RadioSelect, choices=BOOL_CHOICES)
+
+    class Meta:
+        fields = (
+            'aceptacion_corrector',
+            'es_publicable',
+            'observaciones_corrector',
+        )
+        model = Proyecto
+
+
 class CorrectorForm(forms.Form):
     nip = forms.IntegerField(
         label=_('NIP'),

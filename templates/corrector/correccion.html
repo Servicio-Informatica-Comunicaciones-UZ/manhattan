@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags custom_tags i18n %}
+
+{% block title %}{% trans "Valoración de la memoria" %}: {{ proyecto.titulo }}{% endblock title %}
+
+{% block content %}
+<div class='container-blanco'>
+    <h1 id="cabecera">{% trans "Valoración de la memoria" %} <small>{{ proyecto.titulo }}</small></h1>
+    <hr />
+    <br />
+
+    <div class="alert-info alert fade-in">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+
+        <span class="fas fa-info-circle"></span>
+        {% trans 'Aquí puede valorar la memoria del proyecto.' %}<br />
+        {% trans 'Pulse el botón «<strong>Guardar</strong>» para almacenar su dictamen.' %}
+        {% trans 'El dictamen es definitivo y <strong>no</strong> se puede modificar posteriormente.' %}
+    </div><br />
+
+    <form action="" method="post">
+        {% csrf_token %}
+
+        {# CorreccionForm está definido en forms.py #}
+        {{ form | crispy }}
+
+        <br style="clear: both;" />
+
+        <div class="btn-group" role="group" aria-label="{{_('Botones')}}">
+            <a href="{% url 'memorias_asignadas_table' object.convocatoria_id %}" class="btn btn-info"
+                title="{% trans 'Cancelar - Se perderán los cambios no guardados' %}">
+                <span class="fas fa-times"></span> {% trans 'Cancelar' %}
+            </a>
+            <button class="btn btn-danger" type="submit"
+                title="{% trans 'Guardar valoración - El dictamen es definitivo y no se puede modificar' %}">
+                <span class="fas fa-check"></span> {% trans 'Guardar' %}
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock content %}

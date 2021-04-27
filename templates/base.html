@@ -121,6 +121,14 @@
               </li>
             {% endif %}
 
+            {% if user|has_group:"Correctores" %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'memorias_asignadas_table' anyo_actual %}">
+                  <span class="fas fa-balance-scale"></span>&nbsp; {% trans "Memorias" %}
+                </a>
+              </li>
+            {% endif %}
+
             {% if user|has_group:"Evaluadores" %}
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'proyectos_evaluados_table' anyo_actual %}">
