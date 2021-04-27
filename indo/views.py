@@ -220,8 +220,49 @@ class MemoriaCorreccionUpdateView(LoginRequiredMixin, ChecksMixin, UpdateView):
     def get_success_url(self):
         return reverse('memorias_asignadas_table', kwargs={'anyo': self.object.convocatoria.id})
 
+    def form_valid(self, form):
+        # This method is called when valid form data has been POSTed.
+        # It should return an HttpResponse.
+        proyecto = self.object
+        admision = self.request.POST.get('aceptacion_corrector')
+
+        if admision == 'False':
+            proyecto.estado = 'MEM_NO_ADMITIDA'
+        elif admision == 'True':
+            proyecto.estado = 'MEM_ADMITIDA'
+        proyecto.save()
+
+        return super().form_valid(form)
+
+    def post(self, request, *args, **kwargs):
+        if request.POST.get('aceptacion_corrector') == 'True':
+            proyecto = self.get_object()
+            self._enviar_notificacion(request, proyecto)
+
+        return super().post(request, *args, **kwargs)
+
     def test_func(self):
         return self.es_corrector_del_proyecto(self.kwargs['pk'])
+
+    def _enviar_notificacion(self, request, proyecto):
+        """Envia un mensaje al coordinador del proyecto."""
+        try:
+            send_templated_mail(
+                template_name='memoria_admitida',
+                from_email=None,  # settings.DEFAULT_FROM_EMAIL
+                recipient_list=(proyecto.get_coordinador().email,),
+                context={
+                    'proyecto': proyecto,
+                    'coordinador': proyecto.get_coordinador(),
+                    'vicerrector': settings.VICERRECTOR,
+                },
+                cc=(settings.DEFAULT_FROM_EMAIL,),  # Enviar copia al vicerrectorado
+            )
+        except Exception as err:  # smtplib.SMTPAuthenticationError etc
+            messages.warning(
+                request,
+                _('No se envió por correo la notificación de admisión de la memoria: ' f'{err}'),
+            )
 
 
 class CorrectorTableView(LoginRequiredMixin, PermissionRequiredMixin, SingleTableView):
@@ -777,8 +818,9 @@ class MemoriaDetailView(LoginRequiredMixin, ChecksMixin, TemplateView):
         context['apartados'] = proyecto.convocatoria.apartados_memoria.all()
         context['dict_respuestas'] = proyecto.get_dict_respuestas_memoria()
 
-        context['permitir_edicion'] = (
-            self.es_coordinador(proyecto.id) and proyecto.estado == 'ACEPTADO'
+        context['permitir_edicion'] = self.es_coordinador(proyecto.id) and proyecto.estado in (
+            'ACEPTADO',
+            'MEM_NO_ADMITIDA',
         )
 
         return context
@@ -825,8 +867,9 @@ class MemoriaDetailView(LoginRequiredMixin, ChecksMixin, TemplateView):
     """
 
     def test_func(self):
-        # TODO: Permitir acceso al corrector de la memoria
-        return self.es_coordinador(self.kwargs['pk'])
+        return self.es_coordinador(self.kwargs['pk']) or self.es_corrector_del_proyecto(
+            self.kwargs['pk']
+        )
 
 
 class MemoriaPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
@@ -849,7 +892,10 @@ class MemoriaPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
     def post(self, request, *args, **kwargs):
         proyecto_id = kwargs.get('pk')
         proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
-        if proyecto.estado != 'ACEPTADO':
+        if proyecto.estado not in (
+            'ACEPTADO',
+            'MEM_NO_ADMITIDA',
+        ):
             messages.error(
                 request,
                 _(
@@ -869,6 +915,9 @@ class MemoriaPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
             return super().post(request, *args, **kwargs)
 
         proyecto.estado = 'MEM_PRESENTADA'
+        # Si la memoria ya había sido valorada por el corrector, rechazada, y se está subsanando:
+        proyecto.aceptacion_corrector = None
+        proyecto.es_publicable = None
         proyecto.save()
 
         contexto = self.create_context(proyecto)

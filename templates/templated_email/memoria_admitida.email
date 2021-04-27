@@ -1,0 +1,20 @@
+{% block subject %}Admisión de la memoria «{{proyecto.titulo}}»{% endblock %}
+{% block plain %}
+{% if coordinador.sexo == 'F' %}
+Estimada {{coordinador.full_name}}:
+{% elif coordinador.sexo == 'M' %}
+Estimado {{coordinador.full_name}}:
+{% else %}
+Estimad@ {{coordinador.full_name}}:
+{% endif %}
+
+Habiéndose recibido en este Vicerrectorado autorización para la conclusión de la memoria
+del proyecto  
+«{{proyecto.titulo}}»  
+se ha comprobado, tras las verificaciones oportunas, que la memoria del proyecto cumple
+con todos los requisitos necesarios establecidos en la convocatoria.
+
+Un cordial saludo,  
+    {{vicerrector}}  
+    Vicerrectorado de Política Académica
+{% endblock %}

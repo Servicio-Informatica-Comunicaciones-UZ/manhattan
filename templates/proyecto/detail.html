@@ -123,7 +123,7 @@
     <h3>{% trans 'Memoria' %}</h3>
 
     <p><a href="{%url 'memoria_detail' proyecto.id %}" class="btn btn-info btn-sm">
-      {% if proyecto.estado == 'ACEPTADO' %}
+      {% if proyecto.estado == 'ACEPTADO' or proyecto.estado == 'MEM_NO_ADMITIDA' %}
         <span class="fas fa-pencil-alt" aria-hidden="true"></span>&nbsp; {% trans 'Editar la memoria' %}
       {% else %}
         <span class="far fa-eye" aria-hidden="true"></span>&nbsp; {% trans 'Ver la memoria' %}
