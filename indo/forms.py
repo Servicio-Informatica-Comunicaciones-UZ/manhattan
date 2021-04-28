@@ -2,9 +2,9 @@
 from datetime import date
 
 # Third-party
-from crispy_forms.bootstrap import StrictButton
+from crispy_forms.bootstrap import InlineField, StrictButton
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import ButtonHolder, Layout
+from crispy_forms.layout import ButtonHolder, Div, Fieldset, Layout, Submit
 from django_summernote.fields import SummernoteTextField
 from django_summernote.widgets import SummernoteWidget
 from social_django.models import UserSocialAuth
@@ -211,6 +211,31 @@ class InvitacionForm(forms.ModelForm):
     class Meta:
         fields = ['nip']
         model = ParticipanteProyecto
+
+
+class ProyectoFilterFormHelper(FormHelper):
+    """
+    Formulario para filtrar el listado de todas los proyectos.
+
+    Ver https://django-crispy-forms.readthedocs.io/en/latest/form_helper.html
+    """
+
+    form_class = 'form form-inline'
+    form_id = 'proyecto-search-form'
+    form_method = 'GET'
+    form_tag = True
+    html5_required = True
+    layout = Layout(
+        Fieldset(
+            '<span class="fa fa-search"></span> ' + str(_('Filtrar proyectos')),
+            Div(
+                InlineField('estado', wrapper_class='col-4'),
+                css_class='row',
+            ),
+            css_class='col-10 border p-3',
+        ),
+        ButtonHolder(Submit('submit', _('Filtrar')), css_class='col-2 text-center'),
+    )
 
 
 class ProyectoForm(forms.ModelForm):

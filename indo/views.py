@@ -45,6 +45,7 @@ from django.views.generic import DetailView, RedirectView, TemplateView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 # Local Django
+from .filters import ProyectoFilter
 from .forms import (
     AsignarCorrectorForm,
     CorreccionForm,
@@ -52,6 +53,7 @@ from .forms import (
     EvaluadorForm,
     InvitacionForm,
     MemoriaRespuestaForm,
+    ProyectoFilterFormHelper,
     ProyectoForm,
     ResolucionForm,
 )
@@ -79,6 +81,7 @@ from .tables import (
     ProyectoCorrectorTable,
 )
 from .tasks import generar_pdf
+from .utils import PagedFilteredTableView
 
 
 class ChecksMixin(UserPassesTestMixin):
@@ -618,7 +621,7 @@ class InvitacionView(LoginRequiredMixin, ChecksMixin, CreateView):
         context['proyecto'] = Proyecto.objects.get(id=proyecto_id)
         return context
 
-    def get_form_kwargs(self, **kwargs):
+    def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         # Update the kwargs for the form init method with ours
         kwargs.update(self.kwargs)  # self.kwargs contains all URL conf params
@@ -1138,9 +1141,12 @@ class ProyectosNotificarView(LoginRequiredMixin, PermissionRequiredMixin, Redire
         )
 
 
-class ProyectoTableView(LoginRequiredMixin, PermissionRequiredMixin, SingleTableView):
-    """Muestra una tabla de todos los proyectos presentados en una convocatoria."""
+class ProyectoTableView(LoginRequiredMixin, PermissionRequiredMixin, PagedFilteredTableView):
+    """Muestra una tabla de todos los proyectos introducidos en una convocatoria."""
 
+    filter_class = ProyectoFilter
+    formhelper_class = ProyectoFilterFormHelper
+    model = Proyecto
     permission_required = 'indo.listar_proyectos'
     permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
     table_class = ProyectosTable
@@ -1154,7 +1160,7 @@ class ProyectoTableView(LoginRequiredMixin, PermissionRequiredMixin, SingleTable
     def get_queryset(self):
         return (
             Proyecto.objects.filter(convocatoria__id=self.kwargs['anyo'])
-            .exclude(estado__in=['BORRADOR', 'ANULADO'])
+            # .exclude(estado__in=['BORRADOR', 'ANULADO'])
             .order_by('programa__nombre_corto', 'linea__nombre', 'titulo')
         )
 

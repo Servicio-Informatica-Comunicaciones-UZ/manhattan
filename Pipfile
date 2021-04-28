@@ -29,6 +29,7 @@ social-auth-app-django = "*"
 social-auth-core = {extras = ["saml"],version = "*"}
 weasyprint = "*"
 zeep = "*"
+django-filter = "*"
 
 [requires]
 python_version = "3"

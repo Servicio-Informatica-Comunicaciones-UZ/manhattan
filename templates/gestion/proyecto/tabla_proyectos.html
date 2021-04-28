@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
-{% load i18n %}
+{% load crispy_forms_tags i18n %}
 {% load render_table from django_tables2 %}
 
-{% block title %}{% trans "Proyectos presentados" %}{% endblock title %}
+{% block title %}{% trans "Proyectos" %} {{ anyo }}{% endblock title %}
 
 {% block content %}
   <div class='container-blanco'>
-    <h1 id="presentados">{% trans "Proyectos presentados" %} <small>{{ anyo }}</small></h1>
+    <h1 id="proyectos">{% trans "Proyectos" %} <small>{{ anyo }}</small></h1>
     <hr />
     <br />
 
@@ -14,8 +14,12 @@
       <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 
       <span class="fas fa-info-circle"></span>
-      {% trans "Aquí puede ver todos los proyectos presentados en esta convocatoria." %}
+      {% trans "Aquí puede ver todos los proyectos introducidos en esta convocatoria." %}
+      {% trans "Puede filtrarlos por su estado." %}
     </div><br />
+
+    {% crispy filter.form filter.form.helper %}
+    <br />
 
     {% render_table table %}
   </div>
