@@ -3,20 +3,65 @@ Proyecto Manhattan
 
 > First we take Manhattan, then we take Berlin.
 
-Manhattan es una aplicación web para gestionar los proyectos de Innovación Docente.
-Está desarrollada con [Django](https://www.djangoproject.com/) 3, mucho ♥, bastante ☕ y un poco de magia 🧙.
+Manhattan es una aplicación web para gestionar los proyectos de Innovación Docente.  
+Está desarrollada con [Django](https://www.djangoproject.com/) 3, mucho ♥, bastante ☕
+y un poco de magia 🧙.
 
-Requisitos
-----------
+Instalación sobre contenedores Docker
+-------------------------------------
 
-1. Python 3.8 o superior. En Debian o Ubuntu instalar los paquetes `python3.8-dev` y `python3-distutils`.
-2. [pip](https://pip.pypa.io/en/stable/installing/), instalador de paquetes de Python.
+1. Crear una base de datos.  
+   En MariaDB/MySQL sería algo así:
+
+   ```sh
+   sudo mysql -u root
+   ```
+
+   ```sql
+   CREATE DATABASE nombre CHARACTER SET='utf8mb4' COLLATE utf8mb4_unicode_ci;
+   GRANT ALL PRIVILEGES ON nombre.* TO usuario@localhost IDENTIFIED BY 'abretesesamo';
+   quit
+   ```
+
+2. Copiar el fichero de ejemplo `.env-sample` a `.env`.  Configurar las bases de datos
+   en el fichero `.env`.
+3. Copiar el fichero de ejemplo `manhattan_project/settings-sample.py` a
+   `manhattan_project/settings.py`.  
+   Configurar en `settings.py` los datos para el correo, la URL del sitio (`SITE_URL`)
+   y los datos para el _Single Sign On_ (SAML).
+4. Levantar los contenedores:
+   `docker-compose up -d`
+5. Crear el usuario administrador:
+
+   ```bash
+   docker-compose exec web ./manage.py createsuperuser
+   docker-compose exec web ./manage.py loaddata seed
+   ```
+
+6. Entrar como administrador en la interfaz web, y añadir usuarios al grupo `Gestores`
+   (incluyendo el superusuario).
+
+7. Activar a los usuarios gestores el atributo `is_staff` para que puedan acceder
+   a la interfaz de administración.
+
+Instalación sobre hierro
+------------------------
+
+### Requisitos
+
+1. **Python 3.8 o superior**. En Debian o Ubuntu:
+
+   ```bash
+    sudo apt-get install python3.8-dev python3-distutils
+    ```
+
+2. **[pip](https://pip.pypa.io/en/stable/installing/)**, instalador de paquetes de Python.
    (Puede venir con la instalación de Python).
-3. [pipenv](https://github.com/pypa/pipenv) para crear un entorno virtual para Python y facilitar el trabajo.
+3. **[pipenv](https://github.com/pypa/pipenv)** para crear un entorno virtual para Python y facilitar el trabajo.
 
    Se puede instalar con `sudo -H pip3 install pipenv`.
 4. Paquetes `fonts-texgyre`, `libxmlsec1-dev`, `pandoc` y `pkg-config`.
-5. Un servidor de bases de datos aceptado por Django (vg PostgreSQL o MariaDB).
+5. **Un servidor de bases de datos** aceptado por Django (vg PostgreSQL o MariaDB).
 
    En Debian/Ubuntu:  
    `apt install postgresql`  
@@ -34,8 +79,7 @@ Requisitos
    innodb_default_row_format = dynamic  # Default on MariaDB >= 10.2.2
    ```
 
-Instalación
------------
+### Instalación
 
 ```shell
 git clone https://gitlab.unizar.es/InnovacionDocente/manhattan.git
@@ -43,8 +87,7 @@ cd manhattan
 pipenv install [--dev]
 ```
 
-Configuración inicial
----------------------
+### Configuración inicial
 
 1. Crear una base de datos.  
    En MariaDB/MySQL sería algo así:
@@ -59,8 +102,10 @@ Configuración inicial
    quit
    ```
 
-2. Copiar el fichero de ejemplo `.env-sample`.  Configurar las bases de datos en el fichero `.env`.
-3. Copiar el fichero de ejemplo `manhattan_project/settings-sample.py`.  
+2. Copiar el fichero de ejemplo `.env-sample` a `.env`.  Configurar las bases de datos
+   en el fichero `.env`.
+3. Copiar el fichero de ejemplo `manhattan_project/settings-sample.py` a
+   `manhattan_project/settings.py`.  
    Configurar en `settings.py` los datos para el correo, y la URL del sitio (`SITE_URL`).
 4. Configurar los datos para el _Single Sign On_ (SAML).
 5. Ejecutar
@@ -79,8 +124,7 @@ Configuración inicial
 7. Activar a los usuarios gestores el atributo `is_staff` para que puedan acceder
    a la interfaz de administración.
 
-Servidor web para desarrollo
-----------------------------
+### Servidor web para desarrollo
 
 ```shell
 pipenv shell
@@ -99,10 +143,11 @@ WHERE is_superuser = 1;
 Nueva convocatoria
 ------------------
 
-Se puede crear una nueva convocatoria desde la interfaz de administración (los usuarios gestores, además de pertenecer
-al grupo `Gestores` deben tener activado el atributo `is_staff` para que puedan acceder a esta interfaz).
+Se puede crear una nueva convocatoria desde la interfaz de administración
+(los usuarios gestores, además de pertenecer al grupo `Gestores` deben tener activado
+el atributo `is_staff` para que puedan acceder a esta interfaz).
 
-Se pueden clonar los maestros de la convocatoria anterior con estas órdenes:
+Se pueden clonar los maestros de la convocatoria anterior con estas órdenes SQL:
 
 ```sql
 -- Programas
@@ -111,7 +156,7 @@ INSERT INTO indo_programa (nombre_corto, nombre_largo, max_ayuda, max_estudiante
 SELECT nombre_corto, nombre_largo, max_ayuda, max_estudiantes, campos,
   requiere_visto_bueno_centro, convocatoria_id + 1, requiere_visto_bueno_estudio
 FROM indo_programa
-WHERE convocatoria_id = 2020
+WHERE convocatoria_id = 2020  -- Reemplazar 2020 por la última convocatoria.
 ORDER BY id;
 
 -- Líneas
