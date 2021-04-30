@@ -4,6 +4,7 @@ from django.urls import include, path
 
 from .views import (
     AyudaView,
+    CorreccionVerView,
     CorrectorAnyadirView,
     CorrectorCesarView,
     CorrectorTableView,
@@ -30,6 +31,7 @@ from .views import (
     ProyectoEvaluacionesTableView,
     ProyectoEvaluadorTableView,
     ProyectoEvaluadorUpdateView,
+    ProyectoMemoriasTableView,
     ProyectoResolucionUpdateView,
     ProyectoTableView,
     ProyectoPresentarView,
@@ -85,6 +87,11 @@ urlpatterns = [
         name='proyecto_corrector_table',
     ),
     path(
+        'gestion/proyectos/<int:anyo>/memorias/',
+        ProyectoMemoriasTableView.as_view(),
+        name='memorias_table',
+    ),
+    path(
         'gestion/proyecto/<int:pk>/editar_corrector/',
         ProyectoCorrectorUpdateView.as_view(),
         name='corrector_update',
@@ -103,6 +110,9 @@ urlpatterns = [
         'gestion/proyecto/<int:pk>/editar_resolucion/',
         ProyectoResolucionUpdateView.as_view(),
         name='resolucion_update',
+    ),
+    path(
+        'gestion/proyecto/<int:pk>/correccion/', CorreccionVerView.as_view(), name='ver_correccion'
     ),
     path(
         'gestion/proyecto/<int:pk>/evaluacion/', EvaluacionVerView.as_view(), name='ver_evaluacion'

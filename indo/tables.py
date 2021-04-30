@@ -64,7 +64,7 @@ class ProyectoCorrectorTable(tables.Table):
     class Meta:
         attrs = {'class': 'table table-striped table-hover cabecera-azul'}
         model = Proyecto
-        fields = ('programa', 'linea', 'titulo', 'corrector__full_name', 'editar')
+        fields = ('programa', 'linea', 'id', 'titulo', 'corrector__full_name', 'editar')
         empty_text = _('Por el momento ningún coordinador ha aceptado ningún proyecto.')
         template_name = 'django_tables2/bootstrap4.html'
         per_page = 20
@@ -91,7 +91,7 @@ class EvaluadoresTable(tables.Table):
     class Meta:
         attrs = {'class': 'table table-striped table-hover cabecera-azul'}
         model = Proyecto
-        fields = ('programa', 'linea', 'titulo', 'evaluador__full_name', 'editar')
+        fields = ('programa', 'linea', 'id', 'titulo', 'evaluador__full_name', 'editar')
         empty_text = _('Por el momento no se ha presentado ninguna solicitud de proyecto.')
         template_name = 'django_tables2/bootstrap4.html'
         per_page = 20
@@ -140,7 +140,7 @@ class EvaluacionProyectosTable(tables.Table):
     class Meta:
         attrs = {'class': 'table table-striped table-hover cabecera-azul'}
         model = Proyecto
-        fields = ('programa', 'linea', 'titulo', 'evaluacion', 'resolucion')
+        fields = ('programa', 'linea', 'id', 'titulo', 'evaluacion', 'resolucion')
         empty_text = _('Por el momento no se ha presentado ninguna solicitud de proyecto.')
         template_name = 'django_tables2/bootstrap4.html'
         per_page = 20
@@ -178,6 +178,76 @@ class MemoriasAsignadasTable(tables.Table):
         per_page = 20
 
 
+class MemoriaProyectosTable(tables.Table):
+    """Muestra los proyectos aceptados y enlaces a su memoria y dictamen del corrector."""
+
+    def render_titulo(self, record):
+        enlace = reverse('proyecto_detail', args=[record.id])
+        return mark_safe(f'<a href="{enlace}">{record.titulo}</a>')
+
+    def render_memoria(self, record):
+        enlace = reverse('memoria_detail', args=[record.id])
+        return mark_safe(
+            f'''<a href="{enlace}" title="{_('Ver la memoria del proyecto')}"
+                aria-label="{_('Ver la memoria del proyecto')}">
+                  <span class="far fa-eye"></span>
+                </a>'''
+        )
+
+    memoria = tables.Column(empty_values=(), orderable=False, verbose_name=_('Memoria'))
+    valoracion = tables.Column(empty_values=(), orderable=False, verbose_name=_('Valoración'))
+    aceptacion_corrector = tables.BooleanColumn(null=True, verbose_name=_('Adm'))
+    es_publicable = tables.BooleanColumn(null=True, verbose_name=_('Pub'))
+
+    def render_valoracion(self, record):
+        enlace = reverse('ver_correccion', args=[record.id])
+        return mark_safe(
+            f'''<a href="{enlace}" title="{_('Ver la valoración del corrector de la memoria')}"
+                aria-label="{_('Ver la valoración del corrector de la memoria')}">
+                  <span class="far fa-eye"></span>
+                </a>'''
+            if record.aceptacion_corrector is not None
+            else '—'
+        )
+
+    def render_aceptacion_corrector(self, record):
+        return mark_safe(
+            f'''<span class="fas fa-check-circle text-success" title="{_('Admitida')}"></span>'''
+            if record.aceptacion_corrector is True
+            else f'''<span class="fas fa-times-circle text-danger" title="{_('No admitida')}">
+                 </span>'''
+            if record.aceptacion_corrector is False
+            else '—'
+        )
+
+    def render_es_publicable(self, record):
+        return mark_safe(
+            f'''<span class="fas fa-check-circle text-success" title="{_('Publicable')}"></span>'''
+            if record.es_publicable is True
+            else f'''<span class="fas fa-times-circle text-danger" title="{_('No publicable')}">
+                 </span>'''
+            if record.es_publicable is False
+            else '—'
+        )
+
+    class Meta:
+        attrs = {'class': 'table table-striped table-hover cabecera-azul'}
+        model = Proyecto
+        fields = (
+            'programa',
+            'linea',
+            'id',
+            'titulo',
+            'memoria',
+            'valoracion',
+            'aceptacion_corrector',
+            'es_publicable',
+        )
+        empty_text = _('Por el momento no se ha aceptado ningún proyecto.')
+        template_name = 'django_tables2/bootstrap4.html'
+        per_page = 20
+
+
 class ProyectosEvaluadosTable(tables.Table):
     """Muestra los proyectos asignados a un usuario evaluador."""
 
@@ -207,7 +277,7 @@ class ProyectosEvaluadosTable(tables.Table):
 
 
 class ProyectosTable(tables.Table):
-    """Muestra las solicitudes de proyecto presentadas."""
+    """Muestra las solicitudes de proyecto introducidas."""
 
     def render_titulo(self, record):
         enlace = reverse('proyecto_detail', args=[record.id])
@@ -225,7 +295,7 @@ class ProyectosTable(tables.Table):
     class Meta:
         attrs = {'class': 'table table-striped table-hover cabecera-azul'}
         model = Proyecto
-        fields = ('programa', 'linea', 'titulo', 'coordinadores', 'estado')
-        empty_text = _('Por el momento no se ha presentado ninguna solicitud de proyecto.')
+        fields = ('programa', 'linea', 'id', 'titulo', 'coordinadores', 'estado')
+        empty_text = _('Por el momento no se ha introducido ninguna solicitud de proyecto.')
         template_name = 'django_tables2/bootstrap4.html'
         per_page = 20

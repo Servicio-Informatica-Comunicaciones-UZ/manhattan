@@ -525,6 +525,7 @@ class Proyecto(models.Model):
             ('editar_aceptacion', _('Puede editar la decisión de la Comisión Evaluadora.')),
             ('listar_correctores', _('Puede ver el listado de correctores.')),
             ('editar_corrector', _('Puede modificar el corrector de un proyecto.')),
+            ('ver_memorias', _('Puede ver el listado y cualquier memoria de proyecto.')),
         ]
 
     def __str__(self):

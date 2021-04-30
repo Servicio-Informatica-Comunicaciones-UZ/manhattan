@@ -75,6 +75,7 @@ from .tables import (
     CorrectoresTable,
     EvaluadoresTable,
     EvaluacionProyectosTable,
+    MemoriaProyectosTable,
     MemoriasAsignadasTable,
     ProyectosEvaluadosTable,
     ProyectosTable,
@@ -211,6 +212,15 @@ class ChecksMixin(UserPassesTestMixin):
 
 class AyudaView(TemplateView):
     template_name = 'ayuda.html'
+
+
+class CorreccionVerView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
+    """Muestra la valoración de la memoria del proyecto indicado."""
+
+    permission_required = 'indo.ver_memorias'
+    permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
+    model = Proyecto
+    template_name = 'gestion/proyecto/correccion.html'
 
 
 class MemoriaCorreccionUpdateView(LoginRequiredMixin, ChecksMixin, UpdateView):
@@ -870,8 +880,10 @@ class MemoriaDetailView(LoginRequiredMixin, ChecksMixin, TemplateView):
     """
 
     def test_func(self):
-        return self.es_coordinador(self.kwargs['pk']) or self.es_corrector_del_proyecto(
-            self.kwargs['pk']
+        return (
+            self.es_coordinador(self.kwargs['pk'])
+            or self.es_corrector_del_proyecto(self.kwargs['pk'])
+            or self.request.user.has_perm('indo.ver_memorias')
         )
 
 
@@ -1050,16 +1062,18 @@ class ProyectoEvaluacionesTableView(LoginRequiredMixin, PermissionRequiredMixin,
         convocatoria = Convocatoria.objects.get(id=self.kwargs.get('anyo'))
 
         hitos = [
-            'fecha_max_alegaciones',
             'fecha_max_aceptacion_resolucion',
-            'fecha_max_memorias',
-            'fecha_max_gastos',
+            'fecha_max_alegaciones',
         ]
         for hito in hitos:
             if not getattr(convocatoria, hito):
                 fecha_faltante = convocatoria._meta.get_field(hito).verbose_name
                 messages.warning(
-                    request, _(f'Recuerde introducir en la convocatoria la {fecha_faltante}.')
+                    request,
+                    _(
+                        f'Recuerde introducir en la convocatoria la {fecha_faltante}'
+                        ' desde el menú Gestión → Administrar convocatorias.'
+                    ),
                 )
         return super().get(request, *args, **kwargs)
 
@@ -1072,6 +1086,46 @@ class ProyectoEvaluacionesTableView(LoginRequiredMixin, PermissionRequiredMixin,
         return (
             Proyecto.objects.filter(convocatoria__id=self.kwargs['anyo'])
             .exclude(estado__in=['BORRADOR', 'ANULADO'])
+            .order_by('programa__nombre_corto', 'linea__nombre', 'titulo')
+        )
+
+
+class ProyectoMemoriasTableView(LoginRequiredMixin, PermissionRequiredMixin, SingleTableView):
+    """Muestra los proyectos aceptados y enlaces a su memoria y dictamen del corrector."""
+
+    permission_required = 'indo.ver_memorias'
+    permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
+    table_class = MemoriaProyectosTable
+    template_name = 'gestion/proyecto/tabla_memorias.html'
+
+    def get(self, request, *args, **kwargs):
+        convocatoria = Convocatoria.objects.get(id=self.kwargs.get('anyo'))
+
+        hitos = [
+            'fecha_max_memorias',
+            'fecha_max_gastos',
+        ]
+        for hito in hitos:
+            if not getattr(convocatoria, hito):
+                fecha_faltante = convocatoria._meta.get_field(hito).verbose_name
+                messages.warning(
+                    request,
+                    _(
+                        f'Recuerde introducir en la convocatoria la {fecha_faltante}'
+                        ' desde el menú Gestión → Administrar convocatorias.'
+                    ),
+                )
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['anyo'] = self.kwargs['anyo']
+        return context
+
+    def get_queryset(self):
+        return (
+            Proyecto.objects.filter(convocatoria__id=self.kwargs['anyo'])
+            .filter(aceptacion_coordinador=True)
             .order_by('programa__nombre_corto', 'linea__nombre', 'titulo')
         )
 
@@ -1151,6 +1205,27 @@ class ProyectoTableView(LoginRequiredMixin, PermissionRequiredMixin, PagedFilter
     permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
     table_class = ProyectosTable
     template_name = 'gestion/proyecto/tabla_proyectos.html'
+
+    def get(self, request, *args, **kwargs):
+        convocatoria = Convocatoria.objects.get(id=self.kwargs.get('anyo'))
+
+        hitos = [
+            'fecha_min_solicitudes',
+            'fecha_max_solicitudes',
+            'fecha_max_aceptos',
+            'fecha_max_visto_buenos',
+        ]
+        for hito in hitos:
+            if not getattr(convocatoria, hito):
+                fecha_faltante = convocatoria._meta.get_field(hito).verbose_name
+                messages.warning(
+                    request,
+                    _(
+                        f'Recuerde introducir en la convocatoria la {fecha_faltante}'
+                        ' en el menú Gestión → Administrar convocatorias.'
+                    ),
+                )
+        return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

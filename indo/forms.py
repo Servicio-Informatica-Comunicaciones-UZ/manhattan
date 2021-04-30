@@ -221,13 +221,13 @@ class ProyectoFilterFormHelper(FormHelper):
     """
 
     form_class = 'form form-inline'
-    form_id = 'proyecto-search-form'
+    form_id = 'proyecto-filter-form'
     form_method = 'GET'
     form_tag = True
     html5_required = True
     layout = Layout(
         Fieldset(
-            '<span class="fa fa-search"></span> ' + str(_('Filtrar proyectos')),
+            '<span class="fas fa-filter"></span> ' + str(_('Filtrar proyectos')),
             Div(
                 InlineField('estado', wrapper_class='col-4'),
                 css_class='row',
