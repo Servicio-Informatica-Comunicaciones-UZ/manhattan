@@ -441,7 +441,7 @@ class ProyectoAceptarView(LoginRequiredMixin, ChecksMixin, SuccessMessageMixin, 
 
         if aceptacion == 'false':
             proyecto.estado = 'RECHAZADO'
-        elif aceptacion:
+        elif aceptacion == 'true':
             proyecto.estado = 'ACEPTADO'
         proyecto.save()
 
@@ -454,7 +454,23 @@ class ProyectoAceptarView(LoginRequiredMixin, ChecksMixin, SuccessMessageMixin, 
         return reverse_lazy('proyecto_detail', args=[self.object.id])
 
     def test_func(self):
-        # TODO: Comprobar estado del proyecto, fecha.
+        proyecto = get_object_or_404(Proyecto, pk=self.kwargs['pk'])
+        if proyecto.estado != 'APROBADO':
+            self.permission_denied_message = _(
+                f'''El estado actual del proyecto ({proyecto.get_estado_display()})
+                no permite aceptar/rechazar las condiciones.'''
+            )
+            return False
+
+        fecha_limite = proyecto.convocatoria.fecha_max_aceptacion_resolucion
+        if date.today() > fecha_limite:
+            fecha_limite_str = localize(fecha_limite)
+            self.permission_denied_message = _(
+                f'''Se ha superado la fecha límite ({fecha_limite_str})
+                 para aceptar/rechazar las condiciones.'''
+            )
+            return False
+
         return self.es_coordinador(self.kwargs['pk'])
 
 
@@ -642,7 +658,16 @@ class InvitacionView(LoginRequiredMixin, ChecksMixin, CreateView):
         return reverse_lazy('proyecto_detail', kwargs={'pk': self.kwargs['proyecto_id']})
 
     def test_func(self):
-        # TODO: Comprobar estado del proyecto, fecha.
+        proyecto = get_object_or_404(Proyecto, pk=self.kwargs['pk'])
+        fecha_limite = proyecto.convocatoria.fecha_max_aceptos
+        if date.today() > fecha_limite:
+            fecha_limite_str = localize(fecha_limite)
+            self.permission_denied_message = _(
+                f'''Se ha superado la fecha límite ({fecha_limite_str})
+                 para que los invitados puedan aceptar participar en el proyecto.'''
+            )
+            return False
+
         return self.es_coordinador(self.kwargs['proyecto_id']) or self.request.user.has_perm(
             'indo.editar_proyecto'
         )
@@ -1061,10 +1086,7 @@ class ProyectoEvaluacionesTableView(LoginRequiredMixin, PermissionRequiredMixin,
     def get(self, request, *args, **kwargs):
         convocatoria = Convocatoria.objects.get(id=self.kwargs.get('anyo'))
 
-        hitos = [
-            'fecha_max_aceptacion_resolucion',
-            'fecha_max_alegaciones',
-        ]
+        hitos = ('fecha_max_aceptacion_resolucion', 'fecha_max_alegaciones')
         for hito in hitos:
             if not getattr(convocatoria, hito):
                 fecha_faltante = convocatoria._meta.get_field(hito).verbose_name
@@ -1101,10 +1123,7 @@ class ProyectoMemoriasTableView(LoginRequiredMixin, PermissionRequiredMixin, Sin
     def get(self, request, *args, **kwargs):
         convocatoria = Convocatoria.objects.get(id=self.kwargs.get('anyo'))
 
-        hitos = [
-            'fecha_max_memorias',
-            'fecha_max_gastos',
-        ]
+        hitos = ('fecha_max_memorias', 'fecha_max_gastos')
         for hito in hitos:
             if not getattr(convocatoria, hito):
                 fecha_faltante = convocatoria._meta.get_field(hito).verbose_name
@@ -1209,12 +1228,12 @@ class ProyectoTableView(LoginRequiredMixin, PermissionRequiredMixin, PagedFilter
     def get(self, request, *args, **kwargs):
         convocatoria = Convocatoria.objects.get(id=self.kwargs.get('anyo'))
 
-        hitos = [
+        hitos = (
             'fecha_min_solicitudes',
             'fecha_max_solicitudes',
             'fecha_max_aceptos',
             'fecha_max_visto_buenos',
-        ]
+        )
         for hito in hitos:
             if not getattr(convocatoria, hito):
                 fecha_faltante = convocatoria._meta.get_field(hito).verbose_name

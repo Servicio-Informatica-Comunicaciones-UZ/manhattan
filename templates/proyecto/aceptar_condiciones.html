@@ -26,7 +26,8 @@
     sin financiación.
   {% endif %}</p>
 
-  {% if proyecto.estado == 'APROBADO' %}
+  {% now "Y-m-d" as fecha_actual %}
+  {% if proyecto.estado == 'APROBADO' and fecha_actual <= proyecto.convocatoria.fecha_max_aceptacion_resolucion|date:"Y-m-d" %}
   <form action="" method="post">
     {% csrf_token %}
 
