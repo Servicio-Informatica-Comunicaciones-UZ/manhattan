@@ -643,8 +643,8 @@ class InvitacionView(LoginRequiredMixin, ChecksMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        proyecto_id = self.kwargs['proyecto_id']
-        context['proyecto'] = Proyecto.objects.get(id=proyecto_id)
+        proyecto = get_object_or_404(Proyecto, pk=kwargs['proyecto_id'])
+        context['proyecto'] = proyecto
         return context
 
     def get_form_kwargs(self):
@@ -1523,6 +1523,21 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
             )
             or self.request.user.has_perm('indo.editar_proyecto')
         )
+
+
+class ProyectoVerCondicionesView(LoginRequiredMixin, ChecksMixin, TemplateView):
+    """Muestra las condiciones aceptadas/rechazadas por el coordinador de un proyecto"""
+
+    template_name = 'proyecto/aceptar_condiciones.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        proyecto = get_object_or_404(Proyecto, pk=kwargs['pk'])
+        context['proyecto'] = proyecto
+        return context
+
+    def test_func(self):
+        return self.es_coordinador(self.kwargs['pk'])
 
 
 class ProyectosUsuarioView(LoginRequiredMixin, TemplateView):

@@ -107,16 +107,23 @@
   {% if proyecto.aceptacion_comision %}
     <h3>{% trans 'Aceptación de las condiciones' %}</h3>
 
-    <p><a href="{% url 'proyecto_aceptar' proyecto.id %}" class="btn btn-info btn-sm">
-      <span aria-hidden="true" class="far fa-handshake"></span>&nbsp;
+    <p>
       {% if proyecto.aceptacion_coordinador is None %}
-        {% trans 'Aceptar/Rechazar' %}
-      {% elif proyecto.aceptacion_coordinador %}
-        {% trans 'Ver condiciones aceptadas' %}
+        <a href="{% url 'proyecto_aceptar' proyecto.id %}" class="btn btn-info btn-sm">
+          <span aria-hidden="true" class="far fa-handshake"></span>&nbsp;
+          {% trans 'Aceptar/Rechazar' %}
+        </a>
       {% else %}
-        {% trans 'Ver condiciones rechazadas' %}
+        <a href="{% url 'proyecto_ver_condiciones' proyecto.id %}" class="btn btn-info btn-sm">
+          <span aria-hidden="true" class="far fa-handshake"></span>&nbsp;
+          {% if proyecto.aceptacion_coordinador %}
+            {% trans 'Ver condiciones aceptadas' %}
+          {% else %}
+            {% trans 'Ver condiciones rechazadas' %}
+          {% endif %}
+        </a>
       {% endif %}
-    </a></p>
+    </p>
   {% endif %}
 
   {% if proyecto.aceptacion_coordinador %}

@@ -36,6 +36,7 @@ from .views import (
     ProyectoTableView,
     ProyectoPresentarView,
     ProyectoUpdateFieldView,
+    ProyectoVerCondicionesView,
     ProyectosEvaluadosTableView,
     ProyectosNotificarView,
     ProyectosUsuarioView,
@@ -160,6 +161,11 @@ urlpatterns = [
         'proyecto/<int:pk>/aceptar-condiciones/',
         ProyectoAceptarView.as_view(),
         name='proyecto_aceptar',
+    ),
+    path(
+        'proyecto/<int:pk>/ver-condiciones/',
+        ProyectoVerCondicionesView.as_view(),
+        name='proyecto_ver_condiciones',
     ),
     path('proyecto/<int:pk>/anular/', ProyectoAnularView.as_view(), name='proyecto_anular'),
     path(

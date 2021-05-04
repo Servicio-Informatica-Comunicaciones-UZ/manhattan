@@ -26,6 +26,7 @@
     sin financiación.
   {% endif %}</p>
 
+  {# Esta plantilla es usada por ProyectoVerCondicionesView y ProyectoAceptarView #}
   {% now "Y-m-d" as fecha_actual %}
   {% if proyecto.estado == 'APROBADO' and fecha_actual <= proyecto.convocatoria.fecha_max_aceptacion_resolucion|date:"Y-m-d" %}
   <form action="" method="post">
