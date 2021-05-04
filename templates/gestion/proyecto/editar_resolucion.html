@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n %}
+{% load crispy_forms_tags i18n %}
 {% block title %}{% trans 'Actualizar la resolución de la Comisión sobre el proyecto' %}{% endblock title %}
 {% block description %}{% trans 'Actualizar la resolución de la Comisión sobre el proyecto' %}{% endblock description %}
 
@@ -36,7 +36,7 @@
     <p><label>Proyecto:</label> {{ proyecto.titulo }}</p>
     <form action="" method="post">
         {% csrf_token %}
-        {{ form.as_p }}
+        {{ form | crispy }}
         <br style="clear: both;" />
         <div class="btn-group" role="group" aria-label="Botones">
             <a href="{% url 'evaluaciones_table' proyecto.convocatoria_id %}" class="btn btn-info">
