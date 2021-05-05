@@ -658,7 +658,7 @@ class InvitacionView(LoginRequiredMixin, ChecksMixin, CreateView):
         return reverse_lazy('proyecto_detail', kwargs={'pk': self.kwargs['proyecto_id']})
 
     def test_func(self):
-        proyecto = get_object_or_404(Proyecto, pk=self.kwargs['pk'])
+        proyecto = get_object_or_404(Proyecto, pk=self.kwargs['proyecto_id'])
         fecha_limite = proyecto.convocatoria.fecha_max_aceptos
         if date.today() > fecha_limite:
             fecha_limite_str = localize(fecha_limite)
@@ -819,7 +819,24 @@ class ProyectoCreateView(LoginRequiredMixin, ChecksMixin, CreateView):
         registro.save()
 
     def test_func(self):
-        # TODO: Comprobar fecha
+        convocatoria = Convocatoria(date.today().year)
+        fecha_minima = convocatoria.fecha_min_solicitudes
+        if date.today() < fecha_minima:
+            fecha_limite_str = localize(fecha_minima)
+            self.permission_denied_message = _(
+                f'''El plazo de solicitudes se abrirá el {fecha_limite_str}.'''
+            )
+            return False
+
+        fecha_maxima = convocatoria.fecha_max_solicitudes
+        if date.today() > fecha_maxima:
+            fecha_limite_str = localize(fecha_maxima)
+            self.permission_denied_message = _(
+                f'''Se ha superado la fecha límite ({fecha_limite_str})
+                 para presentar solicitudes.'''
+            )
+            return False
+
         return self.es_pas_o_pdi()
 
 
@@ -932,27 +949,6 @@ class MemoriaPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
     def post(self, request, *args, **kwargs):
         proyecto_id = kwargs.get('pk')
         proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
-        if proyecto.estado not in (
-            'ACEPTADO',
-            'MEM_NO_ADMITIDA',
-        ):
-            messages.error(
-                request,
-                _(
-                    f'El estado actual del proyecto ({proyecto.get_estado_display()})'
-                    ' no permite presentar memorias.'
-                ),
-            )
-            return super().post(request, *args, **kwargs)
-
-        fecha_limite = proyecto.convocatoria.fecha_max_memorias
-        if date.today() > fecha_limite:
-            fecha_limite_str = localize(fecha_limite)
-            messages.error(
-                request,
-                _(f'Se ha superado la fecha límite ({fecha_limite_str}) para presentar memorias.'),
-            )
-            return super().post(request, *args, **kwargs)
 
         proyecto.estado = 'MEM_PRESENTADA'
         # Si la memoria ya había sido valorada por el corrector, rechazada, y se está subsanando:
@@ -986,6 +982,23 @@ class MemoriaPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
         return super().post(request, *args, **kwargs)
 
     def test_func(self):
+        proyecto = get_object_or_404(Proyecto, pk=self.kwargs.get('pk'))
+        if proyecto.estado not in ('ACEPTADO', 'MEM_NO_ADMITIDA'):
+            self.permission_denied_message = _(
+                f'''El estado actual del proyecto ({proyecto.get_estado_display()})
+                no permite modificar la memoria.'''
+            )
+            return False
+
+        fecha_maxima = proyecto.convocatoria.fecha_max_memorias
+        if date.today() > fecha_maxima:
+            fecha_limite_str = localize(fecha_maxima)
+            self.permission_denied_message = _(
+                f'''Se ha superado la fecha límite ({fecha_limite_str})
+                 para presentar memorias.'''
+            )
+            return False
+
         return self.es_coordinador(self.kwargs['pk'])
 
 
@@ -1006,7 +1019,16 @@ class MemoriaUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
         return reverse_lazy('memoria_detail', args=[self.object.proyecto_id])
 
     def test_func(self):
-        # TODO: Comprobar estado del proyecto, fecha.
+        proyecto = get_object_or_404(Proyecto, pk=self.kwargs.get('proyecto_id'))
+        fecha_maxima = proyecto.convocatoria.fecha_max_memorias
+        if date.today() > fecha_maxima:
+            fecha_limite_str = localize(fecha_maxima)
+            self.permission_denied_message = _(
+                f'''Se ha superado la fecha límite ({fecha_limite_str})
+                 para presentar memorias.'''
+            )
+            return False
+
         return self.es_coordinador(self.kwargs['proyecto_id']) or self.request.user.has_perm(
             'indo.editar_proyecto'
         )
@@ -1273,8 +1295,6 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
         proyecto_id = kwargs.get('pk')
         proyecto = Proyecto.objects.get(pk=proyecto_id)
 
-        # TODO ¿Chequear el estado actual del proyecto?
-
         num_equipos = self.request.user.get_num_equipos(proyecto.convocatoria_id)
         num_max_equipos = proyecto.convocatoria.num_max_equipos
         if num_equipos >= num_max_equipos:
@@ -1438,7 +1458,32 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
             )
 
     def test_func(self):
-        # TODO: Comprobar fecha
+        proyecto = get_object_or_404(Proyecto, pk=self.kwargs['pk'])
+
+        if proyecto.estado != 'BORRADOR':
+            self.permission_denied_message = _(
+                f'''El estado actual del proyecto ({proyecto.get_estado_display()})
+                no permite presentar la solicitud.'''
+            )
+            return False
+
+        fecha_minima = proyecto.convocatoria.fecha_min_solicitudes
+        if date.today() < fecha_minima:
+            fecha_limite_str = localize(fecha_minima)
+            self.permission_denied_message = _(
+                f'''El plazo de solicitudes se abrirá el {fecha_limite_str}.'''
+            )
+            return False
+
+        fecha_maxima = proyecto.convocatoria.fecha_max_solicitudes
+        if date.today() > fecha_maxima:
+            fecha_limite_str = localize(fecha_maxima)
+            self.permission_denied_message = _(
+                f'''Se ha superado la fecha límite ({fecha_limite_str})
+                 para presentar solicitudes.'''
+            )
+            return False
+
         return self.es_coordinador(self.kwargs['pk'])
 
 
