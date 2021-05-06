@@ -571,7 +571,8 @@ class ProyectoEvaluadorUpdateView(LoginRequiredMixin, PermissionRequiredMixin, U
         if advertencia:
             messages.warning(request, advertencia)
         nip_evaluadores = [str(nip) for nip in nip_evaluadores]
-        # nip_evaluadores = ['136040', '327618', '329639', '370109']  # XXX - Desarrollo
+        # XXX - Desarrollo
+        # nip_evaluadores = ['136040', '327618', '329639', '370109', '408704', '181785']
 
         # Creamos los usuarios que no existan ya en la aplicación.
         evaluadores = Group.objects.get(name='Evaluadores')
@@ -1348,7 +1349,6 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
         proyecto.estado = 'SOLICITADO'
         proyecto.save()
 
-        # TODO Modificar detail.html para no mostrar botones de edición/presentación
         messages.success(request, _('Su solicitud de proyecto ha sido presentada.'))
         return super().post(request, *args, **kwargs)
 
@@ -1484,13 +1484,35 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
             )
             return False
 
+            self.permission_denied_message = _(
+                f'''El estado actual del proyecto ({proyecto.get_estado_display()})
+                no permite presentar la solicitud.'''
+            )
+            return False
+
+        fecha_minima = proyecto.convocatoria.fecha_min_solicitudes
+        if date.today() < fecha_minima:
+            fecha_limite_str = localize(fecha_minima)
+            self.permission_denied_message = _(
+                f'''El plazo de solicitudes se abrirá el {fecha_limite_str}.'''
+            )
+            return False
+
+        fecha_maxima = proyecto.convocatoria.fecha_max_solicitudes
+        if date.today() > fecha_maxima:
+            fecha_limite_str = localize(fecha_maxima)
+            self.permission_denied_message = _(
+                f'''Se ha superado la fecha límite ({fecha_limite_str})
+                 para presentar solicitudes.'''
+            )
+            return False
+
         return self.es_coordinador(self.kwargs['pk'])
 
 
 class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
     """Actualiza un campo de una solicitud de proyecto."""
 
-    # TODO: Comprobar estado/fecha
     model = Proyecto
     template_name = 'proyecto/update.html'
 
