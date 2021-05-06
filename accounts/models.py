@@ -74,11 +74,19 @@ class CustomUser(AbstractUser):
         )
 
     @property
+    def id_nk_centros(self):
+        """Devuelve una lista con los ID de los centros del usuario."""
+        return set(json.loads(self.centro_id_nks)) if self.centro_id_nks else []
+
+    @property
+    def centros(self):
+        """Devuelve una lista con los centros del usuario."""
+        return [get_object_or_404(Centro, academico_id_nk=id_nk) for id_nk in self.id_nk_centros]
+
+    @property
     def nombres_centros(self):
         """Devuelve una cadena con los nombres de los centros del usuario."""
-        id_nk_centros = json.loads(self.centro_id_nks) if self.centro_id_nks else []
-        centros = [get_object_or_404(Centro, academico_id_nk=id_nk) for id_nk in id_nk_centros]
-        return ', '.join([centro.nombre for centro in centros])
+        return ', '.join([centro.nombre for centro in self.centros])
 
     @property
     def id_nk_departamentos(self):

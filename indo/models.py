@@ -37,7 +37,9 @@ class Centro(models.Model):
     emails_coords_pou = models.CharField(
         _('emails de los coordinadores POU'), blank=True, max_length=1023, null=True
     )
-    unidad_gasto = models.CharField(_('unidad de gasto'), blank=True, max_length=3, null=True)
+    unidad_planificacion = models.CharField(
+        _('unidad de planificación'), blank=True, max_length=3, null=True
+    )
     esta_activo = models.BooleanField(_('¿Activo?'), default=False)
 
     class Meta:
@@ -133,7 +135,9 @@ class Departamento(models.Model):
         _('nombre del director'), max_length=255, blank=True, null=True
     )
     email_director = models.EmailField(_('email del director'), blank=True, null=True)
-    unidad_gasto = models.CharField(_('unidad de gasto'), blank=True, max_length=3, null=True)
+    unidad_planificacion = models.CharField(
+        _('unidad de planificación'), blank=True, max_length=3, null=True
+    )
 
     class Meta:
         constraints = [
@@ -545,16 +549,28 @@ class Proyecto(models.Model):
         except ParticipanteProyecto.DoesNotExist:
             return None
 
-    def get_unidad_gasto(self):
-        """Devuelve el id de la Unidad de gasto del proyecto"""
-        if self.programa.nombre_corto in ('PIEC', 'PIPOUZ'):
-            return self.centro.unidad_gasto
+    def get_unidad_planificacion(self):
+        """Devuelve el ID de la Unidad de Planificación del proyecto
 
-        return (
-            self.coordinador.departamentos[0].unidad_gasto
-            if self.coordinador.departamentos
-            else None
-        )
+        PIEC, PIPOUZ: UP del centro del proyecto
+        PIIDUZ, PRAUZ, MOOC, PISOC: UP del departamento del coordinador del proyecto
+        PIET: UP del centro del coordinador del proyecto
+        """
+        if self.programa.nombre_corto in ('PIEC', 'PIPOUZ'):
+            return self.centro.unidad_planificacion
+        elif self.programa.nombre_corto in ('PIIDUZ', 'PRAUZ', 'MOOC', 'PISOC'):
+            return (
+                self.coordinador.departamentos[0].unidad_planificacion
+                if self.coordinador.departamentos
+                else None
+            )
+        elif self.programa.nombre_corto == 'PIET':
+            return (
+                self.coordinador.centros[0].unidad_planificacion
+                if self.coordinador.centros
+                else None
+            )
+        return None
 
     @property
     def coordinador(self):
