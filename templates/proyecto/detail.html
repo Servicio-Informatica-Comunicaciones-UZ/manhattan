@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load custom_tags i18n %}
+{% load custom_tags i18n static %}
 
 {% block title %}{% trans 'Solicitud de proyecto' %}: {{ proyecto.titulo }}{% endblock title %}
 
@@ -15,6 +15,10 @@
     </div>
   </div>
   {% endif %}
+
+  {% with 'img/'|concat:proyecto.programa.nombre_corto|concat:'.png' as logo_programa %}
+  <p style='text-align: right;'><img src="{% static logo_programa %}" alt="Logo programa" height="240px" /></p>
+  {% endwith %}
 
   {# DetailView proporciona el objeto de contexto `proyecto` #}
   <h1 id="titulo">{{ proyecto.titulo }}

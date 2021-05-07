@@ -86,3 +86,9 @@ cleaner = bleach.Cleaner(
 @register.filter
 def limpiar(text):
     return mark_safe(cleaner.clean(text))
+
+
+@register.filter
+def concat(arg1, arg2):
+    """Concatenate arg1 and arg2"""
+    return str(arg1) + str(arg2)
