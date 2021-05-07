@@ -1,15 +1,10 @@
 {% extends 'base.html' %}
-{% load custom_tags i18n %}
+{% load custom_tags i18n static %}
 
 {% block title %}{% trans 'Memoria final' %}: {{ proyecto.titulo }}{% endblock title %}
 
 {% block content %}
 <div class="container-blanco">
-  <h1 id="cabecera">{% trans 'Memoria final' %}</h1>
-  <h2><small>{% trans 'Proyectos de Innovación Docente' %} {{proyecto.convocatoria}}</small></h2>
-  <hr />
-  <br />
-
   <div class="alert-info alert fade-in noprint">
     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 
@@ -27,13 +22,21 @@
     {% blocktrans %}En caso de que el corrector rechace la memoria, podrá subsanar sus defectos
     <strong>sólo</strong> mientras esté dentro del plazo de presentación.{% endblocktrans %}
     -->
-    </div>
+  </div>
+
+  {% with logo_programa='img/'|concat:proyecto.programa.nombre_corto|concat:'.png' %}
+  <p style='text-align: right;'><img src="{% static logo_programa %}" alt="Logo programa" height="240" /></p>
+  {% endwith %}
+
+  <h1 id="cabecera">{% trans 'Memoria final' %}</h1>
+  <h2><small>{% trans 'Proyectos de Innovación Docente' %} {{proyecto.convocatoria}}</small></h2>
+  <hr />
   <br />
 
   <h3>1. {% trans 'Identificación del proyecto' %}</h3>
 
   <div class="table-responsive">
-    <table class="table table-hover table-striped table-sm" aria-describedby="datos del proyecto">
+    <table class="table table-hover table-striped table-sm" aria-label="datos del proyecto">
       <tr>
         <th scope="row"><strong>{% trans 'Título' %}</strong>:</th>
         <td>{{ proyecto.titulo }}</td>
@@ -74,7 +77,7 @@
   <div class="table-responsive">
     {% if proyecto.coordinador %}
     <table class="table table-hover table-striped table-sm"
-      aria-describedby="coordinador">
+      aria-label="coordinador">
       <tr>
         <th scope="row" style="font-weight: bold;">{% trans 'Coordinador' %}</th>
         <td>{{ proyecto.coordinador.full_name }}</td>
@@ -95,7 +98,7 @@
     {% endif %}
     {% if proyecto.coordinador_2 %}
     <table class="table table-hover table-striped table-sm"
-      aria-describedby="coordinador 2">
+      aria-label="coordinador 2">
       <tr>
         <th scope="row" style="font-weight: bold;">{% trans 'Coordinador 2' %}</th>
         <td>{{ proyecto.coordinador_2.full_name }}</td>
@@ -126,7 +129,7 @@
 
   <div class="table-responsive">
     <table class="table table-hover table-striped table-sm cabecera-azul"
-      aria-describedby="participantes">
+      aria-label="participantes">
       <thead>
         <tr>
           <th scope="col">{% trans "Nombre y apellidos" %}</th>

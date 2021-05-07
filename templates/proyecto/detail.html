@@ -6,7 +6,8 @@
 {% block content %}
 <div class="container-blanco">
   {% if permitir_edicion and proyecto.en_borrador %}
-  <div class="alert alert-info">
+  <div class="alert alert-info fade-in noprint">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
     <span class="fas fa-info-circle"></span>
     <div>
       {% trans 'Puede editar su solicitud tantas veces como desee.' %}<br />
@@ -16,8 +17,8 @@
   </div>
   {% endif %}
 
-  {% with 'img/'|concat:proyecto.programa.nombre_corto|concat:'.png' as logo_programa %}
-  <p style='text-align: right;'><img src="{% static logo_programa %}" alt="Logo programa" height="240px" /></p>
+  {% with logo_programa='img/'|concat:proyecto.programa.nombre_corto|concat:'.png' %}
+  <p style='text-align: right;'><img src="{% static logo_programa %}" alt="Logo programa" height="240" /></p>
   {% endwith %}
 
   {# DetailView proporciona el objeto de contexto `proyecto` #}
@@ -31,7 +32,7 @@
   <br />
 
   <div class="table-responsive">
-    <table class="table table-hover table-striped table-sm" aria-describedby="titulo">
+    <table class="table table-hover table-striped table-sm" aria-label="titulo">
       <tr>
         <th scope="row"><strong>{% trans 'ID del proyecto' %}</strong>:</th>
         <td>{{ proyecto.id }}</td>
@@ -145,7 +146,7 @@
   <h3 id="invitaciones">{% trans 'Invitaciones' %}</h3>
   {% if invitados %}
   <div class="table-responsive">
-    <table class="table table-hover table-striped table-sm cabecera-azul" aria-describedby="invitaciones">
+    <table class="table table-hover table-striped table-sm cabecera-azul" aria-label="invitaciones">
       <thead>
         <tr>
           <th scope="col">{% trans "Usuario" %}</th>
@@ -190,7 +191,7 @@
   <h3 id="participantes">{% trans 'Participantes' %}</h3>
   {% if participantes %}
   <div class="table-responsive">
-    <table class="table table-hover table-striped table-sm cabecera-azul" aria-describedby="participantes">
+    <table class="table table-hover table-striped table-sm cabecera-azul" aria-label="participantes">
       <thead>
         <tr>
           <th scope="col">{% trans "Usuario" %}</th>
