@@ -530,6 +530,7 @@ class Proyecto(models.Model):
             ('listar_correctores', _('Puede ver el listado de correctores.')),
             ('editar_corrector', _('Puede modificar el corrector de un proyecto.')),
             ('ver_memorias', _('Puede ver el listado y cualquier memoria de proyecto.')),
+            ('ver_up', _('Puede ver el listado de UP y gastos de los proyectos.')),
         ]
 
     def __str__(self):
