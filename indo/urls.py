@@ -36,6 +36,7 @@ from .views import (
     ProyectoTableView,
     ProyectoPresentarView,
     ProyectoUpdateFieldView,
+    ProyectoUPTableView,
     ProyectoVerCondicionesView,
     ProyectosEvaluadosTableView,
     ProyectosNotificarView,
@@ -91,6 +92,11 @@ urlpatterns = [
         'gestion/proyectos/<int:anyo>/memorias/',
         ProyectoMemoriasTableView.as_view(),
         name='memorias_table',
+    ),
+    path(
+        'gestion/proyectos/<int:anyo>/unidades-planificacion/',
+        ProyectoUPTableView.as_view(),
+        name='up_table',
     ),
     path(
         'gestion/proyecto/<int:pk>/editar_corrector/',

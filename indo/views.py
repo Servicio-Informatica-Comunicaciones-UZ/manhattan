@@ -80,6 +80,7 @@ from .tables import (
     ProyectosEvaluadosTable,
     ProyectosTable,
     ProyectoCorrectorTable,
+    ProyectoUPTable,
 )
 from .tasks import generar_pdf
 from .utils import PagedFilteredTableView
@@ -629,6 +630,33 @@ class ProyectoResolucionUpdateView(
 
     def get_success_url(self):
         return reverse_lazy('evaluaciones_table', args=[self.object.convocatoria_id])
+
+
+class ProyectoUPTableView(LoginRequiredMixin, PermissionRequiredMixin, SingleTableView):
+    """Muestra las unidades de planificación de los proyectos, y los gastos autorizados."""
+
+    permission_required = 'indo.ver_up'
+    permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
+    table_class = ProyectoUPTable
+    template_name = 'gestion/proyecto/tabla_up.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['anyo'] = self.kwargs['anyo']
+        return context
+
+    def get_queryset(self):
+        return (
+            Proyecto.objects.filter(convocatoria__id=self.kwargs['anyo'])
+            .filter(aceptacion_coordinador=True)
+            .order_by(
+                'departamento__unidad_planificacion',
+                'centro__unidad_planificacion',
+                'programa__nombre_corto',
+                'linea__nombre',
+                'titulo',
+            )
+        )
 
 
 class HomePageView(TemplateView):

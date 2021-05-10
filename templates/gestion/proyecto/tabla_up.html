@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load render_table from django_tables2 %}
+
+{% block title %}{% trans "Unidades de planificación y gastos de los proyectos" %}{% endblock title %}
+
+{% block content %}
+<div class='container-blanco'>
+  <h1 id="presentados">{% trans "Unidades de planificación y gastos de los proyectos" %} <small>{{ anyo }}</small></h1>
+  <hr />
+  <br />
+
+  <div class="alert-info alert fade-in">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+
+    <span class="fas fa-info-circle"></span>
+    <p>{% trans 'En esta página puede ver para cada proyecto:' %}</p>
+    <ul>
+      <li>{% trans 'Su unidad de planificación.' %}</li>
+      <li>{% trans 'La ayuda concedida y los tipos de gasto autorizados.' %}</li>
+      <!-- li>{% trans 'Descargar una hoja de cálculo con esta información.' %}</li -->
+    </ul>
+  </div><br />
+
+  {% render_table table %}
+
+</div>
+
+{% endblock content %}

@@ -299,3 +299,42 @@ class ProyectosTable(tables.Table):
         empty_text = _('Por el momento no se ha introducido ninguna solicitud de proyecto.')
         template_name = 'django_tables2/bootstrap4.html'
         per_page = 20
+
+
+class ProyectoUPTable(tables.Table):
+    """Muestra los proyectos aceptados, su Unidad de Planificación y gastos autorizados."""
+
+    def render_titulo(self, record):
+        enlace = reverse('proyecto_detail', args=[record.id])
+        return mark_safe(f'<a href="{enlace}">{record.titulo}</a>')
+
+    coordinadores = tables.Column(
+        empty_values=(), orderable=False, verbose_name=_('Coordinador(es)')
+    )
+
+    def render_coordinadores(self, record):
+        coordinadores = record.get_coordinadores()
+        enlaces = [f'<a href="mailto:{c.email}">{c.get_full_name()}</a>' for c in coordinadores]
+        return mark_safe(', '.join(enlaces))
+
+    unidad_planificacion = tables.Column(
+        empty_values=(), orderable=False, verbose_name=_('Unidad de planificación')
+    )
+
+    def render_unidad_planificacion(self, record):
+        return record.get_unidad_planificacion() or '—'
+
+    class Meta:
+        attrs = {'class': 'table table-striped table-hover cabecera-azul'}
+        model = Proyecto
+        fields = (
+            'programa',
+            'id',
+            'titulo',
+            'coordinadores',
+            'unidad_planificacion',
+            'ayuda_concedida',
+            'tipo_gasto',
+        )
+        empty_text = _('Por el momento ningún coordinador ha aceptado ningún proyecto.')
+        template_name = 'django_tables2/bootstrap4.html'

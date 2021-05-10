@@ -2,7 +2,7 @@
 import json
 
 # Third-party
-from annoying.functions import get_config
+from annoying.functions import get_config, get_object_or_None
 from requests import Session
 from requests.auth import HTTPBasicAuth
 from requests.exceptions import ConnectionError as RequestConnectionError
@@ -14,7 +14,6 @@ import zeep
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 
 # local Django
@@ -81,7 +80,15 @@ class CustomUser(AbstractUser):
     @property
     def centros(self):
         """Devuelve una lista con los centros del usuario."""
-        return [get_object_or_404(Centro, academico_id_nk=id_nk) for id_nk in self.id_nk_centros]
+        return list(
+            filter(
+                lambda x: x is not None,
+                [
+                    get_object_or_None(Centro, academico_id_nk=id_nk)
+                    for id_nk in self.id_nk_centros
+                ],
+            )
+        )
 
     @property
     def nombres_centros(self):
@@ -96,10 +103,15 @@ class CustomUser(AbstractUser):
     @property
     def departamentos(self):
         """Devuelve una lista con los departamentos del usuario."""
-        return [
-            get_object_or_404(Departamento, academico_id_nk=id_nk)
-            for id_nk in self.id_nk_departamentos
-        ]
+        return list(
+            filter(
+                lambda x: x is not None,
+                [
+                    get_object_or_None(Departamento, academico_id_nk=id_nk)
+                    for id_nk in self.id_nk_departamentos
+                ],
+            )
+        )
 
     @property
     def nombres_departamentos(self):
