@@ -23,25 +23,32 @@ Instalación sobre contenedores Docker
    quit
    ```
 
-2. Copiar el fichero de ejemplo `.env-sample` a `.env`.  Configurar las bases de datos
-   en el fichero `.env`.
-3. Copiar el fichero de ejemplo `manhattan_project/settings-sample.py` a
+   Si el servidor en que se encuentra la base de datos es distinto a donde se alojará la aplicación,
+   comprobar que desde la máquina de la aplicación se pueda acceder a la BD.
+
+2. Clonar el repositorio Git.  
+   `git clone https://gitlab.unizar.es/InnovacionDocente/manhattan.git .`
+3. Copiar el fichero de ejemplo `.env-sample` a `.env`.  Configurar las bases de datos,
+   los _web services_ de Gestión de Identidades y la clave de Django en el fichero `.env`.
+4. Copiar el fichero de ejemplo `manhattan_project/settings-sample.py` a
    `manhattan_project/settings.py`.  
    Configurar en `settings.py` los datos para el correo, la URL del sitio (`SITE_URL`)
    y los datos para el _Single Sign On_ (SAML).
-4. Levantar los contenedores:
+5. En el fichero `Dockerfile` cambiar `UWSGI_UID` y `UWSGI_GID` al usuario y grupo que se desee.
+   En el fichero `docker-compose.yml` cambiar el puerto `published` al que se desee.
+6. Levantar los contenedores:
    `docker-compose up -d`
-5. Crear el usuario administrador:
+7. Crear el usuario administrador:
 
    ```bash
    docker-compose exec web ./manage.py createsuperuser
    docker-compose exec web ./manage.py loaddata seed
    ```
 
-6. Entrar como administrador en la interfaz web, y añadir usuarios al grupo `Gestores`
+8. Entrar como administrador en la interfaz web, y añadir usuarios al grupo `Gestores`
    (incluyendo el superusuario).
 
-7. Activar a los usuarios gestores el atributo `is_staff` para que puedan acceder
+9. Activar a los usuarios gestores el atributo `is_staff` para que puedan acceder
    a la interfaz de administración.
 
 Instalación sobre hierro
