@@ -1520,29 +1520,6 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
             )
             return False
 
-            self.permission_denied_message = _(
-                f'''El estado actual del proyecto ({proyecto.get_estado_display()})
-                no permite presentar la solicitud.'''
-            )
-            return False
-
-        fecha_minima = proyecto.convocatoria.fecha_min_solicitudes
-        if date.today() < fecha_minima:
-            fecha_limite_str = localize(fecha_minima)
-            self.permission_denied_message = _(
-                f'''El plazo de solicitudes se abrirá el {fecha_limite_str}.'''
-            )
-            return False
-
-        fecha_maxima = proyecto.convocatoria.fecha_max_solicitudes
-        if date.today() > fecha_maxima:
-            fecha_limite_str = localize(fecha_maxima)
-            self.permission_denied_message = _(
-                f'''Se ha superado la fecha límite ({fecha_limite_str})
-                 para presentar solicitudes.'''
-            )
-            return False
-
         return self.es_coordinador(self.kwargs['pk'])
 
 
