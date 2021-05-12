@@ -830,7 +830,7 @@ class ProyectoCreateView(LoginRequiredMixin, ChecksMixin, CreateView):
         """
         form = super().get_form(form_class)
         form.instance.user = self.request.user
-        form.instance.convocatoria = Convocatoria(date.today().year)
+        form.instance.convocatoria = Convocatoria.objects.get(pk=date.today().year)
         return form
 
     def _guardar_coordinador(self, proyecto):
@@ -849,7 +849,7 @@ class ProyectoCreateView(LoginRequiredMixin, ChecksMixin, CreateView):
         registro.save()
 
     def test_func(self):
-        convocatoria = Convocatoria(date.today().year)
+        convocatoria = Convocatoria.objects.get(pk=date.today().year)
         fecha_minima = convocatoria.fecha_min_solicitudes
         if date.today() < fecha_minima:
             fecha_limite_str = localize(fecha_minima)
