@@ -144,10 +144,26 @@
               </li>
             {% endif %}
 
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'mis_proyectos' anyo_actual %}">
-                <span class="fas fa-project-diagram"></span> &nbsp;{% trans "Mis proyectos" %}
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href=""
+                id="proyectosMenu"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                <span class="fas fa-project-diagram"></span>&nbsp; {% trans "Proyectos" %}
               </a>
+              <div class="dropdown-menu" aria-labelledby="proyectosMenu">
+                <a class="dropdown-item" href="{% url 'mis_proyectos' anyo_actual %}">
+                  <span class="fas fa-user-tag"></span> &nbsp;{% trans "Mis proyectos" %}
+                </a>
+
+                <a class="dropdown-item" href="{% url 'proyectos_aceptados' anyo_actual %}">
+                  <span class="fas fa-check"></span>&nbsp; {% trans "Proyectos aceptados" %}
+                </a>
+              </div>
             </li>
           {% endif %}
           <li class="nav-item">

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load render_table from django_tables2 %}
+
+{% block title %}{% trans "Proyectos aceptados" %}{% endblock title %}
+
+{% block content %}
+<div class='container-blanco'>
+  <h1 id="presentados">{% trans "Proyectos aceptados" %} <small>{{ anyo }}</small></h1>
+  <hr />
+  <br />
+
+  <div class="alert-info alert fade-in">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+
+    <span class="fas fa-info-circle"></span>
+    <p>{% trans 'En esta página puede ver los proyectos de esta convocatoria que han sido aprobados por la comisión y aceptados por su coordinador.' %}</p>
+  </div><br />
+
+  {% render_table table %}
+
+</div>
+
+{% endblock content %}

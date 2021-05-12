@@ -248,6 +248,31 @@ class MemoriaProyectosTable(tables.Table):
         per_page = 20
 
 
+class ProyectosAceptadosTable(tables.Table):
+    """Muestra los proyectos aceptados, y el centro de su coordinador."""
+
+    def render_titulo(self, record):
+        enlace = reverse('proyecto_ficha', args=[record.id])
+        return mark_safe(f'<a href="{enlace}">{record.titulo}</a>')
+
+    coordinador = tables.Column(orderable=False, verbose_name=_('Coordinador'))
+
+    def render_coordinador(self, record):
+        return record.coordinador.full_name
+
+    centro_coordinador = tables.Column(empty_values=(), orderable=False, verbose_name=_('Centro'))
+
+    def render_centro_coordinador(self, record):
+        return record.coordinador.nombres_centros
+
+    class Meta:
+        attrs = {'class': 'table table-striped table-hover cabecera-azul'}
+        model = Proyecto
+        fields = ('programa', 'id', 'titulo', 'coordinador', 'centro_coordinador')
+        empty_text = _('Por el momento ningún coordinador ha aceptado ningún proyecto.')
+        template_name = 'django_tables2/bootstrap4.html'
+
+
 class ProyectosEvaluadosTable(tables.Table):
     """Muestra los proyectos asignados a un usuario evaluador."""
 

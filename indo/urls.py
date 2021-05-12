@@ -31,6 +31,7 @@ from .views import (
     ProyectoEvaluacionesTableView,
     ProyectoEvaluadorTableView,
     ProyectoEvaluadorUpdateView,
+    ProyectoFichaView,
     ProyectoMemoriasTableView,
     ProyectoResolucionUpdateView,
     ProyectoTableView,
@@ -38,6 +39,7 @@ from .views import (
     ProyectoUpdateFieldView,
     ProyectoUPTableView,
     ProyectoVerCondicionesView,
+    ProyectosAceptadosTableView,
     ProyectosEvaluadosTableView,
     ProyectosNotificarView,
     ProyectosUsuarioView,
@@ -67,6 +69,7 @@ urlpatterns = [
         CorrectorCesarView.as_view(),
         name='corrector_cesar',
     ),
+    # Listados de proyectos
     path('gestion/proyectos/<int:anyo>/', ProyectoTableView.as_view(), name='proyectos_table'),
     path(
         'gestion/proyectos/<int:anyo>/evaluaciones/',
@@ -99,14 +102,15 @@ urlpatterns = [
         name='up_table',
     ),
     path(
-        'gestion/proyecto/<int:pk>/editar_corrector/',
-        ProyectoCorrectorUpdateView.as_view(),
-        name='corrector_update',
-    ),
-    path(
         'gestion/proyectos/<int:anyo>/evaluadores/',
         ProyectoEvaluadorTableView.as_view(),
         name='evaluadores_table',
+    ),
+    # Gestión de un proyecto
+    path(
+        'gestion/proyecto/<int:pk>/editar_corrector/',
+        ProyectoCorrectorUpdateView.as_view(),
+        name='corrector_update',
     ),
     path(
         'gestion/proyecto/<int:pk>/editar_evaluador/',
@@ -124,6 +128,15 @@ urlpatterns = [
     path(
         'gestion/proyecto/<int:pk>/evaluacion/', EvaluacionVerView.as_view(), name='ver_evaluacion'
     ),
+    # Memoria
+    path('memoria/<int:pk>/', MemoriaDetailView.as_view(), name='memoria_detail'),
+    path(
+        'memoria/<int:proyecto_id>/edit/<int:sub_pk>/',
+        MemoriaUpdateFieldView.as_view(),
+        name='memoria_update_field',
+    ),
+    path('memoria/<int:pk>/presentar/', MemoriaPresentarView.as_view(), name='memoria_presentar'),
+    # Participante en proyecto
     path(
         'participante-proyecto/aceptar_invitacion/<int:proyecto_id>/',
         ParticipanteAceptarView.as_view(),
@@ -149,15 +162,10 @@ urlpatterns = [
         ParticipanteDeleteView.as_view(),
         name='participante_delete',
     ),
-    path('memoria/<int:pk>/', MemoriaDetailView.as_view(), name='memoria_detail'),
-    path(
-        'memoria/<int:proyecto_id>/edit/<int:sub_pk>/',
-        MemoriaUpdateFieldView.as_view(),
-        name='memoria_update_field',
-    ),
-    path('memoria/<int:pk>/presentar/', MemoriaPresentarView.as_view(), name='memoria_presentar'),
+    # Proyecto
     path('proyecto/new/', ProyectoCreateView.as_view(), name='proyecto_new'),
     path('proyecto/<int:pk>/', ProyectoDetailView.as_view(), name='proyecto_detail'),
+    path('proyecto/<int:pk>/ficha', ProyectoFichaView.as_view(), name='proyecto_ficha'),
     path(
         'proyecto/<int:pk>/edit/<campo>/',
         ProyectoUpdateFieldView.as_view(),
@@ -178,7 +186,12 @@ urlpatterns = [
         'proyecto/<int:pk>/presentar/', ProyectoPresentarView.as_view(), name='proyecto_presentar'
     ),
     path(
-        'proyecto/mis-proyectos/<int:anyo>/', ProyectosUsuarioView.as_view(), name='mis_proyectos'
+        'proyectos/<int:anyo>/mis-proyectos/', ProyectosUsuarioView.as_view(), name='mis_proyectos'
+    ),
+    path(
+        'proyectos/<int:anyo>/aceptados/',
+        ProyectosAceptadosTableView.as_view(),
+        name='proyectos_aceptados',
     ),
 ]
 

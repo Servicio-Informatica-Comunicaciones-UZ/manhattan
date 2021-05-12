@@ -77,6 +77,7 @@ from .tables import (
     EvaluacionProyectosTable,
     MemoriaProyectosTable,
     MemoriasAsignadasTable,
+    ProyectosAceptadosTable,
     ProyectosEvaluadosTable,
     ProyectosTable,
     ProyectoCorrectorTable,
@@ -1163,6 +1164,13 @@ class ProyectoEvaluacionesTableView(LoginRequiredMixin, PermissionRequiredMixin,
         )
 
 
+class ProyectoFichaView(DetailView):
+    """Muestra una ficha con la información básica del proyecto."""
+
+    model = Proyecto
+    template_name = 'proyecto/ficha.html'
+
+
 class ProyectoMemoriasTableView(LoginRequiredMixin, PermissionRequiredMixin, SingleTableView):
     """Muestra los proyectos aceptados y enlaces a su memoria y dictamen del corrector."""
 
@@ -1633,6 +1641,25 @@ class ProyectoVerCondicionesView(LoginRequiredMixin, ChecksMixin, TemplateView):
 
     def test_func(self):
         return self.es_coordinador(self.kwargs['pk'])
+
+
+class ProyectosAceptadosTableView(SingleTableView):
+    """Lista los proyectos aceptados en una convocatoria, con su centro."""
+
+    table_class = ProyectosAceptadosTable
+    template_name = 'proyecto/aceptados.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['anyo'] = self.kwargs['anyo']
+        return context
+
+    def get_queryset(self):
+        return (
+            Proyecto.objects.filter(convocatoria__id=self.kwargs['anyo'])
+            .filter(aceptacion_coordinador=True)
+            .order_by('programa__nombre_corto', 'linea__nombre', 'titulo')
+        )
 
 
 class ProyectosUsuarioView(LoginRequiredMixin, TemplateView):
