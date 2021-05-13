@@ -40,11 +40,14 @@ def alert_style(tag):
 
 
 @register.simple_tag
-def lord_url():
-    """Devuelve la URL del Single Sign On."""
+def sso_url():
+    """Devuelve la URL del Single Sign On.
+
+    Se debe indicar el IdP a usar, definido en `settings.py`.
+    """
     return '{base}?{params}'.format(
         base=reverse('social:begin', kwargs={'backend': 'saml'}),
-        params=urllib.parse.urlencode({'next': '/', 'idp': 'lord'}),
+        params=urllib.parse.urlencode({'next': '/', 'idp': 'sir'}),
     )
 
 

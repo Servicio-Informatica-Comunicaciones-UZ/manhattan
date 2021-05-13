@@ -192,14 +192,17 @@ SOCIAL_AUTH_SAML_SUPPORT_CONTACT = {
     'givenName': 'Vicerrectorado de Política Académica',
     'emailAddress': 'innova.docen@manhattan.local',
 }
-# Si se cambia el backend de autenticación, actualizar clean() en InvitacionForm
+# Si se cambia el Identity Provider:
+# * Modificar `sso_url()` en `indo/templatetags/custom_tags.py`
+# * Modificar `InvitacionForm` en `indo/forms.py
+# * Actualizar la columna `uid` en la tabla `social_auth_usersocialauth`
 SOCIAL_AUTH_SAML_ENABLED_IDPS = {
     'lord': {
         'entity_id': 'https://FIXME.idp.com/saml2/idp/metadata.php',
         'url': 'https://FIXME.idp.com/saml2/idp/SSOService.php',
         'slo_url': 'https://FIXME.idp.com/saml2/idp/SingleLogoutService.php',
         'x509cert': 'Lovely spam, wonderful spam',
-        'attr_user_permanent_id': 'uid',
+        # 'attr_user_permanent_id': 'uid',
         'attr_full_name': 'cn',  # "urn:oid:2.5.4.3"
         'attr_first_name': 'givenName',  # "urn:oid:2.5.4.42"
         'attr_last_name': 'sn',  # "urn:oid:2.5.4.4"

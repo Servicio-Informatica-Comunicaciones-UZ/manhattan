@@ -127,9 +127,9 @@ class InvitacionForm(forms.ModelForm):
             usuario.delete()
             raise forms.ValidationError('ERROR: ' + str(ex))
 
-        # HACK - Indicamos que la autenticación es vía Single Sign On con SAML.
+        # HACK - Indicamos que la autenticación es vía Single Sign On con SAML, y el IdP usado.
         usuario_social = UserSocialAuth(
-            uid=f'lord:{usuario.username}', provider='saml', user=usuario
+            uid=f'sir:{usuario.username}', provider='saml', user=usuario
         )
         usuario_social.save()
 
