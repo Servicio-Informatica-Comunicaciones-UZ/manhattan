@@ -33,7 +33,9 @@ Instalación sobre contenedores Docker
 4. Copiar el fichero de ejemplo `manhattan_project/settings-sample.py` a
    `manhattan_project/settings.py`.  
    Configurar en `settings.py` los datos para el correo, la URL del sitio (`SITE_URL`)
-   y los datos para el _Single Sign On_ (SAML).
+   y los datos para el _Single Sign On_ (SAML).  
+   Si se está detrás de un proxy, habilitar la opción `USE_X_FORWARDED_PORT`.  
+   Si se usa SSL, habilitar las opciones `SESSION_COOKIE_SECURE` y `CSRF_COOKIE_SECURE`.
 5. En el fichero `Dockerfile` cambiar `UWSGI_UID` y `UWSGI_GID` al usuario y grupo que se desee.
    En el fichero `docker-compose.yml` cambiar el puerto `published` al que se desee.
 6. Levantar los contenedores:

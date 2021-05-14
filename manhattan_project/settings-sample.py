@@ -195,19 +195,21 @@ SOCIAL_AUTH_SAML_SUPPORT_CONTACT = {
 # Si se cambia el Identity Provider:
 # * Modificar `sso_url()` en `indo/templatetags/custom_tags.py`
 # * Modificar `InvitacionForm` en `indo/forms.py
-# * Actualizar la columna `uid` en la tabla `social_auth_usersocialauth`
+# * Actualizar la columna `uid` en la tabla `social_auth_usersocialauth` de la base de datos
+# * Actualizar `LOGIN_URL` en este fichero.
 SOCIAL_AUTH_SAML_ENABLED_IDPS = {
-    'lord': {
+    # SIR: Servicio de Federación de Identidades de RedIRIS <https://www.rediris.es/sir2/>
+    'sir': {
         'entity_id': 'https://FIXME.idp.com/saml2/idp/metadata.php',
         'url': 'https://FIXME.idp.com/saml2/idp/SSOService.php',
         'slo_url': 'https://FIXME.idp.com/saml2/idp/SingleLogoutService.php',
         'x509cert': 'Lovely spam, wonderful spam',
-        # 'attr_user_permanent_id': 'uid',
+        'attr_user_permanent_id': 'urn:oid:0.9.2342.19200300.100.1.1',  # 'uid',
         'attr_full_name': 'cn',  # "urn:oid:2.5.4.3"
         'attr_first_name': 'givenName',  # "urn:oid:2.5.4.42"
         'attr_last_name': 'sn',  # "urn:oid:2.5.4.4"
-        'attr_username': 'uid',  # "urn:oid:0.9.2342.19200300.100.1.1"
-        # "attr_email": "email",            # "urn:oid:0.9.2342.19200300.100.1.3"
+        'attr_username': 'urn:oid:0.9.2342.19200300.100.1.1',  # "uid',
+        # "attr_email": "email",  # "urn:oid:0.9.2342.19200300.100.1.3"
     }
 }
 
@@ -380,3 +382,14 @@ VICERRECTOR = os.environ.get('VICERRECTOR')
 # pool = ConnectionPool(host='localhost', port=6379, max_connections=20)
 # HUEY = RedisHuey('manhattan', connection_pool=pool)
 HUEY = SqliteHuey(filename='cola/huey.db')
+
+# Enable when behind a load balancer or proxy. Otherwise OneLogin SAML may not work.
+# The load balancer or proxy should be configured to add this header.
+USE_X_FORWARDED_PORT = False
+
+# Tell Django to check this header to determine whether the request came in via HTTPS.
+# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Tell the browser to send the cookies under an HTTPS connection only.
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
