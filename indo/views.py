@@ -351,7 +351,7 @@ class EvaluacionVerView(LoginRequiredMixin, PermissionRequiredMixin, TemplateVie
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        proyecto = get_object_or_404(Proyecto, pk=kwargs['pk'])
+        proyecto = get_object_or_404(Proyecto, pk=self.kwargs['pk'])
         context['proyecto'] = proyecto
         context['criterios'] = Criterio.objects.filter(
             convocatoria_id=proyecto.convocatoria_id
@@ -368,7 +368,7 @@ class EvaluacionView(LoginRequiredMixin, ChecksMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        proyecto = get_object_or_404(Proyecto, pk=kwargs['pk'])
+        proyecto = get_object_or_404(Proyecto, pk=self.kwargs['pk'])
         context['proyecto'] = proyecto
         context['criterios'] = Criterio.objects.filter(
             convocatoria_id=proyecto.convocatoria_id
@@ -673,7 +673,7 @@ class InvitacionView(LoginRequiredMixin, ChecksMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        proyecto = get_object_or_404(Proyecto, pk=kwargs['proyecto_id'])
+        proyecto = get_object_or_404(Proyecto, pk=self.kwargs['proyecto_id'])
         context['proyecto'] = proyecto
         return context
 
@@ -898,7 +898,7 @@ class MemoriaDetailView(LoginRequiredMixin, ChecksMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        proyecto = get_object_or_404(Proyecto, pk=kwargs['pk'])
+        proyecto = get_object_or_404(Proyecto, pk=self.kwargs['pk'])
         context['proyecto'] = proyecto
         context['apartados'] = proyecto.convocatoria.apartados_memoria.all()
         context['dict_respuestas'] = proyecto.get_dict_respuestas_memoria()
@@ -1612,7 +1612,7 @@ class ProyectoVerCondicionesView(LoginRequiredMixin, ChecksMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        proyecto = get_object_or_404(Proyecto, pk=kwargs['pk'])
+        proyecto = get_object_or_404(Proyecto, pk=self.kwargs['pk'])
         context['proyecto'] = proyecto
         return context
 
