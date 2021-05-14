@@ -149,12 +149,34 @@ class EvaluacionProyectosTable(tables.Table):
 class MemoriasAsignadasTable(tables.Table):
     """Muestra las memorias asignadas a un usuario corrector."""
 
+    memoria = tables.Column(empty_values=(), orderable=False, verbose_name=_('Memoria'))
+    valoracion = tables.Column(empty_values=(), orderable=False, verbose_name=_('Valoración'))
+    aceptacion_corrector = tables.BooleanColumn(null=True, verbose_name='Admitida')
+    boton_valorar = tables.Column(empty_values=(), orderable=False, verbose_name='')
+
     def render_titulo(self, record):
         enlace = reverse('proyecto_detail', args=[record.id])
         return mark_safe(f"<a href='{enlace}'>{record.titulo}</a>")
 
-    aceptacion_corrector = tables.BooleanColumn(null=True, verbose_name='Admitida')
-    boton_valorar = tables.Column(empty_values=(), orderable=False, verbose_name='')
+    def render_memoria(self, record):
+        enlace = reverse('memoria_detail', args=[record.id])
+        return mark_safe(
+            f'''<a href="{enlace}" title="{_('Ver la memoria del proyecto')}"
+                aria-label="{_('Ver la memoria del proyecto')}">
+                  <span class="far fa-eye"></span>
+                </a>'''
+        )
+
+    def render_valoracion(self, record):
+        enlace = reverse('ver_correccion', args=[record.id])
+        return mark_safe(
+            f'''<a href="{enlace}" title="{_('Ver la valoración del corrector de la memoria')}"
+                aria-label="{_('Ver la valoración del corrector de la memoria')}">
+                  <span class="far fa-eye"></span>
+                </a>'''
+            if record.aceptacion_corrector is not None
+            else '—'
+        )
 
     def render_boton_valorar(self, record):
         if record.aceptacion_corrector is not None:
@@ -172,7 +194,15 @@ class MemoriasAsignadasTable(tables.Table):
     class Meta:
         attrs = {'class': 'table table-striped table-hover cabecera-azul'}
         model = Proyecto
-        fields = ('programa', 'linea', 'titulo', 'aceptacion_corrector', 'boton_valorar')
+        fields = (
+            'programa',
+            'linea',
+            'titulo',
+            'memoria',
+            'aceptacion_corrector',
+            'valoracion',
+            'boton_valorar',
+        )
         empty_text = _('Por el momento no se le ha asignado ninguna memoria.')
         template_name = 'django_tables2/bootstrap4.html'
         per_page = 20
@@ -245,7 +275,7 @@ class MemoriaProyectosTable(tables.Table):
         )
         empty_text = _('Por el momento no se ha aceptado ningún proyecto.')
         template_name = 'django_tables2/bootstrap4.html'
-        per_page = 20
+        # per_page = 20
 
 
 class ProyectosAceptadosTable(tables.Table):
