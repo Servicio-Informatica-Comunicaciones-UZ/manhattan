@@ -157,7 +157,7 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
-LOGIN_URL = f'{SITE_URL}login/saml/?idp=lord'
+LOGIN_URL = f'{SITE_URL}login/saml/?idp=sir'
 LOGIN_REDIRECT_URL = reverse_lazy('mis_proyectos', args=[date.today().year])
 LOGOUT_REDIRECT_URL = 'home'
 
@@ -208,7 +208,7 @@ SOCIAL_AUTH_SAML_ENABLED_IDPS = {
         'attr_full_name': 'cn',  # "urn:oid:2.5.4.3"
         'attr_first_name': 'givenName',  # "urn:oid:2.5.4.42"
         'attr_last_name': 'sn',  # "urn:oid:2.5.4.4"
-        'attr_username': 'urn:oid:0.9.2342.19200300.100.1.1',  # "uid',
+        'attr_username': 'urn:oid:0.9.2342.19200300.100.1.1',  # 'uid',
         # "attr_email": "email",  # "urn:oid:0.9.2342.19200300.100.1.3"
     }
 }
