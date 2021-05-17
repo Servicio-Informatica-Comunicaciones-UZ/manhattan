@@ -907,6 +907,7 @@ class MemoriaDetailView(LoginRequiredMixin, ChecksMixin, TemplateView):
             'ACEPTADO',
             'MEM_NO_ADMITIDA',
         )
+        context['url_anterior'] = self.request.META.get('HTTP_REFERER', settings.SITE_URL)
 
         return context
 
@@ -1104,6 +1105,8 @@ class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
         context['es_coordinador'] = (
             self.es_coordinador(self.object.id) and self.object.en_borrador()
         )
+
+        context['url_anterior'] = self.request.META.get('HTTP_REFERER', settings.SITE_URL)
 
         return context
 

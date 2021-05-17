@@ -191,7 +191,7 @@
     <!-- Botones -->
     <br style="clear: both;" />
     <div class="btn-group noprint" role="group" aria-label="{{ _('Botones') }}">
-      <a href="{% url 'proyecto_detail' proyecto.id %}" class="btn btn-info"
+      <a href="{{ url_anterior }}" class="btn btn-info"
         title="{% trans 'Volver al proyecto' %}">
         <span class="fas fa-step-backward"></span> {% trans 'Retroceder' %}
       </a>
