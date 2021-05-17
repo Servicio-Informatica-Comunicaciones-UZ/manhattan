@@ -174,7 +174,7 @@ class InvitacionForm(forms.ModelForm):
         if usuario in vinculados:
             raise forms.ValidationError(
                 _(
-                    f'No puede invitar a {usuario.get_full_name()} '
+                    f'No puede invitar a {usuario.full_name} '
                     'porque ya está vinculado a este proyecto.'
                 )
             )
@@ -190,9 +190,7 @@ class InvitacionForm(forms.ModelForm):
                 if vinculado.get_colectivo_principal() == 'EST'
             ]
             if len(estudiantes) >= self.proyecto.programa.max_estudiantes:
-                nombres_estudiantes = ', '.join(
-                    list(map(lambda e: e.get_full_name(), estudiantes))
-                )
+                nombres_estudiantes = ', '.join(list(map(lambda e: e.full_name, estudiantes)))
                 raise forms.ValidationError(
                     _(
                         'Ya se ha alcanzado el máximo de participación de '

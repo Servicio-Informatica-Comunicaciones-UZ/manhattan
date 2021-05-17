@@ -346,7 +346,7 @@ class ProyectosTable(tables.Table):
 
     def render_coordinadores(self, record):
         coordinadores = record.get_coordinadores()
-        enlaces = [f'<a href="mailto:{c.email}">{c.get_full_name()}</a>' for c in coordinadores]
+        enlaces = [f'<a href="mailto:{c.email}">{c.full_name}</a>' for c in coordinadores]
         return mark_safe(', '.join(enlaces))
 
     class Meta:
@@ -371,7 +371,7 @@ class ProyectoUPTable(tables.Table):
 
     def render_coordinadores(self, record):
         coordinadores = record.get_coordinadores()
-        enlaces = [f'<a href="mailto:{c.email}">{c.get_full_name()}</a>' for c in coordinadores]
+        enlaces = [f'<a href="mailto:{c.email}">{c.full_name}</a>' for c in coordinadores]
         return mark_safe(', '.join(enlaces))
 
     unidad_planificacion = tables.Column(

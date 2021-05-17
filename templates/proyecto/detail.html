@@ -156,7 +156,7 @@
       </thead>
       {% for invitado in invitados %}
       <tr>
-        <td>{{ invitado.usuario.get_full_name }}</td>
+        <td>{{ invitado.usuario.full_name }}</td>
         <td>
           {% if invitado.tipo_participacion_id == "invitado" %}
           {% trans "Pendiente" %}{% else %}{% trans "Declinada" %}
@@ -200,7 +200,7 @@
       </thead>
       {% for participante in participantes %}
       <tr>
-        <td>{{ participante.usuario.get_full_name }}</td>
+        <td>{{ participante.usuario.full_name }}</td>
         {% if permitir_edicion %}
         <td>
           <a href="{% url 'participante_delete' participante.id %}" aria-label="{% trans 'Eliminar' %}">

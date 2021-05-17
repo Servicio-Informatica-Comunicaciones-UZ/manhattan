@@ -1392,8 +1392,8 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
                     from_email=None,  # settings.DEFAULT_FROM_EMAIL
                     recipient_list=[invitado.usuario.email],
                     context={
-                        'nombre_coordinador': request.user.get_full_name(),
-                        'nombre_invitado': invitado.usuario.get_full_name(),
+                        'nombre_coordinador': request.user.full_name,
+                        'nombre_invitado': invitado.usuario.full_name,
                         'sexo_invitado': invitado.usuario.sexo,
                         'titulo_proyecto': proyecto.titulo,
                         'programa_proyecto': f'{proyecto.programa.nombre_corto} '
@@ -1433,7 +1433,7 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
                 from_email=None,  # settings.DEFAULT_FROM_EMAIL
                 recipient_list=[proyecto.centro.email_decano],
                 context={
-                    'nombre_coordinador': request.user.get_full_name(),
+                    'nombre_coordinador': request.user.full_name,
                     'nombre_decano': proyecto.centro.nombre_decano,
                     'tratamiento_decano': proyecto.centro.tratamiento_decano,
                     'titulo_proyecto': proyecto.titulo,
@@ -1472,7 +1472,7 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
                 from_email=None,  # settings.DEFAULT_FROM_EMAIL
                 recipient_list=email_coordinadores_estudio,
                 context={
-                    'nombre_coordinador': request.user.get_full_name(),
+                    'nombre_coordinador': request.user.full_name,
                     'titulo_proyecto': proyecto.titulo,
                     'programa_proyecto': f'{proyecto.programa.nombre_corto} '
                     f'({proyecto.programa.nombre_largo})',
