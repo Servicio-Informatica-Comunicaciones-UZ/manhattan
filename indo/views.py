@@ -265,10 +265,10 @@ class MemoriaCorreccionUpdateView(LoginRequiredMixin, ChecksMixin, UpdateView):
             send_templated_mail(
                 template_name='memoria_admitida',
                 from_email=None,  # settings.DEFAULT_FROM_EMAIL
-                recipient_list=(proyecto.get_coordinador().email,),
+                recipient_list=(proyecto.coordinador.email,),
                 context={
                     'proyecto': proyecto,
-                    'coordinador': proyecto.get_coordinador(),
+                    'coordinador': proyecto.coordinador,
                     'vicerrector': settings.VICERRECTOR,
                 },
                 cc=(settings.DEFAULT_FROM_EMAIL,),  # Enviar copia al vicerrectorado
@@ -1074,27 +1074,19 @@ class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        pp_coordinador = self.object.get_participante_or_none('coordinador')
-        context['pp_coordinador'] = pp_coordinador
-
-        pp_coordinador_2 = self.object.get_participante_or_none('coordinador_2')
-        context['pp_coordinador_2'] = pp_coordinador_2
-
-        participantes = (
+        context['participantes'] = (
             self.object.participantes.filter(tipo_participacion='participante')
             .order_by('usuario__first_name', 'usuario__last_name')
             .all()
         )
-        context['participantes'] = participantes
 
-        invitados = (
+        context['invitados'] = (
             self.object.participantes.filter(
                 tipo_participacion__in=['invitado', 'invitacion_rehusada']
             )
             .order_by('tipo_participacion', 'usuario__first_name', 'usuario__last_name')
             .all()
         )
-        context['invitados'] = invitados
 
         context['campos'] = json.loads(self.object.programa.campos)
 
@@ -1265,10 +1257,10 @@ class ProyectosNotificarView(LoginRequiredMixin, PermissionRequiredMixin, Redire
         send_templated_mail(
             template_name=plantilla,
             from_email=None,  # settings.DEFAULT_FROM_EMAIL
-            recipient_list=(proyecto.get_coordinador().email,),
+            recipient_list=(proyecto.coordinador.email,),
             context={
                 'proyecto': proyecto,
-                'coordinador': proyecto.get_coordinador(),
+                'coordinador': proyecto.coordinador,
                 'site_url': settings.SITE_URL,
                 'vicerrector': settings.VICERRECTOR,
             },

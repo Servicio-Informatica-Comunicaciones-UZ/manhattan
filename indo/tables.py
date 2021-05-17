@@ -290,7 +290,9 @@ class ProyectosAceptadosTable(tables.Table):
     def render_coordinador(self, record):
         return record.coordinador.full_name
 
-    centro_coordinador = tables.Column(empty_values=(), orderable=False, verbose_name=_('Centro'))
+    centro_coordinador = tables.Column(
+        empty_values=(), orderable=False, verbose_name=_('Centro del coordinador')
+    )
 
     def render_centro_coordinador(self, record):
         return record.coordinador.nombres_centros

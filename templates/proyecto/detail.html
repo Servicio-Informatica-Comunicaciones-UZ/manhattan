@@ -72,17 +72,15 @@
         <td>{{ proyecto.get_unidad_planificacion | default:"—"}}</td>
       </tr>
 
-      {% if pp_coordinador %}
       <tr>
-        <th scope="row"><strong>{{ pp_coordinador.get_cargo }}</strong>:</th>
-        <td>{{ pp_coordinador.usuario.get_full_name }}</td>
+        <th scope="row"><strong>{% trans 'Coordinador' %}</strong>:</th>
+        <td>{{ proyecto.coordinador.full_name }}</td>
       </tr>
-      {% endif %}
 
-      {% if pp_coordinador_2 %}
+      {% if proyecto.coordinador_2 %}
       <tr>
-        <th scope="row"><strong>{{ pp_coordinador_2.get_cargo }}</strong>:</th>
-        <td>{{ pp_coordinador_2.usuario.get_full_name }}</td>
+        <th scope="row"><strong>{% trans 'Coordinador 2' %}</strong>:</th>
+        <td>{{ proyecto.coordinador_2.full_name }}</td>
       </tr>
       {% endif %}
 

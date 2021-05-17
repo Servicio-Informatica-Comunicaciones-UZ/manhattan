@@ -579,19 +579,11 @@ class Proyecto(models.Model):
         coordinador = self.get_participante_or_none('coordinador')
         return coordinador.usuario if coordinador else None
 
-    def get_coordinador(self):
-        """Devuelve el usuario coordinador del proyecto"""
-        return self.coordinador
-
     @property
     def coordinador_2(self):
         """Devuelve el segundo coordinador del proyecto (los PIET pueden tener 2)."""
         coordinador_2 = self.get_participante_or_none('coordinador_2')
         return coordinador_2.usuario if coordinador_2 else None
-
-    def get_coordinador_2(self):
-        """Devuelve el segundo coordinador del proyecto (los PIET pueden tener 2)."""
-        return self.coordinador_2
 
     def get_coordinadores(self):
         """Devuelve los usuarios coordinadores del proyecto."""

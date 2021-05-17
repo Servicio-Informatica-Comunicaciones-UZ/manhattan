@@ -10,9 +10,9 @@
   <hr />
   <br />
 
-  <p>{% if proyecto.get_coordinador.sexo == 'F' %}Doña{% else %}Don{% endif %}
-  {{proyecto.get_coordinador.full_name}}, con NIF {{proyecto.get_coordinador.numero_documento}},
-  como {% if proyecto.get_coordinador.sexo == 'F' %}coordinadora{% else %}coordinador{% endif %}
+  <p>{% if proyecto.coordinador.sexo == 'F' %}Doña{% else %}Don{% endif %}
+  {{proyecto.coordinador.full_name}}, con NIF {{proyecto.coordinador.numero_documento}},
+  como {% if proyecto.coordinador.sexo == 'F' %}coordinadora{% else %}coordinador{% endif %}
   responsable, solicitante del proyecto con título «{{proyecto.titulo}}»</p>
 
   <p>ACEPTA:</p>
