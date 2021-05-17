@@ -17,6 +17,10 @@
         {% trans 'Pulse el botón «<strong>Guardar</strong>» para almacenar sus cambios.' %}
     </div><br />
 
+    {% if not criterios %}
+        <p>{% trans 'No se han definido los criterios de evaluación para esta convocatoria.' %}</p>
+    {% endif %}
+
     <form action="" method="post">
         {% csrf_token %}
 
