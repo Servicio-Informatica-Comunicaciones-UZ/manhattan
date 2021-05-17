@@ -1524,6 +1524,11 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
     model = Proyecto
     template_name = 'proyecto/update.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['url_anterior'] = self.request.META.get('HTTP_REFERER', settings.SITE_URL)
+        return context
+
     def get_form_class(self, **kwargs):
         campo = self.kwargs['campo']
         if campo in ('centro', 'codigo', 'convocatoria', 'estado', 'estudio', 'linea', 'programa'):
@@ -1583,6 +1588,11 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
             return formulario
         self.fields = (campo,)
         return super().get_form_class()
+
+    def get_success_url(self):
+        if self.kwargs['campo'] in ('visto_bueno_centro', 'visto_bueno_estudio'):
+            return reverse_lazy('mis_proyectos', kwargs={'anyo': date.today().year})
+        return super().get_success_url()
 
     def test_func(self):
         """Devuelve si el usuario está autorizado a modificar este campo."""
