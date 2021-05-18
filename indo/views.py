@@ -907,7 +907,7 @@ class MemoriaDetailView(LoginRequiredMixin, ChecksMixin, TemplateView):
             'ACEPTADO',
             'MEM_NO_ADMITIDA',
         )
-        context['url_anterior'] = self.request.META.get('HTTP_REFERER', settings.SITE_URL)
+        context['url_anterior'] = self.request.META.get('HTTP_REFERER', reverse('home'))
 
         return context
 
@@ -1098,7 +1098,7 @@ class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
             self.es_coordinador(self.object.id) and self.object.en_borrador()
         )
 
-        context['url_anterior'] = self.request.META.get('HTTP_REFERER', settings.SITE_URL)
+        context['url_anterior'] = self.request.META.get('HTTP_REFERER', reverse('home'))
 
         return context
 
@@ -1526,7 +1526,7 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['url_anterior'] = self.request.META.get('HTTP_REFERER', settings.SITE_URL)
+        context['url_anterior'] = self.request.META.get('HTTP_REFERER', reverse('home'))
         return context
 
     def get_form_class(self, **kwargs):
