@@ -250,9 +250,8 @@ class MemoriaCorreccionUpdateView(LoginRequiredMixin, ChecksMixin, UpdateView):
         return super().form_valid(form)
 
     def post(self, request, *args, **kwargs):
-        if request.POST.get('aceptacion_corrector') == 'True':
-            proyecto = self.get_object()
-            self._enviar_notificacion(request, proyecto)
+        proyecto = self.get_object()
+        self._enviar_notificacion(request, proyecto)
 
         return super().post(request, *args, **kwargs)
 
@@ -261,15 +260,21 @@ class MemoriaCorreccionUpdateView(LoginRequiredMixin, ChecksMixin, UpdateView):
 
     def _enviar_notificacion(self, request, proyecto):
         """Envia un mensaje al coordinador del proyecto."""
+        if request.POST.get('aceptacion_corrector') == 'True':
+            plantilla = 'memoria_admitida'
+        else:
+            plantilla = 'memoria_no_admitida'
+
         try:
             send_templated_mail(
-                template_name='memoria_admitida',
+                template_name=plantilla,
                 from_email=None,  # settings.DEFAULT_FROM_EMAIL
                 recipient_list=(proyecto.coordinador.email,),
                 context={
                     'proyecto': proyecto,
                     'coordinador': proyecto.coordinador,
                     'vicerrector': settings.VICERRECTOR,
+                    'observaciones': request.POST.get('observaciones_corrector'),
                 },
                 cc=(settings.DEFAULT_FROM_EMAIL,),  # Enviar copia al vicerrectorado
             )

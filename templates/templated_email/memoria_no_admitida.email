@@ -1,4 +1,4 @@
-{% block subject %}Admisión de la memoria «{{proyecto.titulo}}»{% endblock %}
+{% block subject %}Inadmisión de la memoria «{{proyecto.titulo}}»{% endblock %}
 {% block plain %}
 {% if coordinador.sexo == 'F' %}
 Estimada {{coordinador.full_name}}:
@@ -11,11 +11,10 @@ Estimad@ {{coordinador.full_name}}:
 Habiéndose recibido en este Vicerrectorado autorización para la conclusión de la memoria
 del proyecto  
 «{{proyecto.titulo}}»  
-se ha comprobado, tras las verificaciones oportunas, que la memoria del proyecto cumple
-con todos los requisitos necesarios establecidos en la convocatoria.
+se ha comprobado, tras las verificaciones oportunas, que la memoria del proyecto 
+*no* cumple con todos los requisitos necesarios establecidos en la convocatoria.
 
-Aprovecho para agradecerle su interés y colaboración en esta convocatoria, extensivo a
-todos los participantes del proyecto.
+{{observaciones}}
 
 Un cordial saludo,  
     {{vicerrector}}  
