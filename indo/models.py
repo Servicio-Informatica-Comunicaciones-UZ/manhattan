@@ -495,7 +495,7 @@ class Proyecto(models.Model):
         related_name='proyectos_evaluados',
     )
     # Aprobación de la Comisión Evaluadora
-    aceptacion_comision = models.BooleanField(_('Aceptación por la comisión'), null=True)
+    aceptacion_comision = models.BooleanField(_('Aprobación por la comisión'), null=True)
     ayuda_concedida = models.PositiveIntegerField(_('Ayuda económica concedida'), null=True)
     tipo_gasto = models.TextField(
         _('Tipo de gasto posible'),
@@ -505,18 +505,19 @@ class Proyecto(models.Model):
     observaciones = models.TextField(_('Observaciones para comunicar al coordinador'), null=True)
     # Aceptación por el coordinador de las condiciones decididas por la Comisión
     aceptacion_coordinador = models.BooleanField(_('Aceptación por el coordinador'), null=True)
-    # Aceptación por el corrector/consultor de las memorias
+    # Corrector/consultor de las memorias
     corrector = models.ForeignKey(
         'accounts.CustomUser',
         null=True,
         on_delete=models.PROTECT,
         related_name='proyectos_corregidos',
     )
-    aceptacion_corrector = models.BooleanField(_('Aceptación por el corrector'), null=True)
+    aceptacion_corrector = models.BooleanField(_('Admisión por el corrector'), null=True)
     es_publicable = models.BooleanField(_('¿Publicar la memoria?'), null=True)
     observaciones_corrector = models.TextField(
         _('Observaciones del corrector de la memoria'), null=True
     )
+    aceptacion_economico = models.BooleanField(_('Cierre económico'), default=False)
 
     class Meta:
         permissions = [
@@ -531,6 +532,7 @@ class Proyecto(models.Model):
             ('editar_corrector', _('Puede modificar el corrector de un proyecto.')),
             ('ver_memorias', _('Puede ver el listado y cualquier memoria de proyecto.')),
             ('ver_up', _('Puede ver el listado de UP y gastos de los proyectos.')),
+            ('ver_economico', _('Puede ver/editar el cierre económico de los proyectos.')),
         ]
 
     def __str__(self):

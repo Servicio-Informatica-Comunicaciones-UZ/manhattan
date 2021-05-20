@@ -99,10 +99,10 @@
                     <span class="fas fa-balance-scale"></span>&nbsp; {% trans "Asignación de evaluadores" %}
                   </a>
                   <a class="dropdown-item" href="{% url 'evaluaciones_table' anyo_actual %}">
-                   <span class="fas fa-gavel"></span>&nbsp; {% trans "Evaluaciones de los proyectos" %}
+                    <span class="fas fa-gavel"></span>&nbsp; {% trans "Evaluaciones de los proyectos" %}
                   </a>
                   <a class="dropdown-item" href="{% url 'up_table' anyo_actual %}">
-                   <span class="fas fa-hand-holding-usd"></span>&nbsp; {% trans "Unidades de planificación y gastos" %}
+                    <span class="fas fa-hand-holding-usd"></span>&nbsp; {% trans "Unidades de planificación y gastos" %}
                   </a>
                   <div class="dropdown-divider"></div>
                   <a class="dropdown-item" href="{% url 'correctores_table' %}">
@@ -112,7 +112,11 @@
                     <span class="fas fa-balance-scale"></span>&nbsp; {% trans "Asignación de correctores" %}
                   </a>
                   <a class="dropdown-item" href="{% url 'memorias_table' anyo_actual %}">
-                   <span class="fas fa-gavel"></span>&nbsp; {% trans "Memorias de los proyectos" %}
+                    <span class="fas fa-gavel"></span>&nbsp; {% trans "Memorias de los proyectos" %}
+                  </a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="{% url 'cierre_economico_table' anyo_actual %}">
+                    <span class="fas fa-money-check-alt"></span>&nbsp; {% trans "Cierre económico de los proyectos" %}
                   </a>
                   <div class="dropdown-divider"></div>
                   <a class="dropdown-item" href="{% url 'admin:indo_convocatoria_changelist' %}">

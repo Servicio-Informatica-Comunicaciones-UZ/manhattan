@@ -23,6 +23,7 @@ from .views import (
     ParticipanteRenunciarView,
     ProyectoAceptarView,
     ProyectoAnularView,
+    ProyectosCierreEconomicoTableView,
     ProyectoCreateView,
     ProyectoDetailView,
     ProyectoCorrectorTableView,
@@ -71,6 +72,11 @@ urlpatterns = [
     ),
     # Listados de proyectos
     path('gestion/proyectos/<int:anyo>/', ProyectoTableView.as_view(), name='proyectos_table'),
+    path(
+        'gestion/proyectos/<int:anyo>/cierre-economico/',
+        ProyectosCierreEconomicoTableView.as_view(),
+        name='cierre_economico_table',
+    ),
     path(
         'gestion/proyectos/<int:anyo>/evaluaciones/',
         ProyectoEvaluacionesTableView.as_view(),

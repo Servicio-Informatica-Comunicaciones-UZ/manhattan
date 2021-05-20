@@ -78,6 +78,7 @@ from .tables import (
     MemoriaProyectosTable,
     MemoriasAsignadasTable,
     ProyectosAceptadosTable,
+    ProyectosCierreEconomicoTable,
     ProyectosEvaluadosTable,
     ProyectosTable,
     ProyectoCorrectorTable,
@@ -259,7 +260,7 @@ class MemoriaCorreccionUpdateView(LoginRequiredMixin, ChecksMixin, UpdateView):
         return self.es_corrector_del_proyecto(self.kwargs['pk'])
 
     def _enviar_notificacion(self, request, proyecto):
-        """Envia un mensaje al coordinador del proyecto."""
+        """Envía un mensaje al coordinador del proyecto."""
         if request.POST.get('aceptacion_corrector') == 'True':
             plantilla = 'memoria_admitida'
         else:
@@ -810,6 +811,35 @@ class ParticipanteDeleteView(LoginRequiredMixin, ChecksMixin, DeleteView):
     def test_func(self):
         return self.es_coordinador(self.get_object().proyecto.id) or self.request.user.has_perm(
             'indo.editar_proyecto'
+        )
+
+
+class ProyectosCierreEconomicoTableView(
+    LoginRequiredMixin, PermissionRequiredMixin, SingleTableView
+):
+    """Muestra los proyectos aceptados y su cierre económico."""
+
+    permission_required = 'indo.ver_economico'
+    permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
+    table_class = ProyectosCierreEconomicoTable
+    template_name = 'gestion/proyecto/tabla_cierre_economico.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['anyo'] = self.kwargs['anyo']
+        return context
+
+    def get_queryset(self):
+        return (
+            Proyecto.objects.filter(convocatoria__id=self.kwargs['anyo'])
+            .filter(aceptacion_coordinador=True)
+            .order_by(
+                '-aceptacion_corrector',
+                '-aceptacion_economico',
+                'programa__nombre_corto',
+                'linea__nombre',
+                'titulo',
+            )
         )
 
 
@@ -1389,7 +1419,7 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
         return super().post(request, *args, **kwargs)
 
     def _enviar_invitaciones(self, request, proyecto):
-        """Envia un mensaje a cada uno de los invitados al proyecto."""
+        """Envía un mensaje a cada uno de los invitados al proyecto."""
         try:
             for invitado in proyecto.participantes.filter(tipo_participacion='invitado'):
                 send_templated_mail(
@@ -1419,7 +1449,7 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
             )
 
     def _enviar_solicitudes_visto_bueno_centro(self, request, proyecto):
-        """Envia un mensaje al responsable del centro solicitando su visto bueno."""
+        """Envía un mensaje al responsable del centro solicitando su visto bueno."""
         try:
             validate_email(proyecto.centro.email_decano)
         except ValidationError:
@@ -1464,7 +1494,7 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
         return True
 
     def _enviar_solicitudes_visto_bueno_estudio(self, request, proyecto):
-        """Envia mensaje a los coordinadores del plan solicitando su visto bueno."""
+        """Envía mensaje a los coordinadores del plan solicitando su visto bueno."""
         email_coordinadores_estudio = [
             f'{p.email_coordinador}'
             for p in proyecto.estudio.planes.all()
@@ -1546,6 +1576,7 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
             'ayuda',
             'visto_bueno_centro',
             'visto_bueno_estudio',
+            'aceptacion_economico',
         ):
             formulario = modelform_factory(
                 Proyecto, fields=(campo,), widgets={campo: SummernoteWidget()}
@@ -1597,6 +1628,10 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
     def get_success_url(self):
         if self.kwargs['campo'] in ('visto_bueno_centro', 'visto_bueno_estudio'):
             return reverse_lazy('mis_proyectos', kwargs={'anyo': date.today().year})
+        if self.kwargs['campo'] == 'aceptacion_economico':
+            return reverse_lazy(
+                'cierre_economico_table', kwargs={'anyo': self.get_object().convocatoria_id}
+            )
         return super().get_success_url()
 
     def test_func(self):

@@ -305,6 +305,59 @@ class ProyectosAceptadosTable(tables.Table):
         template_name = 'django_tables2/bootstrap4.html'
 
 
+class ProyectosCierreEconomicoTable(tables.Table):
+    """Muestra los proyectos aceptados y su cierre económico."""
+
+    aceptacion_corrector = tables.BooleanColumn(null=True, verbose_name=_('Mem adm'))
+    aceptacion_economico = tables.BooleanColumn(null=True, verbose_name=_('Cierre económico'))
+
+    def render_titulo(self, record):
+        enlace = reverse('proyecto_detail', args=[record.id])
+        return mark_safe(f'<a href="{enlace}">{record.titulo}</a>')
+
+    def render_aceptacion_corrector(self, record):
+        return mark_safe(
+            f'''<span class="fas fa-check-circle text-success" title="{_('Admitida')}"></span>'''
+            if record.aceptacion_corrector is True
+            else f'''<span class="fas fa-times-circle text-danger" title="{_('No admitida')}">
+                 </span>'''
+            if record.aceptacion_corrector is False
+            else '—'
+        )
+
+    def render_aceptacion_economico(self, record):
+        if record.aceptacion_economico:
+            return mark_safe(
+                f'''<span class="fas fa-check-circle text-success" title="{_('Cerrado')}">
+                </span>'''
+            )
+
+        enlace = reverse(
+            'proyecto_update_field', kwargs={'pk': record.id, 'campo': 'aceptacion_economico'}
+        )
+        return mark_safe(
+            f'''<a href="{enlace}" title="{_('Cerrar económicamente')}"
+                aria-label="{_('Cerrar económicamente')}">
+                <span class="fas fa-pencil-alt"></span>
+            </a>'''
+        )
+
+    class Meta:
+        attrs = {'class': 'table table-striped table-hover cabecera-azul'}
+        model = Proyecto
+        fields = (
+            'programa',
+            'linea',
+            'id',
+            'titulo',
+            'aceptacion_corrector',
+            'aceptacion_economico',
+        )
+        empty_text = _('Por el momento no se ha aceptado ningún proyecto.')
+        template_name = 'django_tables2/bootstrap4.html'
+        # per_page = 20
+
+
 class ProyectosEvaluadosTable(tables.Table):
     """Muestra los proyectos asignados a un usuario evaluador."""
 
