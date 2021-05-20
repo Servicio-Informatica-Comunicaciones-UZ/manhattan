@@ -39,8 +39,8 @@
 
             <span class="fas fa-exclamation-triangle"></span>
             <p>{% blocktrans with nombre_programa=proyecto.programa.nombre_corto %}
-            El programa {{ nombre_programa }} requiere del visto bueno de un coordinador del estudio,
-            y este proyecto <strong>no</strong> lo tiene.
+                El programa {{ nombre_programa }} requiere del visto bueno de un coordinador del estudio,
+                y este proyecto <strong>no</strong> lo tiene.
             {% endblocktrans %}</p>
         </div><br />
     {% endif %}
@@ -51,9 +51,18 @@
 
             <span class="fas fa-exclamation-triangle"></span>
             <p>{% blocktrans with nombre_programa=proyecto.programa.nombre_corto %}
-            El programa {{ nombre_programa }} requiere del visto bueno del responsable del centro,
-            y este proyecto <strong>no</strong> lo tiene.
+                Este proyecto <strong>carece</strong> del visto bueno del responsable del centro,
+                preceptivo en el programa {{ nombre_programa }}.
             {% endblocktrans %}</p>
+        </div><br />
+    {% endif %}
+
+    {% if not proyecto.tiene_participantes %}
+        <div class="alert-warning alert fade-in">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+
+            <span class="fas fa-exclamation-triangle"></span>
+            <p>{% trans 'En este proyecto <strong>no</strong> hay ningún participante además del coordinador.' %}</p>
         </div><br />
     {% endif %}
 

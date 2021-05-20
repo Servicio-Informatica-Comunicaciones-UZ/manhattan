@@ -620,6 +620,11 @@ class Proyecto(models.Model):
         num_invitados = self.participantes.filter(tipo_participacion='invitado').count()
         return num_invitados >= 1
 
+    def tiene_participantes(self):
+        """Devuelve si el proyecto tiene algún participante que haya aceptado la invitación."""
+        num_participantes = self.participantes.filter(tipo_participacion='participante').count()
+        return num_participantes >= 1
+
 
 class MemoriaApartado(models.Model):
     """Apartados de la memoria"""
