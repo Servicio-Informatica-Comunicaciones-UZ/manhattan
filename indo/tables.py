@@ -73,11 +73,37 @@ class ProyectoCorrectorTable(tables.Table):
 class EvaluadoresTable(tables.Table):
     """Muestra los proyectos solicitados y el evaluador asignado a ellos."""
 
+    visto_bueno_centro = tables.Column(empty_values=(), verbose_name='VBC')
+    visto_bueno_estudio = tables.Column(empty_values=(), verbose_name='VBE')
+    editar = tables.Column(empty_values=(), orderable=False, verbose_name='')
+
     def render_titulo(self, record):
         enlace = reverse('proyecto_detail', args=[record.id])
         return mark_safe(f'<a href="{enlace}">{record.titulo}</a>')
 
-    editar = tables.Column(empty_values=(), orderable=False, verbose_name='')
+    def render_visto_bueno_centro(self, record):
+        if not record.programa.requiere_visto_bueno_centro:
+            return '—'
+
+        return mark_safe(
+            f'''<span class="text-success" title="{_('Aceptado')}">✔</span>'''
+            if record.visto_bueno_centro is True
+            else f'''<span class="text-danger" title="{_('Rechazado')}">✘</span>'''
+            if record.visto_bueno_centro is False
+            else f'''<span class="text-secondary" title="{_('Pendiente')}">⁇</span>'''
+        )
+
+    def render_visto_bueno_estudio(self, record):
+        if not record.programa.requiere_visto_bueno_estudio:
+            return '—'
+
+        return mark_safe(
+            f'''<span class="text-success" title="{_('Aceptado')}">✔</span>'''
+            if record.visto_bueno_estudio is True
+            else f'''<span class="text-danger" title="{_('Rechazado')}">✘</span>'''
+            if record.visto_bueno_estudio is False
+            else f'''<span class="text-secondary" title="{_('Pendiente')}">⁇</span>'''
+        )
 
     def render_editar(self, record):
         enlace = reverse('evaluador_update', args=[record.id])
@@ -91,7 +117,16 @@ class EvaluadoresTable(tables.Table):
     class Meta:
         attrs = {'class': 'table table-striped table-hover cabecera-azul'}
         model = Proyecto
-        fields = ('programa', 'linea', 'id', 'titulo', 'evaluador__full_name', 'editar')
+        fields = (
+            'programa',
+            'linea',
+            'id',
+            'titulo',
+            'visto_bueno_centro',
+            'visto_bueno_estudio',
+            'evaluador__full_name',
+            'editar',
+        )
         empty_text = _('Por el momento no se ha presentado ninguna solicitud de proyecto.')
         template_name = 'django_tables2/bootstrap4.html'
         per_page = 20
