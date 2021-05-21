@@ -1656,51 +1656,53 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
 
             return True
 
-        permitidos_coordinador = (
-            'titulo',
-            'descripcion',
-            # Campos listados en `indo_programa`
-            'actividades',
-            'afectadas',
-            'ambito',
-            'aplicacion',
-            'caracter_estrategico',
-            'contenido_modulos',
-            'contenidos',
-            'contexto',
-            'contexto_aplicacion',
-            'continuidad',
-            'duracion',
-            'enlace',
-            'formatos',
-            'idioma',
-            'impacto',
-            'indicadores',
-            'innovacion',
-            'interes',
-            'justificacion_equipo',
-            'material_previo',
-            'mejoras',
-            'metodos',
-            'metodos_estudio',
-            'multimedia',
-            'objetivos',
-            'proyectos_anteriores',
-            'ramas',
-            'seminario',
-            'tecnologias',
-            'tipo',
-        )
-        if (
-            self.es_coordinador(self.kwargs['pk'])
-            and self.kwargs['campo'] in permitidos_coordinador
-        ):
+        if self.es_coordinador(self.kwargs['pk']):
+            permitidos_coordinador = (
+                'titulo',
+                'descripcion',
+                # Campos listados en `indo_programa`
+                'actividades',
+                'afectadas',
+                'ambito',
+                'aplicacion',
+                'caracter_estrategico',
+                'contenido_modulos',
+                'contenidos',
+                'contexto',
+                'contexto_aplicacion',
+                'continuidad',
+                'duracion',
+                'enlace',
+                'formatos',
+                'idioma',
+                'impacto',
+                'indicadores',
+                'innovacion',
+                'interes',
+                'justificacion_equipo',
+                'material_previo',
+                'mejoras',
+                'metodos',
+                'metodos_estudio',
+                'multimedia',
+                'objetivos',
+                'proyectos_anteriores',
+                'ramas',
+                'seminario',
+                'tecnologias',
+                'tipo',
+            )
+            if not self.kwargs['campo'] in permitidos_coordinador:
+                self.permission_denied_message = _('No puede modificar este campo.')
+                return False
+
             if not proyecto.en_borrador():
                 self.permission_denied_message = _(
                     f'''El estado actual del proyecto ({proyecto.get_estado_display()})
                     no permite modificar los campos de la solicitud.'''
                 )
                 return False
+
             return True
 
         return self.request.user.has_perm('indo.editar_proyecto')
