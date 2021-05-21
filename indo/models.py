@@ -463,7 +463,7 @@ class Proyecto(models.Model):
         on_delete=models.PROTECT,
         blank=True,
         null=True,
-        help_text=_('Sólo obligatorio para PIEC, PRACUZ, PIPOUZ.'),
+        help_text=_('Sólo obligatorio para PIEC y PIPOUZ.'),
         related_name='proyectos',
     )
     convocatoria = models.ForeignKey('Convocatoria', on_delete=models.PROTECT)
