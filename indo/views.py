@@ -1636,18 +1636,74 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
 
     def test_func(self):
         """Devuelve si el usuario está autorizado a modificar este campo."""
-        return (
-            self.es_coordinador(self.kwargs['pk'])
-            or (
-                self.kwargs['campo'] == 'visto_bueno_centro'
-                and self.es_decano_o_director(self.kwargs['pk'])
-            )
-            or (
-                self.kwargs['campo'] == 'visto_bueno_estudio'
-                and self.es_coordinador_estudio(self.kwargs['pk'])
-            )
-            or self.request.user.has_perm('indo.editar_proyecto')
+        proyecto = get_object_or_404(Proyecto, pk=self.kwargs['pk'])
+
+        if (
+            self.kwargs['campo'] == 'visto_bueno_centro'
+            and self.es_decano_o_director(self.kwargs['pk'])
+        ) or (
+            self.kwargs['campo'] == 'visto_bueno_estudio'
+            and self.es_coordinador_estudio(self.kwargs['pk'])
+        ):
+            fecha_limite = proyecto.convocatoria.fecha_max_visto_buenos
+            if date.today() > fecha_limite:
+                fecha_limite_str = localize(fecha_limite)
+                self.permission_denied_message = _(
+                    f'''Se ha superado la fecha límite ({fecha_limite_str})
+                    para dar el visto bueno.'''
+                )
+                return False
+
+            return True
+
+        permitidos_coordinador = (
+            'titulo',
+            'descripcion',
+            # Campos listados en `indo_programa`
+            'actividades',
+            'afectadas',
+            'ambito',
+            'aplicacion',
+            'caracter_estrategico',
+            'contenido_modulos',
+            'contenidos',
+            'contexto',
+            'contexto_aplicacion',
+            'continuidad',
+            'duracion',
+            'enlace',
+            'formatos',
+            'idioma',
+            'impacto',
+            'indicadores',
+            'innovacion',
+            'interes',
+            'justificacion_equipo',
+            'material_previo',
+            'mejoras',
+            'metodos',
+            'metodos_estudio',
+            'multimedia',
+            'objetivos',
+            'proyectos_anteriores',
+            'ramas',
+            'seminario',
+            'tecnologias',
+            'tipo',
         )
+        if (
+            self.es_coordinador(self.kwargs['pk'])
+            and self.kwargs['campo'] in permitidos_coordinador
+        ):
+            if not proyecto.en_borrador():
+                self.permission_denied_message = _(
+                    f'''El estado actual del proyecto ({proyecto.get_estado_display()})
+                    no permite modificar los campos de la solicitud.'''
+                )
+                return False
+            return True
+
+        return self.request.user.has_perm('indo.editar_proyecto')
 
 
 class ProyectoVerCondicionesView(LoginRequiredMixin, ChecksMixin, TemplateView):
