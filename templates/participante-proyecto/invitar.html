@@ -8,6 +8,23 @@
   <div class="alert alert-info">
     <span class="fas fa-info-circle"></span>
     <p>{% trans 'Introduzca el NIP de la persona que desee invitar a su proyecto.' %}</p>
+    {% blocktrans %}
+      <p>Si la persona nunca ha estado vinculado a la Universad de Zaragoza:</p>
+
+      <ol>
+          <li>
+              Infórmele de que puede obtener un NIP (identificador de usuario) visitando la
+              <a href="https://identidad.unizar.es/autoregistro" target="_blank" rel="noopener noreferrer">
+                  página de autorregistro</a>
+              <span class="fas fa-link" style="float: none; font-size: 100%;"></span>.
+          </li>
+          <li>
+              Una vez que el usuario disponga de un NIP, debe comunicárselo al Vicerrectorado
+              de Política Académica para asignarle la vinculación correspondiente en el Sistema de Gestión de
+              Identidades.
+          </li>
+      </ol>
+    {% endblocktrans %}
     <div>
       {% trans 'Cuando presente su solicitud se enviará un correo electrónico a cada persona invitada.' %}<br />
       {% trans 'Las personas que acepten la invitación pasarán a ser participantes del proyecto.' %}
