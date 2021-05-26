@@ -48,7 +48,7 @@ def get_identidad(strategy, response, user, *args, **kwargs):
         identidad.correoPrincipal if is_email_valid(identidad.correoPrincipal) else None
     )
     # El email es un campo NOT NULL en el modelo.
-    user.email = correo_personal or correo_principal or ''
+    user.email = correo_principal or correo_personal or ''
     user.is_active = identidad.activo != 'N'
     user.nombre_oficial = identidad.nombreAdmin
     user.numero_documento = identidad.documento
