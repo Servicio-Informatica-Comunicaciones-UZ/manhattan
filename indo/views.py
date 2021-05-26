@@ -1660,6 +1660,8 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
             permitidos_coordinador = (
                 'titulo',
                 'descripcion',
+                'ayuda',
+                'financiacion',
                 # Campos listados en `indo_programa`
                 'actividades',
                 'afectadas',
