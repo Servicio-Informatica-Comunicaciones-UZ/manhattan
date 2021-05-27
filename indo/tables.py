@@ -75,6 +75,7 @@ class EvaluadoresTable(tables.Table):
 
     visto_bueno_centro = tables.Column(empty_values=(), verbose_name='VBC')
     visto_bueno_estudio = tables.Column(empty_values=(), verbose_name='VBE')
+    numero_participantes = tables.Column(empty_values=(), verbose_name='P')
     editar = tables.Column(empty_values=(), orderable=False, verbose_name='')
 
     def render_titulo(self, record):
@@ -105,6 +106,15 @@ class EvaluadoresTable(tables.Table):
             else f'''<span class="text-secondary" title="{_('Pendiente')}">⁇</span>'''
         )
 
+    def render_numero_participantes(self, record):
+        if record.numero_participantes == 0:
+            return mark_safe(
+                f'''<span style="font-weight: bold;" class="text-danger">
+                  {record.numero_participantes}
+                </span>'''
+            )
+        return record.numero_participantes
+
     def render_editar(self, record):
         enlace = reverse('evaluador_update', args=[record.id])
         return mark_safe(
@@ -124,6 +134,7 @@ class EvaluadoresTable(tables.Table):
             'titulo',
             'visto_bueno_centro',
             'visto_bueno_estudio',
+            'numero_participantes',
             'evaluador__full_name',
             'editar',
         )

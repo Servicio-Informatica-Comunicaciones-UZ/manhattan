@@ -617,6 +617,11 @@ class Proyecto(models.Model):
         """
         return list(map(lambda p: p.usuario, self.participantes.all()))
 
+    @property
+    def numero_participantes(self):
+        """Devuelve la cantidad de partipantes que han aceptado la invitación."""
+        return self.participantes.filter(tipo_participacion='participante').count()
+
     def tiene_invitados(self):
         """Devuelve si el proyecto tiene al menos un invitado."""
         num_invitados = self.participantes.filter(tipo_participacion='invitado').count()
@@ -624,8 +629,7 @@ class Proyecto(models.Model):
 
     def tiene_participantes(self):
         """Devuelve si el proyecto tiene algún participante que haya aceptado la invitación."""
-        num_participantes = self.participantes.filter(tipo_participacion='participante').count()
-        return num_participantes >= 1
+        return self.numero_participantes >= 1
 
 
 class MemoriaApartado(models.Model):
