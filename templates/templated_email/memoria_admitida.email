@@ -8,14 +8,15 @@ Estimado {{coordinador.full_name}}:
 Estimad@ {{coordinador.full_name}}:
 {% endif %}
 
-Habiéndose recibido en este Vicerrectorado autorización para la conclusión de la memoria
-del proyecto  
-«{{proyecto.titulo}}»  
-se ha comprobado, tras las verificaciones oportunas, que la memoria del proyecto cumple
-con todos los requisitos necesarios establecidos en la convocatoria.
+En primer lugar, espero que esté bien.
 
-Aprovecho para agradecerle su interés y colaboración en esta convocatoria, extensivo a
-todos los participantes del proyecto.
+Tras las verificaciones oportunas este Vicerrectorado autoriza la memoria del
+proyecto «{{proyecto.titulo}}»,
+ya que cumple con todos los requisitos necesarios establecidos en la convocatoria.
+Enhorabuena por ello.
+
+Aprovecho para agradecerle su interés y colaboración en esta convocatoria, y hágalo,
+por favor, extensivo a todos los participantes en el proyecto.
 
 Un cordial saludo,  
     {{vicerrector}}  

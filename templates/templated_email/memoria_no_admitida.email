@@ -8,15 +8,20 @@ Estimado {{coordinador.full_name}}:
 Estimad@ {{coordinador.full_name}}:
 {% endif %}
 
-Habiéndose recibido en este Vicerrectorado autorización para la conclusión de la memoria
-del proyecto  
-«{{proyecto.titulo}}»  
-se ha comprobado, tras las verificaciones oportunas, que la memoria del proyecto 
-*no* cumple con todos los requisitos necesarios establecidos en la convocatoria.
+En primer lugar, espero que esté bien.
+
+La Comisión Evaluadora ha revisado la memoria de resultados del proyecto con el fin
+de dar por finalizado el proyecto «{{proyecto.titulo}}»
+y se le solicita la siguiente subsanación:
 
 {{observaciones}}
 
-Un cordial saludo,  
-    {{vicerrector}}  
-    Vicerrectorado de Política Académica
+Para dar por finalizado el proyecto deberá realizar, por favor, los cambios en el plazo
+de 10 días en la web de gestión de proyectos.
+
+Agradecemos de antemano su colaboración y quedamos a su disposición para
+cualquier aclaración o duda que estime oportuna.
+
+Atentamente,
+    La Comisión Evaluadora
 {% endblock %}
