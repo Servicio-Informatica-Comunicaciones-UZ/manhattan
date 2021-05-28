@@ -1562,6 +1562,7 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['url_anterior'] = self.request.META.get('HTTP_REFERER', reverse('home'))
+        context['campo'] = self.kwargs['campo']
         return context
 
     def get_form_class(self, **kwargs):
@@ -1622,6 +1623,30 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
             formulario.clean = clean
 
             return formulario
+
+        if campo == 'ayuda':
+            self.fields = (campo,)
+            formulario = super().get_form_class()
+
+            def clean(self):
+                cleaned_data = super(formulario, self).clean()
+                ayuda_solicitada = cleaned_data.get('ayuda')
+                if (
+                    ayuda_solicitada > 0
+                    and self.instance.coordinador.get_colectivo_principal() == 'ADS'
+                ):
+                    self.add_error(
+                        'ayuda',
+                        _(
+                            'El profesorado de centros adscritos no puede ser '
+                            'destinatario de cuantías económicas.'
+                        ),
+                    )
+                return cleaned_data
+
+            formulario.clean = clean
+            return formulario
+
         self.fields = (campo,)
         return super().get_form_class()
 

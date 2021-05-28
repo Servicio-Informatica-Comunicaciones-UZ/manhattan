@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n %}
+{% load crispy_forms_tags i18n %}
 {% block title %}{% trans 'Actualizar solicitud de proyecto' %}{% endblock title %}
 {% block description %}{% trans 'Actualizar solicitud de proyecto' %}{% endblock description %}
 
@@ -27,7 +27,11 @@
 
   <form action="" method="post">
     {% csrf_token %}
-    {{ form.as_p }}
+    {% if campo == 'ayuda' %}
+      {{ form | crispy }}
+    {% else %}
+      {{ form.as_p }}
+    {% endif %}
     <br style="clear: both;" />
     <div class="btn-group" role="group" aria-label="Botones">
       <a href="{{ url_anterior }}" class="btn btn-info">

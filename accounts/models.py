@@ -137,10 +137,11 @@ class CustomUser(AbstractUser):
     def get_colectivo_principal(self):
         """Devuelve el colectivo principal del usuario.
 
-        Se determina usando el orden de prelación PDI > ADS > PAS > EST.
+        Se determina usando el orden de prelación PDI > PAS > ADS > EST.
+        PDI y PAS pueden solicitar financiación, pero el profesorado de los centros adscritos no.
         """
         colectivos_del_usuario = json.loads(self.colectivos) if self.colectivos else []
-        for col in ('PDI', 'ADS', 'PAS', 'EST'):
+        for col in ('PDI', 'PAS', 'ADS', 'EST'):
             if col in colectivos_del_usuario:
                 return col
         return None
