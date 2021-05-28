@@ -1,3 +1,4 @@
+import datetime
 from django.core.validators import FileExtensionValidator
 from django.db import connection, models
 from django.urls import reverse
@@ -752,6 +753,26 @@ class Registro(models.Model):
     descripcion = models.CharField(max_length=255)
     evento = models.ForeignKey('Evento', on_delete=models.PROTECT)
     proyecto = models.ForeignKey('Proyecto', on_delete=models.PROTECT)
+
+
+class Resolucion(models.Model):
+    """Datos sobre una resolución publicada en el tablón de anuncios."""
+
+    fecha = models.DateField(default=datetime.date.today)
+    titulo = models.CharField(_('título'), max_length=255)
+    url = models.URLField(
+        'URL',
+        help_text=_(
+            'Dirección de la página web. '
+            'Vg: https://ae.unizar.es/?app=touz&opcion=mostrar&id=12345'
+        ),
+        max_length=255,
+    )
+
+    class Meta:
+        ordering = ('fecha',)
+        verbose_name = _('resolución')
+        verbose_name_plural = _('resoluciones')
 
 
 class RightsSupport(models.Model):

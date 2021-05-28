@@ -41,7 +41,7 @@ from django.utils.formats import localize
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.views import View
-from django.views.generic import DetailView, RedirectView, TemplateView
+from django.views.generic import DetailView, ListView, RedirectView, TemplateView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 # Local Django
@@ -68,6 +68,7 @@ from .models import (
     Plan,
     Proyecto,
     Registro,
+    Resolucion,
     TipoParticipacion,
     Valoracion,
 )
@@ -1830,3 +1831,10 @@ class ProyectosUsuarioView(LoginRequiredMixin, TemplateView):
             )
 
         return context
+
+
+class ResolucionListView(ListView):
+    """Lista las resoluciones publicadas en el tablón de anuncios."""
+
+    model = Resolucion
+    template_name = 'resolucion/list.html'

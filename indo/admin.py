@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 
-from .models import Convocatoria, Criterio, MemoriaApartado, MemoriaSubapartado, Opcion
+from .models import Convocatoria, Criterio, MemoriaApartado, MemoriaSubapartado, Opcion, Resolucion
 
 # Register your models here.
 admin.site.register(Convocatoria)
@@ -44,6 +44,11 @@ class Opcion(admin.ModelAdmin):
         return obj.criterio.descripcion[:12]
 
     mini_criterio.short_description = _('Criterio')
+
+
+@admin.register(Resolucion)
+class Resolucion(admin.ModelAdmin):
+    list_display = ('fecha', 'titulo')
 
 
 admin.site.site_header = _('Administración de Manhattan')

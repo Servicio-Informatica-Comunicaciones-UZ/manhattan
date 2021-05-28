@@ -44,6 +44,7 @@ from .views import (
     ProyectosEvaluadosTableView,
     ProyectosNotificarView,
     ProyectosUsuarioView,
+    ResolucionListView,
 )
 
 
@@ -199,6 +200,7 @@ urlpatterns = [
         ProyectosAceptadosTableView.as_view(),
         name='proyectos_aceptados',
     ),
+    path('resoluciones', ResolucionListView.as_view(), name='resoluciones'),
 ]
 
 if settings.DEBUG:
