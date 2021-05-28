@@ -11,7 +11,9 @@
 
   <ul class="listado">
   {% for resolucion in resolucion_list %}
-    <li> {{ resolucion.fecha }} <a href="{{ resolucion.url }}">{{ resolucion.titulo }}</a></li>
+    <li> {{ resolucion.fecha }}
+    <a href="{{ resolucion.url }}" target="_blank" rel="noopener noreferrer">{{ resolucion.titulo }}</a>
+    <span class="fas fa-link" style="float: none; font-size: 100%;"></span></li>
   {% empty %}
     <li>{% trans 'Todavía no se ha publicado ninguna resolución.' %}</li>
   {% endfor %}
