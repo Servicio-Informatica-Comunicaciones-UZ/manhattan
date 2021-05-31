@@ -1,5 +1,7 @@
 from django_tables2 import SingleTableView
 
+from .models import Evento, Registro
+
 
 class PagedFilteredTableView(SingleTableView):
     filter_class = None
@@ -15,3 +17,30 @@ class PagedFilteredTableView(SingleTableView):
         context = super().get_context_data(**kwargs)
         context[self.context_filter_name] = self.filter
         return context
+
+
+def get_client_ip(request):
+    """
+    Devuelve la (presunta) IP del cliente.
+
+    Véase <https://en.wikipedia.org/wiki/X-Forwarded-For>
+    """
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        return x_forwarded_for.split(',')[-1].strip()
+
+    return request.META.get('REMOTE_ADDR')
+
+
+def registrar_evento(request, nombre_evento, descripcion, proyecto):
+    evento = Evento.objects.get(nombre=nombre_evento)
+    ip_address = get_client_ip(request)
+
+    registro = Registro(
+        descripcion=descripcion,
+        evento=evento,
+        proyecto=proyecto,
+        usuario=request.user,
+        ip_address=ip_address,
+    )
+    registro.save()

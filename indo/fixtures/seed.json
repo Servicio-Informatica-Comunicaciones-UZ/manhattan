@@ -10,8 +10,8 @@
         "fecha_max_visto_buenos": "2021-07-06",
         "fecha_max_alegaciones": null,
         "fecha_max_aceptacion_resolucion": null,
-        "fecha_max_memorias": "2022-09-30",
-        "fecha_max_gastos": "2022-06-15"
+        "fecha_max_memorias": "2022-06-15",
+        "fecha_max_gastos": "2022-09-30"
     }
 },
 {
@@ -196,6 +196,61 @@
 {
     "model": "indo.evento",
     "pk": "creacion_solicitud",
+    "fields": {}
+},
+{
+    "model": "indo.evento",
+    "pk": "anulacion_solicitud",
+    "fields": {}
+},
+{
+    "model": "indo.evento",
+    "pk": "presentacion_solicitud",
+    "fields": {}
+},
+{
+    "model": "indo.evento",
+    "pk": "denegacion_proyecto",
+    "fields": {}
+},
+{
+    "model": "indo.evento",
+    "pk": "anulacion_resolucion",
+    "fields": {}
+},
+{
+    "model": "indo.evento",
+    "pk": "aprobacion_proyecto",
+    "fields": {}
+},
+{
+    "model": "indo.evento",
+    "pk": "rechazo_condiciones",
+    "fields": {}
+},
+{
+    "model": "indo.evento",
+    "pk": "aceptacion_condiciones",
+    "fields": {}
+},
+{
+    "model": "indo.evento",
+    "pk": "presentacion_memoria",
+    "fields": {}
+},
+{
+    "model": "indo.evento",
+    "pk": "inadmision_memoria",
+    "fields": {}
+},
+{
+    "model": "indo.evento",
+    "pk": "admision_memoria",
+    "fields": {}
+},
+{
+    "model": "indo.evento",
+    "pk": "cierre_economico",
     "fields": {}
 },
 {
