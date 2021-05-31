@@ -85,6 +85,7 @@ def add_permissions_to_groups(apps, schema_editor):
     listar_evaluaciones = Permission.objects.get(codename='listar_evaluaciones')
     gestionar_correctores = Permission.objects.get(codename='gestionar_correctores')
     asignar_correctores = Permission.objects.get(codename='asignar_correctores')
+    ver_evaluacion = Permission.objects.get(codename='ver_evaluacion')
     ver_memorias = Permission.objects.get(codename='ver_memorias')
     ver_up = Permission.objects.get(codename='ver_up')
     ver_economico = Permission.objects.get(codename='ver_economico')
@@ -107,6 +108,7 @@ def add_permissions_to_groups(apps, schema_editor):
         listar_evaluaciones,
         gestionar_correctores,
         asignar_correctores,
+        ver_evaluacion,
         ver_memorias,
         ver_up,
         ver_economico,
@@ -1063,6 +1065,7 @@ class Migration(migrations.Migration):
                     ),
                     ('listar_correctores', 'Puede ver el listado de correctores.'),
                     ('editar_corrector', 'Puede modificar el corrector de un proyecto.'),
+                    ('ver_evaluacion', 'Puede ver la evaluación de cualquier proyecto.'),
                     ('ver_memorias', 'Puede ver el listado y cualquier memoria de proyecto.'),
                     ('ver_up', 'Puede ver el listado de UP y gastos de los proyectos.'),
                     ('ver_economico', 'Puede ver/editar el cierre económico de los proyectos.'),

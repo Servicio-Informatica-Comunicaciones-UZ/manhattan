@@ -531,6 +531,7 @@ class Proyecto(models.Model):
             ('editar_resolucion', _('Puede modificar la resolución de la Comisión Evaluadora.')),
             ('listar_correctores', _('Puede ver el listado de correctores.')),
             ('editar_corrector', _('Puede modificar el corrector de un proyecto.')),
+            ('ver_evaluacion', _('Puede ver la evaluacion de cualquier proyecto.')),
             ('ver_memorias', _('Puede ver el listado y cualquier memoria de proyecto.')),
             ('ver_up', _('Puede ver el listado de UP y gastos de los proyectos.')),
             ('ver_economico', _('Puede ver/editar el cierre económico de los proyectos.')),
