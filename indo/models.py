@@ -528,7 +528,7 @@ class Proyecto(models.Model):
             ('listar_evaluaciones', _('Puede ver el listado de evaluaciones de los proyectos.')),
             ('listar_evaluadores', _('Puede ver el listado de evaluadores.')),
             ('editar_evaluador', _('Puede editar el evaluador de un proyecto.')),
-            ('editar_aceptacion', _('Puede editar la decisión de la Comisión Evaluadora.')),
+            ('editar_resolucion', _('Puede modificar la resolución de la Comisión Evaluadora.')),
             ('listar_correctores', _('Puede ver el listado de correctores.')),
             ('editar_corrector', _('Puede modificar el corrector de un proyecto.')),
             ('ver_memorias', _('Puede ver el listado y cualquier memoria de proyecto.')),

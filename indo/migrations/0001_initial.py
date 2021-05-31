@@ -81,7 +81,7 @@ def add_permissions_to_groups(apps, schema_editor):
     editar_proyecto = Permission.objects.get(codename='editar_proyecto')
     listar_evaluadores = Permission.objects.get(codename='listar_evaluadores')
     editar_evaluador = Permission.objects.get(codename='editar_evaluador')
-    editar_aceptacion = Permission.objects.get(codename='editar_aceptacion')
+    editar_resolucion = Permission.objects.get(codename='editar_resolucion')
     listar_evaluaciones = Permission.objects.get(codename='listar_evaluaciones')
     gestionar_correctores = Permission.objects.get(codename='gestionar_correctores')
     asignar_correctores = Permission.objects.get(codename='asignar_correctores')
@@ -103,7 +103,7 @@ def add_permissions_to_groups(apps, schema_editor):
         editar_proyecto,
         listar_evaluadores,
         editar_evaluador,
-        editar_aceptacion,
+        editar_resolucion,
         listar_evaluaciones,
         gestionar_correctores,
         asignar_correctores,
@@ -1057,7 +1057,10 @@ class Migration(migrations.Migration):
                     ),
                     ('listar_evaluadores', 'Puede ver el listado de evaluadores.'),
                     ('editar_evaluador', 'Puede editar el evaluador de un proyecto.'),
-                    ('editar_aceptacion', 'Puede editar la decisión de la Comisión Evaluadora.'),
+                    (
+                        'editar_resolucion',
+                        'Puede modificar la resolución de la Comisión Evaluadora.',
+                    ),
                     ('listar_correctores', 'Puede ver el listado de correctores.'),
                     ('editar_corrector', 'Puede modificar el corrector de un proyecto.'),
                     ('ver_memorias', 'Puede ver el listado y cualquier memoria de proyecto.'),
