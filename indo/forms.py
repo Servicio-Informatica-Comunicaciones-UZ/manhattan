@@ -136,6 +136,8 @@ class InvitacionForm(forms.ModelForm):
         return usuario
 
     def clean(self):
+        # See <https://docs.djangoproject.com/en/dev/ref/forms/validation/>
+        # <https://docs.djangoproject.com/en/dev/topics/forms/modelforms/#overriding-modelform-clean-method>
         cleaned_data = super().clean()
         nip = cleaned_data.get('nip')
         # Comprobamos si el usuario ya existe en el sistema.
@@ -198,6 +200,8 @@ class InvitacionForm(forms.ModelForm):
                         f'por proyecto: {nombres_estudiantes}.'
                     )
                 )
+
+        return cleaned_data
 
     def save(self, commit=True):
         invitado = super().save(commit=False)
@@ -270,6 +274,9 @@ class ProyectoForm(forms.ModelForm):
                         'el coordinador del POU del centro.'
                     ),
                 )
+
+        # In Django < 1.7, `form.clean()` was required to return a dictionary of `cleaned_data`.
+        # This method may still return a dictionary of data to be used, but it's no longer required
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
