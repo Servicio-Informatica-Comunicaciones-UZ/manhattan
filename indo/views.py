@@ -581,7 +581,7 @@ class ProyectoEvaluadorUpdateView(LoginRequiredMixin, PermissionRequiredMixin, U
             messages.warning(request, advertencia)
         nip_evaluadores = [str(nip) for nip in nip_evaluadores]
         # XXX - Desarrollo
-        # nip_evaluadores = ['136040', '327618', '329639', '370109', '408704', '181785']
+        # nip_evaluadores += ['136040', '327618', '329639', '370109', '408704', '181785']
 
         # Creamos los usuarios que no existan ya en la aplicación.
         evaluadores = Group.objects.get(name='Evaluadores')
@@ -879,8 +879,19 @@ class ProyectoCreateView(LoginRequiredMixin, ChecksMixin, CreateView):
 
     def _registrar_creacion(self, proyecto):
         evento = Evento.objects.get(nombre='creacion_solicitud')
+
+        x_forwarded_for = self.request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip_address = x_forwarded_for.split(',')[-1].strip()
+        else:
+            ip_address = self.request.META.get('REMOTE_ADDR')
+
         registro = Registro(
-            descripcion='Creación inicial de la solicitud', evento=evento, proyecto=proyecto
+            descripcion='Creación inicial de la solicitud',
+            evento=evento,
+            proyecto=proyecto,
+            usuario=self.request.user,
+            ip_address=ip_address,
         )
         registro.save()
 

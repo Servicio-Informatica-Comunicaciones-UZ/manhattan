@@ -753,6 +753,10 @@ class Registro(models.Model):
     descripcion = models.CharField(max_length=255)
     evento = models.ForeignKey('Evento', on_delete=models.PROTECT)
     proyecto = models.ForeignKey('Proyecto', on_delete=models.PROTECT)
+    usuario = models.ForeignKey(
+        'accounts.CustomUser', null=True, on_delete=models.PROTECT, related_name='registros'
+    )
+    ip_address = models.GenericIPAddressField(_('Dirección IP'), null=True)
 
 
 class Resolucion(models.Model):
