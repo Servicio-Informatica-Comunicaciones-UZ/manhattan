@@ -20,6 +20,9 @@
       <li>{% trans 'Ver las valoraciones de los correctores de las memorias.' %}</li>
       <!-- li>{% trans 'Descargar una hoja de cálculo con todas las valoraciones de los correctores de las memorias.' %}</li -->
     </ul>
+    <p>{% blocktrans %}La aplicacion no permite presentar memorias pasada la fecha establecida.
+      De cara a las subsanaciones, se puede establecer una nueva fecha en el menú Gestión → Administrar convocatorias.
+    {% endblocktrans %}</p>
   </div><br />
 
   {% render_table table %}

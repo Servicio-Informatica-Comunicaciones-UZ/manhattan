@@ -38,8 +38,8 @@ Instalación sobre contenedores Docker
    Si se usa SSL, habilitar las opciones `SESSION_COOKIE_SECURE` y `CSRF_COOKIE_SECURE`.
 5. En el fichero `Dockerfile` cambiar `UWSGI_UID` y `UWSGI_GID` al usuario y grupo que se desee.
    En el fichero `docker-compose.yml` cambiar el puerto `published` al que se desee.
-6. Levantar los contenedores:
-   `docker-compose up -d`
+6. Construir y levantar los contenedores:
+   `docker-compose build && docker-compose up -d`
 7. Crear el usuario administrador:
 
    ```bash

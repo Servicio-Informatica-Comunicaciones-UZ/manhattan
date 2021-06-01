@@ -61,13 +61,11 @@ from .models import (
     Centro,
     Convocatoria,
     Criterio,
-    Evento,
     MemoriaRespuesta,
     # MemoriaSubapartado,
     ParticipanteProyecto,
     Plan,
     Proyecto,
-    Registro,
     Resolucion,
     TipoParticipacion,
     Valoracion,
@@ -86,7 +84,7 @@ from .tables import (
     ProyectoUPTable,
 )
 from .tasks import generar_pdf
-from .utils import PagedFilteredTableView
+from .utils import PagedFilteredTableView, registrar_evento
 
 
 class ChecksMixin(UserPassesTestMixin):
@@ -245,8 +243,12 @@ class MemoriaCorreccionUpdateView(LoginRequiredMixin, ChecksMixin, UpdateView):
 
         if admision == 'False':
             proyecto.estado = 'MEM_NO_ADMITIDA'
+            registrar_evento(
+                self.request, 'inadmision_memoria', 'No admisión de la memoria', proyecto
+            )
         elif admision == 'True':
             proyecto.estado = 'MEM_ADMITIDA'
+            registrar_evento(self.request, 'admision_memoria', 'Admisión de la memoria', proyecto)
         proyecto.save()
 
         return super().form_valid(form)
@@ -450,8 +452,14 @@ class ProyectoAceptarView(LoginRequiredMixin, ChecksMixin, SuccessMessageMixin, 
 
         if aceptacion == 'false':
             proyecto.estado = 'RECHAZADO'
+            registrar_evento(
+                self.request, 'rechazo_condiciones', 'Rechazo de las condiciones', proyecto
+            )
         elif aceptacion == 'true':
             proyecto.estado = 'ACEPTADO'
+            registrar_evento(
+                self.request, 'aceptacion_condiciones', 'Aceptación de las condiciones', proyecto
+            )
         proyecto.save()
 
         return super().form_valid(form)
@@ -581,7 +589,7 @@ class ProyectoEvaluadorUpdateView(LoginRequiredMixin, PermissionRequiredMixin, U
             messages.warning(request, advertencia)
         nip_evaluadores = [str(nip) for nip in nip_evaluadores]
         # XXX - Desarrollo
-        # nip_evaluadores = ['136040', '327618', '329639', '370109', '408704', '181785']
+        # nip_evaluadores += ['136040', '327618', '329639', '370109', '408704', '181785']
 
         # Creamos los usuarios que no existan ya en la aplicación.
         evaluadores = Group.objects.get(name='Evaluadores')
@@ -625,10 +633,22 @@ class ProyectoResolucionUpdateView(
 
         if resolucion == 'true':
             proyecto.estado = 'APROBADO'
+            registrar_evento(
+                self.request, 'aprobacion_proyecto', 'Aprobación del proyecto', proyecto
+            )
         elif resolucion == 'false':
             proyecto.estado = 'DENEGADO'
+            registrar_evento(
+                self.request, 'denegacion_proyecto', 'Denegación del proyecto', proyecto
+            )
         else:  # unknown
             proyecto.estado = 'SOLICITADO'
+            registrar_evento(
+                self.request,
+                'anulacion_resolucion',
+                'Anulación de la aprobación o denegación',
+                proyecto,
+            )
         proyecto.save()
 
         return super().form_valid(form)
@@ -856,7 +876,9 @@ class ProyectoCreateView(LoginRequiredMixin, ChecksMixin, CreateView):
         # to do custom logic on form data. It should return an HttpResponse.
         proyecto = form.save()
         self._guardar_coordinador(proyecto)
-        self._registrar_creacion(proyecto)
+        registrar_evento(
+            self.request, 'creacion_solicitud', 'Creacion inicial de la solicitud', proyecto
+        )
         return redirect('proyecto_detail', proyecto.id)
 
     def get_form(self, form_class=None):
@@ -876,13 +898,6 @@ class ProyectoCreateView(LoginRequiredMixin, ChecksMixin, CreateView):
             usuario=self.request.user,
         )
         pp.save()
-
-    def _registrar_creacion(self, proyecto):
-        evento = Evento.objects.get(nombre='creacion_solicitud')
-        registro = Registro(
-            descripcion='Creación inicial de la solicitud', evento=evento, proyecto=proyecto
-        )
-        registro.save()
 
     def test_func(self):
         convocatoria = Convocatoria.objects.get(pk=date.today().year)
@@ -920,6 +935,9 @@ class ProyectoAnularView(LoginRequiredMixin, ChecksMixin, RedirectView):
         proyecto.save()
 
         messages.success(request, _('Su solicitud de proyecto ha sido anulada.'))
+        registrar_evento(
+            self.request, 'anulacion_solicitud', 'Anulación de la solicitud', proyecto
+        )
         return super().post(request, *args, **kwargs)
 
     def test_func(self):
@@ -1045,6 +1063,9 @@ class MemoriaPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
 
         messages.success(
             request, _('La memoria de su proyecto ha sido presentada para su corrección.')
+        )
+        registrar_evento(
+            self.request, 'presentacion_memoria', 'Presentacion de la memoria', proyecto
         )
         return super().post(request, *args, **kwargs)
 
@@ -1417,6 +1438,9 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
         proyecto.save()
 
         messages.success(request, _('Su solicitud de proyecto ha sido presentada.'))
+        registrar_evento(
+            self.request, 'presentacion_solicitud', 'Presentación de la solicitud', proyecto
+        )
         return super().post(request, *args, **kwargs)
 
     def _enviar_invitaciones(self, request, proyecto):

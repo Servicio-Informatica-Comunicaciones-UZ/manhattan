@@ -528,9 +528,10 @@ class Proyecto(models.Model):
             ('listar_evaluaciones', _('Puede ver el listado de evaluaciones de los proyectos.')),
             ('listar_evaluadores', _('Puede ver el listado de evaluadores.')),
             ('editar_evaluador', _('Puede editar el evaluador de un proyecto.')),
-            ('editar_aceptacion', _('Puede editar la decisión de la Comisión Evaluadora.')),
+            ('editar_resolucion', _('Puede modificar la resolución de la Comisión Evaluadora.')),
             ('listar_correctores', _('Puede ver el listado de correctores.')),
             ('editar_corrector', _('Puede modificar el corrector de un proyecto.')),
+            ('ver_evaluacion', _('Puede ver la evaluacion de cualquier proyecto.')),
             ('ver_memorias', _('Puede ver el listado y cualquier memoria de proyecto.')),
             ('ver_up', _('Puede ver el listado de UP y gastos de los proyectos.')),
             ('ver_economico', _('Puede ver/editar el cierre económico de los proyectos.')),
@@ -753,6 +754,10 @@ class Registro(models.Model):
     descripcion = models.CharField(max_length=255)
     evento = models.ForeignKey('Evento', on_delete=models.PROTECT)
     proyecto = models.ForeignKey('Proyecto', on_delete=models.PROTECT)
+    usuario = models.ForeignKey(
+        'accounts.CustomUser', null=True, on_delete=models.PROTECT, related_name='registros'
+    )
+    ip_address = models.GenericIPAddressField(_('Dirección IP'), null=True)
 
 
 class Resolucion(models.Model):
@@ -817,7 +822,7 @@ class Valoracion(models.Model):
         with connection.cursor() as cursor:
             cursor.execute(
                 f'''
-                SELECT DISTINCT prog.nombre_corto, l.nombre, p.id, p.titulo
+                SELECT DISTINCT prog.nombre_corto, l.nombre, p.id, p.titulo, p.ayuda
                 FROM indo_valoracion v
                 JOIN indo_proyecto p ON v.proyecto_id = p.id
                 JOIN indo_programa prog ON p.programa_id = prog.id
@@ -850,7 +855,7 @@ class Valoracion(models.Model):
 
         valoraciones = list(zip(*valoraciones))
 
-        cabeceras = [('Programa'), _('Línea'), _('ID'), _('Título')]
+        cabeceras = [('Programa'), _('Línea'), _('ID'), _('Título'), _('Ayuda solicitada')]
         cabeceras.extend([criterio.descripcion for criterio in criterios])
         valoraciones.insert(0, cabeceras)
         return valoraciones
