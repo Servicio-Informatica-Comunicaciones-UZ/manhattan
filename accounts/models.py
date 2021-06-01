@@ -174,7 +174,7 @@ class CustomUser(AbstractUser):
 
         # HACK - Indicamos que la autenticación es vía Single Sign On con SAML.
         usuario_social = UserSocialAuth(
-            uid=f'lord:{usuario.username}', provider='saml', user=usuario
+            uid=f'sir:{usuario.username}', provider='saml', user=usuario
         )
         usuario_social.save()
 
