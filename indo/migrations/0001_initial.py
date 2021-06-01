@@ -65,6 +65,7 @@ def add_permissions_to_groups(apps, schema_editor):
 
     gestores = Group.objects.get(name='Gestores')
 
+    # Permisos para la interfaz de administración
     add_convocatoria = Permission.objects.get(codename='add_convocatoria')
     change_convocatoria = Permission.objects.get(codename='change_convocatoria')
 
@@ -76,6 +77,15 @@ def add_permissions_to_groups(apps, schema_editor):
     change_opcion = Permission.objects.get(codename='change_opcion')
     delete_opcion = Permission.objects.get(codename='delete_opcion')
 
+    add_memoriaapartado = Permission.objects.get(codename='add_memoriaapartado')
+    change_memoriaapartado = Permission.objects.get(codename='change_memoriaapartado')
+    delete_memoriaapartado = Permission.objects.get(codename='delete_memoriaapartado')
+
+    add_memoriasubapartado = Permission.objects.get(codename='add_memoriasubapartado')
+    change_memoriasubapartado = Permission.objects.get(codename='change_memoriasubapartado')
+    delete_memoriasubapartado = Permission.objects.get(codename='delete_memoriasubapartado')
+
+    # Permisos para las vistas creadas
     listar_proyectos = Permission.objects.get(codename='listar_proyectos')
     ver_proyecto = Permission.objects.get(codename='ver_proyecto')
     editar_proyecto = Permission.objects.get(codename='editar_proyecto')
@@ -98,6 +108,12 @@ def add_permissions_to_groups(apps, schema_editor):
         add_opcion,
         change_opcion,
         delete_opcion,
+        add_memoriaapartado,
+        change_memoriaapartado,
+        delete_memoriaapartado,
+        add_memoriasubapartado,
+        change_memoriasubapartado,
+        delete_memoriasubapartado,
         listar_proyectos,
         ver_proyecto,
         editar_proyecto,
