@@ -822,7 +822,7 @@ class Valoracion(models.Model):
         with connection.cursor() as cursor:
             cursor.execute(
                 f'''
-                SELECT DISTINCT prog.nombre_corto, l.nombre, p.id, p.titulo, p.ayuda
+                SELECT DISTINCT prog.nombre_corto, l.nombre, p.id, p.titulo, p.ayuda, p.financiacion
                 FROM indo_valoracion v
                 JOIN indo_proyecto p ON v.proyecto_id = p.id
                 JOIN indo_programa prog ON p.programa_id = prog.id
@@ -855,7 +855,7 @@ class Valoracion(models.Model):
 
         valoraciones = list(zip(*valoraciones))
 
-        cabeceras = [('Programa'), _('Línea'), _('ID'), _('Título'), _('Ayuda solicitada')]
+        cabeceras = [('Programa'), _('Línea'), _('ID'), _('Título'), _('Ayuda solicitada'), _('Financiación')]
         cabeceras.extend([criterio.descripcion for criterio in criterios])
         valoraciones.insert(0, cabeceras)
         return valoraciones
