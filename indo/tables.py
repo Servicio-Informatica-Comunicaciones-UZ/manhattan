@@ -225,7 +225,7 @@ class MemoriasAsignadasTable(tables.Table):
         )
 
     def render_boton_valorar(self, record):
-        if record.aceptacion_corrector is not None:
+        if record.estado != 'MEM_PRESENTADA':
             return ''
 
         enlace = reverse('corregir', args=[record.id])
@@ -263,10 +263,17 @@ class MemoriaProyectosTable(tables.Table):
 
     def render_memoria(self, record):
         enlace = reverse('memoria_detail', args=[record.id])
+        if record.estado in ('ACEPTADO', 'MEM_RECHAZADA'):
+            return mark_safe(
+                f'''<a href="{enlace}" title="{_('Ver la memoria del proyecto')}"
+                    aria-label="{_('Ver la memoria del proyecto')}">
+                    <span class="far fa-eye"></span>
+                    </a>'''
+            )
         return mark_safe(
             f'''<a href="{enlace}" title="{_('Ver la memoria del proyecto')}"
                 aria-label="{_('Ver la memoria del proyecto')}">
-                  <span class="far fa-eye"></span>
+                <span class="far fa-eye text-success"></span>
                 </a>'''
         )
 

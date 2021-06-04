@@ -224,6 +224,11 @@ class CorreccionVerView(LoginRequiredMixin, PermissionRequiredMixin, DetailView)
     model = Proyecto
     template_name = 'gestion/proyecto/correccion.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['url_anterior'] = self.request.META.get('HTTP_REFERER', reverse('home'))
+        return context
+
 
 class MemoriaCorreccionUpdateView(LoginRequiredMixin, ChecksMixin, UpdateView):
     """Muestra y permite editar la corrección de la memoria un proyecto."""
