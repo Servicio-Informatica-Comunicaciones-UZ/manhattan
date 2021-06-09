@@ -9,11 +9,15 @@
   <div class="alert alert-info fade-in noprint">
     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
     <span class="fas fa-info-circle"></span>
-    <div>
+    <p>
       {% trans 'Puede editar su solicitud tantas veces como desee.' %}<br />
       {% trans 'Cuando esté satisfecho, pulse el botón «Presentar».' %}
       {% trans 'Una vez haya presentado la solicitud, ya no podrá modificarla.' %}
-    </div>
+    </p>
+    <p>
+      {% trans 'Las invitaciones a participar en el proyecto se enviarán por correo electrónico cuando presente la solicitud.' %}<br>
+      {% trans 'Las personas que acepten la invitación pasarán a ser participantes.' %}
+    </p>
   </div>
   {% endif %}
 
