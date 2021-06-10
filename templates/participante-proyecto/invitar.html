@@ -7,32 +7,44 @@
 <div class="container-blanco">
   <div class="alert alert-info">
     <span class="fas fa-info-circle"></span>
-    <p>{% trans 'Introduzca el NIP de la persona que desee invitar a su proyecto.' %}</p>
     {% blocktrans %}
+      <p>Introduzca el NIP de la persona que desee invitar a su proyecto.</p>
+
       <p>Si la persona nunca ha estado vinculado a la Universidad de Zaragoza:</p>
 
       <ol>
-          <li>
-              Infórmele de que puede obtener un NIP (identificador de usuario) visitando la
-              <a href="https://identidad.unizar.es/autoregistro" target="_blank" rel="noopener noreferrer">
-                  página de autorregistro</a>
-              <span class="fas fa-link" style="float: none; font-size: 100%;"></span>.
-          </li>
-          <li>
-              Una vez que el usuario disponga de un NIP, usted, como coordinador, deberá comunicárselo al Vicerrectorado
-              de Política Académica a través del sistema de gestión de incidencias
-              <strong><a href="https://ayudica.unizar.es/otrs/customer.pl" target="_blank" rel="noopener noreferrer">Ayudica</a></strong>
-              <span class="fas fa-link" style="float: none; font-size: 100%;"></span>,
-              para que se le asigne a dicho NIP la vinculación «Participantes externos Proyectos Innovación Docente» (66)
-              en el Sistema de Gestión de Identidades.
-          </li>
-          <li>Cuando sea efectiva la vinculación, Ayudica le avisará para que proceda a efectuar la invitación.</li>
+        <li>
+          Infórmele de que puede obtener un NIP (identificador de usuario) visitando la
+          <a href="https://identidad.unizar.es/autoregistro" target="_blank" rel="noopener noreferrer">
+          página de autorregistro</a>
+          <span class="fas fa-link" style="float: none; font-size: 100%;"></span>.
+        </li>
+        <li>
+          Una vez que el usuario disponga de un NIP, usted, como coordinador, deberá comunicárselo al Vicerrectorado
+          de Política Académica a través del sistema de gestión de incidencias
+          <strong><a href="https://ayudica.unizar.es/otrs/customer.pl" target="_blank" rel="noopener noreferrer">Ayudica</a></strong>
+          <span class="fas fa-link" style="float: none; font-size: 100%;"></span>,
+          para que se le asigne a dicho NIP la vinculación «Participantes externos Proyectos Innovación Docente» (66)
+          en el Sistema de Gestión de Identidades.
+        </li>
+        <li>Cuando sea efectiva la vinculación, Ayudica le avisará para que (al día siguiente) proceda a efectuar la invitación.</li>
       </ol>
+
+      <p>La persona debe de tener registrada alguna dirección de correo electrónico en el sistema de
+        <a href="https://identidad.unizar.es" target="_blank" rel="noopener noreferrer">Gestión de Identidades</a>
+        <span class="fas fa-link" style="float: none; font-size: 100%;"></span>de la Universidad.<br>
+        Si no tiene ninguna dirección de email, y no recuerda su contraseña administrativa, puede
+        <a href="https://aesso.unizar.es/" target="_blank" rel="noopener noreferrer">recuperarla</a>
+        <span class="fas fa-link" style="float: none; font-size: 100%;"></span>usando
+        <a href="https://clave.gob.es/" target="_blank" rel="noopener noreferrer">Cl@ve</a>
+        <span class="fas fa-link" style="float: none; font-size: 100%;"></span>o un certificado electrónico.
+      </p>
+
+      <p>
+        Cuando usted presente su solicitud de proyecto, se enviará un correo electrónico a cada persona invitada.<br />
+        Las personas que acepten la invitación pasarán a ser participantes del proyecto.
+      </p>
     {% endblocktrans %}
-    <div>
-      {% trans 'Cuando presente su solicitud de proyecto se enviará un correo electrónico a cada persona invitada.' %}<br />
-      {% trans 'Las personas que acepten la invitación pasarán a ser participantes del proyecto.' %}
-    </div>
   </div>
 
   <h1>{% blocktrans with titulo=proyecto.titulo %}Invitar al proyecto «{{ titulo }}»{% endblocktrans %}</h1>
