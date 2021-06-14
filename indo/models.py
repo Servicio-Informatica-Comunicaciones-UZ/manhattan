@@ -531,7 +531,7 @@ class Proyecto(models.Model):
             ('editar_resolucion', _('Puede modificar la resolución de la Comisión Evaluadora.')),
             ('listar_correctores', _('Puede ver el listado de correctores.')),
             ('editar_corrector', _('Puede modificar el corrector de un proyecto.')),
-            ('ver_evaluacion', _('Puede ver la evaluacion de cualquier proyecto.')),
+            ('ver_evaluacion', _('Puede ver la evaluación de cualquier proyecto.')),
             ('ver_memorias', _('Puede ver el listado y cualquier memoria de proyecto.')),
             ('ver_up', _('Puede ver el listado de UP y gastos de los proyectos.')),
             ('ver_economico', _('Puede ver/editar el cierre económico de los proyectos.')),
@@ -822,7 +822,8 @@ class Valoracion(models.Model):
         with connection.cursor() as cursor:
             cursor.execute(
                 f'''
-                SELECT DISTINCT prog.nombre_corto, l.nombre, p.id, p.titulo, p.ayuda, p.financiacion
+                SELECT DISTINCT prog.nombre_corto, l.nombre,
+                  p.id, p.titulo, p.ayuda, p.financiacion
                 FROM indo_valoracion v
                 JOIN indo_proyecto p ON v.proyecto_id = p.id
                 JOIN indo_programa prog ON p.programa_id = prog.id
@@ -838,9 +839,9 @@ class Valoracion(models.Model):
                 cursor.execute(
                     f'''
                     SELECT CASE
-                    WHEN c.tipo = 'opcion' THEN o.puntuacion
-                    WHEN c.tipo = 'texto' THEN v.texto
-                    ELSE NULL
+                      WHEN c.tipo = 'opcion' THEN o.puntuacion
+                      WHEN c.tipo = 'texto' THEN v.texto
+                      ELSE NULL
                     END AS valoracion
                     FROM indo_valoracion v
                     JOIN indo_criterio c ON v.criterio_id = c.id
@@ -855,7 +856,14 @@ class Valoracion(models.Model):
 
         valoraciones = list(zip(*valoraciones))
 
-        cabeceras = [('Programa'), _('Línea'), _('ID'), _('Título'), _('Ayuda solicitada'), _('Financiación')]
+        cabeceras = [
+            _('Programa'),
+            _('Línea'),
+            _('ID'),
+            _('Título'),
+            _('Ayuda solicitada'),
+            _('Financiación'),
+        ]
         cabeceras.extend([criterio.descripcion for criterio in criterios])
         valoraciones.insert(0, cabeceras)
         return valoraciones
