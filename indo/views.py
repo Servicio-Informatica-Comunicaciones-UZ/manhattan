@@ -726,7 +726,7 @@ class InvitacionView(LoginRequiredMixin, ChecksMixin, CreateView):
             fecha_limite_str = localize(fecha_limite)
             self.permission_denied_message = _(
                 f'''Se ha superado la fecha límite ({fecha_limite_str})
-                 para que los invitados puedan aceptar participar en el proyecto.'''
+                para que los invitados puedan aceptar participar en el proyecto.'''
             )
             return False
 
@@ -753,9 +753,19 @@ class ParticipanteAceptarView(LoginRequiredMixin, RedirectView):
                 request,
                 _(
                     f'''No puede aceptar esta invitación porque ya forma parte del número
-                máximo de equipos de trabajo permitido ({num_max_equipos}).
-                Para poder aceptar esta invitación, antes debería renunciar a participar
-                en algún otro proyecto.'''
+                    máximo de equipos de trabajo permitido ({num_max_equipos}).
+                    Para poder aceptar esta invitación, antes debería renunciar a participar
+                    en algún otro proyecto.'''
+                ),
+            )
+            return super().post(request, *args, **kwargs)
+
+        if proyecto.estado in ('BORRADOR', 'ANULADO', 'DENEGADO'):
+            messages.error(
+                request,
+                _(
+                    f'''El estado actual del proyecto ({proyecto.get_estado_display()})
+                    no permite aceptar invitaciones a participar en él.'''
                 ),
             )
             return super().post(request, *args, **kwargs)
@@ -1833,6 +1843,7 @@ class ProyectosUsuarioView(LoginRequiredMixin, TemplateView):
                 participantes__usuario=usuario,
                 participantes__tipo_participacion_id='invitado',
             )
+            .exclude(estado__in=['BORRADOR', 'ANULADO', 'DENEGADO'])
             .order_by('programa__nombre_corto', 'linea__nombre', 'titulo')
             .all()
         )
