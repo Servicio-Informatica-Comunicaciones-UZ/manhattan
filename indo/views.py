@@ -1433,7 +1433,8 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
             )
             return super().post(request, *args, **kwargs)
 
-        if not proyecto.tiene_invitados():
+        # if not proyecto.tiene_invitados():
+        if not (proyecto.tiene_invitados() or proyecto.tiene_participantes()):
             messages.error(
                 request, _('La solicitud debe incluir al menos un invitado a participar.')
             )
