@@ -282,7 +282,7 @@ class MemoriaCorreccionUpdateView(LoginRequiredMixin, ChecksMixin, UpdateView):
                 context={
                     'proyecto': proyecto,
                     'coordinador': proyecto.coordinador,
-                    'vicerrector': settings.VICERRECTOR,
+                    'vicerrector': settings.VICERRECTOR.strip('"'),
                     'observaciones': request.POST.get('observaciones_corrector'),
                 },
                 cc=(settings.DEFAULT_FROM_EMAIL,),  # Enviar copia al vicerrectorado
@@ -1334,7 +1334,7 @@ class ProyectosNotificarView(LoginRequiredMixin, PermissionRequiredMixin, Redire
                 'proyecto': proyecto,
                 'coordinador': proyecto.coordinador,
                 'site_url': settings.SITE_URL,
-                'vicerrector': settings.VICERRECTOR,
+                'vicerrector': settings.VICERRECTOR.strip('"'),
             },
             cc=(settings.DEFAULT_FROM_EMAIL,),  # Enviar copia al vicerrectorado
         )
