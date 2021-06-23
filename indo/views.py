@@ -329,7 +329,7 @@ class CorrectorAnyadirView(LoginRequiredMixin, PermissionRequiredMixin, View):
             try:
                 usuario = User.crear_usuario(request, nip)
             except Exception as ex:
-                messages.error(request, ex.args[0])
+                messages.error(request, 'ERROR: %s' % ex.args[0])
                 return redirect('correctores_table')
 
         grupo_correctores = Group.objects.get(name='Correctores')

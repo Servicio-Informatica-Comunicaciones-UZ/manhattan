@@ -64,6 +64,7 @@ class CustomUser(AbstractUser):
         _('Cód. departamentos'), max_length=127, blank=True, null=True
     )
     colectivos = models.CharField(max_length=127, blank=True, null=True)
+    orcid = models.CharField(max_length=19, blank=True, null=True)
 
     class Meta:
         ordering = (
@@ -125,6 +126,14 @@ class CustomUser(AbstractUser):
             part.strip() for part in (self.first_name, self.last_name, self.last_name_2) if part
         )
 
+    @property
+    def apellidos_nombre(self):
+        """Devuelve el nombre completo en formato «Apellido_1 Apellido_2, Nombre»."""
+        nombre = self.first_name.strip() if self.first_name else ''
+        apellidos = ' '.join(part.strip() for part in (self.last_name, self.last_name_2) if part)
+
+        return f'{apellidos}, {nombre}'
+
     # Metodos sobrescritos
     def get_full_name(self):
         """Devuelve el nombre completo (nombre y los dos apellidos)."""
@@ -170,7 +179,7 @@ class CustomUser(AbstractUser):
             # Si Gestión de Identidades devuelve un error, borramos el usuario
             # y finalizamos mostrando el mensaje de error.
             usuario.delete()
-            raise ValidationError('ERROR: ' + str(ex))
+            raise ValidationError(ex)
 
         # HACK - Indicamos que la autenticación es vía Single Sign On con SAML.
         usuario_social = UserSocialAuth(
