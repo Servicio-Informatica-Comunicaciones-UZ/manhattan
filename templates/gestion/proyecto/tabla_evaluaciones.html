@@ -21,7 +21,8 @@
           {% trans 'La aplicación no calcula la puntuación final; puede usar esta hoja en Excel/LibreOffice Calc/Google Sheets para sumar los campos adecuados.' %}</li>
       <li>{% trans 'Introducir la resolución de la Comisión Evaluadora para cada proyecto (aprobación o no, y, en su caso, ayuda concedida, tipos de gastos posibles, etc.' %}</li>
       <li>{% trans 'Una vez se haya introducido la resolución de todos los proyectos, enviar las notificaciones de aprobación a los coordinadores.' %}
-          {% trans 'Recuerde establecer en el menú Gestión → Administrar convocatorias la <strong>fecha límite</strong> para que los coordinadores acepten las condiciones concedidas.' %}</li>
+          {% trans 'Recuerde establecer en el menú Gestión → Administrar convocatorias la <strong>fecha límite</strong> para que los coordinadores acepten las condiciones concedidas.' %}<br>
+          {% trans 'A los coordinadores de los proyectos rechazados deberá comunicarles la resolución manualmente.' %}<br></li>
     </ol>
   </div><br />
 
@@ -58,7 +59,9 @@
           {% blocktrans %}Se enviarán notificaciones a los coordinadores de <b>todos</b> los proyectos
           aprobados por la Comisión.<br><br>
           Recuerde establecer en el menú Gestión → Administrar convocatorias la <strong>fecha límite</strong>
-          para que los coordinadores acepten las condiciones concedidas.{% endblocktrans %}
+          para que los coordinadores acepten las condiciones concedidas.<br><br>
+          A los coordinadores de los proyectos rechazados deberá comunicarles la resolución manualmente.
+          {% endblocktrans %}
         </p>
       </div>
       <div class="modal-footer">
