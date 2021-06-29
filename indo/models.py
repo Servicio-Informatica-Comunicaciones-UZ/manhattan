@@ -264,7 +264,11 @@ class Proyecto(models.Model):
         _('Resumen'),
         null=True,
         max_length=4095,
-        help_text=_('Resumen sucinto del proyecto. Máximo recomendable: un párrafo de 10 líneas.'),
+        help_text=_(
+            'Resumen sucinto del proyecto. Máximo recomendable: un párrafo de 10 líneas.<br>'
+            'Si copia de Word y se le indica que ha introducido demasiados caracteres, '
+            'pruebe a pegar usando Ctrl+Mayúsculas+V.'
+        ),
     )
     estado = models.CharField(
         choices=(

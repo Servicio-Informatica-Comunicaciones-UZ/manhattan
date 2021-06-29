@@ -1646,6 +1646,12 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
             def clean(self):
                 cleaned_data = super(formulario, self).clean()
                 texto = cleaned_data.get(campo)
+
+                # Si se excede la longitud del campo, `cleaned_data` es `{}`, y `texto` es `None`,
+                # lo que provoca una excepción al llamar a `bleach.clean(texto)`.
+                if texto is None:
+                    texto = ''
+
                 # See <https://bleach.readthedocs.io/en/latest/clean.html>
                 cleaned_data[campo] = mark_safe(
                     bleach.clean(
