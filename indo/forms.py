@@ -14,6 +14,7 @@ from social_django.utils import load_strategy
 from django import forms
 from django.contrib.auth.models import Group
 from django.db.models import BLANK_CHOICE_DASH
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 # Local Django
@@ -157,7 +158,13 @@ class InvitacionForm(forms.ModelForm):
         # Si el usuario no está activo, finalizamos explicando esta circunstancia.
         if not usuario.is_active:
             raise forms.ValidationError(
-                _('Usuario inactivo en el sistema de Gestión de Identidades')
+                mark_safe(
+                    _(
+                        '''Usuario inactivo en el sistema de Gestión de Identidades.<br>
+                        Solicite en Ayudica que se le asigne la vinculación
+                        «Participantes externos Proyectos Innovación Docente».'''
+                    )
+                )
             )
 
         # Si el usuario no tiene un email válido, finalizamos explicando esta circunstancia.
