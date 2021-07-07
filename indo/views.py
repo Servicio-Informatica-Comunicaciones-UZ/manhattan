@@ -770,6 +770,18 @@ class ParticipanteAceptarView(LoginRequiredMixin, RedirectView):
             )
             return super().post(request, *args, **kwargs)
 
+        fecha_limite = proyecto.convocatoria.fecha_max_aceptos
+        if date.today() > fecha_limite:
+            fecha_limite_str = localize(fecha_limite)
+            messages.error(
+                request,
+                _(
+                    f'''Se ha superado la fecha límite ({fecha_limite_str})
+                    para que los invitados puedan aceptar participar en el proyecto.'''
+                ),
+            )
+            return super().post(request, *args, **kwargs)
+
         pp = get_object_or_404(
             ParticipanteProyecto,
             proyecto_id=proyecto_id,

@@ -109,24 +109,29 @@
             <td>{{proyecto.coordinador.full_name}}</td>
             <td>{{proyecto.get_estado_display}}</td>
             <td>
-              <form action="{% url 'participante_aceptar' proyecto_id=proyecto.id %}" id="aceptar-form" method="post">
-                {% csrf_token %}
-                <div class="btn-group" role="group" aria-label="Botones">
-                  <button
-                    class="btn btn-secondary btn-sm prepararDeclinar"
-                    data-id="{{proyecto.id}}"
-                    data-titulo="{{proyecto.titulo}}"
-                    data-toggle="modal"
-                    data-target="#declinarModal"
-                    type="button"
-                  >
-                    <span class="fas fa-times"></span> {% trans 'Declinar' %}
-                  </button>
-                  <button type="submit" class="btn btn-primary btn-sm">
-                    <span class="fas fa-check"></span> {% trans "Aceptar" %}
-                  </button>
-                </div>
-              </form>
+              {% now "Y-m-d" as fecha_actual %}
+              {% if fecha_actual > proyecto.convocatoria.fecha_max_aceptos|date:"Y-m-d" %}
+                <span title="{% trans 'Fecha límite superada' %}">—</span>
+              {% else %}
+                <form action="{% url 'participante_aceptar' proyecto_id=proyecto.id %}" id="aceptar-form" method="post">
+                  {% csrf_token %}
+                  <div class="btn-group" role="group" aria-label="Botones">
+                    <button
+                      class="btn btn-secondary btn-sm prepararDeclinar"
+                      data-id="{{proyecto.id}}"
+                      data-titulo="{{proyecto.titulo}}"
+                      data-toggle="modal"
+                      data-target="#declinarModal"
+                      type="button"
+                    >
+                      <span class="fas fa-times"></span> {% trans 'Declinar' %}
+                    </button>
+                    <button type="submit" class="btn btn-primary btn-sm">
+                      <span class="fas fa-check"></span> {% trans "Aceptar" %}
+                    </button>
+                  </div>
+                </form>
+              {% endif %}
             </td>
           </tr>
         {% endfor %}
