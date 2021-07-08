@@ -41,6 +41,7 @@ from .views import (
     ProyectoUPTableView,
     ProyectoVerCondicionesView,
     ProyectosAceptadosTableView,
+    ProyectosCsvView,
     ProyectosEvaluadosTableView,
     ProyectosNotificarView,
     ProyectosUsuarioView,
@@ -84,9 +85,14 @@ urlpatterns = [
         name='evaluaciones_table',
     ),
     path(
-        'gestion/proyectos/<int:anyo>/csv_evaluaciones/',
+        'gestion/proyectos/<int:anyo>/csv-evaluaciones/',
         ProyectoEvaluacionesCsvView.as_view(),
         name='csv_evaluaciones',
+    ),
+    path(
+        'gestion/proyectos/<int:anyo>/csv-proyectos/',
+        ProyectosCsvView.as_view(),
+        name='csv_proyectos',
     ),
     path(
         'gestion/proyectos/<int:anyo>/notificar/',
@@ -115,17 +121,17 @@ urlpatterns = [
     ),
     # Gestión de un proyecto
     path(
-        'gestion/proyecto/<int:pk>/editar_corrector/',
+        'gestion/proyecto/<int:pk>/editar-corrector/',
         ProyectoCorrectorUpdateView.as_view(),
         name='corrector_update',
     ),
     path(
-        'gestion/proyecto/<int:pk>/editar_evaluador/',
+        'gestion/proyecto/<int:pk>/editar-evaluador/',
         ProyectoEvaluadorUpdateView.as_view(),
         name='evaluador_update',
     ),
     path(
-        'gestion/proyecto/<int:pk>/editar_resolucion/',
+        'gestion/proyecto/<int:pk>/editar-resolucion/',
         ProyectoResolucionUpdateView.as_view(),
         name='resolucion_update',
     ),
@@ -145,12 +151,12 @@ urlpatterns = [
     path('memoria/<int:pk>/presentar/', MemoriaPresentarView.as_view(), name='memoria_presentar'),
     # Participante en proyecto
     path(
-        'participante-proyecto/aceptar_invitacion/<int:proyecto_id>/',
+        'participante-proyecto/aceptar-invitacion/<int:proyecto_id>/',
         ParticipanteAceptarView.as_view(),
         name='participante_aceptar',
     ),
     path(
-        'participante-proyecto/declinar_invitacion/',
+        'participante-proyecto/declinar-invitacion/',
         ParticipanteDeclinarView.as_view(),
         name='participante_declinar',
     ),

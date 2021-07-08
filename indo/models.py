@@ -558,6 +558,90 @@ class Proyecto(models.Model):
         except ParticipanteProyecto.DoesNotExist:
             return None
 
+    @classmethod
+    def get_todos(cls, anyo):
+        """Devuelve datos de todos los proyectos introducidos en el año indicado."""
+
+        cabeceras = [
+            _('Programa'),
+            _('Línea'),
+            _('ID'),
+            _('Título'),
+            _('Nombre coordinador'),
+            _('Apellido 1 coordinador'),
+            _('Apellido 1 coordinador'),
+            _('NIP Coordinador'),
+            _('Correo coordinador'),
+            _('Estado'),
+            _('VºBº C'),
+            _('VºBº E'),
+            _('Núm. participantes'),
+            _('Evaluador'),
+            _('Ayuda solicitada'),
+            _('Resolución'),
+            _('Ayuda concedida'),
+            _('Aceptación coordinador'),
+        ]
+
+        with connection.cursor() as cursor:
+            cursor.execute(
+                f'''
+                SELECT prog.nombre_corto AS 'programa', l.nombre AS 'línea',
+                    p.id, p.titulo,
+                    u1.first_name AS 'nombre coordinador',
+                    u1.last_name AS 'apellido 1 coord',
+                    u1.last_name_2 AS 'apellido 2 coord',
+                    u1.username AS 'nip coord',
+                    u1.email AS 'correo coord',
+                    p.estado,
+                    CASE p.visto_bueno_centro
+                      WHEN 1 THEN 'S'
+                      WHEN 0 THEN 'N'
+                      ELSE '-'
+                    END AS 'VºBº Centro',
+                    CASE p.visto_bueno_estudio
+                      WHEN 1 THEN 'S'
+                      WHEN 0 THEN 'N'
+                      ELSE '-'
+                    END AS 'VºBº Estudio',
+                    COUNT(pp2.id) AS 'núm. participantes',
+                    CONCAT(u2.first_name, ' ', u2.last_name, ' ', u2.last_name_2) AS evaluador,
+                    p.ayuda AS 'ayuda solicitada',
+                    CASE p.aceptacion_comision
+                      WHEN 1 THEN 'S'
+                      WHEN 0 THEN 'N'
+                      ELSE '-'
+                    END AS 'aceptación comisión',
+                    p.ayuda_concedida,
+                    CASE p.aceptacion_coordinador
+                      WHEN 1 THEN 'S'
+                      WHEN 0 THEN 'N'
+                      ELSE '-'
+                    END AS 'aceptación coordinador'
+                FROM indo_proyecto p
+                JOIN indo_programa prog ON p.programa_id = prog.id
+                LEFT JOIN indo_linea l ON p.linea_id = l.id
+                JOIN indo_participanteproyecto pp
+                  ON p.id = pp.proyecto_id AND pp.tipo_participacion_id = 'coordinador'
+                JOIN accounts_customuser u1 ON pp.usuario_id = u1.id
+                LEFT JOIN accounts_customuser u2 ON p.evaluador_id = u2.id
+                LEFT JOIN indo_participanteproyecto pp2
+                       ON p.id = pp2.proyecto_id AND pp2.tipo_participacion_id = 'participante'
+                WHERE prog.convocatoria_id = {anyo}
+                GROUP BY p.id, prog.nombre_corto, l.nombre, p.titulo, u1.first_name, u1.last_name,
+                         u1.last_name_2, u1.username, u1.email, p.estado, p.visto_bueno_centro,
+                         p.visto_bueno_estudio, u2.first_name, u2.last_name, u2.last_name_2,
+                         p.ayuda, p.aceptacion_comision, p.ayuda_concedida,
+                         p.aceptacion_coordinador
+                ORDER BY p.programa_id, p.linea_id, p.titulo;
+                '''
+            )
+            rows = cursor.fetchall()
+
+        datos_proyectos = list(rows)
+        datos_proyectos.insert(0, cabeceras)
+        return datos_proyectos
+
     def get_unidad_planificacion(self):
         """Devuelve el ID de la Unidad de Planificación del proyecto
 

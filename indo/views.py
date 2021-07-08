@@ -1191,6 +1191,21 @@ class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
         return self.esta_vinculado_o_es_decano_o_es_coordinador(proyecto_id)
 
 
+class ProyectosCsvView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    """Devuelve un fichero CSV con datos de todos los proyectos introducidos en el año."""
+
+    permission_required = 'indo.listar_evaluadores'
+    permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
+
+    def get(self, request, *args, **kwargs):
+        datos_proyectos = Proyecto.get_todos(kwargs.get('anyo'))
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="proyectos.csv"'
+        writer = csv.writer(response)
+        writer.writerows(datos_proyectos)
+        return response
+
+
 class ProyectoEvaluacionesCsvView(LoginRequiredMixin, PermissionRequiredMixin, View):
     """Devuelve un fichero CSV con las valoraciones de todos los proyectos presentados."""
 
