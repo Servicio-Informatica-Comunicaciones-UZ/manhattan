@@ -174,7 +174,8 @@ class ChecksMixin(UserPassesTestMixin):
             self.esta_vinculado(proyecto_id)
             or self.es_decano_o_director(proyecto_id)
             or self.es_coordinador_estudio(proyecto_id)
-            or usuario_actual.has_perm('indo.ver_proyecto')  # Gestores y evaluadores
+            or self.es_evaluador_del_proyecto(proyecto_id)
+            or usuario_actual.has_perm('indo.ver_proyecto')  # Gestores
         )
 
         return esta_autorizado
