@@ -1,4 +1,5 @@
 import datetime
+import pypandoc
 from django.core.validators import FileExtensionValidator
 from django.db import connection, models
 from django.urls import reverse
@@ -922,6 +923,14 @@ class Valoracion(models.Model):
             )
             rows = cursor.fetchall()
             valoraciones = list(zip(*rows))
+
+            # Convertimos el apartado «financiacion» de HTML a texto plano
+            valoraciones[-1] = [
+                pypandoc.convert_text(financiacion, 'md', format='html').replace('\\', '')
+                if financiacion
+                else ''
+                for financiacion in list(valoraciones[-1])
+            ]
 
             for criterio in criterios:
                 cursor.execute(
