@@ -926,9 +926,7 @@ class Valoracion(models.Model):
 
             # Convertimos el apartado «financiacion» de HTML a texto plano
             valoraciones[-1] = [
-                pypandoc.convert_text(financiacion, 'md', format='html').replace('\\', '')
-                if financiacion
-                else ''
+                pypandoc.convert_text(financiacion, 'plain', format='html') if financiacion else ''
                 for financiacion in list(valoraciones[-1])
             ]
 
