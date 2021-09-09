@@ -500,6 +500,7 @@ class Proyecto(models.Model):
         on_delete=models.PROTECT,
         related_name='proyectos_evaluados',
     )
+    esta_evaluado = models.BooleanField(_('Ha sido evaluado'), null=True)
     # Aprobación de la Comisión Evaluadora
     aceptacion_comision = models.BooleanField(_('Aprobación por la comisión'), null=True)
     ayuda_concedida = models.PositiveIntegerField(_('Ayuda económica concedida'), null=True)
@@ -578,6 +579,8 @@ class Proyecto(models.Model):
             _('VºBº E'),
             _('Núm. participantes'),
             _('Evaluador'),
+            _('Correo evaluador'),
+            _('Está evaluado'),
             _('Ayuda solicitada'),
             _('Resolución'),
             _('Ayuda concedida'),
@@ -607,6 +610,12 @@ class Proyecto(models.Model):
                     END AS 'VºBº Estudio',
                     COUNT(pp2.id) AS 'núm. participantes',
                     CONCAT(u2.first_name, ' ', u2.last_name, ' ', u2.last_name_2) AS evaluador,
+                    u2.email,
+                    CASE p.esta_evaluado
+                      WHEN 1 THEN 'S'
+                      WHEN 0 THEN 'N'
+                      ELSE '-'
+                    END AS 'está evaluado',
                     p.ayuda AS 'ayuda solicitada',
                     CASE p.aceptacion_comision
                       WHEN 1 THEN 'S'
@@ -631,8 +640,9 @@ class Proyecto(models.Model):
                 WHERE prog.convocatoria_id = {anyo}
                 GROUP BY p.id, prog.nombre_corto, l.nombre, p.titulo, u1.first_name, u1.last_name,
                          u1.last_name_2, u1.username, u1.email, p.estado, p.visto_bueno_centro,
-                         p.visto_bueno_estudio, u2.first_name, u2.last_name, u2.last_name_2,
-                         p.ayuda, p.aceptacion_comision, p.ayuda_concedida,
+                         p.visto_bueno_estudio,
+                         u2.first_name, u2.last_name, u2.last_name_2, u2.email,
+                         p.esta_evaluado, p.ayuda, p.aceptacion_comision, p.ayuda_concedida,
                          p.aceptacion_coordinador
                 ORDER BY p.programa_id, p.linea_id, p.titulo;
                 '''

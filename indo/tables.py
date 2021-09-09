@@ -1,5 +1,6 @@
 import django_tables2 as tables
 from django.contrib.auth import get_user_model
+from django.db.models import Count, Q
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
@@ -124,6 +125,15 @@ class EvaluadoresTable(tables.Table):
                 </a>'''
         )
 
+    def order_numero_participantes(self, queryset, is_descending):
+        # XXX Incompatible con la opción ONLY_FULL_GROUP_BY de MariaDB/MySQL
+        queryset = queryset.annotate(
+            num_participantes=Count(
+                'participantes', filter=Q(participantes__tipo_participacion='participante')
+            )
+        ).order_by(('-' if is_descending else '') + 'num_participantes')
+        return (queryset, True)
+
     class Meta:
         attrs = {'class': 'table table-striped table-hover cabecera-azul'}
         model = Proyecto
@@ -150,17 +160,17 @@ class EvaluacionProyectosTable(tables.Table):
         enlace = reverse('proyecto_detail', args=[record.id])
         return mark_safe(f'<a href="{enlace}">{record.titulo}</a>')
 
-    evaluacion = tables.Column(empty_values=(), orderable=False, verbose_name=_('Evaluación'))
+    esta_evaluado = tables.Column(verbose_name=_('Evaluación'))
     resolucion = tables.Column(empty_values=(), orderable=False, verbose_name=_('Resolución'))
 
-    def render_evaluacion(self, record):
+    def render_esta_evaluado(self, record):
         enlace = reverse('ver_evaluacion', args=[record.id])
         return mark_safe(
             f'''<a href="{enlace}" title="{_('Ver la evaluación')}"
                 aria-label="{_('Ver la evaluación')}">
                   <span class="far fa-eye"></span>
                 </a>'''
-            if record.valoraciones.first()
+            if record.esta_evaluado
             else '—'
         )
 
@@ -186,7 +196,7 @@ class EvaluacionProyectosTable(tables.Table):
     class Meta:
         attrs = {'class': 'table table-striped table-hover cabecera-azul'}
         model = Proyecto
-        fields = ('programa', 'linea', 'id', 'titulo', 'evaluacion', 'resolucion')
+        fields = ('programa', 'linea', 'id', 'titulo', 'esta_evaluado', 'resolucion')
         empty_text = _('Por el momento no se ha presentado ninguna solicitud de proyecto.')
         template_name = 'django_tables2/bootstrap4.html'
         per_page = 20

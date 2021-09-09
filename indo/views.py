@@ -407,6 +407,10 @@ class EvaluacionView(LoginRequiredMixin, ChecksMixin, TemplateView):
                 valoracion.texto = request.POST.get(str(criterio.id))
             valoracion.save()
 
+        if not proyecto.esta_evaluado:
+            proyecto.esta_evaluado = True
+            proyecto.save()
+
         messages.success(
             request, _(f'Se ha guardado la evaluación del proyecto «{proyecto.titulo}».')
         )
