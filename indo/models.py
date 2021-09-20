@@ -922,11 +922,12 @@ class Valoracion(models.Model):
             cursor.execute(
                 f'''
                 SELECT DISTINCT prog.nombre_corto, l.nombre,
-                  p.id, p.titulo, p.centro, p.ayuda, p.financiacion
+                  p.id, p.titulo, c.nombre, p.ayuda, p.financiacion
                 FROM indo_valoracion v
                 JOIN indo_proyecto p ON v.proyecto_id = p.id
                 JOIN indo_programa prog ON p.programa_id = prog.id
                 LEFT JOIN indo_linea l ON p.linea_id = l.id
+                LEFT JOIN indo_centro c ON p.centro_id = c.id
                 WHERE prog.convocatoria_id = {anyo}
                 ORDER BY proyecto_id;
                 '''
