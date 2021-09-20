@@ -922,7 +922,7 @@ class Valoracion(models.Model):
             cursor.execute(
                 f'''
                 SELECT DISTINCT prog.nombre_corto, l.nombre,
-                  p.id, p.titulo, p.ayuda, p.financiacion
+                  p.id, p.titulo, p.centro, p.ayuda, p.financiacion
                 FROM indo_valoracion v
                 JOIN indo_proyecto p ON v.proyecto_id = p.id
                 JOIN indo_programa prog ON p.programa_id = prog.id
@@ -966,6 +966,7 @@ class Valoracion(models.Model):
             _('Línea'),
             _('ID'),
             _('Título'),
+            _('Centro'),
             _('Ayuda solicitada'),
             _('Financiación'),
         ]
