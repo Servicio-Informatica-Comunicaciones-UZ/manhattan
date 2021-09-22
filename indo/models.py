@@ -509,7 +509,7 @@ class Proyecto(models.Model):
         help_text=_('Indicar los gastos autorizados indicados por la Comisión.'),
         null=True,
     )
-    observaciones = models.TextField(_('Observaciones para comunicar al coordinador'), null=True)
+    observaciones = models.TextField(_('Observaciones internas'), null=True)
     # Aceptación por el coordinador de las condiciones decididas por la Comisión
     aceptacion_coordinador = models.BooleanField(_('Aceptación por el coordinador'), null=True)
     # Corrector/consultor de las memorias

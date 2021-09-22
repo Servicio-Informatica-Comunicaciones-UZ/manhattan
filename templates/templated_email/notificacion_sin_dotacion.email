@@ -7,7 +7,7 @@ Resolución Convocatoria de Innovación Docente {{proyecto.convocatoria.id}} de 
 {% elif coordinador.sexo == 'M' %}Estimado {{coordinador.full_name}}:
 {% else %}Estimad@ {{coordinador.full_name}}:{% endif %}
 Me complace comunicarte la concesión del proyecto
-«{{proyecto.titulo}}»,
+«{{proyecto.titulo}}» (id {{proyecto.id}}),
 en el que constas como {% if coordinador.sexo == 'F' %}coordinadora{% else %}coordinador{% endif %}.
 
 Este proyecto no ha sido dotado económicamente para su realización.

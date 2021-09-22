@@ -960,9 +960,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     'observaciones',
-                    models.TextField(
-                        null=True, verbose_name='Observaciones para comunicar al coordinador'
-                    ),
+                    models.TextField(null=True, verbose_name='Observaciones internas'),
                 ),
                 (
                     'aceptacion_coordinador',

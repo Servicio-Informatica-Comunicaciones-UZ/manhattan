@@ -7,7 +7,7 @@ Resolución Convocatoria de Innovación Docente {{proyecto.convocatoria.id}}/{{p
 {% elif coordinador.sexo == 'M' %}Estimado {{coordinador.full_name}}:
 {% else %}Estimad@ {{coordinador.full_name}}:{% endif %}
 Me complace comunicarte la concesión del proyecto
-«{{proyecto.titulo}}»,
+«{{proyecto.titulo}}» (id {{proyecto.id}}),
 en el que constas como {% if coordinador.sexo == 'F' %}coordinadora{% else %}coordinador{% endif %}.
 
 El importe de la ayuda concedida para la realización del proyecto es de
@@ -21,7 +21,7 @@ Realizados los gastos y una vez finalizado el proyecto, este
 Vicerrectorado transferirá la cantidad justificada a la Unidad de
 Planificación correspondiente.
 
-Debes confirmar la aceptación del proyecto hasta el {{proyecto.convocatoria.fecha_max_aceptacion_resolucion}} (inclusive).   FIXME
+Debes confirmar la aceptación del proyecto hasta el {{proyecto.convocatoria.fecha_max_aceptacion_resolucion}} (inclusive).
 Dicha confirmación debe realizarse exclusivamente a través de la página web
 <{{site_url}}> (no por registro).
 
