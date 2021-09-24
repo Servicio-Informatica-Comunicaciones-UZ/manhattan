@@ -355,5 +355,12 @@ class MemoriaRespuestaForm(forms.ModelForm):
 
 class ResolucionForm(forms.ModelForm):
     class Meta:
-        fields = ('aceptacion_comision', 'ayuda_concedida', 'tipo_gasto', 'observaciones')
+        fields = (
+            'aceptacion_comision',
+            'ayuda_concedida',
+            'ayuda_definitiva',
+            'tipo_gasto',
+            'puntuacion',
+            'observaciones',
+        )
         model = Proyecto

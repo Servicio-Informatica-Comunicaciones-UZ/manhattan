@@ -503,12 +503,18 @@ class Proyecto(models.Model):
     esta_evaluado = models.BooleanField(_('Ha sido evaluado'), null=True)
     # Aprobación de la Comisión Evaluadora
     aceptacion_comision = models.BooleanField(_('Aprobación por la comisión'), null=True)
-    ayuda_concedida = models.PositiveIntegerField(_('Ayuda económica concedida'), null=True)
+    ayuda_concedida = models.PositiveIntegerField(
+        _('Ayuda económica concedida (provisional)'), null=True
+    )
+    ayuda_definitiva = models.PositiveIntegerField(
+        _('Ayuda económica concedida (definitiva)'), null=True, blank=True
+    )
     tipo_gasto = models.TextField(
         _('Tipo de gasto posible'),
         help_text=_('Indicar los gastos autorizados indicados por la Comisión.'),
         null=True,
     )
+    puntuacion = models.PositiveIntegerField(_('Puntuación obtenida'), null=True)
     observaciones = models.TextField(_('Observaciones internas'), null=True)
     # Aceptación por el coordinador de las condiciones decididas por la Comisión
     aceptacion_coordinador = models.BooleanField(_('Aceptación por el coordinador'), null=True)
@@ -938,7 +944,7 @@ class Valoracion(models.Model):
             # Convertimos el apartado «financiacion» de HTML a texto plano
             valoraciones[-1] = [
                 pypandoc.convert_text(financiacion, 'plain', format='html') if financiacion else ''
-                for financiacion in list(valoraciones[-1])
+                for financiacion in valoraciones[-1]
             ]
 
             for criterio in criterios:
