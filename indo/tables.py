@@ -506,7 +506,7 @@ class ProyectoUPTable(tables.Table):
             'titulo',
             'coordinadores',
             'unidad_planificacion',
-            'ayuda_concedida',
+            'ayuda_definitiva',
             'tipo_gasto',
         )
         empty_text = _('Por el momento ningún coordinador ha aceptado ningún proyecto.')

@@ -1235,7 +1235,7 @@ class ProyectoEvaluacionesTableView(LoginRequiredMixin, PermissionRequiredMixin,
     template_name = 'gestion/proyecto/tabla_evaluaciones.html'
 
     def get(self, request, *args, **kwargs):
-        convocatoria = Convocatoria.objects.get(id=self.kwargs.get('anyo'))
+        convocatoria = get_object_or_404(Convocatoria, pk=self.kwargs.get('anyo'))
 
         hitos = ('fecha_max_aceptacion_resolucion', 'fecha_max_alegaciones')
         for hito in hitos:
@@ -1253,6 +1253,7 @@ class ProyectoEvaluacionesTableView(LoginRequiredMixin, PermissionRequiredMixin,
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['anyo'] = self.kwargs['anyo']
+        context['convocatoria'] = get_object_or_404(Convocatoria, pk=self.kwargs.get('anyo'))
         return context
 
     def get_queryset(self):
@@ -1317,14 +1318,35 @@ class ProyectosNotificarView(LoginRequiredMixin, PermissionRequiredMixin, Redire
         return reverse_lazy('evaluaciones_table', kwargs={'anyo': kwargs.get('anyo')})
 
     def post(self, request, *args, **kwargs):
-        proyectos_con_dotacion = (
-            Proyecto.objects.filter(convocatoria__id=self.kwargs['anyo'])
-            .filter(aceptacion_comision=True, ayuda_concedida__gt=0)
-            .all()
-        )
+        convocatoria = Convocatoria.objects.get(id=self.kwargs.get('anyo'))
+        if not convocatoria.notificada_resolucion_provisional:
+            proyectos_con_dotacion = (
+                Proyecto.objects.filter(convocatoria__id=self.kwargs['anyo'])
+                .filter(aceptacion_comision=True, ayuda_provisional__gt=0)
+                .all()
+            )
+            proyectos_sin_dotacion = (
+                Proyecto.objects.filter(convocatoria__id=self.kwargs['anyo'])
+                .filter(aceptacion_comision=True, ayuda_provisional=0)
+                .all()
+            )
+            variante = '_provisional'
+        else:
+            proyectos_con_dotacion = (
+                Proyecto.objects.filter(convocatoria__id=self.kwargs['anyo'])
+                .filter(aceptacion_comision=True, ayuda_definitiva__gt=0)
+                .all()
+            )
+            proyectos_sin_dotacion = (
+                Proyecto.objects.filter(convocatoria__id=self.kwargs['anyo'])
+                .filter(aceptacion_comision=True, ayuda_definitiva=0)
+                .all()
+            )
+            variante = '_definitiva'
+
         try:
             for proyecto in proyectos_con_dotacion:
-                self._enviar_notificaciones(proyecto, 'notificacion_con_dotacion')
+                self._enviar_notificaciones(proyecto, 'notificacion_con_dotacion' + variante)
         except Exception as err:  # smtplib.SMTPAuthenticationError etc
             messages.warning(
                 request,
@@ -1334,14 +1356,9 @@ class ProyectosNotificarView(LoginRequiredMixin, PermissionRequiredMixin, Redire
                 ),
             )
 
-        proyectos_sin_dotacion = (
-            Proyecto.objects.filter(convocatoria__id=self.kwargs['anyo'])
-            .filter(aceptacion_comision=True, ayuda_concedida=0)
-            .all()
-        )
         try:
             for proyecto in proyectos_sin_dotacion:
-                self._enviar_notificaciones(proyecto, 'notificacion_sin_dotacion')
+                self._enviar_notificaciones(proyecto, 'notificacion_sin_dotacion' + variante)
         except Exception as err:  # smtplib.SMTPAuthenticationError etc
             messages.warning(
                 request,
@@ -1350,6 +1367,12 @@ class ProyectosNotificarView(LoginRequiredMixin, PermissionRequiredMixin, Redire
                     f'a los proyectos sin dotación: {err}'
                 ),
             )
+
+        if variante == '_provisional':
+            convocatoria.notificada_resolucion_provisional = True
+        else:
+            convocatoria.notificada_resolucion_definitiva = True
+        convocatoria.save()
 
         messages.success(request, _('Se han enviado las notificaciones.'))
         return super().post(request, *args, **kwargs)

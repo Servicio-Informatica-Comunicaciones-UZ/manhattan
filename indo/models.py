@@ -89,6 +89,8 @@ class Convocatoria(models.Model):
     fecha_max_gastos = models.DateField(
         _('fecha límite para incorporar los gastos'), blank=True, null=True
     )
+    notificada_resolucion_provisional = models.BooleanField(default=False)
+    notificada_resolucion_definitiva = models.BooleanField(default=False)
 
     class Meta:
         ordering = ('-id',)
@@ -503,7 +505,7 @@ class Proyecto(models.Model):
     esta_evaluado = models.BooleanField(_('Ha sido evaluado'), null=True)
     # Aprobación de la Comisión Evaluadora
     aceptacion_comision = models.BooleanField(_('Aprobación por la comisión'), null=True)
-    ayuda_concedida = models.PositiveIntegerField(
+    ayuda_provisional = models.PositiveIntegerField(
         _('Ayuda económica concedida (provisional)'), null=True
     )
     ayuda_definitiva = models.PositiveIntegerField(
@@ -589,7 +591,8 @@ class Proyecto(models.Model):
             _('Está evaluado'),
             _('Ayuda solicitada'),
             _('Resolución'),
-            _('Ayuda concedida'),
+            _('Ayuda provisional'),
+            _('Ayuda definitiva'),
             _('Aceptación coordinador'),
         ]
 
@@ -628,7 +631,8 @@ class Proyecto(models.Model):
                       WHEN 0 THEN 'N'
                       ELSE '-'
                     END AS 'aceptación comisión',
-                    p.ayuda_concedida,
+                    p.ayuda_provisional,
+                    p.ayuda_definitiva,
                     CASE p.aceptacion_coordinador
                       WHEN 1 THEN 'S'
                       WHEN 0 THEN 'N'
@@ -648,8 +652,8 @@ class Proyecto(models.Model):
                          u1.last_name_2, u1.username, u1.email, p.estado, p.visto_bueno_centro,
                          p.visto_bueno_estudio,
                          u2.first_name, u2.last_name, u2.last_name_2, u2.email,
-                         p.esta_evaluado, p.ayuda, p.aceptacion_comision, p.ayuda_concedida,
-                         p.aceptacion_coordinador
+                         p.esta_evaluado, p.ayuda, p.aceptacion_comision,
+                         p.ayuda_provisional, p.ayuda_definitiva, p.aceptacion_coordinador
                 ORDER BY p.programa_id, p.linea_id, p.titulo;
                 '''
             )

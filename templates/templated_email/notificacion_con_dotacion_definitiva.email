@@ -1,0 +1,38 @@
+{% block subject %}Resolución definitiva sobre el proyecto «{{proyecto.titulo}}»{% endblock %}
+{% block plain %}
+Resolución Definitiva Convocatoria de Innovación Docente {{proyecto.convocatoria.id}}/{{proyecto.convocatoria.id|add:1}} de la Universidad de Zaragoza
+---------------------------------------------------------------------
+
+{% if coordinador.sexo == 'F' %}Estimada {{coordinador.full_name}}:
+{% elif coordinador.sexo == 'M' %}Estimado {{coordinador.full_name}}:
+{% else %}Estimad@ {{coordinador.full_name}}:{% endif %}
+Enviamos este mensaje para informar que se ha publicado la resolución
+definitiva de los Proyectos de Innovación Docente correspondientes
+al curso {{proyecto.convocatoria.id}}/{{proyecto.convocatoria.id|add:1}},
+en el que el proyecto
+«{{proyecto.titulo}}» (id {{proyecto.id}})
+consta como concedido.
+Se pueden consultar tanto la convocatoria como la resolución
+definitiva en <http://tablon.unizar.es>.
+
+Te comunicamos que la ayuda económica final asignada al proyecto es
+de {{proyecto.ayuda_definitiva}} euros.
+
+En relación a los plazos de finalización de los proyectos, tal y como
+establecen las bases de la convocatoria (<http://tablon.unizar.es>)
+te recordamos que el plazo de finalización de los proyectos será el
+{{proyecto.convocatoria.fecha_max_memorias}},
+habiendo presentado para entonces la memoria final del proyecto,
+que resumirá el desarrollo del proyecto, resultados, conclusiones,
+etc., así como la justificación de los gastos realizados.
+Por otro lado, el plazo para justificar los gastos realizados a la
+Unidad de Planificación correspondiente será el {{proyecto.convocatoria.fecha_max_gastos}}.
+
+Cualquier duda o sugerencia no dudes en hacérnosla llegar a través de
+Ayudica <https://ayudica.unizar.es>.
+
+Recibe un cordial saludo,
+{{vicerrector}}
+Vicerrector de Política Académica
+Universidad de Zaragoza
+{% endblock %}

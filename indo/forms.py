@@ -357,7 +357,7 @@ class ResolucionForm(forms.ModelForm):
     class Meta:
         fields = (
             'aceptacion_comision',
-            'ayuda_concedida',
+            'ayuda_provisional',
             'ayuda_definitiva',
             'tipo_gasto',
             'puntuacion',
