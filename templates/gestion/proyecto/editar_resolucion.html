@@ -39,7 +39,7 @@
         {% endblocktrans %}</p>
     </div><br />
 
-    {% if proyecto.programa.requiere_visto_bueno_estudio %}
+    {% if proyecto.programa.requiere_visto_bueno_estudio and not proyecto.visto_bueno_estudio %}
         <div class="alert-warning alert fade-in">
             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 
@@ -51,7 +51,7 @@
         </div><br />
     {% endif %}
 
-    {% if proyecto.programa.requiere_visto_bueno_centro %}
+    {% if proyecto.programa.requiere_visto_bueno_centro and not proyecto.visto_bueno_centro %}
         <div class="alert-warning alert fade-in">
             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 
