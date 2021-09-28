@@ -1183,6 +1183,13 @@ class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
             self.es_coordinador(self.object.id) and self.object.en_borrador()
         ) or self.request.user.has_perm('indo.editar_proyecto')
 
+        # No mostrar si la Comisión ha aprobado o no el proyecto
+        # hasta que se publique la resolución.
+        context['ocultar_resolucion'] = (
+            self.object.estado in ('DENEGADO', 'APROBADO')
+            and not self.object.convocatoria.notificada_resolucion_provisional
+        )
+
         context['es_coordinador'] = (
             self.es_coordinador(self.object.id) and self.object.en_borrador()
         )
