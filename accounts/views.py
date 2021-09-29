@@ -49,9 +49,12 @@ class LogoutView(LoginRequiredMixin, RedirectView):
         # As of now, this code only handles the first association.
         association = request.user.social_auth.first()
         if association:
+            # SAML authentication. Log out the user on the Identity Provider
             idp_name = association.uid.split(':')[0]
             sls_url = saml_backend.request_logout(idp_name, association)
             return redirect(sls_url)
+
+        # Local authentication. Log out the user on Django.
         logout(request)
         return super().get(request, *args, **kwargs)
 
@@ -71,11 +74,15 @@ class SlsView(View):
         # As of now, this code only handles the first association.
         association = request.user.social_auth.first()
         idp_name = association.uid.split(':')[0]
-        _, errors = saml_backend.process_logout(idp_name, None)
+        url, errors = saml_backend.process_logout(idp_name, None)
 
         if errors:
             messages = '\n'.join(errors)
             raise Exception(messages)
 
+        # Log out the user on Django.
         logout(request)
-        return redirect(str(self.url))
+
+        # Keep closing sessions on other SPs, or go to the LOGOUT_REDIRECT_URL set in settings
+        url = url or str(self.url)
+        return redirect(url)
