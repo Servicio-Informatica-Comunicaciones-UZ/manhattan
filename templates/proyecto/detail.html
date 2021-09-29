@@ -90,11 +90,7 @@
 
       <tr>
         <th scope="row"><strong>{% trans 'Estado' %}</strong>:</th>
-        {% if ocultar_resolucion %}
-          <td>Solicitud presentada</td> <!-- FIXME: Usar get_estado_display() -->
-        {% else %}
-          <td>{{ proyecto.get_estado_display }}</td>
-        {% endif %}
+        <td>{{ proyecto.get_estado_display }}</td>
       </tr>
 
       {% if proyecto.programa.requiere_visto_bueno_centro %}

@@ -1185,10 +1185,11 @@ class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
 
         # No mostrar si la Comisión ha aprobado o no el proyecto
         # hasta que se publique la resolución.
-        context['ocultar_resolucion'] = (
+        if (
             self.object.estado in ('DENEGADO', 'APROBADO')
             and not self.object.convocatoria.notificada_resolucion_provisional
-        )
+        ):
+            context['object'].estado = 'SOLICITADO'
 
         context['es_coordinador'] = (
             self.es_coordinador(self.object.id) and self.object.en_borrador()
