@@ -1,4 +1,5 @@
 # Standard library
+from time import sleep
 import csv
 import json
 import os
@@ -1355,6 +1356,7 @@ class ProyectosNotificarView(LoginRequiredMixin, PermissionRequiredMixin, Redire
         try:
             for proyecto in proyectos_con_dotacion:
                 self._enviar_notificaciones(proyecto, 'notificacion_con_dotacion' + variante)
+                sleep(0.1)  # El servidor SMTP tiene un control de flujo de 600 mensajes por minuto
         except Exception as err:  # smtplib.SMTPAuthenticationError etc
             messages.warning(
                 request,
@@ -1367,6 +1369,7 @@ class ProyectosNotificarView(LoginRequiredMixin, PermissionRequiredMixin, Redire
         try:
             for proyecto in proyectos_sin_dotacion:
                 self._enviar_notificaciones(proyecto, 'notificacion_sin_dotacion' + variante)
+                sleep(0.1)  # El servidor SMTP tiene un control de flujo de 600 mensajes por minuto
         except Exception as err:  # smtplib.SMTPAuthenticationError etc
             messages.warning(
                 request,
@@ -1543,6 +1546,7 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
                         'site_url': settings.SITE_URL,
                     },
                 )
+                sleep(0.1)  # Tiene que pasar un mínimo de 100ms entre un mensaje y el siguiente
         except Exception as err:  # smtplib.SMTPAuthenticationError etc
             messages.warning(
                 request,
