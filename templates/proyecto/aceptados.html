@@ -5,7 +5,7 @@
 {% block title %}{% trans "Proyectos aceptados" %}{% endblock title %}
 
 {% block content %}
-<div class='container-blanco'>
+<div class="container-blanco">
   <h1 id="presentados">{% trans "Proyectos aceptados" %} <small>{{ anyo }}</small></h1>
   <hr />
   <br />
@@ -14,11 +14,25 @@
     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 
     <span class="fas fa-info-circle"></span>
-    <p>{% trans 'En esta página puede ver los proyectos de esta convocatoria que han sido aprobados por la comisión <strong>y</strong> aceptados por su coordinador.' %}</p>
-  </div><br />
+    <p>
+      {% blocktranslate %}
+        En esta página puede ver los proyectos de esta convocatoria que han sido aprobados
+        por la Comisión Evaluadora <strong>y</strong> aceptados por su coordinador.
+      {% endblocktranslate %}
+    </p>
+    {% if user.is_authenticated %}
+      {% url 'mis_proyectos' anyo_actual as mis_proyectos_url %}
+      <p>{% blocktranslate %}
+        Si usted es un coordinador que <strong>desea aceptar</strong> un proyecto aprobado
+        por la Comisión, vaya a «<a href="{{ mis_proyectos_url }}">Mis proyectos</a>»,
+        entre en el proyecto y pulse el botón de aceptación de las condiciones
+        que está bajo la tabla de datos básicos.
+      {% endblocktranslate %}</p>
+    {% endif %}
+  </div>
+  <br />
 
   {% render_table table %}
-
 </div>
 
 {% endblock content %}
