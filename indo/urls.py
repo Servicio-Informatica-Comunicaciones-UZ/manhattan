@@ -20,6 +20,7 @@ from .views import (
     ParticipanteAceptarView,
     ParticipanteDeclinarView,
     ParticipanteDeleteView,
+    ParticipanteHaceConstarView,
     ParticipanteRenunciarView,
     ProyectoAceptarView,
     ProyectoAnularView,
@@ -71,6 +72,12 @@ urlpatterns = [
         'gestion/corrector/cesar/',
         CorrectorCesarView.as_view(),
         name='corrector_cesar',
+    ),
+    # Participantes
+    path(
+        'gestion/participante-proyecto/hace-constar/',
+        ParticipanteHaceConstarView.as_view(),
+        name='hace_constar',
     ),
     # Listados de proyectos
     path('gestion/proyectos/<int:anyo>/', ProyectoTableView.as_view(), name='proyectos_table'),

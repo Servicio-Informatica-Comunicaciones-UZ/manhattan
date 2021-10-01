@@ -64,6 +64,27 @@ class CorreccionForm(forms.ModelForm):
         model = Proyecto
 
 
+class HaceConstarForm(forms.Form):
+    nip = forms.IntegerField(
+        label=_('NIP'),
+        help_text=_(
+            'Número de Identificación Personal en la Universidad de Zaragoza'
+            ' de la persona para la que desee generar el Hace Constar.'
+        ),
+        min_value=0,
+        max_value=9999999,
+        required=False,
+    )
+    email = forms.EmailField(
+        label=_('E-mail'),
+        help_text=_(
+            'Dirección de correo electrónico de la persona para la que desee generar'
+            ' el Hace Constar.'
+        ),
+        required=False,
+    )
+
+
 class CorrectorForm(forms.Form):
     nip = forms.IntegerField(
         label=_('NIP'),
@@ -72,7 +93,7 @@ class CorrectorForm(forms.Form):
             ' de la persona a añadir al grupo de correctores de memorias.'
         ),
         min_value=0,
-        max_value=999999,
+        max_value=9999999,
         required=True,
     )
 

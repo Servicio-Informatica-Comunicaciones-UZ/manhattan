@@ -52,6 +52,7 @@ from .forms import (
     CorreccionForm,
     CorrectorForm,
     EvaluadorForm,
+    HaceConstarForm,
     InvitacionForm,
     MemoriaRespuestaForm,
     ProyectoFilterFormHelper,
@@ -866,6 +867,23 @@ class ParticipanteDeleteView(LoginRequiredMixin, ChecksMixin, DeleteView):
         return self.es_coordinador(self.get_object().proyecto.id) or self.request.user.has_perm(
             'indo.editar_proyecto'
         )
+
+
+class ParticipanteHaceConstarView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
+    """Generar PDF de constancia de participación de proyectos de una persona"""
+
+    permission_required = 'indo.hace_constar'  # TODO: Añadir el permiso!
+    permission_denied_message = _('Sólo los gestores pueden acceder a esta página')
+    template_name = 'participante-proyecto/form_hace_constar.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = HaceConstarForm()
+        context['url_anterior'] = self.request.META.get('HTTP_REFERER', reverse('home'))
+        return context
+
+    def post(self, request, *args, **kwargs):
+        return HttpResponse("Por hacer")  # TODO
 
 
 class ProyectosCierreEconomicoTableView(

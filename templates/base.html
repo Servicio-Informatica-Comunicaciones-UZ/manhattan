@@ -105,6 +105,7 @@
                     <span class="fas fa-landmark"></span>&nbsp; {% trans "Administrar resoluciones" %}
                   </a>
                   <div class="dropdown-divider"></div>
+                  <!-- -->
                   <a class="dropdown-item" href="{% url 'proyectos_table' anyo_actual %}">
                     <span class="fas fa-th-list"></span>&nbsp; {% trans "Proyectos" %}
                   </a>
@@ -117,7 +118,11 @@
                   <a class="dropdown-item" href="{% url 'up_table' anyo_actual %}">
                     <span class="fas fa-hand-holding-usd"></span>&nbsp; {% trans "Unidades de planificación y gastos" %}
                   </a>
+                  <a class="dropdown-item" href="{% url 'hace_constar' %}">
+                    <span class="far fa-file-pdf"></span>&nbsp; {% trans 'Generar Hace constar' %}
+                  </a>
                   <div class="dropdown-divider"></div>
+                  <!-- -->
                   <a class="dropdown-item" href="{% url 'correctores_table' %}">
                     <span class="fas fa-users"></span>&nbsp; {% trans "Correctores de las memorias" %}
                   </a>
