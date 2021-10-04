@@ -98,6 +98,12 @@ class Convocatoria(models.Model):
     def __str__(self):
         return str(f'{self.id}-{self.id + 1}')
 
+    @classmethod
+    def get_ultima(cls):
+        """Devuelve la última convocatoria."""
+
+        return Convocatoria.objects.order_by('-id').first()
+
 
 class Criterio(models.Model):
     """Criterios para evaluar proyectos por la ACPUA."""

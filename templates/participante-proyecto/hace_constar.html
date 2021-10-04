@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Hace constar" %}{% endblock title %}
+{% block description %}{% trans "Constancia de participación en proyectos" %}{% endblock description %}
+
+{% block content %}
+<div class="container-blanco">
+  <h2>D. {{ vicerrector }}, Vicerrector de Política Académica de la Universidad de Zaragoza</h2>
+
+  <p>HACE CONSTAR</p>
+
+  <p>
+    Que, D. {{ usuario.full_name }} con NIF {{ usuario.numero_documento }} participa en los siguientes proyectos de la
+    convocatoria de Proyectos de Innovación Docente para el curso {{ convocatoria.id }}/{{ convocatoria.id|add:1 }} de
+    la Universidad de Zaragoza:
+  </p>
+
+  <ul class="listado">
+    {% for proyecto in proyecto_list %}
+    <li>{{ proyecto.titulo }}, coordinado por {{ proyecto.coordinador.full_name }}</li>
+    {% endfor %}
+  </ul>
+
+  <p>
+    El plazo de conclusión de los proyectos finalizará el {{ convocatoria.fecha_max_memorias }}. A fecha actual no nos
+    consta el grado de ejecución de los mismos.
+  </p>
+
+  <p>
+    En Zaragoza, a fecha de la firma,<br /><br />
+    El Vicerrector de Política Académica<br /><br />
+    Fdo.: {{ vicerrector }}
+  </p>
+
+  <p>Firmado electrónicamente y con autenticidad contrastable según el artículo 27.3 c) de la Ley 39/2015.</p>
+</div>
+
+{% endblock content %}

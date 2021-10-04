@@ -872,7 +872,7 @@ class ParticipanteDeleteView(LoginRequiredMixin, ChecksMixin, DeleteView):
 class ParticipanteHaceConstarView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
     """Generar PDF de constancia de participación de proyectos de una persona"""
 
-    permission_required = 'indo.hace_constar'  # TODO: Añadir el permiso!
+    permission_required = 'indo.hace_constar'  # TODO: Añadir el permiso !!!
     permission_denied_message = _('Sólo los gestores pueden acceder a esta página')
     template_name = 'participante-proyecto/form_hace_constar.html'
 
@@ -883,7 +883,55 @@ class ParticipanteHaceConstarView(LoginRequiredMixin, PermissionRequiredMixin, T
         return context
 
     def post(self, request, *args, **kwargs):
-        return HttpResponse("Por hacer")  # TODO
+        nip = request.POST.get('nip')
+        email = request.POST.get('email')
+        convocatoria = Convocatoria.get_ultima()
+
+        User = get_user_model()
+        if nip:
+            usuario = get_object_or_None(User, username=nip)
+        elif email:
+            usuario = get_object_or_None(User, email=email)
+        else:
+            messages.error(request, _('Debe introducir un NIP o una dirección de e-mail.'))
+            return super().get(request, *args, **kwargs)
+
+        if not usuario:
+            messages.error(request, _('No se ha encontrado ese usuario.'))
+            return super().get(request, *args, **kwargs)
+
+        proyectos_participados = (
+            Proyecto.objects.filter(convocatoria__id=convocatoria.id)
+            .filter(
+                participantes__usuario=usuario,
+                aceptacion_comision=True,
+                aceptacion_coordinador=True,
+                participantes__tipo_participacion_id__in=['participante', 'coordinador'],
+            )
+            .order_by('titulo')
+            .all()
+        )
+
+        contexto = self.get_context_data(**kwargs)
+        contexto['vicerrector'] = settings.VICERRECTOR.strip('"')
+        contexto['usuario'] = usuario
+        contexto['proyecto_list'] = proyectos_participados
+        contexto['convocatoria'] = Convocatoria.get_ultima()
+
+        # base_url = request.build_absolute_uri().removesuffix('presentar/')  # Requiere Python 3.9
+        base_url = request.build_absolute_uri()[: -len('presentar/')]
+        documento_html = HTML(
+            string=render_to_string(
+                'participante-proyecto/hace_constar.html', context=contexto, request=request
+            ),
+            # En la plantilla, las URL de los CSS y las imágenes son relativas.
+            # Al usar `HTML(string=...)` WeasyPrint no sabe cuál es la URL base, hay que dársela.
+            base_url=base_url,
+        )
+        response = HttpResponse(mimetype='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="{0}"'.format('hace_constar.pdf')
+        documento_html.write_pdf(response)
+        return response
 
 
 class ProyectosCierreEconomicoTableView(
