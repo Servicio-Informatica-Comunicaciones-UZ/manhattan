@@ -19,6 +19,20 @@
       {% trans 'Las personas que acepten la invitación pasarán a ser participantes del proyecto. Mientras tanto aparecerán en estado «Pendiente».' %}
     </p>
   </div>
+  {% elif proyecto.estado == 'SOLICITADO' %}
+  <div class="alert alert-info fade-in noprint">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+    <span class="fas fa-info-circle"></span>
+    <p>
+      {% with proyecto.convocatoria.fecha_max_aceptos as fecha_max_aceptos %}
+        {% blocktrans %}Las personas invitadas a participar en el proyecto tienen de plazo hasta
+        el {{ fecha_max_aceptos }} para aceptar las invitaciones.{% endblocktrans %}
+      {% endwith %}
+    </p>
+    <p>{% blocktrans %}Quienes acepten la invitación pasarán a aparecer en la tabla «Participantes».
+     Mientras tanto aparecerán en estado «Pendiente».{% endblocktrans %}
+    </p>
+  </div>
   {% endif %}
 
   {% with logo_programa='img/'|concat:proyecto.programa.nombre_corto|concat:'.png' %}
@@ -105,6 +119,23 @@
         <th scope="row"><strong>{% trans 'Visto bueno del estudio' %}</strong>:</th>
         <td>{{ proyecto.visto_bueno_estudio | yesno:"Sí,No,—" }}</td>
       </tr>
+      {% endif %}
+
+      {% if proyecto.ayuda_definitiva is not null and proyecto.convocatoria.notificada_resolucion_definitiva %}
+      <tr>
+        <th scope="row"><strong>{% trans 'Ayuda definitiva' %}</strong>:</th>
+        <td>{{ proyecto.ayuda_definitiva }} €</td>
+      </tr>
+      {% elif proyecto.ayuda_provisional is not null and proyecto.convocatoria.notificada_resolucion_provisional %}
+      <tr>
+        <th scope="row"><strong>{% trans 'Ayuda provisional' %}</strong>:</th>
+        <td>{{ proyecto.ayuda_provisional }} €</td>
+      </tr>
+      {% endif %}
+
+      {% if proyecto.ayuda_provisional and proyecto.convocatoria.notificada_resolucion_provisional or proyecto.ayuda_definitiva and proyecto.convocatoria.notificada_resolucion_definitiva %}
+        <th scope="row"><strong>{% trans 'Tipo de gasto' %}</strong>:</th>
+	<td>{{ proyecto.tipo_gasto }}</td>
       {% endif %}
 
     </table>
@@ -333,6 +364,10 @@
         <p>
           {% blocktrans %}Se enviarán mensajes informativos a las personas invitadas y,
           en su caso, a quien deba dar su visto bueno.{% endblocktrans %}
+        </p>
+        <p>
+          {% blocktrans %}Conforme se vayan produciendo, la página del proyecto
+          se actualizará con las aceptaciones o declinaciones de las invitaciones.{% endblocktrans %}
         </p>
         <p>
           {% blocktrans %}Al presentar la solicitud, usted se compromete, en caso de concesión, a cumplir con las
