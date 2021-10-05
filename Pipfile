@@ -27,7 +27,7 @@ python-magic = "*"
 python3-saml = "*"
 social-auth-app-django = "*"
 social-auth-core = {extras = ["saml"],version = "*"}
-weasyprint = "52.5"  # 53 requires pango 1.44
+weasyprint = "==52.5"  # 53 requires pango 1.44
 zeep = "*"
 django-filter = "*"
 

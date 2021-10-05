@@ -905,6 +905,10 @@ class RightsSupport(models.Model):
         permissions = (
             ('gestionar_correctores', _('Puede añadir/quitar usuarios al grupo Correctores')),
             ('asignar_correctores', _('Puede asignar un corrector de memoria a un proyecto')),
+            (
+                'hace_constar',
+                _('Puede generar PDFs de constancia de participación en proyectos'),
+            ),
         )
 
 
