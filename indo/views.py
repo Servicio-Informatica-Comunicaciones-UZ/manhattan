@@ -916,18 +916,16 @@ class ParticipanteHaceConstarView(LoginRequiredMixin, PermissionRequiredMixin, T
             'vicerrector': settings.VICERRECTOR.strip('"'),
             'usuario': usuario,
             'proyecto_list': proyectos_participados,
-            'convocatoria': Convocatoria.get_ultima(),
+            'convocatoria': convocatoria,
         }
 
-        # base_url = request.build_absolute_uri().removesuffix('presentar/')  # Requiere Python 3.9
-        base_url = request.build_absolute_uri()[: -len('presentar/')]
         documento_html = HTML(
             string=render_to_string(
                 'participante-proyecto/hace_constar.html', context=contexto, request=request
             ),
             # En la plantilla, las URL de los CSS y las imágenes son relativas.
             # Al usar `HTML(string=...)` WeasyPrint no sabe cuál es la URL base, hay que dársela.
-            base_url=base_url,
+            base_url=request.build_absolute_uri(),
         )
         response = HttpResponse(content_type='application/pdf')
         musername = usuario.email.split('@')[0]
