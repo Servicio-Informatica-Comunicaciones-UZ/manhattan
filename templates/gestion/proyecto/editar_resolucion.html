@@ -26,7 +26,7 @@
     <hr />
     <br />
 
-    <div class="alert-info alert fade-in">
+    <div class="alert alert-info fade show">
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 
         <span class="fas fa-info-circle"></span>
@@ -40,7 +40,7 @@
     </div><br />
 
     {% if proyecto.programa.requiere_visto_bueno_estudio and not proyecto.visto_bueno_estudio %}
-        <div class="alert-warning alert fade-in">
+        <div class="alert alert-warning fade show">
             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 
             <span class="fas fa-exclamation-triangle"></span>
@@ -52,7 +52,7 @@
     {% endif %}
 
     {% if proyecto.programa.requiere_visto_bueno_centro and not proyecto.visto_bueno_centro %}
-        <div class="alert-warning alert fade-in">
+        <div class="alert alert-warning fade show">
             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 
             <span class="fas fa-exclamation-triangle"></span>
@@ -64,7 +64,7 @@
     {% endif %}
 
     {% if not proyecto.tiene_participantes %}
-        <div class="alert-warning alert fade-in">
+        <div class="alert alert-warning fade show">
             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 
             <span class="fas fa-exclamation-triangle"></span>
@@ -73,7 +73,15 @@
     {% endif %}
 
     <p><label>Proyecto:</label> {{ proyecto.titulo }}</p>
-    <form action="" method="post">
+
+    {% if proyecto.estado not in 'SOLICITADO,APROBADO,DENEGADO' %}
+      <div class="alert alert-danger fade show">
+        <span class="fas fa-bomb"></span>
+        <p>{% trans 'El estado actual de este proyecto no permite modificar la resolución de la Comisión.' %}</p>
+      </div>
+      <br />
+    {% else %}
+      <form action="" method="post">
         {% csrf_token %}
         {{ form | crispy }}
         <br style="clear: both;" />
@@ -85,6 +93,7 @@
                 <span class="fas fa-check"></span> {% trans 'Actualizar' %}
             </button>
         </div>
-    </form>
+      </form>
+    {% endif %}
 </div>
 {% endblock content %}
