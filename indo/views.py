@@ -492,6 +492,11 @@ class ProyectoAceptarView(LoginRequiredMixin, ChecksMixin, SuccessMessageMixin, 
             return False
 
         fecha_limite = proyecto.convocatoria.fecha_max_aceptacion_resolucion
+        if not fecha_limite:
+            self.permission_denied_message = _(
+                'No se ha establecido en la convocatoria la fecha para aceptar las condiciones.'
+            )
+            return False
         if date.today() > fecha_limite:
             fecha_limite_str = localize(fecha_limite)
             self.permission_denied_message = _(
@@ -729,6 +734,12 @@ class InvitacionView(LoginRequiredMixin, ChecksMixin, CreateView):
     def test_func(self):
         proyecto = get_object_or_404(Proyecto, pk=self.kwargs['proyecto_id'])
         fecha_limite = proyecto.convocatoria.fecha_max_aceptos
+        if not fecha_limite:
+            self.permission_denied_message = _(
+                'No se ha establecido en la convocatoria la fecha límite'
+                ' para aceptar participar en un proyecto.'
+            )
+            return False
         if date.today() > fecha_limite:
             fecha_limite_str = localize(fecha_limite)
             self.permission_denied_message = _(
@@ -778,6 +789,12 @@ class ParticipanteAceptarView(LoginRequiredMixin, RedirectView):
             return super().post(request, *args, **kwargs)
 
         fecha_limite = proyecto.convocatoria.fecha_max_aceptos
+        if not fecha_limite:
+            self.permission_denied_message = _(
+                'No se ha establecido en la convocatoria la fecha límite'
+                ' para que los invitados puedan aceptar participar en un proyecto.'
+            )
+            return False
         if date.today() > fecha_limite:
             fecha_limite_str = localize(fecha_limite)
             messages.error(
@@ -1001,6 +1018,12 @@ class ProyectoCreateView(LoginRequiredMixin, ChecksMixin, CreateView):
     def test_func(self):
         convocatoria = Convocatoria.objects.get(pk=date.today().year)
         fecha_minima = convocatoria.fecha_min_solicitudes
+        if not fecha_minima:
+            self.permission_denied_message = _(
+                'No se ha establecido en la convocatoria la fecha'
+                ' en que se abre el plazo para presentar solicitudes.'
+            )
+            return False
         if date.today() < fecha_minima:
             fecha_limite_str = localize(fecha_minima)
             self.permission_denied_message = _(
@@ -1009,6 +1032,12 @@ class ProyectoCreateView(LoginRequiredMixin, ChecksMixin, CreateView):
             return False
 
         fecha_maxima = convocatoria.fecha_max_solicitudes
+        if not fecha_maxima:
+            self.permission_denied_message = _(
+                'No se ha establecido en la convocatoria'
+                ' la fecha límite para presentar solicitudes.'
+            )
+            return False
         if date.today() > fecha_maxima:
             fecha_limite_str = localize(fecha_maxima)
             self.permission_denied_message = _(
@@ -1178,6 +1207,12 @@ class MemoriaPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
             return False
 
         fecha_maxima = proyecto.convocatoria.fecha_max_memorias
+        if not fecha_maxima:
+            self.permission_denied_message = _(
+                'No se ha establecido en la convocatoria'
+                ' la fecha límite para presentar memorias.'
+            )
+            return False
         if date.today() > fecha_maxima:
             fecha_limite_str = localize(fecha_maxima)
             self.permission_denied_message = _(
@@ -1208,6 +1243,12 @@ class MemoriaUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
     def test_func(self):
         proyecto = get_object_or_404(Proyecto, pk=self.kwargs.get('proyecto_id'))
         fecha_maxima = proyecto.convocatoria.fecha_max_memorias
+        if not fecha_maxima:
+            self.permission_denied_message = _(
+                'No se ha establecido en la convocatoria'
+                ' la fecha límite para presentar memorias.'
+            )
+            return False
         if date.today() > fecha_maxima:
             fecha_limite_str = localize(fecha_maxima)
             self.permission_denied_message = _(
@@ -1706,6 +1747,12 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
             return False
 
         fecha_minima = proyecto.convocatoria.fecha_min_solicitudes
+        if not fecha_minima:
+            self.permission_denied_message = _(
+                'No se ha establecido en la convocatoria'
+                ' la fecha en que se abre el plazo para presentar solicitudes.'
+            )
+            return False
         if date.today() < fecha_minima:
             fecha_limite_str = localize(fecha_minima)
             self.permission_denied_message = _(
@@ -1714,6 +1761,12 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
             return False
 
         fecha_maxima = proyecto.convocatoria.fecha_max_solicitudes
+        if not fecha_maxima:
+            self.permission_denied_message = _(
+                'No se ha establecido en la convocatoria'
+                ' la fecha límite para presentar solicitudes.'
+            )
+            return False
         if date.today() > fecha_maxima:
             fecha_limite_str = localize(fecha_maxima)
             self.permission_denied_message = _(
@@ -1849,6 +1902,12 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
             and self.es_coordinador_estudio(self.kwargs['pk'])
         ):
             fecha_limite = proyecto.convocatoria.fecha_max_visto_buenos
+            if not fecha_limite:
+                self.permission_denied_message = _(
+                    'No se ha establecido en la convocatoria'
+                    ' la fecha límite para dar los Visto Bueno.'
+                )
+                return False
             if date.today() > fecha_limite:
                 fecha_limite_str = localize(fecha_limite)
                 self.permission_denied_message = _(
