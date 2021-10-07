@@ -6,7 +6,7 @@
 {% block content %}
 <div class="container-blanco">
   {% if permitir_edicion and proyecto.en_borrador %}
-  <div class="alert alert-info fade-in noprint">
+  <div class="alert alert-info fade show noprint">
     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
     <span class="fas fa-info-circle"></span>
     <p>
@@ -20,7 +20,7 @@
     </p>
   </div>
   {% elif proyecto.estado == 'SOLICITADO' %}
-  <div class="alert alert-info fade-in noprint">
+  <div class="alert alert-info fade show noprint">
     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
     <span class="fas fa-info-circle"></span>
     <p>
@@ -142,7 +142,8 @@
   </div>
   <br />
 
-  {% if proyecto.aceptacion_comision %}
+  <!-- Aceptación de las condiciones concedidas -->
+  {% if proyecto.aceptacion_comision and es_coordinador %}
     <h3>{% trans 'Aceptación de las condiciones' %}</h3>
 
     <p>
@@ -164,7 +165,8 @@
     </p>
   {% endif %}
 
-  {% if proyecto.aceptacion_coordinador %}
+  <!-- Memoria del proyecto -->
+  {% if proyecto.aceptacion_coordinador and es_coordinador %}
     <h3>{% trans 'Memoria' %}</h3>
 
     <p><a href="{%url 'memoria_detail' proyecto.id %}" class="btn btn-info btn-sm">
@@ -176,6 +178,7 @@
     </a></p>
   {% endif %}
 
+  <!-- Usuarios invitados -->
   <h3 id="invitaciones">{% trans 'Invitaciones' %}</h3>
   {% if invitados %}
   <div class="table-responsive">
@@ -221,6 +224,7 @@
   {% endif %}
   <br />
 
+  <!-- Usuarios participantes -->
   <h3 id="participantes">{% trans 'Participantes' %}</h3>
   {% if participantes %}
   <div class="table-responsive">
@@ -228,22 +232,28 @@
       <thead>
         <tr>
           <th scope="col">{% trans "Usuario" %}</th>
+          {% if es_coordinador or permitir_edicion %}
+            <th scope="col">{% trans 'E-mail' %}</th>
+          {% endif %}
           {% if permitir_edicion %}
-          <th scope="col">{% trans "Acción" %}</th>
+            <th scope="col">{% trans "Acción" %}</th>
           {% endif %}
         </tr>
       </thead>
       {% for participante in participantes %}
-      <tr>
-        <td>{{ participante.usuario.full_name }}</td>
-        {% if permitir_edicion %}
-        <td>
-          <a href="{% url 'participante_delete' participante.id %}" aria-label="{% trans 'Eliminar' %}">
-            <span aria-hidden="true" class="fas fa-trash-alt" title="{% trans 'Eliminar' %}"></span>
-          </a>
-        </td>
-        {% endif %}
-      </tr>
+        <tr>
+          <td>{{ participante.usuario.full_name }}</td>
+          {% if es_coordinador or permitir_edicion %}
+            <td>{{ participante.usuario.email }}</td>
+          {% endif %}
+          {% if permitir_edicion %}
+            <td>
+              <a href="{% url 'participante_delete' participante.id %}" aria-label="{% trans 'Eliminar' %}">
+                <span aria-hidden="true" class="fas fa-trash-alt" title="{% trans 'Eliminar' %}"></span>
+              </a>
+            </td>
+          {% endif %}
+        </tr>
       {% endfor %}
     </table>
   </div>
@@ -252,6 +262,7 @@
   {% endif %}
   <br />
 
+  <!-- Datos del proyecto -->
   <h3>{% trans 'Descripción' %}</h3>
   <p>{{ proyecto.descripcion | limpiar }}</p>
 
@@ -309,7 +320,7 @@
       <span class="fas fa-trash-alt"></span> {% trans 'Anular' %}
     </button>
     {% endif %}
-    {% if es_coordinador %}
+    {% if es_coordinador and proyecto.in_borrador %}
     <button class="btn btn-warning" data-toggle="modal" data-target="#presentarModal" type="button">
       <span class="fas fa-check"></span> {% trans 'Presentar' %}
     </button>

@@ -1258,9 +1258,7 @@ class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
         ):
             context['object'].estado = 'SOLICITADO'
 
-        context['es_coordinador'] = (
-            self.es_coordinador(self.object.id) and self.object.en_borrador()
-        )
+        context['es_coordinador'] = self.es_coordinador(self.object.id)
 
         context['url_anterior'] = self.request.META.get('HTTP_REFERER', reverse('home'))
 
