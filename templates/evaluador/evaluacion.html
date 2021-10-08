@@ -9,8 +9,10 @@
     <hr />
     <br />
 
-    <div class="alert-info alert fade-in">
-        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+    <div class="alert alert-info alert-dismissible fade show">
+        <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
+            <span aria-hidden="true">&times;</span>
+        </button>
 
         <span class="fas fa-info-circle"></span>
         {% trans 'Aquí puede ver/editar la evaluación del proyecto.' %}<br />
