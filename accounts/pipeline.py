@@ -4,6 +4,7 @@ import json
 # third-party
 import zeep
 from annoying.functions import get_config
+from lxml.etree import XMLSyntaxError
 from requests import Session
 from requests.auth import HTTPBasicAuth
 from requests.exceptions import ConnectionError as RequestConnectionError
@@ -24,6 +25,8 @@ def get_identidad(strategy, response, user, *args, **kwargs):
         client = zeep.Client(wsdl=wsdl, transport=zeep.transports.Transport(session=session))
     except RequestConnectionError:
         raise RequestConnectionError('No fue posible conectarse al WS de Identidades.')
+    except XMLSyntaxError as e:
+        raise XMLSyntaxError(f'El WS de Identidades no devolvió un XML válido: {e.msg}')
     except Exception as e:
         print(e)
         raise e

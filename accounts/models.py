@@ -3,6 +3,7 @@ import json
 
 # Third-party
 from annoying.functions import get_config, get_object_or_None
+from lxml.etree import XMLSyntaxError
 from requests import Session
 from requests.auth import HTTPBasicAuth
 from requests.exceptions import ConnectionError as RequestConnectionError
@@ -204,6 +205,8 @@ class CustomUser(AbstractUser):
             client = zeep.Client(wsdl=wsdl, transport=zeep.transports.Transport(session=session))
         except RequestConnectionError:
             raise RequestConnectionError('No fue posible conectarse al WS de Vinculaciones.')
+        except XMLSyntaxError:
+            raise XMLSyntaxError('El WS de Identidades no devolvió un XML válido.')
         except Exception as e:
             print(e)
             raise e
