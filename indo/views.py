@@ -613,7 +613,11 @@ class ProyectoEvaluadorUpdateView(LoginRequiredMixin, PermissionRequiredMixin, U
         for nip in nip_evaluadores:
             usuario = get_object_or_None(User, username=nip)
             if not usuario:
-                usuario = User.crear_usuario(request, nip)
+                try:
+                    usuario = User.crear_usuario(request, nip)
+                except Exception as ex:
+                    messages.error(request, 'ERROR: %s' % ex.args[0])
+                    return redirect('evaluador_update')
             # Añadimos los usuarios al grupo Evaluadores.
             evaluadores.user_set.add(usuario)  # or usuario.groups.add(evaluadores)
 

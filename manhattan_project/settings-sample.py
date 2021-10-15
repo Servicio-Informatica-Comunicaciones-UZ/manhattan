@@ -37,6 +37,14 @@ DEBUG = os.environ.get('DEBUG', False) == 'True'
 
 ALLOWED_HOSTS = []  # ['*']
 
+# A list of all the people who get code error notifications.
+# When `DEBUG=False` and `AdminEmailHandler` is configured in `LOGGING` (done by default),
+# Django emails these people the details of exceptions raised in the request/response cycle.
+# See <https://docs.djangoproject.com/en/3.2/howto/error-reporting/>
+ADMINS = [('Root', 'root@localhost')]
+# A list that specifies who should get broken link notifications
+# when `BrokenLinkEmailsMiddleware` is enabled.
+MANAGERS = ADMINS
 
 DEFAULT_FROM_EMAIL = 'La Maestra <leocricia@manhattan.local>'
 # Production value: 'django.core.mail.backends.smtp.EmailBackend'
@@ -72,10 +80,12 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.common.BrokenLinkEmailsMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 

@@ -25,8 +25,8 @@ def get_identidad(strategy, response, user, *args, **kwargs):
         client = zeep.Client(wsdl=wsdl, transport=zeep.transports.Transport(session=session))
     except RequestConnectionError:
         raise RequestConnectionError('No fue posible conectarse al WS de Identidades.')
-    except XMLSyntaxError as e:
-        raise XMLSyntaxError(f'El WS de Identidades no devolvió un XML válido: {e.msg}')
+    except XMLSyntaxError:
+        raise XMLSyntaxError('El WS de Identidades no devolvió un XML válido.')
     except Exception as e:
         print(e)
         raise e

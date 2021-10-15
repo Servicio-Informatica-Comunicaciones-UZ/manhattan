@@ -9,23 +9,23 @@
   <hr />
   <br />
 
-  <div style="text-align: center;">
+  <div style="text-align: center">
     <!-- Retro Robot - Cobalt by VexStrips released into the Public Domain / Creative Commons Zero 1.0 Public Domain License  -->
     <p><img src="{% static 'img/311840.png' %}" alt="Robotito roto" /></p>
     <h1 class="text-danger">{% trans '¡Aúpa! Algo no ha funcionado bien.' %}</h1>
     <h2 class="text-muted">{% trans 'Y, esta vez, seguramente sí sea culpa del informático.' %}</h2>
 
     <p>
-    {% trans 'Si lo desea, puede abrir un parte en Ayudica informando del error.' %}<br />
-    {% trans 'Explique de forma clara, completa y concisa qué pasos ha seguido para provocar el error.' %}<br />
-    {% trans 'Si en el rectángulo rojizo inferior aparece algún texto, cópielo (es importante).' %}
-    {# trans 'Indique también el día y hora exacta en que se ha producido.' #}
+      {% trans 'Si lo desea, puede abrir un parte en Ayudica informando del error.' %}<br />
+      {% trans 'Explique de forma clara, completa y concisa qué pasos ha seguido para provocar el error.' %}<br />
+      {% trans 'Indique también el día y hora exacta en que se ha producido.' %}
     </p>
 
-    <div class="alert alert-danger" role="alert">
-      {% alert_icon 'error' %}
-      {{ exception }}<br />
-    </div>
+    {% comment %}
+    The default 500 view passes no variables to the `500.html` template
+    and is rendered with an empty `Context` to lessen the chance of additional errors.
+    {% endcomment %}
+
   </div>
 </div>
 {% endblock content %}
