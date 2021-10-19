@@ -74,7 +74,7 @@
 
     <p><label>Proyecto:</label> {{ proyecto.titulo }}</p>
 
-    {% if proyecto.estado not in 'SOLICITADO,APROBADO,DENEGADO' %}
+    {% if proyecto.estado not in 'SOLICITADO,APROBADO,DENEGADO,ACEPTADO' %}
       <div class="alert alert-danger fade show">
         <span class="fas fa-bomb"></span>
         <p>{% trans 'El estado actual de este proyecto no permite modificar la resolución de la Comisión.' %}</p>
