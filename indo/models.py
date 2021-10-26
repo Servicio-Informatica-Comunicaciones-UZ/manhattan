@@ -684,10 +684,7 @@ class Proyecto(models.Model):
             Proyecto.objects.filter(convocatoria__id=anyo)
             .filter(aceptacion_coordinador=True)
             .order_by(
-                'departamento__unidad_planificacion',
-                'centro__unidad_planificacion',
                 'programa__nombre_corto',
-                'linea__nombre',
                 'titulo',
             )
         )

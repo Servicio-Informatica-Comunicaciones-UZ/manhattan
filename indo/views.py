@@ -702,10 +702,7 @@ class ProyectoUPTableView(LoginRequiredMixin, PermissionRequiredMixin, SingleTab
             Proyecto.objects.filter(convocatoria__id=self.kwargs['anyo'])
             .filter(aceptacion_coordinador=True)
             .order_by(
-                'departamento__unidad_planificacion',
-                'centro__unidad_planificacion',
                 'programa__nombre_corto',
-                'linea__nombre',
                 'titulo',
             )
         )
