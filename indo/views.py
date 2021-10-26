@@ -653,10 +653,13 @@ class ProyectoResolucionUpdateView(
         resolucion = self.request.POST.get('aceptacion_comision')
 
         if resolucion == 'true':
-            proyecto.estado = 'APROBADO'
-            registrar_evento(
-                self.request, 'aprobacion_proyecto', 'Aprobación del proyecto', proyecto
-            )
+            # Cuando se publica la resolución definitiva, La mayoría de los coordinadores ya han
+            # aceptado las condiciones, y entonces no se debería retroceder al estado Aprobado.
+            if proyecto.estado in ('SOLICITADO', 'DENEGADO'):
+                proyecto.estado = 'APROBADO'
+                registrar_evento(
+                    self.request, 'aprobacion_proyecto', 'Aprobación del proyecto', proyecto
+                )
         elif resolucion == 'false':
             proyecto.estado = 'DENEGADO'
             registrar_evento(
