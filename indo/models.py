@@ -669,6 +669,42 @@ class Proyecto(models.Model):
         datos_proyectos.insert(0, cabeceras)
         return datos_proyectos
 
+    @classmethod
+    def get_up_gastos(cls, anyo):
+        """Devuelve datos de las UP y gastos posibles de todos los proyectos del año indicado."""
+        cabeceras = [
+            _('Programa'),
+            _('ID'),
+            _('Título'),
+            _('UP'),
+            _('Ayuda definitiva'),
+            _('Tipo de gasto posible'),
+        ]
+        proyectos = (
+            Proyecto.objects.filter(convocatoria__id=anyo)
+            .filter(aceptacion_coordinador=True)
+            .order_by(
+                'departamento__unidad_planificacion',
+                'centro__unidad_planificacion',
+                'programa__nombre_corto',
+                'linea__nombre',
+                'titulo',
+            )
+        )
+        datos_proyectos = [
+            [
+                p.programa,
+                p.id,
+                p.titulo,
+                p.get_unidad_planificacion(),
+                p.ayuda_definitiva,
+                p.tipo_gasto,
+            ]
+            for p in proyectos
+        ]
+        datos_proyectos.insert(0, cabeceras)
+        return datos_proyectos
+
     def get_unidad_planificacion(self):
         """Devuelve el ID de la Unidad de Planificación del proyecto
 

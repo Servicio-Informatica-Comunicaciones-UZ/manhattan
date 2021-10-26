@@ -26,6 +26,12 @@
 
   {% render_table table %}
 
+  <br style="clear: both" />
+  <div class="btn-group" role="group" aria-label="Botones">
+    <a href="{% url 'csv_up_gastos' anyo %}" class="btn btn-info">
+      <span class="fas fa-file-csv"></span>&nbsp; {% trans "Descargar UPs y gastos" %}
+    </a>
+  </div>
 </div>
 
 {% endblock content %}

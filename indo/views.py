@@ -711,6 +711,21 @@ class ProyectoUPTableView(LoginRequiredMixin, PermissionRequiredMixin, SingleTab
         )
 
 
+class ProyectosUpCsvView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    """Muestra las unidades de planificación de los proyectos, y los gastos autorizados."""
+
+    permission_required = 'indo.ver_up'
+    permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
+
+    def get(self, request, *args, **kwargs):
+        datos_proyectos = Proyecto.get_up_gastos(kwargs.get('anyo'))
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="proyectos_up_gastos.csv"'
+        writer = csv.writer(response)
+        writer.writerows(datos_proyectos)
+        return response
+
+
 class HomePageView(TemplateView):
     template_name = 'home.html'
 

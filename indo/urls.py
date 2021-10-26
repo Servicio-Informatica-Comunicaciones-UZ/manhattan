@@ -45,6 +45,7 @@ from .views import (
     ProyectosCsvView,
     ProyectosEvaluadosTableView,
     ProyectosNotificarView,
+    ProyectosUpCsvView,
     ProyectosUsuarioView,
     ResolucionListView,
 )
@@ -100,6 +101,11 @@ urlpatterns = [
         'gestion/proyectos/<int:anyo>/csv-proyectos/',
         ProyectosCsvView.as_view(),
         name='csv_proyectos',
+    ),
+    path(
+        'gestion/proyectos/<int:anyo>/csv-up-gastos/',
+        ProyectosUpCsvView.as_view(),
+        name='csv_up_gastos',
     ),
     path(
         'gestion/proyectos/<int:anyo>/notificar/',
