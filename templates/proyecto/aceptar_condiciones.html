@@ -20,7 +20,7 @@
   <p>Llevar a cabo el proyecto en las condiciones en las que ha sido aprobado
   por la Comisión Evaluadora,
   {% if proyecto.ayuda_provisional %}
-    con una ayuda económica asignada de <strong>{{proyecto.ayuda_provisional}}</strong>
+    con una ayuda económica asignada de <strong>{{ proyecto.ayuda_definitiva | default:proyecto.ayuda_provisional }}</strong>
     euros para {{proyecto.tipo_gasto}}.
   {% else %}
     sin financiación.
