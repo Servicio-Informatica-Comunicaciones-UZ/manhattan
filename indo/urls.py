@@ -18,6 +18,7 @@ from .views import (
     MemoriaUpdateFieldView,
     MemoriasAsignadasTableView,
     ParticipanteAceptarView,
+    ParticipanteAnyadirView,
     ParticipanteDeclinarView,
     ParticipanteDeleteView,
     ParticipanteHaceConstarView,
@@ -163,6 +164,11 @@ urlpatterns = [
     ),
     path('memoria/<int:pk>/presentar/', MemoriaPresentarView.as_view(), name='memoria_presentar'),
     # Participante en proyecto
+    path(
+        'participante-proyecto/anyadir/<int:proyecto_id>/',
+        ParticipanteAnyadirView.as_view(),
+        name='participante_anyadir',
+    ),
     path(
         'participante-proyecto/aceptar-invitacion/<int:proyecto_id>/',
         ParticipanteAceptarView.as_view(),

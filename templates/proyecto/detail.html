@@ -262,6 +262,26 @@
   {% endif %}
   <br />
 
+  <!-- Añadir participante con carácter excepcional -->
+  {% if permitir_anyadir_sin_invitacion %}
+  <h4 id="anyadir-participante">{% trans 'Añadir participante de forma excepcional' %}</h4>
+  <div class="alert alert-info fade show noprint">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+    <span class="fas fa-info-circle"></span>
+    <p>
+      {% blocktranslate %} Con carácter <strong>excepcional</strong>, y con
+      <strong>causas debidamente justificadas</strong>, el coordinador podrá solicitar al Presidente de la Comisión
+      Evaluadora la modificación del equipo de trabajo.<br />
+      Aquí puede añadir un participante al equipo, sin que tenga que manifestar su aceptación. {% endblocktranslate %}
+    </p>
+  </div>
+
+  <p><a href="{% url 'participante_anyadir' proyecto.id %}" class="btn btn-info btn-sm">
+    <span class="fas fa-plus" aria-hidden="true"></span>&nbsp; {% trans 'Añadir' %}
+  </a></p>
+  <br />
+  {% endif %}
+
   <!-- Datos del proyecto -->
   <h3>{% trans 'Descripción' %}</h3>
   <p>{{ proyecto.descripcion | limpiar }}</p>

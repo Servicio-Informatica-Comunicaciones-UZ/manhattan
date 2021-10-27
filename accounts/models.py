@@ -144,6 +144,10 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.username
 
+    def actualizar(self, request):
+        """Actualiza el usuario con los datos de Gestión de Identidades."""
+        get_identidad(load_strategy(request), None, self)
+
     def get_colectivo_principal(self):
         """Devuelve el colectivo principal del usuario.
 

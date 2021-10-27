@@ -840,6 +840,102 @@ class ParticipanteAceptarView(LoginRequiredMixin, RedirectView):
         return super().post(request, *args, **kwargs)
 
 
+class ParticipanteAnyadirView(LoginRequiredMixin, ChecksMixin, TemplateView):
+    """Muestra un formulario para añadir excepcionalmente un participante a un proyecto."""
+
+    template_name = 'participante-proyecto/anyadir_excepcional.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['proyecto'] = get_object_or_404(Proyecto, pk=kwargs['proyecto_id'])
+        return context
+
+    def post(self, request, *args, **kwargs):
+        proyecto = get_object_or_404(Proyecto, pk=kwargs['proyecto_id'])
+        # Obtenemos el usuario (si ya existe en el sistema).
+        nip = request.POST.get('nip')
+        User = get_user_model()
+        usuario = get_object_or_None(User, username=nip)
+
+        if not usuario:
+            # El usuario no existe previamente. Lo creamos con los datos de Gestión de Identidades.
+            try:
+                usuario = User.crear_usuario(request, nip)
+            except Exception as ex:
+                messages.error(request, 'ERROR: %s' % ex.args[0])
+                return redirect('participante_anyadir', proyecto.id)
+        else:
+            # El usuario existe. Actualizamos sus datos con los de Gestión de Identidades.
+            try:
+                usuario.actualizar(self.request)
+            except Exception as ex:
+                # Si Identidades devuelve un error, finalizamos mostrando el mensaje de error.
+                messages.error(request, f'ERROR: {ex}')
+                return redirect('participante_anyadir', proyecto.id)
+
+        # Si el usuario no está activo, finalizamos explicando esta circunstancia.
+        if not usuario.is_active:
+            texto = mark_safe(
+                _(
+                    '''Usuario inactivo en el sistema de Gestión de Identidades.<br>
+                    Solicite en Ayudica que se le asigne la vinculación
+                    «Participantes externos Proyectos Innovación Docente».'''
+                )
+            )
+            messages.error(request, f'ERROR: {texto}')
+            return redirect('participante_anyadir', proyecto.id)
+
+        # Comprobamos que el usuario no esté ya en el número máximo de equipos permitido.
+        num_equipos = usuario.get_num_equipos(proyecto.convocatoria_id)
+        num_max_equipos = proyecto.convocatoria.num_max_equipos
+        if num_equipos >= num_max_equipos:
+            messages.error(
+                request,
+                _(
+                    f'''No puede añadir este usuario porque ya forma parte
+                    del número máximo de equipos de trabajo permitido ({num_max_equipos}).'''
+                ),
+            )
+            return redirect('participante_anyadir', proyecto.id)
+
+        # Añadimos al usuario como participante del proyecto.
+        participante = ParticipanteProyecto(
+            proyecto=proyecto,
+            tipo_participacion=TipoParticipacion('participante'),
+            usuario=usuario,
+        )
+        participante.save()
+
+        # Quitamos al usuario de invitado, si lo estaba.
+        invitado = proyecto.participantes.filter(
+            usuario=usuario, tipo_participacion='invitado'
+        ).first()
+        if invitado:
+            invitado.delete()
+
+        messages.success(request, _('Se ha añadido al usuario al equipo de trabajo del proyecto.'))
+        return redirect('proyecto_detail', proyecto.id)
+
+    def test_func(self):
+        proyecto = get_object_or_404(Proyecto, pk=self.kwargs['proyecto_id'])
+        fecha_limite = proyecto.convocatoria.fecha_max_modificacion_equipos
+        if not fecha_limite:
+            self.permission_denied_message = _(
+                'No se ha establecido en la convocatoria la fecha límite'
+                ' para modificar excepcionalmente los equipos de trabajo.'
+            )
+            return False
+        if date.today() > fecha_limite:
+            fecha_limite_str = localize(fecha_limite)
+            self.permission_denied_message = _(
+                f'''Se ha superado la fecha límite ({fecha_limite_str}) para
+                las modificaciones excepcionales del equipo de trabajo de un proyecto.'''
+            )
+            return False
+
+        return self.request.user.has_perm('indo.editar_proyecto')
+
+
 class ParticipanteDeclinarView(LoginRequiredMixin, RedirectView):
     """Declinar la invitación a participar en un proyecto."""
 
@@ -1309,6 +1405,14 @@ class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
         context['permitir_edicion'] = (
             self.es_coordinador(self.object.id) and self.object.en_borrador()
         ) or self.request.user.has_perm('indo.editar_proyecto')
+
+        context['permitir_anyadir_sin_invitacion'] = self.request.user.has_perm(
+            'indo.editar_proyecto'
+        ) and (
+            self.object.convocatoria.fecha_max_aceptos
+            < date.today()
+            < self.object.convocatoria.fecha_max_modificacion_equipos
+        )
 
         # No mostrar si la Comisión ha aprobado o no el proyecto
         # hasta que se publique la resolución.

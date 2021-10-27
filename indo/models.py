@@ -83,6 +83,11 @@ class Convocatoria(models.Model):
     fecha_max_aceptacion_resolucion = models.DateField(
         _('fecha límite para confirmar la aceptación del proyecto admitido'), blank=True, null=True
     )
+    fecha_max_modificacion_equipos = models.DateField(
+        _('fecha límite para modificaciones excepcionales de los equipos de trabajo'),
+        blank=True,
+        null=True,
+    )
     fecha_max_memorias = models.DateField(
         _('fecha límite para remitir la memoria final'), blank=True, null=True
     )
