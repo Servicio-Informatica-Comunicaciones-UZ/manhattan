@@ -14,7 +14,7 @@
     <div>{% trans 'Podrá editar el borrador cuantas veces desee, hasta que finalmente decida presentar la solicitud.' %}</div>
   </div>
 
-  <h1>{% trans 'Nueva solicitud de proyecto' %}</h1>
+  <h1>{% trans 'Nueva solicitud de proyecto' %} <small>{{ anyo }}</small></h1>
   <hr />
   <br />
 
@@ -22,7 +22,7 @@
     {% csrf_token %}
     {{ form | crispy }}
     <div class="btn-group" role="group" aria-label="Botones">
-      <a href="{% url 'mis_proyectos' anyo_actual %}" class="btn btn-info"
+      <a href="{% url 'mis_proyectos' anyo %}" class="btn btn-info"
         ><span class="fas fa-step-backward"></span> {% trans 'Retroceder' %}</a
       >
       <button class="btn btn-warning" type="submit" title="{% trans 'Crear borrador de solicitud' %}">

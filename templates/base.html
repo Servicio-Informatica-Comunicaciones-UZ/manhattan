@@ -76,7 +76,6 @@
           </li>
         </ul>
 
-        {% now "Y" as anyo_actual %}
         <ul class="navbar-nav ml-auto">
           {% if user.is_authenticated %}
             {% if user|has_group:"Gestores" %}
@@ -106,16 +105,16 @@
                   </a>
                   <div class="dropdown-divider"></div>
                   <!-- -->
-                  <a class="dropdown-item" href="{% url 'proyectos_table' anyo_actual %}">
+                  <a class="dropdown-item" href="{% url 'proyectos_table' anyo %}">
                     <span class="fas fa-th-list"></span>&nbsp; {% trans "Proyectos" %}
                   </a>
-                  <a class="dropdown-item" href="{% url 'evaluadores_table' anyo_actual %}">
+                  <a class="dropdown-item" href="{% url 'evaluadores_table' anyo %}">
                     <span class="fas fa-balance-scale"></span>&nbsp; {% trans "Asignación de evaluadores" %}
                   </a>
-                  <a class="dropdown-item" href="{% url 'evaluaciones_table' anyo_actual %}">
+                  <a class="dropdown-item" href="{% url 'evaluaciones_table' anyo %}">
                     <span class="fas fa-gavel"></span>&nbsp; {% trans "Evaluaciones de los proyectos" %}
                   </a>
-                  <a class="dropdown-item" href="{% url 'up_table' anyo_actual %}">
+                  <a class="dropdown-item" href="{% url 'up_table' anyo %}">
                     <span class="fas fa-hand-holding-usd"></span>&nbsp; {% trans "Unidades de planificación y gastos" %}
                   </a>
                   <a class="dropdown-item" href="{% url 'hace_constar' %}">
@@ -126,14 +125,14 @@
                   <a class="dropdown-item" href="{% url 'correctores_table' %}">
                     <span class="fas fa-users"></span>&nbsp; {% trans "Correctores de las memorias" %}
                   </a>
-                  <a class="dropdown-item" href="{% url 'proyecto_corrector_table' anyo_actual %}">
+                  <a class="dropdown-item" href="{% url 'proyecto_corrector_table' anyo %}">
                     <span class="fas fa-balance-scale"></span>&nbsp; {% trans "Asignación de correctores" %}
                   </a>
-                  <a class="dropdown-item" href="{% url 'memorias_table' anyo_actual %}">
+                  <a class="dropdown-item" href="{% url 'memorias_table' anyo %}">
                     <span class="fas fa-gavel"></span>&nbsp; {% trans "Memorias de los proyectos" %}
                   </a>
                   <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="{% url 'cierre_economico_table' anyo_actual %}">
+                  <a class="dropdown-item" href="{% url 'cierre_economico_table' anyo %}">
                     <span class="fas fa-money-check-alt"></span>&nbsp; {% trans "Cierre económico de los proyectos" %}
                   </a>
                 </div>
@@ -142,7 +141,7 @@
 
             {% if user|has_group:"Correctores" %}
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'memorias_asignadas_table' anyo_actual %}">
+                <a class="nav-link" href="{% url 'memorias_asignadas_table' anyo %}">
                   <span class="fas fa-balance-scale"></span>&nbsp; {% trans "Memorias" %}
                 </a>
               </li>
@@ -150,7 +149,7 @@
 
             {% if user|has_group:"Evaluadores" %}
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'proyectos_evaluados_table' anyo_actual %}">
+                <a class="nav-link" href="{% url 'proyectos_evaluados_table' anyo %}">
                   <span class="fas fa-balance-scale"></span>&nbsp; {% trans "Evaluaciones" %}
                 </a>
               </li>
@@ -171,11 +170,11 @@
             </a>
             <div class="dropdown-menu" aria-labelledby="proyectosMenu">
               {% if user.is_authenticated %}
-                <a class="dropdown-item" href="{% url 'mis_proyectos' anyo_actual %}">
+                <a class="dropdown-item" href="{% url 'mis_proyectos' anyo %}">
                   <span class="fas fa-user-tag"></span> &nbsp;{% trans "Mis proyectos" %}
                 </a>
               {% endif %}
-              <a class="dropdown-item" href="{% url 'proyectos_aceptados' anyo_actual %}">
+              <a class="dropdown-item" href="{% url 'proyectos_aceptados' anyo %}">
                 <span class="fas fa-check"></span>&nbsp; {% trans "Proyectos aceptados" %}
               </a>
             </div>
@@ -238,6 +237,7 @@
       <div class="container-fluid p-3 p-md-5">
         <div class="row">
           <div class="col-lg-8">
+            {% now "Y" as anyo_actual %}
             &copy; {{ anyo_actual }} {% trans "Universidad de Zaragoza" %}<br />
             &copy; {{ anyo_actual }} {% trans "Servicio de Informática y Comunicaciones de la Universidad de Zaragoza" %} (<a href="http://sicuz.unizar.es">SICUZ</a>)
           </div>

@@ -216,7 +216,14 @@ class ChecksMixin(UserPassesTestMixin):
 
 
 class AyudaView(TemplateView):
+    """Muestra la página de ayuda."""
+
     template_name = 'ayuda.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['anyo'] = Convocatoria.get_ultima().id
+        return context
 
 
 class CorreccionVerView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
@@ -229,7 +236,12 @@ class CorreccionVerView(LoginRequiredMixin, PermissionRequiredMixin, DetailView)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['url_anterior'] = self.request.META.get('HTTP_REFERER', reverse('home'))
+        context.update(
+            {
+                'anyo': self.object.convocatoria.id,
+                'url_anterior': self.request.META.get('HTTP_REFERER', reverse('home')),
+            }
+        )
         return context
 
 
@@ -239,6 +251,11 @@ class MemoriaCorreccionUpdateView(LoginRequiredMixin, ChecksMixin, UpdateView):
     model = Proyecto
     template_name = 'corrector/correccion.html'
     form_class = CorreccionForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['anyo'] = self.object.convocatoria.id
+        return context
 
     def get_success_url(self):
         return reverse('memorias_asignadas_table', kwargs={'anyo': self.object.convocatoria.id})
@@ -307,7 +324,12 @@ class CorrectorTableView(LoginRequiredMixin, PermissionRequiredMixin, SingleTabl
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['form'] = CorrectorForm()
+        context.update(
+            {
+                'anyo': Convocatoria.get_ultima().id,
+                'form': CorrectorForm(),
+            }
+        )
         return context
 
     def get_queryset(self):
@@ -369,6 +391,7 @@ class EvaluacionVerView(LoginRequiredMixin, PermissionRequiredMixin, TemplateVie
         context = super().get_context_data(**kwargs)
 
         proyecto = get_object_or_404(Proyecto, pk=self.kwargs['pk'])
+        context['anyo'] = proyecto.convocatoria.id
         context['proyecto'] = proyecto
         context['criterios'] = Criterio.objects.filter(
             convocatoria_id=proyecto.convocatoria_id
@@ -386,6 +409,7 @@ class EvaluacionView(LoginRequiredMixin, ChecksMixin, TemplateView):
         context = super().get_context_data(**kwargs)
 
         proyecto = get_object_or_404(Proyecto, pk=self.kwargs['pk'])
+        context['anyo'] = proyecto.convocatoria.id
         context['proyecto'] = proyecto
         context['criterios'] = Criterio.objects.filter(
             convocatoria_id=proyecto.convocatoria_id
@@ -476,6 +500,11 @@ class ProyectoAceptarView(LoginRequiredMixin, ChecksMixin, SuccessMessageMixin, 
 
         return super().form_valid(form)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['anyo'] = self.object.convocatoria.id
+        return context
+
     def get_success_message(self, cleaned_data):
         return self.success_message % dict(cleaned_data, titulo=self.object.titulo)
 
@@ -537,6 +566,11 @@ class ProyectoCorrectorUpdateView(LoginRequiredMixin, PermissionRequiredMixin, U
     model = Proyecto
     template_name = 'gestion/proyecto/editar_corrector.html'
     form_class = AsignarCorrectorForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['anyo'] = self.object.convocatoria.id
+        return context
 
     def get_success_url(self):
         return reverse('proyecto_corrector_table', kwargs={'anyo': self.object.convocatoria.id})
@@ -628,6 +662,11 @@ class ProyectoEvaluadorUpdateView(LoginRequiredMixin, PermissionRequiredMixin, U
 
         return super().get(request, *args, **kwargs)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['anyo'] = self.object.convocatoria.id
+        return context
+
     def get_success_url(self):
         return reverse('evaluadores_table', kwargs={'anyo': self.object.convocatoria.id})
 
@@ -677,6 +716,11 @@ class ProyectoResolucionUpdateView(
 
         return super().form_valid(form)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['anyo'] = self.object.convocatoria.id
+        return context
+
     def get_success_message(self, cleaned_data):
         return self.success_message % dict(cleaned_data, titulo=self.object.titulo)
 
@@ -724,7 +768,14 @@ class ProyectosUpCsvView(LoginRequiredMixin, PermissionRequiredMixin, View):
 
 
 class HomePageView(TemplateView):
+    """Muestra la página principal."""
+
     template_name = 'home.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['anyo'] = Convocatoria.get_ultima().id
+        return context
 
 
 class InvitacionView(LoginRequiredMixin, ChecksMixin, CreateView):
@@ -737,7 +788,12 @@ class InvitacionView(LoginRequiredMixin, ChecksMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         proyecto = get_object_or_404(Proyecto, pk=self.kwargs['proyecto_id'])
-        context['proyecto'] = proyecto
+        context.update(
+            {
+                'anyo': proyecto.convocatoria.id,
+                'proyecto': proyecto,
+            }
+        )
         return context
 
     def get_form_kwargs(self):
@@ -847,7 +903,13 @@ class ParticipanteAnyadirView(LoginRequiredMixin, ChecksMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['proyecto'] = get_object_or_404(Proyecto, pk=kwargs['proyecto_id'])
+        proyecto = get_object_or_404(Proyecto, pk=kwargs['proyecto_id'])
+        context.update(
+            {
+                'anyo': proyecto.convocatoria.id,
+                'proyecto': proyecto,
+            }
+        )
         return context
 
     def post(self, request, *args, **kwargs):
@@ -992,6 +1054,11 @@ class ParticipanteDeleteView(LoginRequiredMixin, ChecksMixin, DeleteView):
     model = ParticipanteProyecto
     template_name = 'participante-proyecto/confirm_delete.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['anyo'] = self.object.proyecto.convocatoria.id
+        return context
+
     def get_success_url(self):
         return reverse_lazy('proyecto_detail', args=[self.object.proyecto.id])
 
@@ -1010,8 +1077,13 @@ class ParticipanteHaceConstarView(LoginRequiredMixin, PermissionRequiredMixin, T
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['form'] = HaceConstarForm()
-        context['url_anterior'] = self.request.META.get('HTTP_REFERER', reverse('home'))
+        context.update(
+            {
+                'anyo': Convocatoria.get_ultima().id,
+                'form': HaceConstarForm(),
+                'url_anterior': self.request.META.get('HTTP_REFERER', reverse('home')),
+            }
+        )
         return context
 
     def post(self, request, *args, **kwargs):
@@ -1102,6 +1174,11 @@ class ProyectoCreateView(LoginRequiredMixin, ChecksMixin, CreateView):
     template_name = 'proyecto/new.html'
     form_class = ProyectoForm
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['anyo'] = Convocatoria.get_ultima().id
+        return context
+
     def form_valid(self, form):
         # This method is called when valid form data has been POSTed,
         # to do custom logic on form data. It should return an HttpResponse.
@@ -1119,7 +1196,7 @@ class ProyectoCreateView(LoginRequiredMixin, ChecksMixin, CreateView):
         """
         form = super().get_form(form_class)
         form.instance.user = self.request.user
-        form.instance.convocatoria = Convocatoria.objects.get(pk=date.today().year)
+        form.instance.convocatoria = Convocatoria.get_ultima()
         return form
 
     def _guardar_coordinador(self, proyecto):
@@ -1131,7 +1208,7 @@ class ProyectoCreateView(LoginRequiredMixin, ChecksMixin, CreateView):
         pp.save()
 
     def test_func(self):
-        convocatoria = Convocatoria.objects.get(pk=date.today().year)
+        convocatoria = Convocatoria.get_ultima()
         fecha_minima = convocatoria.fecha_min_solicitudes
         if not fecha_minima:
             self.permission_denied_message = _(
@@ -1196,6 +1273,7 @@ class MemoriaDetailView(LoginRequiredMixin, ChecksMixin, TemplateView):
         context = super().get_context_data(**kwargs)
 
         proyecto = get_object_or_404(Proyecto, pk=self.kwargs['pk'])
+        context['anyo'] = proyecto.convocatoria.id
         context['proyecto'] = proyecto
         context['apartados'] = proyecto.convocatoria.apartados_memoria.all()
         context['dict_respuestas'] = proyecto.get_dict_respuestas_memoria()
@@ -1266,6 +1344,7 @@ class MemoriaPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
 
     def create_context(self, proyecto):
         return {
+            'anyo': proyecto.convocatoria.id,
             'proyecto': proyecto,
             'apartados': proyecto.convocatoria.apartados_memoria.all(),
             'dict_respuestas': proyecto.get_dict_respuestas_memoria(),
@@ -1346,6 +1425,11 @@ class MemoriaUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
     template_name = 'memoria/update.html'
     form_class = MemoriaRespuestaForm  # Definido en `forms.py`
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['anyo'] = self.object.proyecto.convocatoria.id
+        return context
+
     def get_object(self, queryset=None):
         """Return the object the view is displaying."""
         proyecto_id = self.kwargs.get('proyecto_id')
@@ -1385,6 +1469,8 @@ class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        context['anyo'] = self.object.convocatoria.id
 
         context['participantes'] = (
             self.object.participantes.filter(tipo_participacion='participante')
@@ -1506,6 +1592,11 @@ class ProyectoFichaView(DetailView):
 
     model = Proyecto
     template_name = 'proyecto/ficha.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['anyo'] = self.object.convocatoria.id
+        return context
 
 
 class ProyectoMemoriasTableView(LoginRequiredMixin, PermissionRequiredMixin, SingleTableView):
@@ -1909,8 +2000,13 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['url_anterior'] = self.request.META.get('HTTP_REFERER', reverse('home'))
-        context['campo'] = self.kwargs['campo']
+        context.update(
+            {
+                'anyo': self.object.convocatoria.id,
+                'campo': self.kwargs['campo'],
+                'url_anterior': self.request.META.get('HTTP_REFERER', reverse('home')),
+            }
+        )
         return context
 
     def get_form_class(self, **kwargs):
@@ -2103,7 +2199,12 @@ class ProyectoVerCondicionesView(LoginRequiredMixin, ChecksMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         proyecto = get_object_or_404(Proyecto, pk=self.kwargs['pk'])
-        context['proyecto'] = proyecto
+        context.update(
+            {
+                'anyo': proyecto.convocatoria.id,
+                'proyecto': proyecto,
+            }
+        )
         return context
 
     def test_func(self):
@@ -2198,3 +2299,8 @@ class ResolucionListView(ListView):
 
     model = Resolucion
     template_name = 'resolucion/list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['anyo'] = Convocatoria.get_ultima().id
+        return context

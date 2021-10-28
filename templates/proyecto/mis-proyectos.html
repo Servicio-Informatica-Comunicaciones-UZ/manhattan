@@ -5,7 +5,7 @@
 
 {% block content %}
 <div class="container-blanco">
-  <h1 id="coordinados">{% trans "Proyectos coordinados" %}</h1>
+  <h1 id="coordinados">{% trans "Proyectos coordinados" %} <small>{{ anyo }}</small></h1>
   <hr />
   <br />
 
@@ -37,7 +37,7 @@
   <p><a href="{% url 'proyecto_new' %}" class="btn btn-info">{% trans "Solicitar nuevo proyecto" %}</a></p>
   <br /><br />
 
-  <h1 id="participados">{% trans "Proyectos en los que participo" %}</h1>
+  <h1 id="participados">{% trans "Proyectos en los que participo" %} <small>{{ anyo }}</small></h1>
   <hr />
   <br />
 
@@ -83,7 +83,7 @@
   {% endif %}
   <br /><br />
 
-  <h1 id="invitaciones">{% trans "Invitaciones a proyectos" %}</h1>
+  <h1 id="invitaciones">{% trans "Invitaciones a proyectos" %} <small>{{ anyo }}</small></h1>
   <hr />
   <br />
 
@@ -143,7 +143,7 @@
   <br /><br />
 
   {% if proyectos_centros_dirigidos %}
-    <h1 id="del-centro">{% trans "Proyectos impulsados por mi centro" %}</h1>
+    <h1 id="del-centro">{% trans "Proyectos impulsados por mi centro" %} <small>{{ anyo }}</small></h1>
     <hr />
     <br />
 
@@ -183,7 +183,7 @@
   <br /><br />
 
   {% if proyectos_estudios_coordinados %}
-    <h1 id="del-estudio">{% trans "Proyectos estratégicos de mis estudios" %}</h1>
+    <h1 id="del-estudio">{% trans "Proyectos estratégicos de mis estudios" %} <small>{{ anyo }}</small></h1>
     <hr />
     <br />
 

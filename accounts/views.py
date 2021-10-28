@@ -1,9 +1,10 @@
-# third-party
+# Third-party
 from annoying.functions import get_config
 from social_django.utils import load_backend, load_strategy
 
 # Django
 from django.contrib.auth import logout
+from django.contrib.auth import views as auth_views
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
@@ -11,6 +12,9 @@ from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
 from django.views.generic.base import RedirectView, View
+
+# Local Django
+from indo.models import Convocatoria
 
 
 def metadata_xml(request):
@@ -21,6 +25,13 @@ def metadata_xml(request):
     if errors:
         raise Exception('\n'.join(errors))
     return HttpResponse(content=metadata, content_type='text/xml')
+
+
+class LoginView(auth_views.LoginView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['anyo'] = Convocatoria.get_ultima().id
+        return context
 
 
 class UserdataView(LoginRequiredMixin, View):
