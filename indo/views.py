@@ -12,6 +12,7 @@ from datetime import date
 # Third-party
 from annoying.functions import get_config, get_object_or_None
 from django_summernote.widgets import SummernoteWidget
+from django_tables2.export.views import ExportMixin
 from django_tables2.views import SingleTableView
 from templated_email import send_templated_mail
 
@@ -2211,7 +2212,7 @@ class ProyectoVerCondicionesView(LoginRequiredMixin, ChecksMixin, TemplateView):
         return self.es_coordinador(self.kwargs['pk'])
 
 
-class ProyectosAceptadosTableView(SingleTableView):
+class ProyectosAceptadosTableView(ExportMixin, SingleTableView):
     """Lista los proyectos aceptados en una convocatoria, con su centro."""
 
     table_class = ProyectosAceptadosTable
