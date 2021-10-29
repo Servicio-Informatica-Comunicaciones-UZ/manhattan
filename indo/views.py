@@ -2217,6 +2217,7 @@ class ProyectosAceptadosTableView(ExportMixin, SingleTableView):
 
     table_class = ProyectosAceptadosTable
     template_name = 'proyecto/aceptados.html'
+    export_name = 'proyectos_aceptados'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
