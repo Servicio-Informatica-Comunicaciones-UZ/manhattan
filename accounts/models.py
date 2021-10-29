@@ -84,7 +84,7 @@ class CustomUser(AbstractUser):
         """Devuelve una lista con los centros del usuario."""
         return list(
             filter(
-                lambda x: x is not None,
+                lambda x: x is not None and x.esta_activo,
                 [
                     get_object_or_None(Centro, academico_id_nk=id_nk)
                     for id_nk in self.id_nk_centros
