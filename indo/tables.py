@@ -1,10 +1,15 @@
+# Third-party
 import django_tables2 as tables
+import pypandoc
+
+# Django
 from django.contrib.auth import get_user_model
 from django.db.models import Count, Q
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
+# Local Django
 from .models import Proyecto
 
 
@@ -35,10 +40,7 @@ class CorrectoresTable(tables.Table):
     class Meta:
         attrs = {'class': 'table table-striped table-hover cabecera-azul'}
         model = get_user_model()
-        fields = (
-            'username',
-            'full_name',
-        )
+        fields = ('username', 'full_name')
         empty_text = _('Por el momento no hay ningún corrector.')
         template_name = 'django_tables2/bootstrap4.html'
         per_page = 20
@@ -125,6 +127,7 @@ class EvaluadoresTable(tables.Table):
                 </a>'''
         )
 
+    # Ver <https://django-tables2.readthedocs.io/en/latest/pages/ordering.html>
     def order_numero_participantes(self, queryset, is_descending):
         # XXX Incompatible con la opción ONLY_FULL_GROUP_BY de MariaDB/MySQL
         queryset = queryset.annotate(
@@ -344,7 +347,12 @@ class MemoriaProyectosTable(tables.Table):
 class ProyectosAceptadosTable(tables.Table):
     """Muestra los proyectos aceptados, y el centro de su coordinador."""
 
-    def render_titulo(self, record):
+    linea = tables.Column(visible=False)
+    titulo = tables.Column(visible=False)
+
+    vinculo = tables.Column(empty_values=(), order_by=('titulo',), verbose_name=_('Título'))
+
+    def render_vinculo(self, record):
         enlace = reverse('proyecto_ficha', args=[record.id])
         return mark_safe(f'<a href="{enlace}">{record.titulo}</a>')
 
@@ -360,10 +368,24 @@ class ProyectosAceptadosTable(tables.Table):
     def render_centro_coordinador(self, record):
         return record.coordinador.nombres_centros
 
+    descripcion = tables.Column(visible=False)
+
+    def render_descripcion(self, record):
+        return pypandoc.convert_text(record.descripcion, 'plain', format='html')
+
     class Meta:
         attrs = {'class': 'table table-striped table-hover cabecera-azul'}
         model = Proyecto
-        fields = ('programa', 'id', 'titulo', 'coordinador', 'centro_coordinador')
+        fields = (
+            'programa',
+            'linea',
+            'id',
+            'titulo',
+            'vinculo',
+            'coordinador',
+            'centro_coordinador',
+            'descripcion',
+        )
         empty_text = _('Por el momento ningún coordinador ha aceptado ningún proyecto.')
         template_name = 'django_tables2/bootstrap4.html'
 

@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load i18n %}
+{% load export_url from django_tables2 %}
 {% load render_table from django_tables2 %}
 
 {% block title %}{% trans "Proyectos aceptados" %}{% endblock title %}
@@ -38,7 +39,7 @@
 
   <br style="clear: both" />
   <div class="btn-group" role="group" aria-label="Botones">
-    <a href="{% url 'proyectos_aceptados' anyo %}?_export=csv" class="btn btn-info">
+      <a href="{% export_url 'csv' %}" class="btn btn-info">
       <span class="fas fa-file-csv"></span>&nbsp; {% trans "Descargar datos" %}
     </a>
   </div>

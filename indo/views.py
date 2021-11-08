@@ -2218,6 +2218,7 @@ class ProyectosAceptadosTableView(ExportMixin, SingleTableView):
     table_class = ProyectosAceptadosTable
     template_name = 'proyecto/aceptados.html'
     export_name = 'proyectos_aceptados'
+    exclude_columns = ('vinculo',)  # En el CSV mostrar el título sin el enlace
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
