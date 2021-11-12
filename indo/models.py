@@ -725,6 +725,11 @@ class Proyecto(models.Model):
                 else None
             )
         elif self.programa.nombre_corto == 'PIET':
+            # Un profesor puede impartir docencia en varios centros.
+            # Si ha rellenado el centro en la solicitud del proyecto, usamos ése.
+            # Si no, tomamos el primero que haya llegado de Gestión de Identidades.
+            if self.centro:
+                return self.centro.unidad_planificacion
             return (
                 self.coordinador.centros[0].unidad_planificacion
                 if self.coordinador.centros
