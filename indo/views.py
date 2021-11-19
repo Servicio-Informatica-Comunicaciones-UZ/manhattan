@@ -833,7 +833,8 @@ class ParticipanteAceptarView(LoginRequiredMixin, RedirectView):
     """Aceptar la invitación a participar en un proyecto."""
 
     def get_redirect_url(self, *args, **kwargs):
-        return reverse_lazy('mis_proyectos', kwargs={'anyo': date.today().year})
+        proyecto = get_object_or_404(Proyecto, pk=kwargs.get('proyecto_id'))
+        return reverse_lazy('mis_proyectos', kwargs={'anyo': proyecto.convocatoria_id})
 
     def post(self, request, *args, **kwargs):
         usuario_actual = self.request.user
@@ -1003,7 +1004,8 @@ class ParticipanteDeclinarView(LoginRequiredMixin, RedirectView):
     """Declinar la invitación a participar en un proyecto."""
 
     def get_redirect_url(self, *args, **kwargs):
-        return reverse_lazy('mis_proyectos', kwargs={'anyo': date.today().year})
+        proyecto = get_object_or_404(Proyecto, pk=self.request.POST.get('proyecto_id'))
+        return reverse_lazy('mis_proyectos', kwargs={'anyo': proyecto.convocatoria_id})
 
     def post(self, request, *args, **kwargs):
         proyecto_id = request.POST.get('proyecto_id')
@@ -1028,7 +1030,8 @@ class ParticipanteRenunciarView(LoginRequiredMixin, RedirectView):
     """Renunciar a participar en un proyecto."""
 
     def get_redirect_url(self, *args, **kwargs):
-        return reverse_lazy('mis_proyectos', kwargs={'anyo': date.today().year})
+        proyecto = get_object_or_404(Proyecto, pk=self.request.POST.get('proyecto_id'))
+        return reverse_lazy('mis_proyectos', kwargs={'anyo': proyecto.convocatoria_id})
 
     def post(self, request, *args, **kwargs):
         proyecto_id = request.POST.get('proyecto_id')
@@ -1248,7 +1251,8 @@ class ProyectoAnularView(LoginRequiredMixin, ChecksMixin, RedirectView):
     model = Proyecto
 
     def get_redirect_url(self, *args, **kwargs):
-        return reverse_lazy('mis_proyectos', kwargs={'anyo': date.today().year})
+        proyecto = Proyecto.objects.get(pk=kwargs.get('pk'))
+        return reverse('mis_proyectos', kwargs={'anyo': proyecto.convocatoria_id})
 
     def post(self, request, *args, **kwargs):
         proyecto = Proyecto.objects.get(pk=kwargs.get('pk'))
@@ -2105,7 +2109,7 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
 
     def get_success_url(self):
         if self.kwargs['campo'] in ('visto_bueno_centro', 'visto_bueno_estudio'):
-            return reverse_lazy('mis_proyectos', kwargs={'anyo': date.today().year})
+            return reverse_lazy('mis_proyectos', kwargs={'anyo': self.object.convocatoria_id})
         if self.kwargs['campo'] == 'aceptacion_economico':
             return reverse_lazy(
                 'cierre_economico_table', kwargs={'anyo': self.get_object().convocatoria_id}
