@@ -519,17 +519,32 @@ class ProyectoUPTable(tables.Table):
     def render_unidad_planificacion(self, record):
         return record.get_unidad_planificacion() or '—'
 
+    editar_id_uxxi = tables.Column(empty_values=(), orderable=False, verbose_name='')
+
+    def render_editar_id_uxxi(self, record):
+        enlace = reverse(
+            'proyecto_update_field', kwargs={'pk': record.id, 'campo': 'id_uxxi'}
+        )
+        return mark_safe(
+            f'''<a href="{enlace}" title="{_('Editar el número de proyecto Universitas XXI')}"
+                aria-label="{_('Editar el número de proyecto Universitas XXI')}">
+                  <span class="fas fa-pencil-alt"></span>
+                </a>'''
+        )
+
     class Meta:
         attrs = {'class': 'table table-striped table-hover cabecera-azul'}
         model = Proyecto
         fields = (
-            'programa',
+            # 'programa',
             'id',
             'titulo',
             'coordinadores',
             'unidad_planificacion',
             'ayuda_definitiva',
             'tipo_gasto',
+            'id_uxxi',
+            'editar_id_uxxi',
         )
         empty_text = _('Por el momento ningún coordinador ha aceptado ningún proyecto.')
         template_name = 'django_tables2/bootstrap4.html'

@@ -272,6 +272,12 @@ class Programa(models.Model):
 
 class Proyecto(models.Model):
     id = models.AutoField(primary_key=True)
+    id_uxxi = models.CharField(
+        _('Nº UXXI'),
+        max_length=15,
+        null=True,
+        help_text=_('Número de proyecto asignado en Universitas XXI'),
+    )
     codigo = models.CharField(max_length=31, null=True)
     titulo = models.CharField(_('Título'), max_length=255)
     descripcion = models.TextField(
@@ -685,6 +691,7 @@ class Proyecto(models.Model):
             _('UP'),
             _('Ayuda definitiva'),
             _('Tipo de gasto posible'),
+            _('Nº UXXI'),
         ]
         proyectos = (
             Proyecto.objects.filter(convocatoria__id=anyo)
@@ -703,6 +710,7 @@ class Proyecto(models.Model):
                 p.get_unidad_planificacion(),
                 p.ayuda_definitiva,
                 p.tipo_gasto,
+                p.id_uxxi,
             ]
             for p in proyectos
         ]

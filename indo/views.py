@@ -2023,7 +2023,9 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
             'visto_bueno_centro',
             'visto_bueno_estudio',
             'aceptacion_economico',
+            'id_uxxi',
         ):
+            # Salvo para los campos anteriores, usamos una caja de texto enriquecido
             formulario = modelform_factory(
                 Proyecto, fields=(campo,), widgets={campo: SummernoteWidget()}
             )
@@ -2108,6 +2110,8 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
             return reverse_lazy(
                 'cierre_economico_table', kwargs={'anyo': self.get_object().convocatoria_id}
             )
+        if self.kwargs['campo'] == 'id_uxxi':
+            return reverse_lazy('up_table', kwargs={'anyo': self.object.convocatoria_id})
         return super().get_success_url()
 
     def test_func(self):
