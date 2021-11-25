@@ -14,6 +14,7 @@ from annoying.functions import get_config, get_object_or_None
 from django_summernote.widgets import SummernoteWidget
 from django_tables2.export.views import ExportMixin
 from django_tables2.views import SingleTableView
+from social_django.utils import load_strategy
 from templated_email import send_templated_mail
 
 # Alternativa: Usar Headless Chromium con <https://github.com/pyppeteer/pyppeteer>
@@ -25,6 +26,7 @@ import pypandoc
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
@@ -47,6 +49,7 @@ from django.views.generic import DetailView, ListView, RedirectView, TemplateVie
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 # Local Django
+from accounts.pipeline import get_identidad
 from .filters import ProyectoFilter
 from .forms import (
     AsignarCorrectorForm,
@@ -88,6 +91,25 @@ from .tables import (
 )
 from .tasks import generar_pdf
 from .utils import PagedFilteredTableView, registrar_evento
+
+
+@permission_required('admin')
+def actualizar_usuarios(request, anyo):
+    """Actualiza los usuarios coordinadores con los datos de Gestión de Identidades."""
+    proyectos = Proyecto.objects.filter(convocatoria__id=anyo)
+    for proyecto in proyectos:
+        print(f'Actualizando coordinador del proyecto: {proyecto.id}')
+        coordinador = proyecto.coordinador
+
+        try:
+            get_identidad(load_strategy(request), None, coordinador)
+        except Exception as ex:
+            return HttpResponse(
+                f'ERROR al actualizar el usuario «{coordinador.username}»'
+                f' (proyecto {proyecto.id}): {ex}'
+            )
+
+    return HttpResponse('Coordinadores actualizados!')
 
 
 class ChecksMixin(UserPassesTestMixin):

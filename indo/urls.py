@@ -3,6 +3,7 @@ from django.conf.urls.static import static
 from django.urls import include, path
 
 from .views import (
+    actualizar_usuarios,
     AyudaView,
     CorreccionVerView,
     CorrectorAnyadirView,
@@ -68,6 +69,9 @@ urlpatterns = [
         name='proyectos_evaluados_table',
     ),
     path('evaluador/<int:pk>/evaluacion/', EvaluacionView.as_view(), name='evaluacion'),
+    path(
+        'gestion/actualizar-usuarios/<int:anyo>/', actualizar_usuarios, name='actualizar_usuarios'
+    ),
     path('gestion/corrector/', CorrectorTableView.as_view(), name='correctores_table'),
     path('gestion/corrector/anyadir/', CorrectorAnyadirView.as_view(), name='corrector_anyadir'),
     path(
