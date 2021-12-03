@@ -30,6 +30,7 @@ class Centro(models.Model):
         _('nombre del secretario'), max_length=255, blank=True, null=True
     )
     email_secretario = models.EmailField(_('email del secretario'), blank=True, null=True)
+    email_administrador = models.EmailField(_('email del administrador'), default='', null=True)
     nips_coord_pou = models.CharField(
         _('NIPs de los coordinadores POU'), blank=True, max_length=255, null=True
     )
