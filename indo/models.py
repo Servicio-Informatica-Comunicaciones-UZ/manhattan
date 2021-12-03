@@ -726,10 +726,11 @@ class Proyecto(models.Model):
         PIET: UP del centro del coordinador del proyecto
         """
         if self.programa.nombre_corto in ('PIEC', 'PIPOUZ'):
-            return self.centro.unidad_planificacion
+            return f'{self.centro.unidad_planificacion} ({self.centro.nombre})'
         elif self.programa.nombre_corto in ('PIIDUZ', 'PRAUZ', 'MOOC', 'PISOC'):
             return (
-                self.coordinador.departamentos[0].unidad_planificacion
+                f'{self.coordinador.departamentos[0].unidad_planificacion}'
+                + f' ({self.coordinador.departamentos[0].nombre})'
                 if self.coordinador.departamentos
                 else None
             )
@@ -738,9 +739,10 @@ class Proyecto(models.Model):
             # Si ha rellenado el centro en la solicitud del proyecto, usamos ése.
             # Si no, tomamos el primero que haya llegado de Gestión de Identidades.
             if self.centro:
-                return self.centro.unidad_planificacion
+                return f'{self.centro.unidad_planificacion} ({self.centro.nombre})'
             return (
-                self.coordinador.centros[0].unidad_planificacion
+                f'{self.coordinador.centros[0].unidad_planificacion}'
+                + f' ({self.coordinador.centros[0].nombre})'
                 if self.coordinador.centros
                 else None
             )
