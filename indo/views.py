@@ -262,7 +262,7 @@ class CorreccionVerView(LoginRequiredMixin, PermissionRequiredMixin, DetailView)
         context.update(
             {
                 'anyo': self.object.convocatoria.id,
-                'url_anterior': self.request.META.get('HTTP_REFERER', reverse('home')),
+                'url_anterior': self.request.headers.get('Referer', reverse('home')),
             }
         )
         return context
@@ -1107,7 +1107,7 @@ class ParticipanteHaceConstarView(LoginRequiredMixin, PermissionRequiredMixin, T
             {
                 'anyo': Convocatoria.get_ultima().id,
                 'form': HaceConstarForm(),
-                'url_anterior': self.request.META.get('HTTP_REFERER', reverse('home')),
+                'url_anterior': self.request.headers.get('Referer', reverse('home')),
             }
         )
         return context
@@ -1309,7 +1309,7 @@ class MemoriaDetailView(LoginRequiredMixin, ChecksMixin, TemplateView):
             'ACEPTADO',
             'MEM_NO_ADMITIDA',
         )
-        context['url_anterior'] = self.request.META.get('HTTP_REFERER', reverse('home'))
+        context['url_anterior'] = self.request.headers.get('Referer', reverse('home'))
 
         return context
 
@@ -1537,7 +1537,7 @@ class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
 
         context['es_coordinador'] = self.es_coordinador(self.object.id)
 
-        context['url_anterior'] = self.request.META.get('HTTP_REFERER', reverse('home'))
+        context['url_anterior'] = self.request.headers.get('Referer', reverse('home'))
 
         return context
 
@@ -2031,7 +2031,7 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
             {
                 'anyo': self.object.convocatoria.id,
                 'campo': self.kwargs['campo'],
-                'url_anterior': self.request.META.get('HTTP_REFERER', reverse('home')),
+                'url_anterior': self.request.headers.get('Referer', reverse('home')),
             }
         )
         return context

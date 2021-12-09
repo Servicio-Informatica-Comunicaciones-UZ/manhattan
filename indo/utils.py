@@ -25,7 +25,7 @@ def get_client_ip(request):
 
     Véase <https://en.wikipedia.org/wiki/X-Forwarded-For>
     """
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    x_forwarded_for = request.headers.get('X-Forwarded-For')
     if x_forwarded_for:
         return x_forwarded_for.split(',')[-1].strip()
 
