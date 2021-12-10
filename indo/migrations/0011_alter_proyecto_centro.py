@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
             model_name='proyecto',
             name='centro',
             field=models.ForeignKey(
-                default=9999,
+                default=23,  # Genérico Universidad 9999 / UUU
                 on_delete=django.db.models.deletion.PROTECT,
                 related_name='proyectos',
                 to='indo.centro',
