@@ -50,7 +50,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 # Local Django
 from accounts.pipeline import get_identidad
-from .filters import ProyectoFilter
+from .filters import ProyectoCentroFilter, ProyectoFilter
 from .forms import (
     AsignarCorrectorForm,
     CorreccionForm,
@@ -2247,9 +2247,27 @@ class ProyectoVerCondicionesView(LoginRequiredMixin, ChecksMixin, TemplateView):
         return self.es_coordinador(self.kwargs['pk'])
 
 
-class ProyectosAceptadosTableView(ExportMixin, SingleTableView):
+class ProyectosAceptadosCentrosListView(ListView):
+    model = Centro
+    template_name = 'proyecto/centros_list.html'
+
+    def get_queryset(self):
+        centro_ids = (
+            Proyecto.objects.filter(convocatoria_id=self.kwargs['anyo'])
+            .filter(aceptacion_coordinador=True)
+            .values_list('centro_id', flat=True)
+            .order_by('centro_id')
+            .distinct()
+            .all()
+        )
+        return Centro.objects.filter(id__in=centro_ids).order_by('academico_id_nk')
+
+
+class ProyectosAceptadosTableView(ExportMixin, PagedFilteredTableView):
     """Lista los proyectos aceptados en una convocatoria, con su centro."""
 
+    filter_class = ProyectoCentroFilter
+    model = Proyecto
     table_class = ProyectosAceptadosTable
     template_name = 'proyecto/aceptados.html'
     export_name = 'proyectos_aceptados'
@@ -2258,6 +2276,9 @@ class ProyectosAceptadosTableView(ExportMixin, SingleTableView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['anyo'] = self.kwargs['anyo']
+        centro_id = self.request.GET.get('centro_id', None)
+        if centro_id:
+            context['centro'] = get_object_or_404(Centro, pk=centro_id)
         return context
 
     def get_queryset(self):

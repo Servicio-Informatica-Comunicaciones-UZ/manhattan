@@ -349,6 +349,7 @@ class ProyectosAceptadosTable(tables.Table):
 
     linea = tables.Column(visible=False)
     titulo = tables.Column(visible=False)
+    centro = tables.Column(visible=False)
 
     vinculo = tables.Column(empty_values=(), order_by=('titulo',), verbose_name=_('Título'))
 
@@ -360,13 +361,6 @@ class ProyectosAceptadosTable(tables.Table):
 
     def render_coordinador(self, record):
         return record.coordinador.full_name
-
-    centro_coordinador = tables.Column(
-        empty_values=(), orderable=False, verbose_name=_('Centro del coordinador')
-    )
-
-    def render_centro_coordinador(self, record):
-        return record.coordinador.nombres_centros
 
     descripcion = tables.Column(visible=False)
 
@@ -383,7 +377,7 @@ class ProyectosAceptadosTable(tables.Table):
             'titulo',
             'vinculo',
             'coordinador',
-            'centro_coordinador',
+            'centro',
             'descripcion',
         )
         empty_text = _('Por el momento ningún coordinador ha aceptado ningún proyecto.')
@@ -522,9 +516,7 @@ class ProyectoUPTable(tables.Table):
     editar_id_uxxi = tables.Column(empty_values=(), orderable=False, verbose_name='')
 
     def render_editar_id_uxxi(self, record):
-        enlace = reverse(
-            'proyecto_update_field', kwargs={'pk': record.id, 'campo': 'id_uxxi'}
-        )
+        enlace = reverse('proyecto_update_field', kwargs={'pk': record.id, 'campo': 'id_uxxi'})
         return mark_safe(
             f'''<a href="{enlace}" title="{_('Editar el número de proyecto Universitas XXI')}"
                 aria-label="{_('Editar el número de proyecto Universitas XXI')}">

@@ -10,7 +10,8 @@ class PagedFilteredTableView(SingleTableView):
 
     def get_table_data(self):
         self.filter = self.filter_class(self.request.GET, queryset=super().get_table_data())
-        self.filter.form.helper = self.formhelper_class()
+        if self.formhelper_class:
+            self.filter.form.helper = self.formhelper_class()
         return self.filter.qs
 
     def get_context_data(self, **kwargs):

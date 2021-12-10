@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load custom_tags i18n static %}
+
+{% block title %}{% translate 'Proyectos por centros' %}{% endblock title %}
+
+{% block content %}
+<div class="container-blanco">
+  <h1 id="cabecera">{% translate 'Proyectos por centros' %} <small>{{ anyo }}</small></h1>
+  <hr />
+  <br />
+  {% for centro in object_list %}
+    <a href="{% url 'proyectos_aceptados' anyo %}?centro_id={{ centro.id | urlencode }}">
+      {% with logo_centro='img/centros/'|concat:centro.academico_id_nk|concat:'.png' %}
+        <img src="{% static logo_centro %}" alt="{{ centro.nombre }}" style="margin: 20px; width: 289px;" title="{{ centro.nombre }}" />
+      {% endwith %}
+    </a>
+  {% endfor %}
+</div>
+
+{% endblock content %}

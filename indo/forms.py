@@ -245,7 +245,7 @@ class InvitacionForm(forms.ModelForm):
 
 class ProyectoFilterFormHelper(FormHelper):
     """
-    Formulario para filtrar el listado de todas los proyectos.
+    Formulario para filtrar el listado de todos los proyectos.
 
     Ver https://django-crispy-forms.readthedocs.io/en/latest/form_helper.html
     """

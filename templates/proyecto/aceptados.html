@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n %}
+{% load custom_tags i18n static %}
 {% load export_url from django_tables2 %}
 {% load render_table from django_tables2 %}
 
@@ -34,6 +34,14 @@
     {% endif %}
   </div>
   <br />
+
+  {% if centro %}
+    <p style='text-align: right;'>
+      {% with logo_centro='img/centros/'|concat:centro.academico_id_nk|concat:'.png' %}
+        <img src="{% static logo_centro %}" alt="{{ centro.nombre }}" style="margin: 20px; width: 289px;" title="{{ centro.nombre }}" />
+      {% endwith %}
+    </p>
+  {% endif %}
 
   {% render_table table %}
 

@@ -177,8 +177,11 @@
                   <span class="fas fa-user-tag"></span> &nbsp;{% trans "Mis proyectos" %}
                 </a>
               {% endif %}
+              <a class="dropdown-item" href="{% url 'proyectos_aceptados_por_centros' anyo %}">
+                <span class="fas fa-check"></span>&nbsp; {% trans "Proyectos aceptados por centro" %}
+              </a>
               <a class="dropdown-item" href="{% url 'proyectos_aceptados' anyo %}">
-                <span class="fas fa-check"></span>&nbsp; {% trans "Proyectos aceptados" %}
+                <span class="fas fa-check"></span>&nbsp; {% trans "Todos los proyectos aceptados" %}
               </a>
             </div>
           </li>
