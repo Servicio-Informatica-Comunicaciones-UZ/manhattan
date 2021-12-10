@@ -304,6 +304,7 @@ class ProyectoForm(forms.ModelForm):
         # This method may still return a dictionary of data to be used, but it's no longer required
 
     def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
         self.fields['programa'].widget.choices = tuple(
             BLANK_CHOICE_DASH
@@ -321,6 +322,13 @@ class ProyectoForm(forms.ModelForm):
                 .all()
             )
         )
+        centros_del_usuario = list((c.id, str(c)) for c in self.user.centros)
+        self.fields['centro'].widget.choices = (
+            BLANK_CHOICE_DASH + centros_del_usuario
+            if len(centros_del_usuario) > 1
+            else centros_del_usuario
+        )
+        # Las opciones de `estudio` están limitadas con `limit_choices_to` en el modelo `Proyecto`
 
     class Meta:
         fields = ['titulo', 'descripcion', 'programa', 'linea', 'centro', 'estudio']

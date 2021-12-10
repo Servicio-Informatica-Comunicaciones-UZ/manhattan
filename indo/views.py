@@ -1205,6 +1205,11 @@ class ProyectoCreateView(LoginRequiredMixin, ChecksMixin, CreateView):
         context['anyo'] = Convocatoria.get_ultima().id
         return context
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
     def form_valid(self, form):
         # This method is called when valid form data has been POSTed,
         # to do custom logic on form data. It should return an HttpResponse.
