@@ -33,15 +33,12 @@ from .models import (
 class AsignarCorrectorForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['corrector'].widget.choices = tuple(
-            BLANK_CHOICE_DASH
-            + [
-                (u.id, u.full_name)
-                for u in Group.objects.get(name='Correctores')
-                .user_set.order_by('first_name', 'last_name', 'last_name_2')
-                .all()
-            ]
-        )
+        self.fields['corrector'].widget.choices = BLANK_CHOICE_DASH + [
+            (u.id, u.full_name)
+            for u in Group.objects.get(name='Correctores')
+            .user_set.order_by('first_name', 'last_name', 'last_name_2')
+            .all()
+        ]
 
     class Meta:
         fields = ('corrector',)
@@ -306,21 +303,15 @@ class ProyectoForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
-        self.fields['programa'].widget.choices = tuple(
-            BLANK_CHOICE_DASH
-            + list(
-                Programa.objects.filter(convocatoria_id=date.today().year)
-                .values_list('id', 'nombre_corto')
-                .all()
-            )
+        self.fields['programa'].widget.choices = BLANK_CHOICE_DASH + list(
+            Programa.objects.filter(convocatoria_id=date.today().year)
+            .values_list('id', 'nombre_corto')
+            .all()
         )
-        self.fields['linea'].widget.choices = tuple(
-            BLANK_CHOICE_DASH
-            + list(
-                Linea.objects.filter(programa__convocatoria_id=date.today().year)
-                .values_list('id', 'nombre')
-                .all()
-            )
+        self.fields['linea'].widget.choices = BLANK_CHOICE_DASH + list(
+            Linea.objects.filter(programa__convocatoria_id=date.today().year)
+            .values_list('id', 'nombre')
+            .all()
         )
         centros_del_usuario = list((c.id, str(c)) for c in self.user.centros)
         self.fields['centro'].widget.choices = (
@@ -338,15 +329,12 @@ class ProyectoForm(forms.ModelForm):
 class EvaluadorForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['evaluador'].widget.choices = tuple(
-            BLANK_CHOICE_DASH
-            + [
-                (u.id, u.full_name)
-                for u in Group.objects.get(name="Evaluadores")
-                .user_set.order_by('first_name', 'last_name', 'last_name_2')
-                .all()
-            ]
-        )
+        self.fields['evaluador'].widget.choices = BLANK_CHOICE_DASH + [
+            (u.id, u.full_name)
+            for u in Group.objects.get(name="Evaluadores")
+            .user_set.order_by('first_name', 'last_name', 'last_name_2')
+            .all()
+        ]
 
     class Meta:
         fields = ('evaluador',)
