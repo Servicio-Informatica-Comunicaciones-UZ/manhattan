@@ -2238,6 +2238,11 @@ class ProyectosAceptadosCentrosListView(ListView):
     model = Centro
     template_name = 'proyecto/centros_list.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['anyo'] = self.kwargs['anyo']
+        return context
+
     def get_queryset(self):
         centro_ids = (
             Proyecto.objects.filter(convocatoria_id=self.kwargs['anyo'])
@@ -2262,6 +2267,7 @@ class ProyectosAceptadosTableView(ExportMixin, PagedFilteredTableView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['anyo'] = self.kwargs['anyo']
         academico_id_nk = self.request.GET.get('centro__academico_id_nk', None)
         if academico_id_nk:
             context['centro'] = get_object_or_404(Centro, academico_id_nk=academico_id_nk)
