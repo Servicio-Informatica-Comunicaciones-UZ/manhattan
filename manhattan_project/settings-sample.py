@@ -168,7 +168,7 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
-LOGIN_URL = f'{SITE_URL}login/saml/?idp=sir'
+LOGIN_URL = f'{SITE_URL}/login/saml/?idp=sir'
 LOGIN_REDIRECT_URL = reverse_lazy('mis_proyectos', args=[date.today().year])
 LOGOUT_REDIRECT_URL = 'home'
 
