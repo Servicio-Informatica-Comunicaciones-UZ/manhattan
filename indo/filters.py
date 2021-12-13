@@ -19,6 +19,6 @@ class ProyectoCentroFilter(django_filters.FilterSet):
     class Meta:
         model = Proyecto
         fields = {
-            'centro_id': ['exact'],
+            'centro__academico_id_nk': ['exact'],
         }
         order_by = ['programa__nombre_corto', 'linea__nombre', 'titulo']
