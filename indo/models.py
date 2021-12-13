@@ -718,29 +718,16 @@ class Proyecto(models.Model):
     def get_unidad_planificacion(self):
         """Devuelve el ID de la Unidad de Planificación del proyecto
 
-        PIEC, PIPOUZ: UP del centro del proyecto
+        PIEC, PIPOUZ, PIET: UP del centro del proyecto
         PIIDUZ, PRAUZ, MOOC, PISOC: UP del departamento del coordinador del proyecto
-        PIET: UP del centro del coordinador del proyecto
         """
-        if self.programa.nombre_corto in ('PIEC', 'PIPOUZ'):
+        if self.programa.nombre_corto in ('PIEC', 'PIPOUZ', 'PIET'):
             return f'{self.centro.unidad_planificacion} ({self.centro.nombre})'
         elif self.programa.nombre_corto in ('PIIDUZ', 'PRAUZ', 'MOOC', 'PISOC'):
             return (
                 f'{self.coordinador.departamentos[0].unidad_planificacion}'
                 + f' ({self.coordinador.departamentos[0].nombre})'
                 if self.coordinador.departamentos
-                else None
-            )
-        elif self.programa.nombre_corto == 'PIET':
-            # Un profesor puede impartir docencia en varios centros.
-            # Si ha rellenado el centro en la solicitud del proyecto, usamos ése.
-            # Si no, tomamos el primero que haya llegado de Gestión de Identidades.
-            if self.centro:
-                return f'{self.centro.unidad_planificacion} ({self.centro.nombre})'
-            return (
-                f'{self.coordinador.centros[0].unidad_planificacion}'
-                + f' ({self.coordinador.centros[0].nombre})'
-                if self.coordinador.centros
                 else None
             )
         return None
