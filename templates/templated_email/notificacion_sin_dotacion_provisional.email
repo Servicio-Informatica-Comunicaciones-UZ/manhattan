@@ -21,7 +21,7 @@ página web <{{site_url}}>.
 
 El plazo para formular alegaciones a esta resolución provisional
 finaliza el próximo día {{proyecto.convocatoria.fecha_max_alegaciones}} (inclusive)
-y deberán presentarse a través de Ayudica <https://ayudica.unizar.es>.
+y deberán presentarse a través de Ayudica <{{ ayuda_url }}.
 
 En relación a los plazos de finalización de los proyectos, tal y como
 establecen las bases de la convocatoria (<http://tablon.unizar.es>)
@@ -31,7 +31,7 @@ habiendo presentado para entonces la memoria final del proyecto, que
 resumirá el desarrollo del proyecto, resultados, conclusiones, etc.
 
 Cualquier duda o sugerencia no dudes en hacérnosla llegar a través de
-Ayudica <https://ayudica.unizar.es>.
+Ayudica <{{ ayuda_url }}.
 
 Recibe un cordial saludo,
 {{vicerrector}}

@@ -91,7 +91,8 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'manhattan_project.urls'
 
-SITE_URL = 'http://manhattan.local/'
+# Sin barra al final
+SITE_URL = 'http://manhattan.local'
 
 TEMPLATES = [
     {
@@ -403,3 +404,6 @@ USE_X_FORWARDED_PORT = False
 # Tell the browser to send the cookies under an HTTPS connection only.
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
+
+# Script para crear un ticket en la cola adecuada del sistema de Help Desk
+ADD_TICKET_URL = os.environ.get('ADD_TICKET_URL')

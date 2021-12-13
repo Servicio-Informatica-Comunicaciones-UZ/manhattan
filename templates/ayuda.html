@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n %}
+{% load crispy_forms_tags i18n %}
 {% block title %}{% trans "Ayuda" %}{% endblock title %}
 {% block description %}{% trans "Ayuda" %}{% endblock description %}
 
@@ -9,15 +9,27 @@
   <hr />
   <br />
 
-  <p>{% blocktrans %}
+  <p>{% blocktranslate %}
     Todas las consultas relativas a esta convocatoria y a su resolución se realizarán
     <strong>únicamente</strong> a través del sistema de gestión de incidencias
     <strong><a href="https://ayudica.unizar.es/otrs/customer.pl" target="_blank" rel="noopener noreferrer">Ayudica</a></strong>,
-    al que se accede con el usuario y contraseña del correo electrónico.
-    {% endblocktrans %}
+    al que se accede con el usuario y contraseña del correo electrónico.  Para abrir un parte, simplemente rellene este formulario.
+    {% endblocktranslate %}
   </p>
 
-  {% blocktrans %}
+  <form action="" method="post">
+    {% csrf_token %}
+
+    {{ form | crispy }}
+
+    <div class="btn-group" role="group" aria-label="{{ _('Botones') }}">
+      <button class="btn btn-success" type="submit">
+        <span class="fas fa-paper-plane"></span>&nbsp; {% trans 'Enviar' %}
+      </button>
+    </div>
+  </form><br />
+
+  {% blocktranslate %}
     <p><strong>En caso de incidencia técnica</strong>:</p>
 
     <ul>
@@ -27,12 +39,12 @@
       <li>Distinga claramente entre los hechos objetivos y lo que <em>piense</em> que podría estar sucediendo</li>
       <li>No combine varios problemas en un único ticket. Abra un parte para cada problema</li>
       <li>Si obtiene una pantalla de error, indique de qué error se trata, junto con el mensaje explicativo en caso de que aparezca</li>
-      <li>No dude en adjuntar capturas de pantalla</li>
       <li>Sea amable y educado</li>
       <li>Antes de enviar el parte, vuelva a leerlo, para comprobar que se entiende bien y contiene toda la información necesaria</li>
+      <li>Tras crear el parte, podrá añadir información a él (por ejemplo, adjuntar capturas de pantalla)</li>
     </ul>
 
     <p><strong>Recuerde</strong>: el tiempo dedicado a escribir un buen ticket ayudará a que el problema sea comprendido y solucionado más rápidamente.</p>
-  {% endblocktrans %}
+  {% endblocktranslate %}
 </div>
 {% endblock content %}

@@ -29,7 +29,7 @@ Por otro lado, el plazo para justificar los gastos realizados a la
 Unidad de Planificación correspondiente será el {{proyecto.convocatoria.fecha_max_gastos}}.
 
 Cualquier duda o sugerencia no dudes en hacérnosla llegar a través de
-Ayudica <https://ayudica.unizar.es>.
+Ayudica <{{ ayuda_url }}>.
 
 Recibe un cordial saludo,
 {{vicerrector}}

@@ -21,6 +21,7 @@ from templated_email import send_templated_mail
 from weasyprint import HTML  # https://weasyprint.org/ - No soporta Javascript
 import bleach
 import pypandoc
+import requests
 
 # Django
 from django.conf import settings
@@ -53,6 +54,7 @@ from accounts.pipeline import get_identidad
 from .filters import ProyectoCentroFilter, ProyectoFilter
 from .forms import (
     AsignarCorrectorForm,
+    AyudaForm,
     CorreccionForm,
     CorrectorForm,
     EvaluadorForm,
@@ -238,7 +240,7 @@ class ChecksMixin(UserPassesTestMixin):
         return usuario_actual == proyecto.corrector
 
 
-class AyudaView(TemplateView):
+class AyudaView(LoginRequiredMixin, TemplateView):
     """Muestra la página de ayuda."""
 
     template_name = 'ayuda.html'
@@ -246,7 +248,32 @@ class AyudaView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['anyo'] = Convocatoria.get_ultima().id
+        context['form'] = AyudaForm()
         return context
+
+    def post(self, request, *args, **kwargs):
+        payload = {
+            'asunto': request.POST.get('asunto'),
+            'descripcion': request.POST.get('descripcion'),
+            'email': self.request.user.email,
+        }
+        resp = requests.post(settings.ADD_TICKET_URL, data=payload)
+        received_data = json.loads(resp.content.decode('utf-8'))
+        if not resp.ok:
+            msg = mark_safe(
+                f'''ERROR: {received_data['msg']}<br />Pruebe a crear el ticket en Ayudica.'''
+            )
+            messages.error(request, msg)
+        else:
+            ticket_num = received_data['ticket_num']
+            msg = mark_safe(
+                f'''<strong>Solicitud realizada con éxito</strong>.<br />
+                <p>Para aportar más información a la solicitud, entre al ticket nº
+                <a href='https://ayudica.unizar.es/otrs/customer.pl?Action=CustomerTicketZoom;TicketNumber={ticket_num}'>{ticket_num}</a>
+                y seleccione la opción «Contestar».</p>'''  # noqa: E501
+            )
+            messages.success(request, msg)
+        return redirect('ayuda')
 
 
 class CorreccionVerView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
@@ -938,9 +965,9 @@ class ParticipanteAnyadirView(LoginRequiredMixin, ChecksMixin, TemplateView):
         if not usuario.is_active:
             texto = mark_safe(
                 _(
-                    '''Usuario inactivo en el sistema de Gestión de Identidades.<br>
-                    Solicite en Ayudica que se le asigne la vinculación
-                    «Participantes externos Proyectos Innovación Docente».'''
+                    f'''Usuario inactivo en el sistema de Gestión de Identidades.<br>
+                    <a href="{ reverse('ayuda') }">Solicite en Ayudica</a> que se le asigne
+                    la vinculación «Participantes externos Proyectos Innovación Docente».'''
                 )
             )
             messages.error(request, f'ERROR: {texto}')
@@ -1715,6 +1742,7 @@ class ProyectosNotificarView(LoginRequiredMixin, PermissionRequiredMixin, Redire
                 'proyecto': proyecto,
                 'coordinador': proyecto.coordinador,
                 'site_url': settings.SITE_URL,
+                'ayuda_url': settings.SITE_URL + reverse('ayuda'),
                 'vicerrector': settings.VICERRECTOR.strip('"'),
             },
             cc=(settings.DEFAULT_FROM_EMAIL,),  # Enviar copia al vicerrectorado

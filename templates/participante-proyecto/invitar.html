@@ -7,7 +7,8 @@
 <div class="container-blanco">
   <div class="alert alert-info">
     <span class="fas fa-info-circle"></span>
-    {% blocktrans %}
+    {% url 'ayuda' as ayuda_url %}
+    {% blocktranslate %}
       <p>Introduzca el NIP de la persona que desee invitar a su proyecto.</p>
 
       <p>
@@ -45,18 +46,16 @@
         </li>
         <li>
           Una vez que el usuario disponga de un NIP, usted, como coordinador, deberá comunicar dicho NIP al Vicerrectorado
-          de Política Académica a través del sistema de gestión de incidencias
-          <strong><a href="https://ayudica.unizar.es/otrs/customer.pl" target="_blank" rel="noopener noreferrer">Ayudica</a></strong>
-          <span class="fas fa-link" style="float: none; font-size: 100%;"></span>,
+          de Política Académica <a href="{{ ayuda_url }}">a través del sistema de gestión de incidencias Ayudica</a>,
           solicitando que se le asigne la vinculación «Participantes externos Proyectos Innovación Docente» (66)
           en el Sistema de Gestión de Identidades.
         </li>
         <li>Cuando sea efectiva la vinculación, Ayudica le avisará para que (al día siguiente) proceda a efectuar la invitación.</li>
       </ol>
-    {% endblocktrans %}
+    {% endblocktranslate %}
   </div>
 
-  <h1>{% blocktrans with titulo=proyecto.titulo %}Invitar al proyecto «{{ titulo }}»{% endblocktrans %}</h1>
+  <h1>{% blocktranslate with titulo=proyecto.titulo %}Invitar al proyecto «{{ titulo }}»{% endblocktranslate %}</h1>
   <hr />
   <br />
 

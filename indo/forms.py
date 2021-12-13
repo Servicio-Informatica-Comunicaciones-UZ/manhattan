@@ -14,6 +14,7 @@ from social_django.utils import load_strategy
 from django import forms
 from django.contrib.auth.models import Group
 from django.db.models import BLANK_CHOICE_DASH
+from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
@@ -43,6 +44,29 @@ class AsignarCorrectorForm(forms.ModelForm):
     class Meta:
         fields = ('corrector',)
         model = Proyecto
+
+
+class AyudaForm(forms.Form):
+    """Crea un ticket en OTRS"""
+
+    asunto = forms.CharField(
+        help_text=_(
+            'Ejemplo: '
+            'Asignar la vinculación «Participantes externos Proyectos Innovación Docente» a un NIP'
+        ),
+        label=_('Asunto'),
+        max_length=255,
+        required=True,
+    )
+    descripcion = forms.CharField(
+        label=_('Descripción'),
+        required=True,
+        widget=forms.Textarea(
+            attrs={
+                'placeholder': _('Explique lo que desea, indicando todos los datos necesarios.')
+            }
+        ),
+    )
 
 
 class CorreccionForm(forms.ModelForm):
@@ -178,9 +202,9 @@ class InvitacionForm(forms.ModelForm):
             raise forms.ValidationError(
                 mark_safe(
                     _(
-                        '''Usuario inactivo en el sistema de Gestión de Identidades.<br>
-                        Solicite en Ayudica que se le asigne la vinculación
-                        «Participantes externos Proyectos Innovación Docente».'''
+                        f'''Usuario inactivo en el sistema de Gestión de Identidades.<br>
+                        <a href="{ reverse('ayuda') }">Solicite en Ayudica</a> que se le asigne
+                        la vinculación «Participantes externos Proyectos Innovación Docente».'''
                     )
                 )
             )
