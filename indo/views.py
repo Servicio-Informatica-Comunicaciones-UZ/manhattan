@@ -2252,6 +2252,14 @@ class ProyectosUsuarioView(LoginRequiredMixin, TemplateView):
 
     template_name = 'proyecto/mis-proyectos.html'
 
+    def get(self, request, *args, **kwargs):
+        # `LOGIN_URL` usa el año actual, pero la convocatoria sale a mitad de año
+        convocatoria = get_object_or_None(Convocatoria, pk=kwargs['anyo'])
+        if not convocatoria:
+            ultima_convo = Convocatoria.get_ultima()
+            return redirect('mis_proyectos', ultima_convo.id)
+        return super().get(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         usuario = self.request.user
         anyo = self.kwargs['anyo']
