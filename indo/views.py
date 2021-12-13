@@ -2276,9 +2276,9 @@ class ProyectosAceptadosTableView(ExportMixin, PagedFilteredTableView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['anyo'] = self.kwargs['anyo']
-        centro_id = self.request.GET.get('centro_id', None)
-        if centro_id:
-            context['centro'] = get_object_or_404(Centro, pk=centro_id)
+        academico_id_nk = self.request.GET.get('centro__academico_id_nk', None)
+        if academico_id_nk:
+            context['centro'] = get_object_or_404(Centro, academico_id_nk=academico_id_nk)
         return context
 
     def get_queryset(self):
