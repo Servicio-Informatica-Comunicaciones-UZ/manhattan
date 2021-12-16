@@ -4,7 +4,7 @@ Proyecto Manhattan
 > First we take Manhattan, then we take Berlin.
 
 Manhattan es una aplicación web para gestionar los proyectos de Innovación Docente.  
-Está desarrollada con [Django](https://www.djangoproject.com/) 3, mucho ♥, bastante ☕
+Está desarrollada con [Django](https://www.djangoproject.com/) 4, mucho ♥, bastante ☕
 y un poco de magia 🧙.
 
 Instalación sobre contenedores Docker
