@@ -503,6 +503,11 @@ class MemoriasAsignadasTableView(LoginRequiredMixin, UserPassesTestMixin, Single
     table_class = MemoriasAsignadasTable
     template_name = 'corrector/mis_memorias.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['anyo'] = self.kwargs.get('anyo')
+        return context
+
     def get_queryset(self):
         return (
             Proyecto.objects.filter(convocatoria__id=self.kwargs['anyo'])
@@ -590,6 +595,11 @@ class ProyectoCorrectorTableView(LoginRequiredMixin, PermissionRequiredMixin, Si
     table_class = ProyectoCorrectorTable
     template_name = 'gestion/proyecto/tabla_correctores.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['anyo'] = self.kwargs.get('anyo')
+        return context
+
     def get_queryset(self):
         return (
             Proyecto.objects.filter(convocatoria__id=self.kwargs['anyo'])
@@ -624,6 +634,11 @@ class ProyectoEvaluadorTableView(LoginRequiredMixin, PermissionRequiredMixin, Si
     table_class = EvaluadoresTable
     template_name = 'gestion/proyecto/tabla_evaluadores.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['anyo'] = self.kwargs.get('anyo')
+        return context
+
     def get_queryset(self):
         return (
             Proyecto.objects.filter(convocatoria__id=self.kwargs['anyo'])
@@ -638,6 +653,11 @@ class ProyectosEvaluadosTableView(LoginRequiredMixin, UserPassesTestMixin, Singl
     permission_denied_message = _('Sólo los evaluadores pueden acceder a esta página.')
     table_class = ProyectosEvaluadosTable
     template_name = 'evaluador/mis_proyectos.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['anyo'] = self.kwargs.get('anyo')
+        return context
 
     def get_queryset(self):
         return (
@@ -765,6 +785,11 @@ class ProyectoUPTableView(LoginRequiredMixin, PermissionRequiredMixin, SingleTab
     permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
     table_class = ProyectoUPTable
     template_name = 'gestion/proyecto/tabla_up.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['anyo'] = self.kwargs.get('anyo')
+        return context
 
     def get_queryset(self):
         return (
@@ -1175,6 +1200,11 @@ class ProyectosCierreEconomicoTableView(
     permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
     table_class = ProyectosCierreEconomicoTable
     template_name = 'gestion/proyecto/tabla_cierre_economico.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['anyo'] = self.kwargs.get('anyo')
+        return context
 
     def get_queryset(self):
         return (
@@ -1604,6 +1634,7 @@ class ProyectoEvaluacionesTableView(LoginRequiredMixin, PermissionRequiredMixin,
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['anyo'] = self.kwargs.get('anyo')
         context['convocatoria'] = get_object_or_404(Convocatoria, pk=self.kwargs.get('anyo'))
         return context
 
@@ -1650,6 +1681,11 @@ class ProyectoMemoriasTableView(LoginRequiredMixin, PermissionRequiredMixin, Sin
                     ),
                 )
         return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['anyo'] = self.kwargs.get('anyo')
+        return context
 
     def get_queryset(self):
         return (
@@ -1780,6 +1816,11 @@ class ProyectoTableView(LoginRequiredMixin, PermissionRequiredMixin, PagedFilter
                     ),
                 )
         return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['anyo'] = self.kwargs.get('anyo')
+        return context
 
     def get_queryset(self):
         return (
