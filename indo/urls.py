@@ -11,6 +11,8 @@ from .views import (
     CorrectorTableView,
     EvaluacionVerView,
     EvaluacionView,
+    EvaluadorProyectoDeleteView,
+    EvaluadorProyectoUpdateView,
     HomePageView,
     InvitacionView,
     MemoriaCorreccionUpdateView,
@@ -34,7 +36,6 @@ from .views import (
     ProyectoEvaluacionesCsvView,
     ProyectoEvaluacionesTableView,
     ProyectoEvaluadorTableView,
-    ProyectoEvaluadorUpdateView,
     ProyectoFichaView,
     ProyectoMemoriasTableView,
     ProyectoResolucionUpdateView,
@@ -139,15 +140,21 @@ urlpatterns = [
         name='evaluadores_table',
     ),
     # Gestión de un proyecto
+    path('gestion/evaluacion/<int:pk>/', EvaluacionVerView.as_view(), name='ver_evaluacion'),
     path(
         'gestion/proyecto/<int:pk>/editar-corrector/',
         ProyectoCorrectorUpdateView.as_view(),
         name='corrector_update',
     ),
     path(
-        'gestion/proyecto/<int:pk>/editar-evaluador/',
-        ProyectoEvaluadorUpdateView.as_view(),
-        name='evaluador_update',
+        'gestion/proyecto/<int:proyecto_id>/editar-evaluadores/',
+        EvaluadorProyectoUpdateView.as_view(),
+        name='evaluadores_update',
+    ),
+    path(
+        'gestion/evaluadorproyecto/<int:pk>/delete/',
+        EvaluadorProyectoDeleteView.as_view(),
+        name='evaluadorproyecto_delete',
     ),
     path(
         'gestion/proyecto/<int:pk>/editar-resolucion/',
@@ -156,9 +163,6 @@ urlpatterns = [
     ),
     path(
         'gestion/proyecto/<int:pk>/correccion/', CorreccionVerView.as_view(), name='ver_correccion'
-    ),
-    path(
-        'gestion/proyecto/<int:pk>/evaluacion/', EvaluacionVerView.as_view(), name='ver_evaluacion'
     ),
     # Memoria
     path('memoria/<int:pk>/', MemoriaDetailView.as_view(), name='memoria_detail'),

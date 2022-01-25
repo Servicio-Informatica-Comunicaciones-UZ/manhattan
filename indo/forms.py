@@ -22,6 +22,7 @@ from django.utils.translation import gettext_lazy as _
 from accounts.models import CustomUser
 from accounts.pipeline import get_identidad
 from .models import (
+    EvaluadorProyecto,
     Linea,
     MemoriaRespuesta,
     ParticipanteProyecto,
@@ -352,7 +353,11 @@ class ProyectoForm(forms.ModelForm):
 
 class EvaluadorForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
+        # Override __init__ to make the "self" object have the proyecto instance
+        # designated by the proyecto_id sent by the view, taken from the URL parameter.
+        self.proyecto = Proyecto.objects.get(id=kwargs.pop('proyecto_id'))
         super().__init__(*args, **kwargs)
+        # Content of the dropdown
         self.fields['evaluador'].widget.choices = BLANK_CHOICE_DASH + [
             (u.id, u.full_name)
             for u in Group.objects.get(name="Evaluadores")
@@ -360,9 +365,16 @@ class EvaluadorForm(forms.ModelForm):
             .all()
         ]
 
+    def save(self, commit=True):
+        # evaluadorproyecto = super().save(commit=False)
+        # evaluadorproyecto.proyecto = self.proyecto
+        # evaluadorproyecto.evaluador = self.cleaned_data['evaluador']
+        # return evaluadorproyecto.save()
+        return self.proyecto.evaluadores.add(self.cleaned_data['evaluador'])
+
     class Meta:
         fields = ('evaluador',)
-        model = Proyecto
+        model = EvaluadorProyecto
 
 
 class MemoriaRespuestaForm(forms.ModelForm):

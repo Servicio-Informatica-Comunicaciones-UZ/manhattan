@@ -189,6 +189,26 @@ class Estudio(models.Model):
         return f'{self.nombre} ({self.tipo_estudio.nombre})'
 
 
+class EvaluadorProyecto(models.Model):
+    """Asignación de evaluadores a proyectos"""
+
+    evaluador = models.ForeignKey(
+        'accounts.CustomUser', on_delete=models.PROTECT, related_name='evaluadores_proyectos'
+    )
+    proyecto = models.ForeignKey(
+        'Proyecto', on_delete=models.PROTECT, related_name='evaluadores_proyectos'
+    )
+    ha_evaluado = models.BooleanField(_('Ha realizado la evaluación'), null=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['evaluador_id', 'proyecto_id'],
+                name="unique-evaluador-proyecto",
+            )
+        ]
+
+
 class Evento(models.Model):
     nombre = models.CharField(primary_key=True, max_length=31)
 
@@ -517,6 +537,9 @@ class Proyecto(models.Model):
         on_delete=models.PROTECT,
         related_name='proyectos_evaluados',
     )
+    evaluadores = models.ManyToManyField(
+        'accounts.CustomUser', through='EvaluadorProyecto', related_name='proyectos_del_evaluador'
+    )
     esta_evaluado = models.BooleanField(_('Ha sido evaluado'), null=True)
     # Aprobación de la Comisión Evaluadora
     aceptacion_comision = models.BooleanField(_('Aprobación por la comisión'), null=True)
@@ -556,7 +579,7 @@ class Proyecto(models.Model):
             ('editar_proyecto', _('Puede editar cualquier proyecto en cualquier momento.')),
             ('listar_evaluaciones', _('Puede ver el listado de evaluaciones de los proyectos.')),
             ('listar_evaluadores', _('Puede ver el listado de evaluadores.')),
-            ('editar_evaluador', _('Puede editar el evaluador de un proyecto.')),
+            ('editar_evaluadores', _('Puede editar los evaluadores de un proyecto.')),
             ('editar_resolucion', _('Puede modificar la resolución de la Comisión Evaluadora.')),
             ('listar_correctores', _('Puede ver el listado de correctores.')),
             ('editar_corrector', _('Puede modificar el corrector de un proyecto.')),
@@ -601,8 +624,8 @@ class Proyecto(models.Model):
             _('VºBº C'),
             _('VºBº E'),
             _('Núm. participantes'),
-            _('Evaluador'),
-            _('Correo evaluador'),
+            _('Evaluadores'),
+            _('Correo evaluadores'),
             _('Está evaluado'),
             _('Ayuda solicitada'),
             _('Resolución'),
@@ -633,8 +656,10 @@ class Proyecto(models.Model):
                       ELSE '-'
                     END AS 'VºBº Estudio',
                     COUNT(pp2.id) AS 'núm. participantes',
-                    CONCAT(u2.first_name, ' ', u2.last_name, ' ', u2.last_name_2) AS evaluador,
-                    u2.email,
+                    GROUP_CONCAT(
+                        DISTINCT CONCAT_WS(' ', u2.first_name, u2.last_name, u2.last_name_2
+                    ) ORDER BY u2.id) AS evaluadores,
+                    GROUP_CONCAT(DISTINCT u2.email ORDER BY u2.id),
                     CASE p.esta_evaluado
                       WHEN 1 THEN 'S'
                       WHEN 0 THEN 'N'
@@ -659,14 +684,14 @@ class Proyecto(models.Model):
                 JOIN indo_participanteproyecto pp
                   ON p.id = pp.proyecto_id AND pp.tipo_participacion_id = 'coordinador'
                 JOIN accounts_customuser u1 ON pp.usuario_id = u1.id
-                LEFT JOIN accounts_customuser u2 ON p.evaluador_id = u2.id
                 LEFT JOIN indo_participanteproyecto pp2
                        ON p.id = pp2.proyecto_id AND pp2.tipo_participacion_id = 'participante'
+                LEFT JOIN indo_evaluadorproyecto ep ON p.id = ep.proyecto_id
+                LEFT JOIN accounts_customuser u2 ON ep.evaluador_id = u2.id
                 WHERE prog.convocatoria_id = {anyo}
-                GROUP BY p.id, prog.nombre_corto, l.nombre, p.titulo, u1.first_name, u1.last_name,
-                         u1.last_name_2, u1.username, u1.email, p.estado, p.visto_bueno_centro,
-                         p.visto_bueno_estudio,
-                         u2.first_name, u2.last_name, u2.last_name_2, u2.email,
+                GROUP BY prog.nombre_corto, l.nombre, p.id, p.titulo,
+                         u1.first_name, u1.last_name, u1.last_name_2, u1.username, u1.email,
+                         p.estado, p.visto_bueno_centro, p.visto_bueno_estudio,
                          p.esta_evaluado, p.ayuda, p.aceptacion_comision,
                          p.ayuda_provisional, p.ayuda_definitiva, p.aceptacion_coordinador
                 ORDER BY p.programa_id, p.linea_id, p.titulo;
@@ -749,9 +774,12 @@ class Proyecto(models.Model):
         coordinadores = [self.coordinador, self.coordinador_2]
         return list(filter(None, coordinadores))
 
-    def get_dict_valoraciones(self):
-        """Devuelve un diccionario criterio_id => valoración con las valoraciones del proyecto."""
-        return {valoracion.criterio_id: valoracion for valoracion in self.valoraciones.all()}
+    def get_dict_valoraciones(self, user_id):
+        """Devuelve diccionario criterio_id => valoración con las valoraciones de un evaluador."""
+        return {
+            valoracion.criterio_id: valoracion
+            for valoracion in self.valoraciones.filter(evaluador__id=user_id).all()
+        }
 
     def get_dict_respuestas_memoria(self):
         """Devuelve un diccionario subapartado_id => respuesta de la memoria del proyecto."""
@@ -968,6 +996,9 @@ class Valoracion(models.Model):
     criterio = models.ForeignKey('Criterio', on_delete=models.PROTECT)
     opcion = models.ForeignKey('Opcion', null=True, on_delete=models.PROTECT)
     texto = models.TextField(_('texto'), blank=True, null=True)
+    evaluador = models.ForeignKey(
+        'accounts.CustomUser', null=True, on_delete=models.PROTECT, related_name='valoraciones'
+    )
 
     class Meta:
         verbose_name = _('valoración')
@@ -975,53 +1006,7 @@ class Valoracion(models.Model):
 
     @classmethod
     def get_todas(cls, anyo):
-        """Devuelve las valoraciones de todos los proyectos presentados en el año indicado."""
-        criterios = Criterio.objects.filter(convocatoria_id=anyo).all()
-
-        with connection.cursor() as cursor:
-            cursor.execute(
-                f'''
-                SELECT DISTINCT prog.nombre_corto, l.nombre,
-                  p.id, p.titulo, c.nombre, p.ayuda, p.financiacion
-                FROM indo_valoracion v
-                JOIN indo_proyecto p ON v.proyecto_id = p.id
-                JOIN indo_programa prog ON p.programa_id = prog.id
-                LEFT JOIN indo_linea l ON p.linea_id = l.id
-                LEFT JOIN indo_centro c ON p.centro_id = c.id
-                WHERE prog.convocatoria_id = {anyo}
-                ORDER BY proyecto_id;
-                '''
-            )
-            rows = cursor.fetchall()
-            valoraciones = list(zip(*rows))
-
-            # Convertimos el apartado «financiacion» de HTML a texto plano
-            valoraciones[-1] = [
-                pypandoc.convert_text(financiacion, 'plain', format='html') if financiacion else ''
-                for financiacion in valoraciones[-1]
-            ]
-
-            for criterio in criterios:
-                cursor.execute(
-                    f'''
-                    SELECT CASE
-                      WHEN c.tipo = 'opcion' THEN o.puntuacion
-                      WHEN c.tipo = 'texto' THEN v.texto
-                      ELSE NULL
-                    END AS valoracion
-                    FROM indo_valoracion v
-                    JOIN indo_criterio c ON v.criterio_id = c.id
-                    LEFT JOIN indo_opcion o ON v.opcion_id = o.id
-                    WHERE v.criterio_id = {criterio.id}
-                    ORDER BY v.proyecto_id, c.parte, c.peso;
-                    '''
-                )
-                rows = cursor.fetchall()
-                fila_plana = [row[0] for row in rows]
-                valoraciones.append(fila_plana)
-
-        valoraciones = list(zip(*valoraciones))
-
+        """Devuelve las valoraciones de todos los proyectos aceptados en el año indicado."""
         cabeceras = [
             _('Programa'),
             _('Línea'),
@@ -1031,6 +1016,60 @@ class Valoracion(models.Model):
             _('Ayuda solicitada'),
             _('Financiación'),
         ]
+        criterios = Criterio.objects.filter(convocatoria_id=anyo).order_by('parte', 'peso').all()
         cabeceras.extend([criterio.descripcion for criterio in criterios])
+
+        with connection.cursor() as cursor:
+            # Columnas procedentes de la solicitud de proyecto
+            cursor.execute(
+                f'''
+                SELECT prog.nombre_corto, l.nombre,
+                  p.id, p.titulo, c.nombre, p.ayuda, p.financiacion
+                FROM indo_evaluadorproyecto ep
+                JOIN indo_proyecto p ON ep.proyecto_id = p.id
+                JOIN indo_programa prog ON p.programa_id = prog.id
+                LEFT JOIN indo_linea l ON p.linea_id = l.id
+                LEFT JOIN indo_centro c ON p.centro_id = c.id
+                WHERE prog.convocatoria_id = {anyo}
+                ORDER BY ep.proyecto_id, ep.evaluador_id;
+                '''
+            )
+            rows = cursor.fetchall()
+            # Podríamos añadir las columnas de la evaluación a este array bidimensional
+            #   usando NumPy o bucles.
+            # En su lugar, transponemos la matriz, y las añadiremos como filas.
+            # A continuación, volveremos a transponer la matriz.
+            valoraciones = list(zip(*rows))
+
+            # Convertimos el apartado «financiacion» de HTML a texto plano
+            valoraciones[-1] = [
+                pypandoc.convert_text(financiacion, 'plain', format='html') if financiacion else ''
+                for financiacion in valoraciones[-1]
+            ]
+
+            # Columnas procedentes de la evaluación del proyecto
+            for criterio in criterios:
+                cursor.execute(
+                    f'''
+                    SELECT CASE
+                      WHEN c.tipo = 'opcion' THEN o.puntuacion
+                      WHEN c.tipo = 'texto' THEN v.texto
+                      ELSE NULL
+                    END AS valoracion
+                    FROM indo_evaluadorproyecto ep
+                    LEFT JOIN indo_valoracion v
+                           ON ep.proyecto_id = v.proyecto_id AND ep.evaluador_id=v.evaluador_id
+                    LEFT JOIN indo_criterio c ON v.criterio_id = c.id
+                    LEFT JOIN indo_opcion o ON v.opcion_id = o.id
+                    WHERE v.criterio_id = {criterio.id} OR v.criterio_id IS NULL
+                    ORDER BY ep.proyecto_id, ep.evaluador_id, c.parte, c.peso;
+                    '''
+                )
+                rows = cursor.fetchall()
+                fila_del_criterio = [row[0] for row in rows]
+                valoraciones.append(fila_del_criterio)
+
+        valoraciones = list(zip(*valoraciones))
+
         valoraciones.insert(0, cabeceras)
         return valoraciones

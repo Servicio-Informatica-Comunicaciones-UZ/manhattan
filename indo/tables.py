@@ -118,11 +118,14 @@ class EvaluadoresTable(tables.Table):
             )
         return record.numero_participantes
 
+    def render_evaluadores(self, record):
+        return ', '.join([evaluador.full_name for evaluador in record.evaluadores.all()])
+
     def render_editar(self, record):
-        enlace = reverse('evaluador_update', args=[record.id])
+        enlace = reverse('evaluadores_update', args=[record.id])
         return mark_safe(
-            f'''<a href="{enlace}" title="{_('Editar el evaluador')}"
-                aria-label="{_('Editar el evaluador')}">
+            f'''<a href="{enlace}" title="{_('Editar los evaluadores')}"
+                aria-label="{_('Editar los evaluadores')}">
                   <span class="fas fa-pencil-alt"></span>
                 </a>'''
         )
@@ -148,7 +151,7 @@ class EvaluadoresTable(tables.Table):
             'visto_bueno_centro',
             'visto_bueno_estudio',
             'numero_participantes',
-            'evaluador__full_name',
+            'evaluadores',
             'editar',
         )
         empty_text = _('Por el momento no se ha presentado ninguna solicitud de proyecto.')
@@ -157,25 +160,25 @@ class EvaluadoresTable(tables.Table):
 
 
 class EvaluacionProyectosTable(tables.Table):
-    """Muestra los proyectos presentados y enlaces a su evaluación y resolución de la Comisión."""
+    """Muestra los proyectos presentados, enlaces a evaluaciones, y resolución de la Comisión."""
 
     def render_titulo(self, record):
         enlace = reverse('proyecto_detail', args=[record.id])
         return mark_safe(f'<a href="{enlace}">{record.titulo}</a>')
 
-    esta_evaluado = tables.Column(verbose_name=_('Evaluación'))
+    # `empty_values`` es necesario para que se muestre la renderización,
+    # porque el campo no tiene ningún valor en la tabla.
+    evaluaciones = tables.Column(empty_values=(), orderable=False, verbose_name='Evaluaciones')
     resolucion = tables.Column(empty_values=(), orderable=False, verbose_name=_('Resolución'))
 
-    def render_esta_evaluado(self, record):
-        enlace = reverse('ver_evaluacion', args=[record.id])
-        return mark_safe(
-            f'''<a href="{enlace}" title="{_('Ver la evaluación')}"
-                aria-label="{_('Ver la evaluación')}">
-                  <span class="far fa-eye"></span>
-                </a>'''
-            if record.esta_evaluado
-            else '—'
-        )
+    def render_evaluaciones(self, record):
+        enlaces = ''
+        asignaciones = record.evaluadores_proyectos.all()
+        for asignacion in asignaciones:
+            if asignacion.ha_evaluado:
+                enlaces += f'''<a href="{reverse('ver_evaluacion', args=[asignacion.id])}" title="{_('Ver evaluación')}"
+                aria-label="{_('Ver evaluación')}"><span class="far fa-eye"></span></a> '''
+        return mark_safe(enlaces) if enlaces else '—'
 
     def render_resolucion(self, record):
         enlace = reverse('resolucion_update', args=[record.id])
@@ -199,7 +202,7 @@ class EvaluacionProyectosTable(tables.Table):
     class Meta:
         attrs = {'class': 'table table-striped table-hover cabecera-azul'}
         model = Proyecto
-        fields = ('programa', 'linea', 'id', 'titulo', 'esta_evaluado', 'resolucion')
+        fields = ('programa', 'linea', 'id', 'titulo', 'evaluaciones', 'resolucion')
         empty_text = _('Por el momento no se ha presentado ninguna solicitud de proyecto.')
         template_name = 'django_tables2/bootstrap4.html'
         per_page = 20

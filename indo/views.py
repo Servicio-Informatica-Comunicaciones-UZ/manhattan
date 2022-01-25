@@ -69,6 +69,7 @@ from .models import (
     Centro,
     Convocatoria,
     Criterio,
+    EvaluadorProyecto,
     MemoriaRespuesta,
     # MemoriaSubapartado,
     ParticipanteProyecto,
@@ -229,7 +230,7 @@ class ChecksMixin(UserPassesTestMixin):
         proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
         usuario_actual = self.request.user
 
-        return usuario_actual == proyecto.evaluador
+        return usuario_actual in proyecto.evaluadores.all()
 
     def es_corrector_del_proyecto(self, proyecto_id):
         """Devuelve si el usuario actual es corrector de la memoria del proyecto indicado."""
@@ -431,7 +432,7 @@ class CorrectorCesarView(LoginRequiredMixin, PermissionRequiredMixin, View):
 
 
 class EvaluacionVerView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
-    """Muestra la evaluación del proyecto indicado."""
+    """Muestra la evaluación de un proyecto y evaluador."""
 
     permission_required = 'indo.ver_evaluacion'
     permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
@@ -440,18 +441,18 @@ class EvaluacionVerView(LoginRequiredMixin, PermissionRequiredMixin, TemplateVie
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        proyecto = get_object_or_404(Proyecto, pk=self.kwargs['pk'])
-        context['anyo'] = proyecto.convocatoria.id
+        asignacion = get_object_or_404(EvaluadorProyecto, pk=self.kwargs['pk'])
+        proyecto = asignacion.proyecto
+        anyo = proyecto.convocatoria_id
+        context['anyo'] = anyo
         context['proyecto'] = proyecto
-        context['criterios'] = Criterio.objects.filter(
-            convocatoria_id=proyecto.convocatoria_id
-        ).all()
-        context['dict_valoraciones'] = proyecto.get_dict_valoraciones()
+        context['criterios'] = Criterio.objects.filter(convocatoria_id=anyo).all()
+        context['dict_valoraciones'] = proyecto.get_dict_valoraciones(asignacion.evaluador.id)
         return context
 
 
 class EvaluacionView(LoginRequiredMixin, ChecksMixin, TemplateView):
-    """Muestra y permite editar las valoraciones de un proyecto."""
+    """Muestra y permite editar las valoraciones de un proyecto a un evaluador."""
 
     template_name = 'evaluador/evaluacion.html'
 
@@ -464,18 +465,19 @@ class EvaluacionView(LoginRequiredMixin, ChecksMixin, TemplateView):
         context['criterios'] = Criterio.objects.filter(
             convocatoria_id=proyecto.convocatoria_id
         ).all()
-        context['dict_valoraciones'] = proyecto.get_dict_valoraciones()
+        context['dict_valoraciones'] = proyecto.get_dict_valoraciones(self.request.user.id)
         return context
 
     def post(self, request, *args, **kwargs):
         proyecto = get_object_or_404(Proyecto, pk=kwargs['pk'])
         criterios = Criterio.objects.filter(convocatoria_id=proyecto.convocatoria_id).all()
-        dict_valoraciones = proyecto.get_dict_valoraciones()
+        dict_valoraciones = proyecto.get_dict_valoraciones(request.user.id)
 
         for criterio in criterios:
             valoracion = dict_valoraciones.get(criterio.id)
             if not valoracion:
                 valoracion = Valoracion(proyecto_id=proyecto.id, criterio_id=criterio.id)
+                valoracion.evaluador = request.user
 
             if criterio.tipo == 'opcion':
                 valoracion.opcion_id = request.POST.get(str(criterio.id))
@@ -483,9 +485,19 @@ class EvaluacionView(LoginRequiredMixin, ChecksMixin, TemplateView):
                 valoracion.texto = request.POST.get(str(criterio.id))
             valoracion.save()
 
+        asignacion = EvaluadorProyecto.objects.get(
+            proyecto_id=proyecto.id, evaluador_id=request.user.id
+        )
+        asignacion.ha_evaluado = True
+        asignacion.save()
+
+        # Ponemos `esta_evaluado` a True cuando hayan evaluado todos los evaluadores del proyecto.
         if not proyecto.esta_evaluado:
             proyecto.esta_evaluado = True
-            proyecto.save()
+            for asignacion in proyecto.evaluadores_proyectos.all():
+                if not asignacion.ha_evaluado:
+                    proyecto.esta_evaluado = False
+            proyecto.save(update_fields=['esta_evaluado'])
 
         messages.success(
             request, _(f'Se ha guardado la evaluación del proyecto «{proyecto.titulo}».')
@@ -494,6 +506,23 @@ class EvaluacionView(LoginRequiredMixin, ChecksMixin, TemplateView):
 
     def test_func(self):
         return self.es_evaluador_del_proyecto(self.kwargs['pk'])
+
+
+class EvaluadorProyectoDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    """Borra una asignación Evaluador-Proyecto"""
+
+    model = EvaluadorProyecto
+    permission_required = 'indo.editar_evaluadores'
+    permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
+    template_name = 'gestion/evaluadorproyecto/confirm_delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['anyo'] = self.object.proyecto.convocatoria.id
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy('evaluadores_update', args=[self.object.proyecto.id])
 
 
 class MemoriasAsignadasTableView(LoginRequiredMixin, UserPassesTestMixin, SingleTableView):
@@ -660,23 +689,21 @@ class ProyectosEvaluadosTableView(LoginRequiredMixin, UserPassesTestMixin, Singl
         return context
 
     def get_queryset(self):
-        return (
-            Proyecto.objects.filter(convocatoria__id=self.kwargs['anyo'])
-            .filter(evaluador=self.request.user)
-            .order_by('programa__nombre_corto', 'linea__nombre', 'titulo')
-        )
+        return self.request.user.proyectos_del_evaluador.filter(
+            convocatoria_id=self.kwargs['anyo']
+        ).order_by('programa__nombre_corto', 'linea__nombre', 'titulo')
 
     def test_func(self):
         return self.request.user.groups.filter(name='Evaluadores').exists()
 
 
-class ProyectoEvaluadorUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
-    """Actualizar el evaluador de un proyecto."""
+class EvaluadorProyectoUpdateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    """Actualizar los evaluadores de un proyecto."""
 
-    permission_required = 'indo.editar_evaluador'
+    model = EvaluadorProyecto
+    permission_required = 'indo.editar_evaluadores'
     permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
-    model = Proyecto
-    template_name = 'gestion/proyecto/editar_evaluador.html'
+    template_name = 'gestion/proyecto/editar_evaluadores.html'
     form_class = EvaluadorForm
 
     def get(self, request, *args, **kwargs):
@@ -701,7 +728,7 @@ class ProyectoEvaluadorUpdateView(LoginRequiredMixin, PermissionRequiredMixin, U
                     usuario = User.crear_usuario(request, nip)
                 except Exception as ex:
                     messages.error(request, 'ERROR: %s' % ex.args[0])
-                    return redirect('evaluador_update')
+                    return redirect('evaluadores_update')
             # Añadimos los usuarios al grupo Evaluadores.
             evaluadores.user_set.add(usuario)  # or usuario.groups.add(evaluadores)
 
@@ -714,11 +741,21 @@ class ProyectoEvaluadorUpdateView(LoginRequiredMixin, PermissionRequiredMixin, U
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['anyo'] = self.object.convocatoria.id
+        proyecto = get_object_or_404(Proyecto, pk=self.kwargs.get('proyecto_id'))
+        context['anyo'] = proyecto.convocatoria.id
+        context['proyecto'] = proyecto
         return context
 
-    def get_success_url(self):
-        return reverse('evaluadores_table', kwargs={'anyo': self.object.convocatoria.id})
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        # Update the kwargs for the form init method with ours
+        kwargs.update(self.kwargs)  # self.kwargs contains all URL conf params
+        return kwargs
+
+    def get_success_url(self, **kwargs):
+        return reverse_lazy(
+            'evaluadores_update', kwargs={'proyecto_id': self.kwargs['proyecto_id']}
+        )
 
 
 class ProyectoResolucionUpdateView(

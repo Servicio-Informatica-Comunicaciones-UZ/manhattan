@@ -95,17 +95,52 @@
         </div><br />
     {% endif %}
 
-    <p><label>Proyecto:</label> {{ proyecto.titulo }}</p>
+
+    <!-- Evaluadores del proyecto -->
+    <h3 id="evaluadores">{{ proyecto.titulo }}</h3>
+    <br />
+
+    {% if proyecto.evaluadores_proyectos.all %}
+        <div class="table-responsive">
+            <table class="table table-hover table-striped table-sm cabecera-azul" aria-label="evaluadores">
+            <thead>
+                <tr>
+                <th scope="col">{% trans "Evaluador" %}</th>
+                <th scope="col">{% trans "Correo electrónico" %}</th>
+                <th scope="col">{% trans "Acción" %}</th>
+                </tr>
+            </thead>
+            {% for evaluadorproyecto in proyecto.evaluadores_proyectos.all %}
+                <tr>
+                    <td>{{ evaluadorproyecto.evaluador.full_name }}</td>
+                    <td> {{ evaluadorproyecto.evaluador.email }}</td>
+                    <td>
+                        <a href="{% url 'evaluadorproyecto_delete' evaluadorproyecto.id %}" aria-label="{% trans 'Eliminar' %}">
+                            <span aria-hidden="true" class="fas fa-trash-alt" title="{% trans 'Eliminar' %}"></span>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </table>
+        </div>
+    {% else %}
+        <p>{% trans 'Aquí aparecerán los evaluadores de este proyecto.' %}</p>
+    {% endif %}
+
+    <br />
+
+    <!-- Añadir evaluador al proyecto -->
     <form action="" method="post">
         {% csrf_token %}
         {{ form.as_p }}
         <br style="clear: both;" />
+
         <div class="btn-group" role="group" aria-label="Botones">
             <a href="{% url 'evaluadores_table' proyecto.convocatoria_id %}" class="btn btn-info">
                 <span class="fas fa-step-backward"></span> {% trans 'Retroceder' %}
             </a>
             <button class="btn btn-warning" type="submit">
-                <span class="fas fa-check"></span> {% trans 'Actualizar' %}
+                <span class="fas fa-plus" aria-hidden="true"></span> {% trans 'Añadir' %}
             </button>
         </div>
     </form>
