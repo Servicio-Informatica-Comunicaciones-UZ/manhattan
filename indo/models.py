@@ -1057,11 +1057,14 @@ class Valoracion(models.Model):
                       ELSE NULL
                     END AS valoracion
                     FROM indo_evaluadorproyecto ep
+                    JOIN indo_proyecto p ON ep.proyecto_id = p.id
+                    JOIN indo_programa prog ON p.programa_id = prog.id
                     LEFT JOIN indo_valoracion v
                            ON ep.proyecto_id = v.proyecto_id AND ep.evaluador_id=v.evaluador_id
                     LEFT JOIN indo_criterio c ON v.criterio_id = c.id
                     LEFT JOIN indo_opcion o ON v.opcion_id = o.id
-                    WHERE v.criterio_id = {criterio.id} OR v.criterio_id IS NULL
+                    WHERE prog.convocatoria_id = {anyo}
+                      AND (v.criterio_id = {criterio.id} OR v.criterio_id IS NULL)
                     ORDER BY ep.proyecto_id, ep.evaluador_id, c.parte, c.peso;
                     '''
                 )
