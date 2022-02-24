@@ -278,6 +278,8 @@ class Programa(models.Model):
     max_estudiantes = models.PositiveSmallIntegerField(
         _('Número máximo de estudiantes por programa'), null=True
     )
+    # Para que el coordinador de un proyecto pueda editar un campo,
+    # éste debe estar incluido en la tupla `permitidos_coordinador` de views.py.
     campos = models.TextField(null=True)
     convocatoria = models.ForeignKey('Convocatoria', on_delete=models.PROTECT)
     requiere_visto_bueno_centro = models.BooleanField(
@@ -327,16 +329,27 @@ class Proyecto(models.Model):
         default='BORRADOR',
         max_length=63,
     )
+    # Si se añaden nuevos campos, añadirlos a la tupla `permitidos_coordinador` de views.py
+    # si fuera necesario.
     contexto = models.TextField(
         _('Contexto del proyecto'),
         blank=True,
         null=True,
         help_text=_(
-            'Necesidad a la que responde el proyecto, mejoras esperadas respecto '
-            'al estado de la cuestión, conocimiento que se genera.'
+            '''Necesidad a la que responde el proyecto, mejoras esperadas respecto al estado de la
+            cuestión, otros proyectos de innovación relacionados con el propuesto, conocimiento que
+            se genera y marco epistemológico o teórico que lo avala y descripción del equipo de
+            trabajo para la realización del proyecto.'''
         ),
     )
-    objetivos = models.TextField(_('Objetivos del Proyecto'), blank=True, null=True)
+    objetivos = models.TextField(
+        _('Objetivos del Proyecto'),
+        blank=True,
+        null=True,
+        help_text=_(
+            'Señalando también los relacionados con los Objetivos de Desarrollo Sostenible'
+        ),
+    )
     metodos_estudio = models.TextField(
         _('Métodos de estudio/experimentación y trabajo de campo'),
         blank=True,
@@ -364,6 +377,12 @@ class Proyecto(models.Model):
         blank=True,
         null=True,
         help_text=_('Experiencia, Estudio o Desarrollo'),
+    )
+    prauz_tipo = models.TextField(
+        _('Tipo de curso'),
+        blank=True,
+        null=True,
+        help_text=_('Nuevo o actualización de otro ya existente'),
     )
     contexto_aplicacion = models.TextField(
         _('Contexto de aplicación/Público objetivo'),
@@ -405,8 +424,24 @@ class Proyecto(models.Model):
     seminario = models.TextField(
         _('Asignatura, curso, seminario o equivalente'), blank=True, null=True
     )
-    idioma = models.TextField(_('Idioma de publicación'), blank=True, null=True)
-    ramas = models.TextField(_('Ramas de conocimiento'), blank=True, null=True)
+    idioma = models.TextField(
+        _('Idioma de publicación'),
+        blank=True,
+        null=True,
+        help_text=_(
+            '''Indicar el idioma de publicación y, si además, se publicará la traducción del curso
+            completo o parcial a otros idiomas'''
+        ),
+    )
+    ramas = models.TextField(
+        _('Rama de conocimiento'),
+        blank=True,
+        null=True,
+        help_text=_(
+            '''Artes y Humanidades, Ciencias, Ciencias de la Salud, Ciencias Sociales y Jurídicas,
+            Ingeniería y Arquitectura, o Transversal'''
+        ),
+    )
     mejoras_pou = models.TextField(
         _('Mejoras esperadas en el Plan de Orientación Universitaria y cómo se comprobarán.'),
         blank=True,
@@ -435,7 +470,7 @@ class Proyecto(models.Model):
     afectadas = models.TextField(
         _('Asignatura/s y Titulación/es afectadas'), blank=True, null=True
     )
-    formatos = models.TextField(_('Formatos de los materiales incluidos.'), blank=True, null=True)
+    formatos = models.TextField(_('Formatos de los materiales a incluir'), blank=True, null=True)
     enlace = models.TextField(
         _('Enlace'),
         blank=True,
@@ -473,7 +508,8 @@ class Proyecto(models.Model):
         blank=True,
         null=True,
         help_text=_(
-            'Elementos multimedia e innovadores que va a utilizar en la elaboración del curso.'
+            '''Descripción específica y cantidad aproximada de los recursos multimedia que incluirá
+            el curso en formato video que precisen del uso de un estudio de grabación'''
         ),
     )
     indicadores = models.TextField(

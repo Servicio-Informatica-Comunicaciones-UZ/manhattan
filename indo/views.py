@@ -2275,6 +2275,7 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
                 'seminario',
                 'tecnologias',
                 'tipo',
+                'prauz_tipo',
             )
             if not self.kwargs['campo'] in permitidos_coordinador:
                 self.permission_denied_message = _('No puede modificar este campo.')
