@@ -378,11 +378,21 @@ class Proyecto(models.Model):
         null=True,
         help_text=_('Experiencia, Estudio o Desarrollo'),
     )
-    prauz_tipo = models.TextField(
+    prauz_titulo = models.CharField(_('Título del curso'), blank=True, null=True, max_length=255)
+    prauz_tipo = models.CharField(
         _('Tipo de curso'),
         blank=True,
         null=True,
-        help_text=_('Nuevo o actualización de otro ya existente'),
+        choices=(
+            ('Nuevo', _('Nuevo')),
+            ('Actualización de otro ya existente', _('Actualización de otro ya existente')),
+        ),
+        max_length=34,
+    )
+    prauz_contenido = models.TextField(
+        _('Breve descripción del contenido del curso'),
+        blank=True,
+        null=True,
     )
     contexto_aplicacion = models.TextField(
         _('Contexto de aplicación/Público objetivo'),
@@ -433,14 +443,19 @@ class Proyecto(models.Model):
             completo o parcial a otros idiomas'''
         ),
     )
-    ramas = models.TextField(
+    ramas = models.CharField(
         _('Rama de conocimiento'),
         blank=True,
         null=True,
-        help_text=_(
-            '''Artes y Humanidades, Ciencias, Ciencias de la Salud, Ciencias Sociales y Jurídicas,
-            Ingeniería y Arquitectura, o Transversal'''
+        choices=(
+            ('Artes y Humanidades', _('Artes y Humanidades')),
+            ('Ciencias Sociales y Jurídicas', _('Ciencias Sociales y Jurídicas')),
+            ('Ciencias de la Salud', _('Ciencias de la Salud')),
+            ('Ingeniería y Arquitectura', _('Ingeniería y Arquitectura')),
+            ('Ciencias', _('Ciencias')),
+            ('Transversal', _('Transversal')),
         ),
+        max_length=767,
     )
     mejoras_pou = models.TextField(
         _('Mejoras esperadas en el Plan de Orientación Universitaria y cómo se comprobarán.'),
