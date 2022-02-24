@@ -2382,6 +2382,7 @@ class ProyectosUsuarioView(LoginRequiredMixin, TemplateView):
         usuario = self.request.user
         anyo = self.kwargs['anyo']
         context = super().get_context_data(**kwargs)
+        context['convocatorias'] = Convocatoria.objects.order_by('-id').all()[:5]
         context['proyectos_coordinados'] = (
             Proyecto.objects.filter(
                 convocatoria__id=anyo,

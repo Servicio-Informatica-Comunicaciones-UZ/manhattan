@@ -5,6 +5,14 @@
 
 {% block content %}
 <div class="container-blanco">
+  <select name="convocatoria" onchange="location = this.value;" style="float: right;">
+    {% for convocatoria in convocatorias %}
+      <option value="{% url 'mis_proyectos' convocatoria.id %}"
+        {% if convocatoria.id == anyo %}selected="selected"{% endif %}
+      >{{convocatoria}}</option>
+    {% endfor %}
+  </select>
+
   <h1 id="coordinados">{% trans "Proyectos coordinados" %} <small>{{ anyo }}</small></h1>
   <hr />
   <br />
