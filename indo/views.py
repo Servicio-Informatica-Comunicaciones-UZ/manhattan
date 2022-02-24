@@ -2112,14 +2112,17 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
             raise Http404(_('No puede editar ese campo.'))
 
         if campo not in (
-            'titulo',
-            'departamento',
-            'licencia',
+            'titulo',  # Caja de texto simple
+            'departamento',  # Clave ajena
+            'licencia',  # Clave ajena
             'ayuda',
-            'visto_bueno_centro',
-            'visto_bueno_estudio',
-            'aceptacion_economico',
-            'id_uxxi',
+            'visto_bueno_centro',  # Booleano
+            'visto_bueno_estudio',  # Booleano
+            'aceptacion_economico',  # Booleano
+            'id_uxxi',  # Caja de texto simple
+            'prauz_titulo',  # Caja de texto simple
+            'prauz_tipo',  # Desplegable de opciones
+            'ramas',  # Desplegable de opciones
         ):
             # Salvo para los campos anteriores, usamos una caja de texto enriquecido
             formulario = modelform_factory(
@@ -2275,7 +2278,9 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
                 'seminario',
                 'tecnologias',
                 'tipo',
+                'prauz_titulo',
                 'prauz_tipo',
+                'prauz_contenido',
             )
             if not self.kwargs['campo'] in permitidos_coordinador:
                 self.permission_denied_message = _('No puede modificar este campo.')
