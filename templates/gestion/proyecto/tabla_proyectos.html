@@ -6,6 +6,14 @@
 
 {% block content %}
   <div class='container-blanco'>
+    <select aria-label="Cambiar de convocatoria" class="custom-select form-select" name="convocatoria" onchange="location = this.value;" style="float: right; width: 150px;">
+      {% for convocatoria in convocatorias %}
+        <option value="{% url 'proyectos_table' convocatoria.id %}"
+          {% if convocatoria.id == anyo %}selected="selected"{% endif %}
+        >{{convocatoria}}</option>
+      {% endfor %}
+    </select>
+
     <h1 id="proyectos">{% trans "Proyectos" %} <small>{{ anyo }}</small></h1>
     <hr />
     <br />

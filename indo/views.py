@@ -535,6 +535,7 @@ class MemoriasAsignadasTableView(LoginRequiredMixin, UserPassesTestMixin, Single
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['anyo'] = self.kwargs.get('anyo')
+        context['convocatorias'] = Convocatoria.objects.order_by('-id').all()[:5]
         return context
 
     def get_queryset(self):
@@ -627,6 +628,7 @@ class ProyectoCorrectorTableView(LoginRequiredMixin, PermissionRequiredMixin, Si
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['anyo'] = self.kwargs.get('anyo')
+        context['convocatorias'] = Convocatoria.objects.order_by('-id').all()[:5]
         return context
 
     def get_queryset(self):
@@ -666,6 +668,7 @@ class ProyectoEvaluadorTableView(LoginRequiredMixin, PermissionRequiredMixin, Si
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['anyo'] = self.kwargs.get('anyo')
+        context['convocatorias'] = Convocatoria.objects.order_by('-id').all()[:5]
         return context
 
     def get_queryset(self):
@@ -686,6 +689,7 @@ class ProyectosEvaluadosTableView(LoginRequiredMixin, UserPassesTestMixin, Singl
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['anyo'] = self.kwargs.get('anyo')
+        context['convocatorias'] = Convocatoria.objects.order_by('-id').all()[:5]
         return context
 
     def get_queryset(self):
@@ -826,6 +830,7 @@ class ProyectoUPTableView(LoginRequiredMixin, PermissionRequiredMixin, SingleTab
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['anyo'] = self.kwargs.get('anyo')
+        context['convocatorias'] = Convocatoria.objects.order_by('-id').all()[:5]
         return context
 
     def get_queryset(self):
@@ -1241,6 +1246,7 @@ class ProyectosCierreEconomicoTableView(
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['anyo'] = self.kwargs.get('anyo')
+        context['convocatorias'] = Convocatoria.objects.order_by('-id').all()[:5]
         return context
 
     def get_queryset(self):
@@ -1673,6 +1679,7 @@ class ProyectoEvaluacionesTableView(LoginRequiredMixin, PermissionRequiredMixin,
         context = super().get_context_data(**kwargs)
         context['anyo'] = self.kwargs.get('anyo')
         context['convocatoria'] = get_object_or_404(Convocatoria, pk=self.kwargs.get('anyo'))
+        context['convocatorias'] = Convocatoria.objects.order_by('-id').all()[:5]
         return context
 
     def get_queryset(self):
@@ -1722,6 +1729,7 @@ class ProyectoMemoriasTableView(LoginRequiredMixin, PermissionRequiredMixin, Sin
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['anyo'] = self.kwargs.get('anyo')
+        context['convocatorias'] = Convocatoria.objects.order_by('-id').all()[:5]
         return context
 
     def get_queryset(self):
@@ -1857,6 +1865,7 @@ class ProyectoTableView(LoginRequiredMixin, PermissionRequiredMixin, PagedFilter
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['anyo'] = self.kwargs.get('anyo')
+        context['convocatorias'] = Convocatoria.objects.order_by('-id').all()[:5]
         return context
 
     def get_queryset(self):
@@ -2325,6 +2334,7 @@ class ProyectosAceptadosCentrosListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['anyo'] = self.kwargs['anyo']
+        context['convocatorias'] = Convocatoria.objects.order_by('-id').all()[:5]
         return context
 
     def get_queryset(self):
@@ -2352,6 +2362,7 @@ class ProyectosAceptadosTableView(ExportMixin, PagedFilteredTableView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['anyo'] = self.kwargs['anyo']
+        context['convocatorias'] = Convocatoria.objects.order_by('-id').all()[:5]
         academico_id_nk = self.request.GET.get('centro__academico_id_nk', None)
         if academico_id_nk:
             context['centro'] = get_object_or_404(Centro, academico_id_nk=academico_id_nk)
