@@ -304,7 +304,7 @@ class Proyecto(models.Model):
     codigo = models.CharField(max_length=31, null=True)
     titulo = models.CharField(_('Título'), max_length=255)
     descripcion = models.TextField(
-        _('Resumen'),
+        _('Descripción'),
         null=True,
         max_length=4095,
         help_text=_(
@@ -383,6 +383,8 @@ class Proyecto(models.Model):
         _('Tipo de curso'),
         blank=True,
         null=True,
+        # If choices are given, they’re enforced by model validation and the default form widget
+        # will be a select box with these choices instead of the standard text field.
         choices=(
             ('Nuevo', _('Nuevo')),
             ('Actualización de otro ya existente', _('Actualización de otro ya existente')),
