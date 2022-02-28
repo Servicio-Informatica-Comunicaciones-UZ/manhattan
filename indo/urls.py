@@ -83,7 +83,7 @@ urlpatterns = [
     ),
     # Participantes
     path(
-        'gestion/participante-proyecto/hace-constar/',
+        'gestion/participante-proyecto/<int:anyo>/hace-constar/',
         ParticipanteHaceConstarView.as_view(),
         name='hace_constar',
     ),

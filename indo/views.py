@@ -1174,7 +1174,8 @@ class ParticipanteHaceConstarView(LoginRequiredMixin, PermissionRequiredMixin, T
         context = super().get_context_data(**kwargs)
         context.update(
             {
-                'anyo': Convocatoria.get_ultima().id,
+                'anyo': self.kwargs.get('anyo'),
+                'convocatorias': Convocatoria.objects.order_by('-id').all()[:5],
                 'form': HaceConstarForm(),
                 'url_anterior': self.request.headers.get('Referer', reverse('home')),
             }
@@ -1184,7 +1185,7 @@ class ParticipanteHaceConstarView(LoginRequiredMixin, PermissionRequiredMixin, T
     def post(self, request, *args, **kwargs):
         nip = request.POST.get('nip')
         email = request.POST.get('email')
-        convocatoria = Convocatoria.get_ultima()
+        convocatoria = get_object_or_404(Convocatoria, pk=self.kwargs.get('anyo'))
 
         User = get_user_model()
         if nip:
