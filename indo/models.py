@@ -203,8 +203,7 @@ class EvaluadorProyecto(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['evaluador_id', 'proyecto_id'],
-                name="unique-evaluador-proyecto",
+                fields=['evaluador_id', 'proyecto_id'], name="unique-evaluador-proyecto"
             )
         ]
 
@@ -355,9 +354,9 @@ class Proyecto(models.Model):
         blank=True,
         null=True,
         help_text=_(
-            'Métodos/técnicas utilizadas, características de la muestra, '
+            'Métodos y técnicas utilizadas, características de la muestra, '
             'actividades previstas por los estudiantes y por el equipo del proyecto, '
-            'calendario de actividades.'
+            'así como calendario de actividades.'
         ),
     )
     mejoras = models.TextField(
@@ -392,9 +391,7 @@ class Proyecto(models.Model):
         max_length=34,
     )
     prauz_contenido = models.TextField(
-        _('Breve descripción del contenido del curso'),
-        blank=True,
-        null=True,
+        _('Breve descripción del contenido del curso'), blank=True, null=True
     )
     contexto_aplicacion = models.TextField(
         _('Contexto de aplicación/Público objetivo'),
@@ -557,11 +554,7 @@ class Proyecto(models.Model):
         ),
         default=0,
     )
-    centro = models.ForeignKey(
-        'Centro',
-        on_delete=models.PROTECT,
-        related_name='proyectos',
-    )
+    centro = models.ForeignKey('Centro', on_delete=models.PROTECT, related_name='proyectos')
     convocatoria = models.ForeignKey('Convocatoria', on_delete=models.PROTECT)
     departamento = models.ForeignKey('Departamento', on_delete=models.PROTECT, null=True)
     estudio = models.ForeignKey(
@@ -772,10 +765,7 @@ class Proyecto(models.Model):
         proyectos = (
             Proyecto.objects.filter(convocatoria__id=anyo)
             .filter(aceptacion_coordinador=True)
-            .order_by(
-                'programa__nombre_corto',
-                'titulo',
-            )
+            .order_by('programa__nombre_corto', 'titulo')
         )
         datos_proyectos = [
             [
@@ -1026,10 +1016,7 @@ class RightsSupport(models.Model):
         permissions = (
             ('gestionar_correctores', _('Puede añadir/quitar usuarios al grupo Correctores')),
             ('asignar_correctores', _('Puede asignar un corrector de memoria a un proyecto')),
-            (
-                'hace_constar',
-                _('Puede generar PDFs de constancia de participación en proyectos'),
-            ),
+            ('hace_constar', _('Puede generar PDFs de constancia de participación en proyectos')),
         )
 
 
