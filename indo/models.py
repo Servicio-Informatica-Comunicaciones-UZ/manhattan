@@ -335,8 +335,7 @@ class Proyecto(models.Model):
         blank=True,
         null=True,
         help_text=_(
-            '''Necesidad a la que responde el proyecto, mejoras esperadas respecto al estado de la
-            cuestión, otros proyectos de innovación relacionados con el propuesto, conocimiento que
+            '''Otros proyectos de innovación relacionados con el propuesto, conocimiento que
             se genera y marco epistemológico o teórico que lo avala y descripción del equipo de
             trabajo para la realización del proyecto.'''
         ),
@@ -350,7 +349,7 @@ class Proyecto(models.Model):
         ),
     )
     metodos_estudio = models.TextField(
-        _('Métodos de estudio/experimentación y trabajo de campo'),
+        _('Métodos de estudio y trabajo de campo'),
         blank=True,
         null=True,
         help_text=_(
@@ -363,7 +362,7 @@ class Proyecto(models.Model):
         _('Mejoras esperadas en el proceso de enseñanza-aprendizaje y cómo se comprobarán.'),
         blank=True,
         null=True,
-        help_text=_('Método de evaluación, Resultados, Impacto (Eficiencia y Eficacia)'),
+        help_text=_('Método de evaluación, resultados e impacto (eficiencia y eficacia)'),
     )
     continuidad = models.TextField(
         _('Continuidad y Expansión'),
