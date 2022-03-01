@@ -368,7 +368,7 @@ class Proyecto(models.Model):
         _('Continuidad y Expansión'),
         blank=True,
         null=True,
-        help_text=_('Transferibilidad, Sostenibilidad, Difusión prevista'),
+        help_text=_('Transferibilidad, sostenibilidad y difusión prevista'),
     )
     tipo = models.TextField(
         _('Tipo de proyecto'),
