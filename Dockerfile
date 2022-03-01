@@ -94,7 +94,7 @@ ENV UWSGI_WORKERS=4 UWSGI_THREADS=1
 
 # uWSGI static file serving configuration (customize, or comment out if using Whitenoise or S3):
 ENV UWSGI_STATIC_MAP="/static/=/code/staticfiles/" UWSGI_STATIC_EXPIRES_URI="/static/.*\.[a-f0-9]{12,}\.(css|js|png|jpg|jpeg|gif|ico|woff|ttf|otf|svg|scss|pdf|map|txt) 86400"
-ENV UWSGI_STATIC_MAP2="/media/=/code/media/" UWSGI_STATIC_EXPIRES_URI="/media/.*/.*/.*\.[a-f0-9]{12,}\.(png|jpg|jpeg|gif|svg) 3600"
+ENV UWSGI_STATIC_MAP2="/media/=/code/" UWSGI_STATIC_EXPIRES_URI="/media/.*/.*/.*\.[a-f0-9]{12,}\.(png|jpg|jpeg|gif|svg) 3600"
 
 
 # Deny invalid hosts before they get to Django (uncomment and change to your hostname(s)):
