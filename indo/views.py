@@ -375,12 +375,7 @@ class CorrectorTableView(LoginRequiredMixin, PermissionRequiredMixin, SingleTabl
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.update(
-            {
-                'anyo': Convocatoria.get_ultima().id,
-                'form': CorrectorForm(),
-            }
-        )
+        context.update({'anyo': Convocatoria.get_ultima().id, 'form': CorrectorForm()})
         return context
 
     def get_queryset(self):
@@ -462,9 +457,11 @@ class EvaluacionView(LoginRequiredMixin, ChecksMixin, TemplateView):
         proyecto = get_object_or_404(Proyecto, pk=self.kwargs['pk'])
         context['anyo'] = proyecto.convocatoria.id
         context['proyecto'] = proyecto
-        context['criterios'] = Criterio.objects.filter(
-            convocatoria_id=proyecto.convocatoria_id
-        ).all()
+        context['criterios'] = (
+            Criterio.objects.filter(convocatoria_id=proyecto.convocatoria_id)
+            .filter(programas__contains=proyecto.programa.nombre_corto)
+            .all()
+        )
         context['dict_valoraciones'] = proyecto.get_dict_valoraciones(self.request.user.id)
         return context
 
@@ -721,7 +718,15 @@ class EvaluadorProyectoUpdateView(LoginRequiredMixin, PermissionRequiredMixin, C
             messages.warning(request, advertencia)
         nip_evaluadores = [str(nip) for nip in nip_evaluadores]
         # XXX - Desarrollo
-        # nip_evaluadores += ['136040', '327618', '329639', '370109', '408704', '181785']
+        nip_evaluadores += [
+            '136040',
+            '327618',
+            '329639',
+            '370109',
+            '408704',
+            '181785',
+            'superadmin',
+        ]
 
         # Creamos los usuarios que no existan ya en la aplicación.
         evaluadores = Group.objects.get(name='Evaluadores')
@@ -837,10 +842,7 @@ class ProyectoUPTableView(LoginRequiredMixin, PermissionRequiredMixin, SingleTab
         return (
             Proyecto.objects.filter(convocatoria__id=self.kwargs['anyo'])
             .filter(aceptacion_coordinador=True)
-            .order_by(
-                'programa__nombre_corto',
-                'titulo',
-            )
+            .order_by('programa__nombre_corto', 'titulo')
         )
 
 
@@ -880,12 +882,7 @@ class InvitacionView(LoginRequiredMixin, ChecksMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         proyecto = get_object_or_404(Proyecto, pk=self.kwargs['proyecto_id'])
-        context.update(
-            {
-                'anyo': proyecto.convocatoria.id,
-                'proyecto': proyecto,
-            }
-        )
+        context.update({'anyo': proyecto.convocatoria.id, 'proyecto': proyecto})
         return context
 
     def get_form_kwargs(self):
@@ -997,12 +994,7 @@ class ParticipanteAnyadirView(LoginRequiredMixin, ChecksMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         proyecto = get_object_or_404(Proyecto, pk=kwargs['proyecto_id'])
-        context.update(
-            {
-                'anyo': proyecto.convocatoria.id,
-                'proyecto': proyecto,
-            }
-        )
+        context.update({'anyo': proyecto.convocatoria.id, 'proyecto': proyecto})
         return context
 
     def post(self, request, *args, **kwargs):
@@ -2316,12 +2308,7 @@ class ProyectoVerCondicionesView(LoginRequiredMixin, ChecksMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         proyecto = get_object_or_404(Proyecto, pk=self.kwargs['pk'])
-        context.update(
-            {
-                'anyo': proyecto.convocatoria.id,
-                'proyecto': proyecto,
-            }
-        )
+        context.update({'anyo': proyecto.convocatoria.id, 'proyecto': proyecto})
         return context
 
     def test_func(self):
