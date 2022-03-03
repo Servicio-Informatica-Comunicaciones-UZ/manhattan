@@ -441,7 +441,7 @@ class EvaluacionVerView(LoginRequiredMixin, PermissionRequiredMixin, TemplateVie
         anyo = proyecto.convocatoria_id
         context['anyo'] = anyo
         context['proyecto'] = proyecto
-        context['criterios'] = Criterio.objects.filter(convocatoria_id=anyo).all()
+        context['criterios'] = Criterio.objects.filter(convocatoria_id=anyo).filter(programas__contains=proyecto.programa.nombre_corto).all()
         context['dict_valoraciones'] = proyecto.get_dict_valoraciones(asignacion.evaluador.id)
         return context
 
@@ -718,15 +718,7 @@ class EvaluadorProyectoUpdateView(LoginRequiredMixin, PermissionRequiredMixin, C
             messages.warning(request, advertencia)
         nip_evaluadores = [str(nip) for nip in nip_evaluadores]
         # XXX - Desarrollo
-        nip_evaluadores += [
-            '136040',
-            '327618',
-            '329639',
-            '370109',
-            '408704',
-            '181785',
-            'superadmin',
-        ]
+        # nip_evaluadores += ['136040', '327618', '329639', '370109', '408704', '181785']
 
         # Creamos los usuarios que no existan ya en la aplicación.
         evaluadores = Group.objects.get(name='Evaluadores')

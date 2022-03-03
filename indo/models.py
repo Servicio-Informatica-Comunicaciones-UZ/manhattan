@@ -127,7 +127,14 @@ class Criterio(models.Model):
         TEXTO = 'texto', _('Texto libre')
 
     convocatoria = models.ForeignKey('Convocatoria', on_delete=models.PROTECT)
-    programas = models.JSONField(_("programas en los que aplicar este criterio"), default=list)
+    programas = models.JSONField(
+        _('programas en los que aplicar este criterio'),
+        default=list,
+        help_text=_(
+            'Nombre de los programas entrecomillados, separados por comas, y todos ellos entre corchetes.<br>'
+            'Ejemplo: <span style="font-family: monospace;">["PIIDUZ", "PIET"]</span>'
+        ),
+    )
     parte = models.PositiveSmallIntegerField(_('parte'))
     peso = models.PositiveSmallIntegerField(_('peso'))
     descripcion = models.CharField(_('descripción'), max_length=255)

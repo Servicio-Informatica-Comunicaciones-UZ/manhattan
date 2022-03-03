@@ -9,8 +9,8 @@ admin.site.register(Convocatoria)
 
 @admin.register(Criterio)
 class Criterio(admin.ModelAdmin):
-    fields = ('convocatoria', 'parte', 'peso', 'descripcion', 'tipo')
-    list_display = ('parte', 'peso', 'descripcion')
+    fields = ('convocatoria', 'parte', 'peso', 'descripcion', 'tipo', 'programas')
+    list_display = ('parte', 'peso', 'descripcion', 'programas')
     list_display_links = ('descripcion',)
     list_filter = ('convocatoria',)
     ordering = ('-convocatoria', 'parte', 'peso')
