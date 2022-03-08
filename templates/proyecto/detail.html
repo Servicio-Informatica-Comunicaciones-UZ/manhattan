@@ -181,6 +181,11 @@
   <!-- Usuarios invitados -->
   <h3 id="invitaciones">{% trans 'Invitaciones' %}</h3>
   {% if invitados %}
+    {% if proyecto.en_borrador %}
+      <p>
+        {% trans 'Recuerde que las invitaciones no son efectivas hasta que <strong>presente</strong> su solicitud de proyecto.' %}
+      </p>
+    {% endif %}
   <div class="table-responsive">
     <table class="table table-hover table-striped table-sm cabecera-azul" aria-label="invitaciones">
       <thead>
