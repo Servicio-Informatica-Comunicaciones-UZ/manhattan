@@ -4,8 +4,7 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-# black = "*"  # pipenv does not look for beta releases and black only has beta releases
-               # Workaround: `pipenv install --dev --pre black`
+black = "*"
 coverage = "*"
 django-debug-toolbar = "*"
 pre-commit = "*"
@@ -14,7 +13,7 @@ rope = "*"
 
 [packages]
 bleach = "*"
-django = "==4.0.2"  # Remember to re-generate `requirements.txt`: `pipenv lock -r`
+django = "==4.0.3"  # Remember to re-generate `requirements.txt`: `pipenv lock -r`
 django-annoying = "*"
 django-crispy-forms = "*"
 django-filter = "*"
