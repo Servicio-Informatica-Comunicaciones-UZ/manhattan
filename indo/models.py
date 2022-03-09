@@ -131,8 +131,9 @@ class Criterio(models.Model):
         _('programas en los que aplicar este criterio'),
         default=list,
         help_text=_(
-            'Nombre de los programas entrecomillados, separados por comas, y todos ellos entre corchetes.<br>'
-            'Ejemplo: <span style="font-family: monospace;">["PIIDUZ", "PIET"]</span>'
+            '''Nombre de los programas entrecomillados, separados por comas,
+            y todos ellos entre corchetes.<br>
+            Ejemplo: <span style="font-family: monospace;">["PIIDUZ", "PIET"]</span>'''
         ),
     )
     parte = models.PositiveSmallIntegerField(_('parte'))
@@ -584,12 +585,6 @@ class Proyecto(models.Model):
     programa = models.ForeignKey('Programa', on_delete=models.PROTECT)
     visto_bueno_centro = models.BooleanField(_('Visto bueno del centro'), null=True)
     visto_bueno_estudio = models.BooleanField(_('Visto bueno del plan de estudios'), null=True)
-    evaluador = models.ForeignKey(
-        'accounts.CustomUser',
-        null=True,
-        on_delete=models.PROTECT,
-        related_name='proyectos_evaluados',
-    )
     evaluadores = models.ManyToManyField(
         'accounts.CustomUser', through='EvaluadorProyecto', related_name='proyectos_del_evaluador'
     )
