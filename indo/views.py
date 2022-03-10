@@ -441,7 +441,11 @@ class EvaluacionVerView(LoginRequiredMixin, PermissionRequiredMixin, TemplateVie
         anyo = proyecto.convocatoria_id
         context['anyo'] = anyo
         context['proyecto'] = proyecto
-        context['criterios'] = Criterio.objects.filter(convocatoria_id=anyo).filter(programas__contains=proyecto.programa.nombre_corto).all()
+        context['criterios'] = (
+            Criterio.objects.filter(convocatoria_id=anyo)
+            .filter(programas__contains=proyecto.programa.nombre_corto)
+            .all()
+        )
         context['dict_valoraciones'] = proyecto.get_dict_valoraciones(asignacion.evaluador.id)
         return context
 
@@ -2433,6 +2437,7 @@ class ResolucionListView(ListView):
     """Lista las resoluciones publicadas en el tablón de anuncios."""
 
     model = Resolucion
+    ordering = ['-fecha']
     template_name = 'resolucion/list.html'
 
     def get_context_data(self, **kwargs):
