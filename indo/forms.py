@@ -230,12 +230,9 @@ class InvitacionForm(forms.ModelForm):
                     'porque ya está vinculado a este proyecto.'
                 )
             )
-        # La participación de los estudiantes estará limitada a dos por proyecto
-        # (excepto en los PIPOUZ).
-        if (
-            self.proyecto.programa.nombre_corto != 'PIPOUZ'
-            and usuario.get_colectivo_principal() == 'EST'
-        ):
+        # En algunos programas la participación de los estudiantes puede estar limitada
+        # (por ejemplo a dos por proyecto)
+        if self.proyecto.programa.max_estudiantes and usuario.get_colectivo_principal() == 'EST':
             estudiantes = [
                 vinculado
                 for vinculado in vinculados
