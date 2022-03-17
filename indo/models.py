@@ -321,6 +321,7 @@ class Proyecto(models.Model):
             'pruebe a pegar usando Ctrl+Mayúsculas+V.'
         ),
     )
+    descripcion_txt = models.TextField(_('Descripción en texto plano'), null=True, max_length=4095)
     estado = models.CharField(
         choices=(
             ('ANULADO', 'Solicitud anulada'),
@@ -333,6 +334,7 @@ class Proyecto(models.Model):
             ('MEM_PRESENTADA', 'Memoria presentada'),
             ('MEM_NO_ADMITIDA', 'Memoria no admitida por el corrector'),
             ('MEM_ADMITIDA', 'Memoria admitida por el corrector'),
+            ('FINALIZADO_SIN_MEMORIA', 'Finalizado sin memoria'),
         ),
         default='BORRADOR',
         max_length=63,
