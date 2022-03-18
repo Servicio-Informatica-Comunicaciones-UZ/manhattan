@@ -1954,9 +1954,7 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
                         'titulo_proyecto': proyecto.titulo,
                         'programa_proyecto': f'{proyecto.programa.nombre_corto} '
                         + f'({proyecto.programa.nombre_largo})',
-                        'descripcion_proyecto': pypandoc.convert_text(
-                            proyecto.descripcion, 'md', format='html'
-                        ).replace('\\\n', '  \n'),
+                        'descripcion_proyecto': proyecto.descripcion_txt,
                         'site_url': settings.SITE_URL,
                     },
                 )
@@ -1996,9 +1994,7 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
                     'titulo_proyecto': proyecto.titulo,
                     'programa_proyecto': f'{proyecto.programa.nombre_corto} '
                     f'({proyecto.programa.nombre_largo})',
-                    'descripcion_proyecto': pypandoc.convert_text(
-                        proyecto.descripcion, 'md', format='html'
-                    ).replace('\\\n', '\n'),
+                    'descripcion_proyecto': proyecto.descripcion_txt,
                     'site_url': settings.SITE_URL,
                 },
             )
@@ -2033,9 +2029,7 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
                     'titulo_proyecto': proyecto.titulo,
                     'programa_proyecto': f'{proyecto.programa.nombre_corto} '
                     f'({proyecto.programa.nombre_largo})',
-                    'descripcion_proyecto': pypandoc.convert_text(
-                        proyecto.descripcion, 'md', format='html'
-                    ).replace('\\\n', '\n'),
+                    'descripcion_proyecto': proyecto.descripcion_txt,
                     'site_url': settings.SITE_URL,
                 },
             )
@@ -2092,6 +2086,29 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
 
     model = Proyecto
     template_name = 'proyecto/update.html'
+
+    def form_valid(self, form):
+        # This method is called when valid form data has been POSTed.
+        # It should return an HttpResponse.
+        proyecto = self.object
+
+        # Si se edita la descripción, actualizamos también la descripción en texto plano.
+        # Se usa al pasar las memorias a Zaguán, y al enviar mensajes de correo electrónico.
+        if 'descripcion' in form.fields:
+            proyecto.descripcion_txt = pypandoc.convert_text(
+                form.cleaned_data['descripcion'], 'plain', format='html'
+            )
+            proyecto.save(update_fields=['descripcion_txt'])
+
+        # Si se edita la financiación, actualizamos también la financiación en texto plano.
+        # Se usa al exportar las evaluaciones a una hoja de cálculo.
+        if 'financiacion' in form.fields:
+            proyecto.financiacion_txt = pypandoc.convert_text(
+                form.cleaned_data['financiacion'], 'plain', format='html'
+            )
+            proyecto.save(update_fields=['financiacion_txt'])
+
+        return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

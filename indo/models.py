@@ -1,5 +1,4 @@
 import datetime
-import pypandoc
 from django.core.validators import FileExtensionValidator
 from django.db import connection, models
 from django.urls import reverse
@@ -554,6 +553,7 @@ class Proyecto(models.Model):
             'Añadir información sobre otras fuentes de financiación.'
         ),
     )
+    financiacion_txt = models.TextField(_('Financiación en texto plano'), null=True)
     ayuda = models.PositiveIntegerField(
         _('Ayuda económica solicitada'),
         blank=True,
@@ -1068,7 +1068,7 @@ class Valoracion(models.Model):
             cursor.execute(
                 f'''
                 SELECT prog.nombre_corto, l.nombre,
-                  p.id, p.titulo, c.nombre, p.ayuda, p.financiacion
+                  p.id, p.titulo, c.nombre, p.ayuda, p.financiacion_txt
                 FROM indo_evaluadorproyecto ep
                 JOIN indo_proyecto p ON ep.proyecto_id = p.id
                 JOIN indo_programa prog ON p.programa_id = prog.id
@@ -1084,12 +1084,6 @@ class Valoracion(models.Model):
             # En su lugar, transponemos la matriz, y las añadiremos como filas.
             # A continuación, volveremos a transponer la matriz.
             valoraciones = list(zip(*rows))
-
-            # Convertimos el apartado «financiacion» de HTML a texto plano
-            valoraciones[-1] = [
-                pypandoc.convert_text(financiacion, 'plain', format='html') if financiacion else ''
-                for financiacion in valoraciones[-1]
-            ]
 
             # Columnas procedentes de la evaluación del proyecto
             for criterio in criterios:
