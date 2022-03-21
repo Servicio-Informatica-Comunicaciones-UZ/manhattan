@@ -17,6 +17,8 @@ from .views import (
     InvitacionView,
     MemoriaCorreccionUpdateView,
     MemoriaDetailView,
+    MemoriaMarcxmlView,
+    MemoriasMarcxmlListView,
     MemoriaPresentarView,
     MemoriaUpdateFieldView,
     MemoriasAsignadasTableView,
@@ -88,10 +90,11 @@ urlpatterns = [
         ParticipanteHaceConstarView.as_view(),
         name='hace_constar',
     ),
-    path('gestion/participante-proyecto/certificado/',
+    path(
+        'gestion/participante-proyecto/certificado/',
         ParticipanteCertificadoView.as_view(),
-        name='certificado'),
-
+        name='certificado',
+    ),
     # Listados de proyectos
     path('gestion/proyectos/<int:anyo>/', ProyectoTableView.as_view(), name='proyectos_table'),
     path(
@@ -175,6 +178,10 @@ urlpatterns = [
         'memoria/<int:proyecto_id>/edit/<int:sub_pk>/',
         MemoriaUpdateFieldView.as_view(),
         name='memoria_update_field',
+    ),
+    path('memoria/<int:pk>/marcxml/', MemoriaMarcxmlView.as_view(), name='memoria_marcxml'),
+    path(
+        'memoria/<int:anyo>/marcxmls/', MemoriasMarcxmlListView.as_view(), name='memorias_marcxml'
     ),
     path('memoria/<int:pk>/presentar/', MemoriaPresentarView.as_view(), name='memoria_presentar'),
     # Participante en proyecto

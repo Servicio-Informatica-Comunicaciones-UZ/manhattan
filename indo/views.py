@@ -1175,8 +1175,8 @@ class ParticipanteHaceConstarView(LoginRequiredMixin, PermissionRequiredMixin, T
         nip = request.POST.get('nip')
         email = request.POST.get('email')
         convocatoria = get_object_or_404(Convocatoria, pk=self.kwargs.get('anyo'))
-
         User = get_user_model()
+
         if nip:
             usuario = get_object_or_None(User, username=nip)
         elif email:
@@ -1222,16 +1222,17 @@ class ParticipanteHaceConstarView(LoginRequiredMixin, PermissionRequiredMixin, T
         documento_html.write_pdf(response)
         return response
 
+
 class ParticipanteCertificadoView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
     """
     Generar PDF de Certificado de participación de proyectos de una persona.
 
-    Destinado a los usuarios sin NIP. Los usuarios con NIP pueden obtener sus certificados en People.
+    Destinado a los usuarios sin NIP.
+    Los usuarios con NIP pueden obtener sus certificados en People.
     """
 
     permission_required = 'indo.hace_constar'
     permission_denied_message = _('Sólo los gestores pueden acceder a esta página')
-   
     template_name = 'participante-proyecto/form_certificado.html'
 
     def get_context_data(self, **kwargs):
@@ -1246,11 +1247,9 @@ class ParticipanteCertificadoView(LoginRequiredMixin, PermissionRequiredMixin, T
         return context
 
     def post(self, request, *args, **kwargs):
-       
         nif = request.POST.get('nif')
-        
-
         User = get_user_model()
+
         if nif:
             usuario = get_object_or_None(User, username=nif)
         else:
@@ -1262,13 +1261,16 @@ class ParticipanteCertificadoView(LoginRequiredMixin, PermissionRequiredMixin, T
             return super().get(request, *args, **kwargs)
 
         proyectos_participados = (
-            
-            Proyecto.objects.filter(estado__in=['MEM_ADMITIDA','FINALIZADO_SIN_MEMORIA'])  
+            Proyecto.objects.filter(estado__in=['MEM_ADMITIDA', 'FINALIZADO_SIN_MEMORIA'])
             .filter(
                 participantes__usuario=usuario,
-                participantes__tipo_participacion_id__in=['participante', 'coordinador', 'coordinador_2'],
+                participantes__tipo_participacion_id__in=[
+                    'participante',
+                    'coordinador',
+                    'coordinador_2',
+                ],
             )
-            .order_by('-convocatoria_id','titulo')
+            .order_by('-convocatoria_id', 'titulo')
             .all()
         )
 
@@ -1276,7 +1278,6 @@ class ParticipanteCertificadoView(LoginRequiredMixin, PermissionRequiredMixin, T
             'secretario': settings.SECRETARIO.strip('"'),
             'usuario': usuario,
             'proyecto_list': proyectos_participados,
-            
         }
 
         documento_html = HTML(
@@ -1288,12 +1289,11 @@ class ParticipanteCertificadoView(LoginRequiredMixin, PermissionRequiredMixin, T
             base_url=request.build_absolute_uri(),
         )
         response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename="certificado_{usuario.username}.pdf"'
+        response[
+            'Content-Disposition'
+        ] = f'attachment; filename="certificado_{usuario.username}.pdf"'
         documento_html.write_pdf(response)
         return response
-
-
-
 
 
 class ProyectosCierreEconomicoTableView(
@@ -1497,6 +1497,37 @@ class MemoriaDetailView(LoginRequiredMixin, ChecksMixin, TemplateView):
             self.es_coordinador(self.kwargs['pk'])
             or self.es_corrector_del_proyecto(self.kwargs['pk'])
             or self.request.user.has_perm('indo.ver_memorias')
+        )
+
+
+class MemoriaMarcxmlView(DetailView):
+    """Muestra el fichero MarcXML para catalogar una memoria."""
+
+    model = Proyecto
+    template_name = 'memoria/marc.xml'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({'url_memorias': settings.SITE_URL + settings.MEDIA_URL + 'memoria/'})
+        return context
+
+
+class MemoriasMarcxmlListView(ListView):
+    """Muestra el fichero MarcXML para catalogar las memorias de una convocatoria."""
+
+    model = Proyecto
+    template_name = 'memoria/marc_list.xml'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({'url_memorias': settings.SITE_URL + settings.MEDIA_URL + 'memoria/'})
+        return context
+
+    def get_queryset(self):
+        return (
+            Proyecto.objects.filter(convocatoria__id=self.kwargs['anyo'])
+            .filter(es_publicable=True)
+            .order_by('programa__nombre_corto', 'linea__nombre', 'titulo')
         )
 
 

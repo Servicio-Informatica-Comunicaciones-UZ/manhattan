@@ -1,0 +1,77 @@
+{# Ver [MARC 21 Format for Bibliographic Data](https://www.loc.gov/marc/bibliographic/) #}
+<record>
+
+    <datafield tag="024" ind1="8" ind2=" "> {# Other Standard Identifier #}
+        <subfield code="2">innovaciondocente</subfield>
+        <subfield code="a">{{ proyecto.id }}</subfield>
+    </datafield>
+
+    <datafield tag="037" ind1=" " ind2=" "> {# Source of Acquisition #}
+        <subfield code="a">INNODOC-{{ proyecto.convocatoria_id }}-{{ proyecto.id }}</subfield>
+    </datafield>
+
+    <datafield tag="041" ind1=" " ind2=" "> {# Language Code #}
+        <subfield code="a">spa</subfield>
+    </datafield>
+
+    <datafield tag="100" ind1=" " ind2=" "> {# Main Entry−Personal Name #}
+        {# El campo ORCID es un identificador del autor. Todo PDI de la UNIZAR tiene ORCID. #}
+        {# En caso de no existir ORCID, no debe haber subcampo 0. #}
+        {% if proyecto.coordinador.orcid %}
+            <subfield code="0">(orcid){{ proyecto.coordinador.orcid }}</subfield>
+        {% endif %}
+        <subfield code="a">{{ proyecto.coordinador.apellidos_nombre }}</subfield>
+    </datafield>
+
+    <datafield tag="245" ind1=" " ind2=" "> {# Title Statement #}
+        <subfield code="a">{{ proyecto.titulo }}</subfield>
+    </datafield>
+
+    <datafield tag="260" ind1=" " ind2=" "> {# Publication, Distribution, etc. (Imprint) #}
+        <subfield code="a">Zaragoza</subfield>
+        <subfield code="b">Universidad de Zaragoza</subfield>
+        <subfield code="c">{{ proyecto.convocatoria_id }}</subfield>
+    </datafield>
+
+    <datafield tag="520" ind1="3" ind2=" "> {# Summary, Etc. #}
+        <subfield code="a">{{ proyecto.descripcion_txt }}</subfield>
+    </datafield>
+
+    <datafield tag="540" ind1=" " ind2=" "> {# Terms Governing Use and Reproduction Note #}
+        <subfield code="9">info:eu-repo/semantics/openAccess</subfield>
+        <subfield code="a">{{ proyecto.licencia.identificador }}</subfield>
+        <subfield code="b">{{ proyecto.licencia.nombre }}</subfield>
+        <subfield code="u">{{ proyecto.licencia.url }}</subfield>
+    </datafield>
+
+    {# La etiqueta 700 se repetirá tantas veces como sea necesario para albergar a todos los autores #}
+    {% for participante in proyecto.usuarios_participantes %}
+        <datafield tag="700" ind1=" " ind2=" "> {# Added Entry−Personal Name #}
+            {% if participante.orcid %}
+                <subfield code="0">(orcid){{ participante.orcid }}</subfield>
+            {% endif %}
+            <subfield code="a">{{ participante.apellidos_nombre }}</subfield>
+        </datafield>
+    {% endfor %}
+
+    {# La etiqueta FFT se repetirá tantas veces como sea necesario para recoger el/los documento(s) asociado(s). #}
+    <datafield tag="FFT" ind1=" " ind2=" ">
+        <subfield code="a">{{ url_memorias }}{{ proyecto.convocatoria_id }}/{{ proyecto.programa.nombre_corto}}_{{ proyecto.id }}.pdf</subfield> {# URL accesible #}  <!-- XXX Generar enlaces convocatorias viejas -->
+        <subfield code="n">memoria_{{ proyecto.programa }}_{{ proyecto.convocatoria_id }}_{{ proyecto.id }}</subfield> {# Nombre que recibirá el documento #}
+        <subfield code="d">Memoria del proyecto</subfield> {# Descripción para humanos de los ficheros #}
+    </datafield>
+
+    <datafield tag="970" ind1=" " ind2=" ">
+        <subfield code="a">INNODOC-{{ proyecto.convocatoria_id }}-{{ proyecto.id }}</subfield>
+    </datafield>
+
+    {# La etiqueta 980 se emplea para categorizar los contenidos. #}
+    <datafield tag="980" ind1=" " ind2=" ">
+        <subfield code="a">INNODOC</subfield>
+        <subfield code="b">{{ proyecto.programa }}</subfield>
+        {% if proyecto.linea %}
+            <subfield code="c">{{ proyecto.linea }}</subfield>
+        {% endif %}
+    </datafield>
+
+</record>
