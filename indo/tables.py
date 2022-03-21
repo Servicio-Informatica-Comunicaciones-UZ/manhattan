@@ -212,8 +212,9 @@ class MemoriasAsignadasTable(tables.Table):
     """Muestra las memorias asignadas a un usuario corrector."""
 
     memoria = tables.Column(empty_values=(), orderable=False, verbose_name=_('Memoria'))
+    aceptacion_corrector = tables.BooleanColumn(null=True, verbose_name=_('Adm'))
+    es_publicable = tables.BooleanColumn(null=True, verbose_name=_('Pub'))
     valoracion = tables.Column(empty_values=(), orderable=False, verbose_name=_('Valoración'))
-    aceptacion_corrector = tables.BooleanColumn(null=True, verbose_name='Admitida')
     boton_valorar = tables.Column(empty_values=(), orderable=False, verbose_name='')
 
     def render_titulo(self, record):
@@ -227,6 +228,26 @@ class MemoriasAsignadasTable(tables.Table):
                 aria-label="{_('Ver la memoria del proyecto')}">
                   <span class="far fa-eye"></span>
                 </a>'''
+        )
+
+    def render_aceptacion_corrector(self, record):
+        return mark_safe(
+            f'''<span class="fas fa-check-circle text-success" title="{_('Admitida')}"></span>'''
+            if record.aceptacion_corrector is True
+            else f'''<span class="fas fa-times-circle text-danger" title="{_('No admitida')}">
+                 </span>'''
+            if record.aceptacion_corrector is False
+            else '—'
+        )
+
+    def render_es_publicable(self, record):
+        return mark_safe(
+            f'''<span class="fas fa-check-circle text-success" title="{_('Publicable')}"></span>'''
+            if record.es_publicable is True
+            else f'''<span class="fas fa-times-circle text-danger" title="{_('No publicable')}">
+                 </span>'''
+            if record.es_publicable is False
+            else '—'
         )
 
     def render_valoracion(self, record):
@@ -262,6 +283,7 @@ class MemoriasAsignadasTable(tables.Table):
             'titulo',
             'memoria',
             'aceptacion_corrector',
+            'es_publicable',
             'valoracion',
             'boton_valorar',
         )
@@ -294,20 +316,9 @@ class MemoriaProyectosTable(tables.Table):
         )
 
     memoria = tables.Column(empty_values=(), orderable=False, verbose_name=_('Memoria'))
-    valoracion = tables.Column(empty_values=(), orderable=False, verbose_name=_('Valoración'))
     aceptacion_corrector = tables.BooleanColumn(null=True, verbose_name=_('Adm'))
     es_publicable = tables.BooleanColumn(null=True, verbose_name=_('Pub'))
-
-    def render_valoracion(self, record):
-        enlace = reverse('ver_correccion', args=[record.id])
-        return mark_safe(
-            f'''<a href="{enlace}" title="{_('Ver la valoración del corrector de la memoria')}"
-                aria-label="{_('Ver la valoración del corrector de la memoria')}">
-                  <span class="far fa-eye"></span>
-                </a>'''
-            if record.aceptacion_corrector is not None
-            else '—'
-        )
+    valoracion = tables.Column(empty_values=(), orderable=False, verbose_name=_('Valoración'))
 
     def render_aceptacion_corrector(self, record):
         return mark_safe(
@@ -329,6 +340,17 @@ class MemoriaProyectosTable(tables.Table):
             else '—'
         )
 
+    def render_valoracion(self, record):
+        enlace = reverse('ver_correccion', args=[record.id])
+        return mark_safe(
+            f'''<a href="{enlace}" title="{_('Ver la valoración del corrector de la memoria')}"
+                aria-label="{_('Ver la valoración del corrector de la memoria')}">
+                  <span class="far fa-eye"></span>
+                </a>'''
+            if record.aceptacion_corrector is not None
+            else '—'
+        )
+
     class Meta:
         attrs = {'class': 'table table-striped table-hover cabecera-azul'}
         model = Proyecto
@@ -338,9 +360,9 @@ class MemoriaProyectosTable(tables.Table):
             'id',
             'titulo',
             'memoria',
-            'valoracion',
             'aceptacion_corrector',
             'es_publicable',
+            'valoracion',
         )
         empty_text = _('Por el momento no se ha aceptado ningún proyecto.')
         template_name = 'django_tables2/bootstrap4.html'
