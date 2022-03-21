@@ -106,6 +106,17 @@ class HaceConstarForm(forms.Form):
         required=False,
     )
 
+class CertificadoForm(forms.Form):
+    nif = forms.CharField(
+        label=_('NIF'),
+        help_text=_(
+            'En ausencia de NIP asociado, NIF de la persona para la que desee generar'
+            ' el Certificado.'
+        ),
+        max_length=20,
+        required=True,
+    )    
+
 
 class CorrectorForm(forms.Form):
     nip = forms.IntegerField(

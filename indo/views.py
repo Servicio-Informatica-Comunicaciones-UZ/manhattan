@@ -58,6 +58,7 @@ from .forms import (
     CorreccionForm,
     CorrectorForm,
     EvaluadorForm,
+    CertificadoForm,
     HaceConstarForm,
     InvitacionForm,
     MemoriaRespuestaForm,
@@ -1220,6 +1221,79 @@ class ParticipanteHaceConstarView(LoginRequiredMixin, PermissionRequiredMixin, T
         response['Content-Disposition'] = f'attachment; filename="hace_constar_{musername}.pdf"'
         documento_html.write_pdf(response)
         return response
+
+class ParticipanteCertificadoView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
+    """
+    Generar PDF de Certificado de participación de proyectos de una persona.
+
+    Destinado a los usuarios sin NIP. Los usuarios con NIP pueden obtener sus certificados en People.
+    """
+
+    permission_required = 'indo.hace_constar'
+    permission_denied_message = _('Sólo los gestores pueden acceder a esta página')
+   
+    template_name = 'participante-proyecto/form_certificado.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(
+            {
+                'anyo': Convocatoria.get_ultima().id,
+                'form': CertificadoForm(),
+                'url_anterior': self.request.headers.get('Referer', reverse('home')),
+            }
+        )
+        return context
+
+    def post(self, request, *args, **kwargs):
+       
+        nif = request.POST.get('nif')
+        
+
+        User = get_user_model()
+        if nif:
+            usuario = get_object_or_None(User, username=nif)
+        else:
+            messages.error(request, _('Debe introducir un NIF.'))
+            return super().get(request, *args, **kwargs)
+
+        if not usuario:
+            messages.error(request, _('No se ha encontrado ese usuario.'))
+            return super().get(request, *args, **kwargs)
+
+        proyectos_participados = (
+            
+            Proyecto.objects.filter(estado__in=['MEM_ADMITIDA','FINALIZADO_SIN_MEMORIA'])  
+            .filter(
+                participantes__usuario=usuario,
+                participantes__tipo_participacion_id__in=['participante', 'coordinador', 'coordinador_2'],
+            )
+            .order_by('-convocatoria_id','titulo')
+            .all()
+        )
+
+        contexto = {
+            'secretario': settings.SECRETARIO.strip('"'),
+            'usuario': usuario,
+            'proyecto_list': proyectos_participados,
+            
+        }
+
+        documento_html = HTML(
+            string=render_to_string(
+                'participante-proyecto/certificado.html', context=contexto, request=request
+            ),
+            # En la plantilla, las URL de los CSS y las imágenes son relativas.
+            # Al usar `HTML(string=...)` WeasyPrint no sabe cuál es la URL base, hay que dársela.
+            base_url=request.build_absolute_uri(),
+        )
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="certificado_{usuario.username}.pdf"'
+        documento_html.write_pdf(response)
+        return response
+
+
+
 
 
 class ProyectosCierreEconomicoTableView(
