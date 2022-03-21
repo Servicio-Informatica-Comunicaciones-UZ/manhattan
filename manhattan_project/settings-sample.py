@@ -388,6 +388,8 @@ PASS_VINCULACIONES = os.environ.get('PASS_VINCULACIONES')
 
 # Titular actual del Vicerrectorado de Política Académica
 VICERRECTOR = os.environ.get('VICERRECTOR')
+# Titular actual de Secretaría General
+SECRETARIO = os.environ.get('SECRETARIO')
 
 # Tareas en segundo plano
 # pool = ConnectionPool(host='localhost', port=6379, max_connections=20)

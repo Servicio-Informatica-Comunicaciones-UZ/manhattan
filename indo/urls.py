@@ -25,6 +25,7 @@ from .views import (
     ParticipanteDeclinarView,
     ParticipanteDeleteView,
     ParticipanteHaceConstarView,
+    ParticipanteCertificadoView,
     ParticipanteRenunciarView,
     ProyectoAceptarView,
     ProyectoAnularView,
@@ -87,6 +88,10 @@ urlpatterns = [
         ParticipanteHaceConstarView.as_view(),
         name='hace_constar',
     ),
+    path('gestion/participante-proyecto/certificado/',
+        ParticipanteCertificadoView.as_view(),
+        name='certificado'),
+
     # Listados de proyectos
     path('gestion/proyectos/<int:anyo>/', ProyectoTableView.as_view(), name='proyectos_table'),
     path(
