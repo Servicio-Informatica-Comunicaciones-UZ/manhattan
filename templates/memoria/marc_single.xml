@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 {# Ver [MARC 21 Format for Bibliographic Data](https://www.loc.gov/marc/bibliographic/) #}
 <collection xmlns="http://www.loc.gov/MARC21/slim">
-{% for proyecto in proyecto_list %}
-    {% include 'memoria/marc.xml' %}
-{% endfor %}
+{% include 'memoria/marc.xml' %}
 </collection>

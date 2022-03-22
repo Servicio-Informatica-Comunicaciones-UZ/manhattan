@@ -1504,12 +1504,16 @@ class MemoriaMarcxmlView(DetailView):
     """Muestra el fichero MarcXML para catalogar una memoria."""
 
     model = Proyecto
-    template_name = 'memoria/marc.xml'
+    template_name = 'memoria/marc_single.xml'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update({'url_memorias': settings.SITE_URL + settings.MEDIA_URL + 'memoria/'})
         return context
+
+    def get(self, request, *args, **kwargs):
+        self.content_type = 'application/xml'
+        return super().get(request, *args, **kwargs)
 
 
 class MemoriasMarcxmlListView(ListView):
@@ -1529,6 +1533,10 @@ class MemoriasMarcxmlListView(ListView):
             .filter(es_publicable=True)
             .order_by('programa__nombre_corto', 'linea__nombre', 'titulo')
         )
+
+    def get(self, request, *args, **kwargs):
+        self.content_type = 'application/xml'
+        return super().get(request, *args, **kwargs)
 
 
 class MemoriaPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
