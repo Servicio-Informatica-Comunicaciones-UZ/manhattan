@@ -174,8 +174,10 @@ class ChecksMixin(UserPassesTestMixin):
 
         # Los colaboradores extraordinarios constan como PDI en Gestión de Identidades,
         # pero no tienen relación contractual con la universidad y no pueden coordinar proyectos.
-        if colectivos_del_usuario == ['PDI'] and usuario_actual.cuerpo_pod == 'COLEX':
-            return False
+        if usuario_actual.cuerpo_pod == 'COLEX':
+            return any(
+                col_autorizado in colectivos_del_usuario for col_autorizado in ['PAS', 'ADS']
+            )
 
         return any(
             col_autorizado in colectivos_del_usuario for col_autorizado in ['PAS', 'ADS', 'PDI']
