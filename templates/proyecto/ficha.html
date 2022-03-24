@@ -39,6 +39,13 @@
         <td>{{ proyecto.id }}</td>
       </tr>
 
+      {% if proyecto.codigo %}
+      <tr>
+        <th scope="row"><strong>{% trans 'Código del proyecto' %}</strong>:</th>
+        <td>{{ proyecto.codigo }}</td>
+      </tr>
+      {% endif %}
+
       {% if proyecto.centro %}
       <tr>
         <th scope="row"><strong>{% trans 'Centro' %}</strong>:</th>
