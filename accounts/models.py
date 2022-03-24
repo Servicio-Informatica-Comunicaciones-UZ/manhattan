@@ -65,6 +65,7 @@ class CustomUser(AbstractUser):
         _('Cód. departamentos'), max_length=127, blank=True, null=True
     )
     colectivos = models.CharField(max_length=127, blank=True, null=True)
+    cuerpo_pod = models.CharField(_('Cuerpo POD'), max_length=15, blank=True, null=True)
     orcid = models.CharField(max_length=19, blank=True, null=True)
 
     class Meta:

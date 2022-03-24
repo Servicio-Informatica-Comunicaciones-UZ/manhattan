@@ -172,6 +172,11 @@ class ChecksMixin(UserPassesTestMixin):
         usuario_actual = self.request.user
         colectivos_del_usuario = json.loads(usuario_actual.colectivos)
 
+        # Los colaboradores extraordinarios constan como PDI en Gestión de Identidades,
+        # pero no tienen relación contractual con la universidad y no pueden coordinar proyectos.
+        if colectivos_del_usuario == ['PDI'] and usuario_actual.cuerpo_pod == 'COLEX':
+            return False
+
         return any(
             col_autorizado in colectivos_del_usuario for col_autorizado in ['PAS', 'ADS', 'PDI']
         )
@@ -1699,6 +1704,10 @@ class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
         context['permitir_anyadir_sin_invitacion'] = self.request.user.has_perm(
             'indo.editar_proyecto'
         ) and (
+            # Si todavía se está dentro del plazo para que los invitados acepten participar,
+            # no hay que añadirlos directamente como participantes, sino invitarles y que acepten.
+            # Como la solicitud ya ha sido presentada, no se enviará notificacion de la invitación,
+            # así que deberá comunicárselo el propio coordinador.
             self.object.convocatoria.fecha_max_aceptos
             < date.today()
             < self.object.convocatoria.fecha_max_modificacion_equipos
