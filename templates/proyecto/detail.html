@@ -12,7 +12,7 @@
     <p>
       {% trans 'Puede editar su solicitud tantas veces como desee.' %}<br />
       {% trans 'Cuando esté satisfecho, pulse el botón «Presentar».' %}
-      {% trans 'Una vez haya presentado la solicitud, ya no podrá modificarla.' %}
+      {% trans 'Una vez haya presentado la solicitud, ya <strong>no podrá hacer ninguna modificación</strong> (ni siquiera invitar a más personas).' %}
     </p>
     <p>
       {% trans 'Las invitaciones a participar en el proyecto se enviarán por correo electrónico <strong>cuando presente la solicitud</strong>.' %}<br>
@@ -402,7 +402,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <p>{% trans "Una vez presentada ya no podrá hacer ningún cambio." %}</p>
+        <p>{% trans "Una vez presentada ya no podrá hacer <strong>ningún cambio</strong> (ni siquiera invitar a más personas)." %}</p>
         <p>
           {% blocktrans %}Se enviarán mensajes informativos a las personas invitadas y,
           en su caso, a quien deba dar su visto bueno.{% endblocktrans %}
