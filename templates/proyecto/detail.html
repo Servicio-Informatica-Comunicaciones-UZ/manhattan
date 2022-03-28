@@ -226,7 +226,7 @@
   <p>{% trans 'Aquí aparecerán las personas a las que invite a participar en este proyecto.' %}</p>
   {% endif %}
 
-  {% if permitir_edicion %}
+  {% if permitir_invitar %}
   <p>
     <a href="{% url 'participante_invitar' proyecto.id %}" class="btn btn-info btn-sm">
       <span class="fas fa-plus" aria-hidden="true"></span>&nbsp; {% trans 'Añadir' %}

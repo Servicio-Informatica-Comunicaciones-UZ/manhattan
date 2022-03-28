@@ -78,11 +78,7 @@ class CorreccionForm(forms.ModelForm):
     es_publicable = forms.ChoiceField(widget=forms.RadioSelect, choices=BOOL_CHOICES)
 
     class Meta:
-        fields = (
-            'aceptacion_corrector',
-            'es_publicable',
-            'observaciones_corrector',
-        )
+        fields = ('aceptacion_corrector', 'es_publicable', 'observaciones_corrector')
         model = Proyecto
 
 
@@ -94,7 +90,7 @@ class HaceConstarForm(forms.Form):
             ' de la persona para la que desee generar el Hace Constar.'
         ),
         min_value=0,
-        max_value=9999999,
+        max_value=9_999_999,
         required=False,
     )
     email = forms.EmailField(
@@ -106,6 +102,7 @@ class HaceConstarForm(forms.Form):
         required=False,
     )
 
+
 class CertificadoForm(forms.Form):
     nif = forms.CharField(
         label=_('NIF'),
@@ -115,7 +112,7 @@ class CertificadoForm(forms.Form):
         ),
         max_length=20,
         required=True,
-    )    
+    )
 
 
 class CorrectorForm(forms.Form):
@@ -126,7 +123,7 @@ class CorrectorForm(forms.Form):
             ' de la persona a añadir al grupo de correctores de memorias.'
         ),
         min_value=0,
-        max_value=9999999,
+        max_value=9_999_999,
         required=True,
     )
 
@@ -288,10 +285,7 @@ class ProyectoFilterFormHelper(FormHelper):
     layout = Layout(
         Fieldset(
             '<span class="fas fa-filter"></span> ' + str(_('Filtrar proyectos')),
-            Div(
-                InlineField('estado', wrapper_class='col-4'),
-                css_class='row',
-            ),
+            Div(InlineField('estado', wrapper_class='col-4'), css_class='row'),
             css_class='col-10 border p-3',
         ),
         ButtonHolder(Submit('submit', _('Filtrar')), css_class='col-2 text-center'),

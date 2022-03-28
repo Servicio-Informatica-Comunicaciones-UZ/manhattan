@@ -42,7 +42,9 @@
     <p>{% trans 'No coordina ningún proyecto.' %}</p>
   {% endif %}
 
-  <p><a href="{% url 'proyecto_new' %}" class="btn btn-info">{% trans "Solicitar nuevo proyecto" %}</a></p>
+  {% if permitir_solicitar %}
+    <p><a href="{% url 'proyecto_new' %}" class="btn btn-info">{% trans "Solicitar nuevo proyecto" %}</a></p>
+  {% endif %}
   <br /><br />
 
   <h1 id="participados">{% trans "Proyectos en los que participo" %} <small>{{ anyo }}</small></h1>

@@ -168,7 +168,7 @@ class ChecksMixin(UserPassesTestMixin):
 
     def es_pas_o_pdi(self):
         """Devuelve si el usuario actual es PAS o PDI de la UZ o de sus centros adscritos."""
-        self.permission_denied_message = _('Usted no es PAS ni PDI.')
+        self.permission_denied_message = _('Usted no está contratado como PAS o PDI.')
         usuario_actual = self.request.user
         colectivos_del_usuario = json.loads(usuario_actual.colectivos)
 
@@ -1703,13 +1703,19 @@ class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
             self.es_coordinador(self.object.id) and self.object.en_borrador()
         ) or self.request.user.has_perm('indo.editar_proyecto')
 
+        context['permitir_invitar'] = (
+            context['permitir_edicion']
+            and date.today() <= self.object.convocatoria.fecha_max_aceptos
+        )
+
         context['permitir_anyadir_sin_invitacion'] = self.request.user.has_perm(
             'indo.editar_proyecto'
         ) and (
             # Si todavía se está dentro del plazo para que los invitados acepten participar,
-            # no hay que añadirlos directamente como participantes, sino invitarles y que acepten.
+            # los gestores no pueden añadirlos directamente como participantes,
+            # sino que deben invitarles para que acepten la invitación.
             # Como la solicitud ya ha sido presentada, no se enviará notificacion de la invitación,
-            # así que deberá comunicárselo el propio coordinador.
+            # así que deberá comunicárselo al invitado el propio coordinador.
             self.object.convocatoria.fecha_max_aceptos
             < date.today()
             < self.object.convocatoria.fecha_max_modificacion_equipos
@@ -2501,7 +2507,7 @@ class ProyectosAceptadosTableView(ExportMixin, PagedFilteredTableView):
         )
 
 
-class ProyectosUsuarioView(LoginRequiredMixin, TemplateView):
+class ProyectosUsuarioView(LoginRequiredMixin, ChecksMixin, TemplateView):
     """Lista los proyectos a los que está vinculado el usuario actual."""
 
     template_name = 'proyecto/mis-proyectos.html'
@@ -2528,6 +2534,10 @@ class ProyectosUsuarioView(LoginRequiredMixin, TemplateView):
             .exclude(estado='ANULADO')
             .order_by('programa__nombre_corto', 'linea__nombre', 'titulo')
             .all()
+        )
+        convocatoria = get_object_or_None(Convocatoria, pk=kwargs['anyo'])
+        context['permitir_solicitar'] = (
+            self.es_pas_o_pdi() and date.today() <= convocatoria.fecha_max_solicitudes
         )
         context['proyectos_participados'] = (
             Proyecto.objects.filter(
@@ -2572,6 +2582,11 @@ class ProyectosUsuarioView(LoginRequiredMixin, TemplateView):
             )
 
         return context
+
+    # Para usar `es_pas_o_pdi()` necesitamos `ChecksMixin`,
+    # lo que nos obliga a implementar `test_func()`.
+    def test_func(self):
+        return True
 
 
 class ResolucionListView(ListView):
