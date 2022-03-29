@@ -265,12 +265,16 @@ class ParticipanteProyecto(models.Model):
     )
 
     def get_cargo(self):
-        if self.tipo_participacion.nombre == 'coordinador':
+        if self.tipo_participacion_id == 'coordinador':
             return _('Coordinadora') if self.usuario.sexo == 'F' else _('Coordinador')
-        if self.tipo_participacion.nombre == 'coordinador_2':
+        if self.tipo_participacion_id == 'coordinador_2':
             if self.usuario.sexo == 'F':
                 return _('Coordinadora auxiliar')
             return _('Coordinador auxiliar')
+        if self.tipo_participacion_id == 'invitacion_rehusada':
+            return _('Invitación declinada')
+        if self.tipo_participacion_id == 'invitado':
+            return -('Invitada') if self.usuario.sexo == 'F' else _('Invitado')
         return _('Participante')
 
 

@@ -111,6 +111,9 @@
                   <a class="dropdown-item" href="{% url 'proyectos_table' anyo %}">
                     <span class="fas fa-th-list"></span>&nbsp; {% trans "Proyectos" %}
                   </a>
+		  <a class="dropdown-item" href="{% url 'proyectos_de_un_usuario_form' anyo %}">
+		    <span class="fas fa-th-list"></span>&nbsp; {% trans "Proyectos de un usuario" %}
+		  </a>
                   <a class="dropdown-item" href="{% url 'evaluadores_table' anyo %}">
                     <span class="fas fa-balance-scale"></span>&nbsp; {% trans "Asignación de evaluadores" %}
                   </a>

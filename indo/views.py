@@ -64,6 +64,7 @@ from .forms import (
     MemoriaRespuestaForm,
     ProyectoFilterFormHelper,
     ProyectoForm,
+    ProyectosDeUnUsuarioForm,
     ResolucionForm,
 )
 from .models import (
@@ -2587,6 +2588,65 @@ class ProyectosUsuarioView(LoginRequiredMixin, ChecksMixin, TemplateView):
     # lo que nos obliga a implementar `test_func()`.
     def test_func(self):
         return True
+
+
+class ProyectosDeUnUsuarioFormView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
+    """Muestra un formulario para buscar los proyectos a los que está vinculado un usuario"""
+
+    permission_required = 'indo.listar_proyectos'
+    permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
+    template_name = 'gestion/proyecto/proyectos_de_un_usuario_form.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(
+            {
+                'anyo': self.kwargs.get('anyo'),
+                'convocatorias': Convocatoria.objects.order_by('-id').all()[:5],
+                'form': ProyectosDeUnUsuarioForm(),
+            }
+        )
+        return context
+
+    def post(self, request, *args, **kwargs):
+        nip = request.POST.get('nip')
+        email = request.POST.get('email')
+        User = get_user_model()
+
+        if nip:
+            usuario = get_object_or_None(User, username=nip)
+        elif email:
+            usuario = get_object_or_None(User, email=email)
+        else:
+            messages.error(request, _('Debe introducir un NIP o una dirección de e-mail.'))
+            return super().get(request, *args, **kwargs)
+
+        if not usuario:
+            messages.error(request, _('No se ha encontrado ese usuario.'))
+            return super().get(request, *args, **kwargs)
+
+        return redirect('proyectos_de_un_usuario', self.kwargs.get('anyo'), usuario.id)
+
+
+class ProyectosDeUnUsuarioView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
+    """Lista todos los proyectos vinculados a un usuario en una convocatoria"""
+
+    model = ParticipanteProyecto
+    permission_required = 'indo.listar_proyectos'
+    permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
+    template_name = 'gestion/proyecto/proyectos_de_un_usuario.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        User = get_user_model()
+        usuario = get_object_or_404(User, id=self.kwargs.get('usuario_id'))
+        context['convocatorias'] = Convocatoria.objects.order_by('-id').all()[:5]
+        context['usuario'] = usuario
+        context['vinculaciones'] = usuario.vinculaciones.filter(
+            proyecto__convocatoria_id=self.kwargs.get('anyo')
+        )
+        return context
 
 
 class ResolucionListView(ListView):

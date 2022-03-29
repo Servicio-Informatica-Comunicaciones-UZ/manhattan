@@ -50,6 +50,8 @@ from .views import (
     ProyectosAceptadosCentrosListView,
     ProyectosAceptadosTableView,
     ProyectosCsvView,
+    ProyectosDeUnUsuarioView,
+    ProyectosDeUnUsuarioFormView,
     ProyectosEvaluadosTableView,
     ProyectosNotificarView,
     ProyectosUpCsvView,
@@ -79,11 +81,7 @@ urlpatterns = [
     ),
     path('gestion/corrector/', CorrectorTableView.as_view(), name='correctores_table'),
     path('gestion/corrector/anyadir/', CorrectorAnyadirView.as_view(), name='corrector_anyadir'),
-    path(
-        'gestion/corrector/cesar/',
-        CorrectorCesarView.as_view(),
-        name='corrector_cesar',
-    ),
+    path('gestion/corrector/cesar/', CorrectorCesarView.as_view(), name='corrector_cesar'),
     # Participantes
     path(
         'gestion/participante-proyecto/<int:anyo>/hace-constar/',
@@ -146,6 +144,16 @@ urlpatterns = [
         'gestion/proyectos/<int:anyo>/evaluadores/',
         ProyectoEvaluadorTableView.as_view(),
         name='evaluadores_table',
+    ),
+    path(
+        'gestion/proyectos/<int:anyo>/usuario',
+        ProyectosDeUnUsuarioFormView.as_view(),
+        name='proyectos_de_un_usuario_form',
+    ),
+    path(
+        'gestion/proyectos/<int:anyo>/<int:usuario_id>',
+        ProyectosDeUnUsuarioView.as_view(),
+        name='proyectos_de_un_usuario',
     ),
     # Gestión de un proyecto
     path('gestion/evaluacion/<int:pk>/', EvaluacionVerView.as_view(), name='ver_evaluacion'),
