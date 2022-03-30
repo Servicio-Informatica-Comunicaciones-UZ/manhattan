@@ -9,9 +9,9 @@ services:
         env_file: .env
         ports:
             - protocol: tcp
-              published: 8000
+              published: 8005
               target: 8000
-        restart: on-failure
+        restart: always
         volumes:
             - ./media:/code/media:rw
             - ./cola:/code/cola:rw
