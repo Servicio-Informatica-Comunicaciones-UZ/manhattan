@@ -2558,6 +2558,7 @@ class ProyectosUsuarioView(LoginRequiredMixin, ChecksMixin, TemplateView):
                 participantes__usuario=usuario,
                 participantes__tipo_participacion_id='participante',
             )
+            .exclude(estado='ANULADO')
             .order_by('programa__nombre_corto', 'linea__nombre', 'titulo')
             .all()
         )
