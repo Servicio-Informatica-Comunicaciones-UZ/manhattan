@@ -346,7 +346,7 @@
       <span class="fas fa-step-backward"></span> {% trans 'Retroceder' %}
     </a>
 
-    {% if permitir_edicion and proyecto.en_borrador %}
+    {% if permitir_edicion and proyecto.en_borrador or es_gestor and proyecto.estado == 'SOLICITADO' %}
     <button class="btn btn-danger" data-toggle="modal" data-target="#anularModal" type="button">
       <span class="fas fa-trash-alt"></span> {% trans 'Anular' %}
     </button>

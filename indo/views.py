@@ -1434,7 +1434,17 @@ class ProyectoAnularView(LoginRequiredMixin, ChecksMixin, RedirectView):
         return super().post(request, *args, **kwargs)
 
     def test_func(self):
-        return self.es_coordinador(self.kwargs['pk'])
+        proyecto = get_object_or_404(Proyecto, pk=self.kwargs.get('pk'))
+        if proyecto.estado not in ('BORRADOR', 'SOLICITADO'):
+            self.permission_denied_message = _(
+                f'''El estado actual del proyecto ({proyecto.get_estado_display()})
+                no permite anular la solicitud.'''
+            )
+            return False
+
+        return self.es_coordinador(self.kwargs['pk']) or self.request.user.has_perm(
+            'indo.editar_proyecto'
+        )
 
 
 class MemoriaDetailView(LoginRequiredMixin, ChecksMixin, TemplateView):
@@ -1731,6 +1741,8 @@ class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
             context['object'].estado = 'SOLICITADO'
 
         context['es_coordinador'] = self.es_coordinador(self.object.id)
+
+        context['es_gestor'] = self.request.user.has_perm('indo.editar_proyecto')
 
         context['url_anterior'] = self.request.headers.get('Referer', reverse('home'))
 
