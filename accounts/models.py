@@ -162,10 +162,14 @@ class CustomUser(AbstractUser):
         return None
 
     def get_num_equipos(self, anyo):
-        '''Devuelve el número de equipos de trabajo en los que participa el usuario.'''
-        num_como_participante = self.vinculaciones.filter(
-            tipo_participacion='participante', proyecto__convocatoria_id=anyo
-        ).count()
+        """Devuelve el número de equipos de trabajo en los que participa el usuario."""
+        num_como_participante = (
+            self.vinculaciones.filter(
+                tipo_participacion='participante', proyecto__convocatoria_id=anyo
+            )
+            .exclude(proyecto__estado='ANULADO')
+            .count()
+        )
         num_como_coordinador = self.vinculaciones.filter(
             tipo_participacion__in=['coordinador', 'coordinador_principal'],
             proyecto__convocatoria_id=anyo,
