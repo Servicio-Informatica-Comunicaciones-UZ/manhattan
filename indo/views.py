@@ -1188,7 +1188,14 @@ class ParticipanteHaceConstarView(LoginRequiredMixin, PermissionRequiredMixin, T
         if nip:
             usuario = get_object_or_None(User, username=nip)
         elif email:
-            usuario = get_object_or_None(User, email=email)
+            try:
+                usuario = get_object_or_None(User, email=email)
+            except Exception:
+                messages.error(
+                    request,
+                    _('Se produjo un error al buscar ese e-mail (¿tal vez esté duplicado?).'),
+                )
+                return super().get(request, *args, **kwargs)
         else:
             messages.error(request, _('Debe introducir un NIP o una dirección de e-mail.'))
             return super().get(request, *args, **kwargs)
@@ -2629,7 +2636,14 @@ class ProyectosDeUnUsuarioFormView(LoginRequiredMixin, PermissionRequiredMixin, 
         if nip:
             usuario = get_object_or_None(User, username=nip)
         elif email:
-            usuario = get_object_or_None(User, email=email)
+            try:
+                usuario = get_object_or_None(User, email=email)
+            except Exception:
+                messages.error(
+                    request,
+                    _('Se produjo un error al buscar ese e-mail (¿tal vez esté duplicado?).'),
+                )
+                return super().get(request, *args, **kwargs)
         else:
             messages.error(request, _('Debe introducir un NIP o una dirección de e-mail.'))
             return super().get(request, *args, **kwargs)

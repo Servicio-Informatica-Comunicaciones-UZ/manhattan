@@ -274,7 +274,7 @@ class ParticipanteProyecto(models.Model):
         if self.tipo_participacion_id == 'invitacion_rehusada':
             return _('Invitación declinada')
         if self.tipo_participacion_id == 'invitado':
-            return -('Invitada') if self.usuario.sexo == 'F' else _('Invitado')
+            return ('Invitada') if self.usuario.sexo == 'F' else _('Invitado')
         return _('Participante')
 
 
