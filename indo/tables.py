@@ -1,6 +1,5 @@
 # Third-party
 import django_tables2 as tables
-import pypandoc
 
 # Django
 from django.contrib.auth import get_user_model
@@ -387,10 +386,7 @@ class ProyectosAceptadosTable(tables.Table):
     def render_coordinador(self, record):
         return record.coordinador.full_name
 
-    descripcion = tables.Column(visible=False)
-
-    def render_descripcion(self, record):
-        return pypandoc.convert_text(record.descripcion, 'plain', format='html')
+    descripcion_txt = tables.Column(verbose_name=_('Descripción'), visible=False)
 
     class Meta:
         attrs = {'class': 'table table-striped table-hover cabecera-azul'}
@@ -403,7 +399,7 @@ class ProyectosAceptadosTable(tables.Table):
             'vinculo',
             'coordinador',
             'centro',
-            'descripcion',
+            'descripcion_txt',
         )
         empty_text = _('Por el momento ningún coordinador ha aceptado ningún proyecto.')
         template_name = 'django_tables2/bootstrap4.html'
