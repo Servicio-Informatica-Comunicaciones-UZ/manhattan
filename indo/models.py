@@ -652,11 +652,10 @@ class Proyecto(models.Model):
     def en_borrador(self):
         return self.estado == 'BORRADOR'
 
-    def get_participante_or_none(self, tipo):
+    def get_pp_coordinador_or_none(self, tipo):
+        """Busca el coordinador o coordinador_2 del proyecto"""
         try:
-            return ParticipanteProyecto.objects.get(
-                proyecto_id=self.id, tipo_participacion_id=tipo
-            )
+            return self.participantes.get(tipo_participacion_id=tipo)
         except ParticipanteProyecto.DoesNotExist:
             return None
 
@@ -811,14 +810,14 @@ class Proyecto(models.Model):
     @property
     def coordinador(self):
         """Devuelve el usuario coordinador del proyecto"""
-        coordinador = self.get_participante_or_none('coordinador')
-        return coordinador.usuario if coordinador else None
+        pp_coordinador = self.get_pp_coordinador_or_none('coordinador')
+        return pp_coordinador.usuario if pp_coordinador else None
 
     @property
     def coordinador_2(self):
-        """Devuelve el segundo coordinador del proyecto (los PIET pueden tener 2)."""
-        coordinador_2 = self.get_participante_or_none('coordinador_2')
-        return coordinador_2.usuario if coordinador_2 else None
+        """Devuelve el segundo coordinador del proyecto (los PIET podían tener 2)."""
+        pp_coordinador_2 = self.get_pp_coordinador_or_none('coordinador_2')
+        return pp_coordinador_2.usuario if pp_coordinador_2 else None
 
     def get_coordinadores(self):
         """Devuelve los usuarios coordinadores del proyecto."""

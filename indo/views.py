@@ -51,7 +51,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 # Local Django
 from accounts.pipeline import get_identidad
-from .filters import ProyectoCentroFilter, ProyectoFilter
+from .filters import ParticipanteProyectoCentroFilter, ProyectoFilter
 from .forms import (
     AsignarCorrectorForm,
     AyudaForm,
@@ -2503,8 +2503,8 @@ class ProyectosAceptadosCentrosListView(ListView):
 class ProyectosAceptadosTableView(ExportMixin, PagedFilteredTableView):
     """Lista los proyectos aceptados en una convocatoria, con su centro."""
 
-    filter_class = ProyectoCentroFilter
-    model = Proyecto
+    filter_class = ParticipanteProyectoCentroFilter
+    model = ParticipanteProyecto
     table_class = ProyectosAceptadosTable
     template_name = 'proyecto/aceptados.html'
     export_name = 'proyectos_aceptados'
@@ -2514,16 +2514,24 @@ class ProyectosAceptadosTableView(ExportMixin, PagedFilteredTableView):
         context = super().get_context_data(**kwargs)
         context['anyo'] = self.kwargs['anyo']
         context['convocatorias'] = Convocatoria.objects.order_by('-id').all()[:5]
-        academico_id_nk = self.request.GET.get('centro__academico_id_nk', None)
+        academico_id_nk = self.request.GET.get('proyecto__centro__academico_id_nk', None)
         if academico_id_nk:
             context['centro'] = get_object_or_404(Centro, academico_id_nk=academico_id_nk)
         return context
 
     def get_queryset(self):
         return (
-            Proyecto.objects.filter(convocatoria__id=self.kwargs['anyo'])
-            .filter(aceptacion_coordinador=True)
-            .order_by('programa__nombre_corto', 'linea__nombre', 'titulo')
+            ParticipanteProyecto.objects.select_related('proyecto')
+            .select_related('usuario')
+            .select_related('proyecto__programa')
+            .select_related('proyecto__linea')
+            .select_related('proyecto__centro')
+            .filter(proyecto__convocatoria_id=self.kwargs['anyo'])
+            .filter(proyecto__aceptacion_coordinador=True)
+            .filter(tipo_participacion_id='coordinador')
+            .order_by(
+                'proyecto__programa__nombre_corto', 'proyecto__linea__nombre', 'proyecto__titulo'
+            )
         )
 
 

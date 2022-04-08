@@ -9,7 +9,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 # Local Django
-from .models import Proyecto
+from .models import ParticipanteProyecto, Proyecto
 
 
 class CorrectoresTable(tables.Table):
@@ -369,37 +369,36 @@ class MemoriaProyectosTable(tables.Table):
 
 
 class ProyectosAceptadosTable(tables.Table):
-    """Muestra los proyectos aceptados, y el centro de su coordinador."""
+    """Muestra los proyectos aceptados en una convocatoria (opcionalmente por centro)."""
 
-    linea = tables.Column(visible=False)
-    titulo = tables.Column(visible=False)
-    centro = tables.Column(visible=False)
+    proyecto__linea = tables.Column(visible=False)
+    proyecto__titulo = tables.Column(visible=False)
+    proyecto__centro = tables.Column(visible=False)
 
-    vinculo = tables.Column(empty_values=(), order_by=('titulo',), verbose_name=_('Título'))
+    vinculo = tables.Column(
+        empty_values=(), order_by=('proyecto.titulo',), verbose_name=_('Título')
+    )
 
     def render_vinculo(self, record):
-        enlace = reverse('proyecto_ficha', args=[record.id])
-        return mark_safe(f'<a href="{enlace}">{record.titulo}</a>')
+        enlace = reverse('proyecto_ficha', args=[record.proyecto.id])
+        return mark_safe(f'<a href="{enlace}">{record.proyecto.titulo}</a>')
 
-    coordinador = tables.Column(orderable=False, verbose_name=_('Coordinador'))
+    usuario__full_name = tables.Column(verbose_name=_('Coordinador'))
 
-    def render_coordinador(self, record):
-        return record.coordinador.full_name
-
-    descripcion_txt = tables.Column(verbose_name=_('Descripción'), visible=False)
+    proyecto__descripcion_txt = tables.Column(verbose_name=_('Descripción'), visible=False)
 
     class Meta:
         attrs = {'class': 'table table-striped table-hover cabecera-azul'}
-        model = Proyecto
+        model = ParticipanteProyecto
         fields = (
-            'programa',
-            'linea',
-            'id',
-            'titulo',
+            'proyecto__programa',
+            'proyecto__linea',
+            'proyecto__id',
+            'proyecto__titulo',
             'vinculo',
-            'coordinador',
-            'centro',
-            'descripcion_txt',
+            'usuario__full_name',
+            'proyecto__centro',
+            'proyecto__descripcion_txt',
         )
         empty_text = _('Por el momento ningún coordinador ha aceptado ningún proyecto.')
         template_name = 'django_tables2/bootstrap4.html'

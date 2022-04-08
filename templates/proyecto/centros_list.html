@@ -17,7 +17,7 @@
   <hr />
   <br />
   {% for centro in object_list %}
-    <a href="{% url 'proyectos_aceptados' anyo %}?centro__academico_id_nk={{ centro.academico_id_nk | urlencode }}">
+    <a href="{% url 'proyectos_aceptados' anyo %}?proyecto__centro__academico_id_nk={{ centro.academico_id_nk | urlencode }}">
       {% with logo_centro='img/centros/'|concat:centro.academico_id_nk|concat:'.png' %}
         <img src="{% static logo_centro %}" alt="{{ centro.nombre }}" style="margin: 20px; width: 289px;" title="{{ centro.nombre }}" />
       {% endwith %}
