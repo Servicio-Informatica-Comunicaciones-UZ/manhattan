@@ -66,7 +66,7 @@ def get_identidad(strategy, response, user, *args, **kwargs):
         colectivos.append('ADS')
     if any(cod_adscritos in cods_vinculaciones for cod_adscritos in (25, 61)):
         colectivos.append('INV')  # Investigadores sin contrato pero con docencia
-    user.colectivos = json.dumps(colectivos)
+    user.colectivos = json.dumps(list(set(colectivos)))
     user.cuerpo_pod = identidad.cuerpoPod
     user.orcid = identidad.orcid if identidad.orcid != '-' else None
 
