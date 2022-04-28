@@ -15,15 +15,18 @@
     {% trans 'Puede editar su memoria tantas veces como desee.' %}<br />
     {% trans 'Cuando esté satisfecho, pulse el botón «<strong>Presentar</strong>».' %}
     {% trans 'Una vez haya presentado la memoria para su corrección, ya no podrá modificarla.' %}<br /><br />
+
     {% blocktrans with fecha=proyecto.convocatoria.fecha_max_memorias %}
     Recuerde que la fecha límite para la presentación de memorias es el {{ fecha }}.
     {% endblocktrans %}<br />
-    <strong>{% trans 'No se admitirá ninguna memoria fuera de plazo.' %}</strong>
+    <strong>{% trans 'No se admitirá ninguna memoria fuera de plazo.' %}</strong><br /><br />
+
     <!--
     <strong>{% trans '¡No espere hasta el último momento para presentar la memoria!' %}</strong><br />
     {% blocktrans %}En caso de que el corrector rechace la memoria, podrá subsanar sus defectos
     <strong>sólo</strong> mientras esté dentro del plazo de presentación.{% endblocktrans %}
     -->
+    {% trans 'En el botón «Plantilla infografía» puede descargar el modelo para rellenar y enviar a innova.docen@unizar.es (opcional).' %}
   </div>
 
   {% with logo_programa='img/'|concat:proyecto.programa.nombre_corto|concat:'.png' %}
@@ -199,12 +202,14 @@
       </a>
 
       {% comment %}
-      {% if permitir_edicion %}
-      <button class="btn btn-success" type="submit" title="{% trans 'Guardar cambios' %}">
-        <span class="far fa-save"></span> {% trans 'Guardar' %}
-      </button>
-      {% endif %}
+        Por el momento ponemos la plantilla en `static`.
+        Probablemente sería mejor permitir que los gestores puedan subir cada año una plantilla nueva a `media`.
       {% endcomment %}
+      {% with infografia='pptx/'|concat:proyecto.programa.nombre_corto|concat:'.pptx' %}
+      <a href="{% static infografia %}" class="btn btn-secondary">
+        <span class="fas fa-file-powerpoint"></span> {% trans 'Plantilla infografía' %}
+      </a>
+      {% endwith %}
 
       {% if permitir_edicion %}
       <button class="btn btn-danger" data-toggle="modal" data-target="#presentarModal"
