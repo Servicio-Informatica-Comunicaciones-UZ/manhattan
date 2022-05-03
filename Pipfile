@@ -13,7 +13,7 @@ rope = "*"
 
 [packages]
 bleach = "*"
-django = "==4.0.3"  # Remember to re-generate `requirements.txt`: `pipenv lock -r`
+django = "==4.0.4"  # Remember to re-generate `requirements.txt`: `pipenv requirements`
 django-annoying = "*"
 django-crispy-forms = "*"
 django-filter = "*"
