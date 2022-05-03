@@ -18,6 +18,7 @@ from social_django.utils import load_strategy
 from templated_email import send_templated_mail
 
 # Alternativa: Usar Headless Chromium con <https://github.com/pyppeteer/pyppeteer>
+from bleach.css_sanitizer import CSSSanitizer
 from weasyprint import HTML  # https://weasyprint.org/ - No soporta Javascript
 import bleach
 import pypandoc
@@ -2330,7 +2331,7 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
                             bleach.sanitizer.ALLOWED_TAGS + get_config('ADDITIONAL_ALLOWED_TAGS')
                         ),
                         attributes=get_config('ALLOWED_ATTRIBUTES'),
-                        styles=get_config('ALLOWED_STYLES'),
+                        css_sanitizer=CSSSanitizer(allowed_css_properties=get_config('ALLOWED_CSS_PROPERTIES')),
                         protocols=get_config('ALLOWED_PROTOCOLS'),
                         strip=True,
                     )

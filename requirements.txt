@@ -1,7 +1,7 @@
 -i https://pypi.org/simple
 asgiref==3.5.1
 attrs==21.4.0
-bleach==5.0.0
+bleach[css]==5.0.0
 brotli==1.0.9
 cached-property==1.5.2
 certifi==2021.10.8

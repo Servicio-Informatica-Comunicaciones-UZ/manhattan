@@ -8,6 +8,7 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 
 from annoying.functions import get_config
+from bleach.css_sanitizer import CSSSanitizer
 
 register = template.Library()
 
@@ -79,7 +80,7 @@ def has_group(user, group_name):
 cleaner = bleach.Cleaner(
     tags=(bleach.sanitizer.ALLOWED_TAGS + get_config('ADDITIONAL_ALLOWED_TAGS')),
     attributes=get_config('ALLOWED_ATTRIBUTES'),
-    styles=get_config('ALLOWED_STYLES'),
+    css_sanitizer=CSSSanitizer(allowed_css_properties=get_config('ALLOWED_CSS_PROPERTIES')),
     protocols=get_config('ALLOWED_PROTOCOLS'),
     strip=True,
     strip_comments=True,

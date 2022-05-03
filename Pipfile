@@ -12,7 +12,7 @@ pylint = "*"
 rope = "*"
 
 [packages]
-bleach = "*"
+bleach = {extras = ["css"], version = "*"}
 django = "==4.0.4"  # Remember to re-generate `requirements.txt`: `pipenv requirements`
 django-annoying = "*"
 django-crispy-forms = "*"
