@@ -21,7 +21,7 @@ from huey import SqliteHuey
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
 # Quick-start development settings - unsuitable for production
@@ -376,6 +376,26 @@ ALLOWED_CSS_PROPERTIES = ['background-color', 'color', 'text-align', 'width']
 ALLOWED_PROTOCOLS = ['data', 'http', 'https', 'mailto']
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'  # Required by SummernoteWidget on Django 3.x
+
+if DEBUG:
+    # DJANGO-DEBUG-TOOLBAR - <https://github.com/jazzband/django-debug-toolbar>
+    # ------------------------------------------------------------------------------
+    # https://django-debug-toolbar.readthedocs.io/en/latest/installation.html#prerequisites
+    INSTALLED_APPS += ['debug_toolbar']  # noqa F405
+    # https://django-debug-toolbar.readthedocs.io/en/latest/installation.html#middleware
+    MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']  # noqa F405
+    # https://django-debug-toolbar.readthedocs.io/en/latest/configuration.html#debug-toolbar-config
+    DEBUG_TOOLBAR_CONFIG = {
+        'DISABLE_PANELS': ['debug_toolbar.panels.redirects.RedirectsPanel'],
+        'SHOW_TEMPLATE_CONTEXT': True,
+    }
+    # https://django-debug-toolbar.readthedocs.io/en/latest/installation.html#internal-ips
+
+    import socket  # only if you haven't already imported this
+
+    hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
+    INTERNAL_IPS = [ip[: ip.rfind('.')] + '.1' for ip in ips] + ['127.0.0.1', '10.0.2.2']
+
 
 # WEB SERVICE DE GESTIÓN DE IDENTIDADES
 WSDL_IDENTIDAD = os.environ.get('WSDL_IDENTIDAD')
