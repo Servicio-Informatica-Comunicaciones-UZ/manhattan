@@ -236,7 +236,7 @@ class Licencia(models.Model):
 
 
 class Linea(models.Model):
-    nombre = models.CharField(max_length=31)
+    nombre = models.CharField(max_length=191)
     programa = models.ForeignKey('Programa', on_delete=models.PROTECT, related_name='lineas')
 
     def __str__(self):
