@@ -89,6 +89,8 @@ cleaner = bleach.Cleaner(
 
 @register.filter
 def limpiar(text):
+    if text is None:
+        return ''
     return mark_safe(cleaner.clean(text))
 
 
