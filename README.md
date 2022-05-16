@@ -28,12 +28,10 @@ Instalación sobre contenedores Docker
 
 2. Clonar el repositorio Git.  
    `git clone https://gitlab.unizar.es/InnovacionDocente/manhattan.git .`
-3. Copiar el fichero de ejemplo `.env-sample` a `.env`.  Configurar las bases de datos,
-   los _web services_ de Gestión de Identidades y la clave de Django en el fichero `.env`.
-4. Copiar el fichero de ejemplo `manhattan_project/settings-sample.py` a
-   `manhattan_project/settings.py`.  
-   Configurar en `settings.py` los datos para el correo, la URL del sitio (`SITE_URL`)
-   y los datos para el _Single Sign On_ (SAML).  
+3. Copiar el fichero de ejemplo `.env-sample` a `.env`.
+4. En el fichero `.env` configurar la clave secreta de Django, la conexión con la base de datos,
+   la URL del sitio (`SITE_URL`), los datos para el correo electrónico, los datos para el _Single Sign On_ (SAML,
+   los _web services_ de Gestión de Identidades, etc.  
    Si se está detrás de un proxy o balanceador, habilitar la opción `USE_X_FORWARDED_PORT`.  
    Si se usa SSL, habilitar las opciones `SESSION_COOKIE_SECURE` y `CSRF_COOKIE_SECURE`.
 5. En el fichero `Dockerfile` cambiar `UWSGI_UID` y `UWSGI_GID` al usuario y grupo que se desee.
@@ -61,7 +59,7 @@ Instalación sobre hierro
 1. **Python 3.8 o superior**. En Debian o Ubuntu:
 
    ```bash
-    sudo apt-get install python3.8-dev python3-distutils
+    sudo apt-get install python3.9-dev python3-distutils
     ```
 
 2. **[pip](https://pip.pypa.io/en/stable/installing/)**, instalador de paquetes de Python.
@@ -111,13 +109,13 @@ pipenv install [--dev]
    quit
    ```
 
-2. Copiar el fichero de ejemplo `.env-sample` a `.env`.  Configurar las bases de datos
-   en el fichero `.env`.
-3. Copiar el fichero de ejemplo `manhattan_project/settings-sample.py` a
-   `manhattan_project/settings.py`.  
-   Configurar en `settings.py` los datos para el correo, y la URL del sitio (`SITE_URL`).
-4. Configurar los datos para el _Single Sign On_ (SAML).
-5. Ejecutar
+2. Copiar el fichero de ejemplo `.env-sample` a `.env`.
+3. En el fichero `.env` configurar la clave secreta de Django, la conexión con la base de datos,
+   la URL del sitio (`SITE_URL`), los datos para el correo electrónico, los datos para el _Single Sign On_ (SAML,
+   los _web services_ de Gestión de Identidades, etc.  
+   Si se está detrás de un proxy o balanceador, habilitar la opción `USE_X_FORWARDED_PORT`.  
+   Si se usa SSL, habilitar las opciones `SESSION_COOKIE_SECURE` y `CSRF_COOKIE_SECURE`.
+4. Ejecutar
 
     ```shell
     source .env
@@ -127,15 +125,16 @@ pipenv install [--dev]
     ./manage.py loaddata seed
     ```
 
-6. Abrir la URL con el navegador web, autenticarse como superusuario y,
+5. Abrir la URL con el navegador web, autenticarse como superusuario y,
    en la interfaz de administración de Django, añadir usuarios al grupo `Gestores`
    (incluyendo al superusuario).
-7. Activar a los usuarios gestores el atributo `is_staff` para que puedan acceder
+6. Activar a los usuarios gestores el atributo `is_staff` para que puedan acceder
    a la interfaz de administración.
 
 ### Servidor web para desarrollo
 
 ```shell
+source .env
 pipenv shell
 nohup ./manage.py run_huey &
 ./manage.py runserver [<IP>[:<puerto>]]
