@@ -56,7 +56,11 @@
 
     {# La etiqueta FFT se repetirá tantas veces como sea necesario para recoger el/los documento(s) asociado(s). #}
     <datafield tag="FFT" ind1=" " ind2=" ">
-        <subfield code="a">{{ url_memorias }}{{ proyecto.convocatoria_id }}/{{ proyecto.programa.nombre_corto}}_{{ proyecto.id }}.pdf</subfield> {# URL accesible #}  <!-- XXX Generar enlaces convocatorias viejas -->
+        {% if proyecto.convocatoria_id < 2021 %}
+            <subfield code="a">{{ proyecto.enlace }}</subfield> {# URL accesible #}
+        {% else %}
+            <subfield code="a">{{ url_memorias }}{{ proyecto.convocatoria_id }}/{{ proyecto.programa.nombre_corto}}_{{ proyecto.id }}.pdf</subfield> {# URL accesible #}
+        {% endif %}
         <subfield code="n">memoria_{{ proyecto.programa }}_{{ proyecto.convocatoria_id }}_{{ proyecto.id }}</subfield> {# Nombre que recibirá el documento #}
         <subfield code="d">Memoria del proyecto</subfield> {# Descripción para humanos de los ficheros #}
     </datafield>

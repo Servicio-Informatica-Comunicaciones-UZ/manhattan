@@ -498,6 +498,8 @@ class Proyecto(models.Model):
         _('Asignatura/s y Titulación/es afectadas'), blank=True, null=True
     )
     formatos = models.TextField(_('Formatos de los materiales a incluir'), blank=True, null=True)
+    # En proyectos anteriores a 2021 el campo `enlace` se usa para recoger la URL de la memoria
+    # en la aplicación vieja, para pasarlas a Zaguán vía MarcXML.
     enlace = models.TextField(
         _('Enlace'),
         blank=True,
