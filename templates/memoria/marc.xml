@@ -40,7 +40,6 @@
     <datafield tag="540" ind1=" " ind2=" "> {# Terms Governing Use and Reproduction Note #}
         <subfield code="9">info:eu-repo/semantics/openAccess</subfield>
         <subfield code="a">{{ proyecto.licencia.identificador }}</subfield>
-        <subfield code="b">{{ proyecto.licencia.nombre }}</subfield>
         <subfield code="u">{{ proyecto.licencia.url }}</subfield>
     </datafield>
 
