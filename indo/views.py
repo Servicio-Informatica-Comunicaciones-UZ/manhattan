@@ -2246,8 +2246,10 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
         # Si se edita la descripción, actualizamos también la descripción en texto plano.
         # Se usa al pasar las memorias a Zaguán, y al enviar mensajes de correo electrónico.
         if 'descripcion' in form.fields:
-            proyecto.descripcion_txt = pypandoc.convert_text(
-                form.cleaned_data['descripcion'], 'plain', format='html'
+            proyecto.descripcion_txt = " ".join(
+                pypandoc.convert_text(
+                    form.cleaned_data['descripcion'], 'plain', format='html'
+                ).splitlines()
             )
             proyecto.save(update_fields=['descripcion_txt'])
 
@@ -2331,7 +2333,9 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
                             bleach.sanitizer.ALLOWED_TAGS + get_config('ADDITIONAL_ALLOWED_TAGS')
                         ),
                         attributes=get_config('ALLOWED_ATTRIBUTES'),
-                        css_sanitizer=CSSSanitizer(allowed_css_properties=get_config('ALLOWED_CSS_PROPERTIES')),
+                        css_sanitizer=CSSSanitizer(
+                            allowed_css_properties=get_config('ALLOWED_CSS_PROPERTIES')
+                        ),
                         protocols=get_config('ALLOWED_PROTOCOLS'),
                         strip=True,
                     )
