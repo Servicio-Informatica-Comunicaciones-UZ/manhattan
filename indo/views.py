@@ -560,6 +560,23 @@ class MemoriasAsignadasTableView(LoginRequiredMixin, UserPassesTestMixin, Single
         return self.request.user.groups.filter(name='Correctores').exists()
 
 
+class MemoriasZaguanView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
+    """Envía las memorias de una convocatoria al repositorio institucional"""
+
+    permission_required = 'indo.zaguan'
+    permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
+    template_name = 'gestion/memoria/zaguan.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['convocatorias'] = Convocatoria.objects.order_by('-id').all()[:5]
+
+        return context
+
+    def post(self, request, *args, **kwargs):
+        return HttpResponse('Por hacer')  # TODO
+
+
 class ProyectoAceptarView(LoginRequiredMixin, ChecksMixin, SuccessMessageMixin, UpdateView):
     """Aceptación por el coordinador de las condiciones concedidas para un proyecto."""
 

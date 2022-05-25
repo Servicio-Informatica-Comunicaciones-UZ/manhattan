@@ -18,10 +18,11 @@ from .views import (
     MemoriaCorreccionUpdateView,
     MemoriaDetailView,
     MemoriaMarcxmlView,
-    MemoriasMarcxmlListView,
     MemoriaPresentarView,
     MemoriaUpdateFieldView,
     MemoriasAsignadasTableView,
+    MemoriasMarcxmlListView,
+    MemoriasZaguanView,
     ParticipanteAceptarView,
     ParticipanteAnyadirView,
     ParticipanteDeclinarView,
@@ -188,10 +189,11 @@ urlpatterns = [
         name='memoria_update_field',
     ),
     path('memoria/<int:pk>/marcxml/', MemoriaMarcxmlView.as_view(), name='memoria_marcxml'),
-    path(
-        'memoria/<int:anyo>/marcxmls/', MemoriasMarcxmlListView.as_view(), name='memorias_marcxml'
-    ),
     path('memoria/<int:pk>/presentar/', MemoriaPresentarView.as_view(), name='memoria_presentar'),
+    path(
+        'memorias/<int:anyo>/marcxmls/', MemoriasMarcxmlListView.as_view(), name='memorias_marcxml'
+    ),
+    path('memorias/<int:anyo>/zaguan/', MemoriasZaguanView.as_view(), name='memorias_zaguan'),
     # Participante en proyecto
     path(
         'participante-proyecto/anyadir/<int:proyecto_id>/',
