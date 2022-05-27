@@ -21,6 +21,7 @@
             <subfield code="0">(orcid){{ proyecto.coordinador.orcid }}</subfield>
         {% endif %}
         <subfield code="a">{{ proyecto.coordinador.apellidos_nombre }}</subfield>
+        <subfield code="e">coord.</subfield>
     </datafield>
 
     <datafield tag="245" ind1=" " ind2=" "> {# Title Statement #}
@@ -44,6 +45,16 @@
     </datafield>
 
     {# La etiqueta 700 se repetirá tantas veces como sea necesario para albergar a todos los autores #}
+    {% if proyecto.coordinador_2 %}
+        <datafield tag="700" ind1=" " ind2=" "> {# Added Entry−Personal Name #}
+            {% if proyecto.coordinador_2.orcid %}
+                <subfield code="0">(orcid){{ proyecto.coordinador_2.orcid }}</subfield>
+            {% endif %}
+            <subfield code="a">{{ proyecto.coordinador_2.apellidos_nombre }}</subfield>
+            <subfield code="e">coord.</subfield>
+        </datafield>
+    {% endif %}
+
     {% for participante in proyecto.usuarios_participantes %}
         <datafield tag="700" ind1=" " ind2=" "> {# Added Entry−Personal Name #}
             {% if participante.orcid %}
