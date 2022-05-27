@@ -618,6 +618,7 @@ class MemoriasZaguanView(LoginRequiredMixin, PermissionRequiredMixin, TemplateVi
                 recipient_list=(settings.REPO_EMAIL,),
                 context={
                     'anyo': self.kwargs['anyo'],
+                    'respuesta': respuesta,
                     'usuario': self.request.user,
                 },
             )

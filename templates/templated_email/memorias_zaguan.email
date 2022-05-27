@@ -3,6 +3,9 @@
 {{ usuario.full_name }} ha lanzado la carga a Zaguán
 de las memorias de Innovación Docente del año {{ anyo }}.
 
+La respuesta de Zaguán fue:
+    {{ respuesta }}
+
 Saludos,
     el robot de Innovación Docente
 {% endblock %}
