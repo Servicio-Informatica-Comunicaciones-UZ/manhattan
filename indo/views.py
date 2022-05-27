@@ -3,6 +3,7 @@ from time import sleep
 import csv
 import json
 import os
+import sys
 
 # import magic
 from datetime import date
@@ -570,11 +571,70 @@ class MemoriasZaguanView(LoginRequiredMixin, PermissionRequiredMixin, TemplateVi
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['convocatorias'] = Convocatoria.objects.order_by('-id').all()[:5]
-
         return context
 
     def post(self, request, *args, **kwargs):
-        return HttpResponse('Por hacer')  # TODO
+        contexto = self.get_context_data()
+        contexto['proyecto_list'] = (
+            Proyecto.objects.filter(convocatoria__id=self.kwargs['anyo'])
+            .filter(es_publicable=True)
+            .order_by('programa__nombre_corto', 'linea__nombre', 'titulo')
+        )
+        contexto['url_memorias'] = settings.SITE_URL + settings.MEDIA_URL + 'memoria/'
+
+        cadena_xml = render_to_string('memoria/marc_list.xml', context=contexto, request=request)
+
+        payload = {'mode': '-ir'}
+        files = {'file': ('listado.xml', cadena_xml, 'application/xml')}
+        headers = {'user-agent': 'zaguan_indo'}
+
+        try:
+            resp = requests.post(settings.REPO_WSURL, data=payload, files=files, headers=headers)
+            resp.raise_for_status()
+        except requests.exceptions.SSLError:
+            raise requests.exceptions.SSLError(
+                'No fue posible verificar el certificado SSL del repositorio'
+            )
+        except requests.exceptions.ConnectionError:
+            raise requests.exceptions.ConnectionError('No fue posible conectar con el repositorio')
+        except requests.exceptions.HTTPError:
+            raise requests.exceptions.HTTPError(
+                'El repositorio devolvió una respuesta HTTP no válida'
+            )
+        except requests.exceptions.Timeout:
+            raise requests.exceptions.Timeout('El repositorio no respondió')
+        # except requests.exceptions.TooManyRedirects:
+        #     raise requests.exceptions.TooManyRedirects('Demasiadas redirecciones')
+        except requests.exceptions.RequestException:
+            raise requests.exceptions.RequestException(
+                f'Problema desconocido al enviar la petición al repositorio ({sys.exc_info()[0]})'
+            )
+        respuesta = resp.content.decode('utf-8')
+
+        try:
+            send_templated_mail(
+                template_name='memorias_zaguan',
+                from_email=None,  # settings.DEFAULT_FROM_EMAIL
+                recipient_list=(settings.REPO_EMAIL,),
+                context={
+                    'anyo': self.kwargs['anyo'],
+                    'usuario': self.request.user,
+                },
+            )
+        except Exception as err:  # smtplib.SMTPAuthenticationError etc
+            messages.warning(
+                request,
+                _(f'No fue posible avisar al administrador del repositorio: {err}'),
+            )
+
+        messages.success(
+            request,
+            mark_safe(_(f'Memorias enviadas. La respuesta de Zaguán fue:<br />{respuesta}')),
+        )
+        return redirect('memorias_zaguan', self.kwargs['anyo'])
+        # TODO: Se podría crear un callback donde el repositorio notifique cómo ha ido el proceso,
+        # y enviar un correo electrónico al usuario.
+        # Ver <https://cds.cern.ch/help/admin/bibupload-admin-guide#3.7>
 
 
 class ProyectoAceptarView(LoginRequiredMixin, ChecksMixin, SuccessMessageMixin, UpdateView):

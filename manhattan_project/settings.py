@@ -83,7 +83,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 ROOT_URLCONF = 'manhattan_project.urls'
 # https://docs.djangoproject.com/en/dev/ref/settings/#wsgi-application
 WSGI_APPLICATION = 'manhattan_project.wsgi.application'
-# Necesario para LOGIN_URL
+# Necesario para LOGIN_URL, los correos de notificación y los enlaces a las memorias en MarcXML
 SITE_URL = os.environ.get('SITE_URL')
 
 # APPS
@@ -485,3 +485,7 @@ HUEY = SqliteHuey(filename='cola/huey.db')
 
 # Script para crear un ticket en la cola adecuada del sistema de Help Desk
 ADD_TICKET_URL = os.environ.get('ADD_TICKET_URL')
+
+# Repositorio institucional de documentos
+REPO_WSURL = os.environ.get('REPO_WSURL')
+REPO_EMAIL = os.environ.get('REPO_EMAIL')

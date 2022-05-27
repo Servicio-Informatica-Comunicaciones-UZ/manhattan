@@ -1,0 +1,8 @@
+{% block subject %}Lanzada carga a Zaguán{% endblock %}
+{% block plain %}
+{{ usuario.full_name }} ha lanzado la carga a Zaguán
+de las memorias de Innovación Docente del año {{ anyo }}.
+
+Saludos,
+    el robot de Innovación Docente
+{% endblock %}
