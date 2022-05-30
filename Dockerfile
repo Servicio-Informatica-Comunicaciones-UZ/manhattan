@@ -6,7 +6,7 @@ LABEL maintainer="Enrique Matías Sánchez <quique@unizar.es>"
 # Don't write .pyc files
 # All output to stdout will be flushed immediately
 ENV PYTHONDONTWRITEBYTECODE 1 \
-    PYTHONUNBUFFERED 1
+  PYTHONUNBUFFERED 1
 
 # Install packages needed to run your application (not build deps):
 #   fonts-ebgaramond-extra -- EB Garamond 12
@@ -19,27 +19,27 @@ ENV PYTHONDONTWRITEBYTECODE 1 \
 #   xmlsec1 -- required for SAML auth
 #   mime-support -- for mime types when serving static files
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-      # fonts-ebgaramond-extra \
-      # fonts-liberation \
-      # fonts-sil-gentium \
-      fonts-texgyre \
-      # libgs9-common \
-      libmariadb3 \
-      libpcre3 \
-      libxmlsec1-openssl \
-      mime-support \
-      pandoc \
-      # Weasyprint:
-      libcairo2 \
-      libffi-dev \
-      libgdk-pixbuf2.0-0 \
-      libpango-1.0-0 \
-      libpangocairo-1.0-0 \
-      python3-cffi \
-      shared-mime-info \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+  && apt-get install -y --no-install-recommends \
+  # fonts-ebgaramond-extra \
+  # fonts-liberation \
+  # fonts-sil-gentium \
+  fonts-texgyre \
+  # libgs9-common \
+  libmariadb3 \
+  libpcre3 \
+  libxmlsec1-openssl \
+  mime-support \
+  pandoc \
+  # Weasyprint:
+  libcairo2 \
+  libffi-dev \
+  libgdk-pixbuf2.0-0 \
+  libpango-1.0-0 \
+  libpangocairo-1.0-0 \
+  python3-cffi \
+  shared-mime-info \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
 
 # Copy the requirements file to the container image
 COPY requirements.txt ./
@@ -50,12 +50,12 @@ COPY requirements.txt ./
 # All in a single step, so that Docker cache it as a single layer.
 RUN set -ex \
   && BUILD_DEPS=" \
-    gcc \
-    libmariadb-dev \
-    libmariadb-dev-compat \
-    libpcre3-dev \
-    libxmlsec1-dev \
-    pkg-config" \
+  gcc \
+  libmariadb-dev \
+  libmariadb-dev-compat \
+  libpcre3-dev \
+  libxmlsec1-dev \
+  pkg-config" \
   && apt-get update \
   && apt-get install -y --no-install-recommends $BUILD_DEPS \
   && pip install --no-cache-dir -r requirements.txt \
