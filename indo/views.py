@@ -273,16 +273,19 @@ class AyudaView(LoginRequiredMixin, TemplateView):
         received_data = json.loads(resp.content.decode('utf-8'))
         if not resp.ok:
             msg = mark_safe(
-                f'''ERROR: {received_data['msg']}<br />Pruebe a crear el ticket en Ayudica.'''
+                _('ERROR: %(mensaje)s<br />Pruebe a crear el ticket en Ayudica.')
+                % {'mensaje': received_data['msg']}
             )
             messages.error(request, msg)
         else:
-            ticket_num = received_data['ticket_num']
             msg = mark_safe(
-                f'''<strong>Solicitud realizada con éxito</strong>.<br />
-                <p>Para aportar más información a la solicitud, entre al ticket nº
-                <a href='https://ayudica.unizar.es/otrs/customer.pl?Action=CustomerTicketZoom;TicketNumber={ticket_num}'>{ticket_num}</a>
-                y seleccione la opción «Contestar».</p>'''  # noqa: E501
+                _(
+                    '''<strong>Solicitud realizada con éxito</strong>.<br />
+                    <p>Para aportar más información a la solicitud, entre al ticket nº
+                    <a href='https://ayudica.unizar.es/otrs/customer.pl?Action=CustomerTicketZoom;TicketNumber=%(ticket_num)s'>%(ticket_num)s</a>
+                    y seleccione la opción «Contestar».</p>'''  # noqa: E501
+                )
+                % {'ticket_num': received_data['ticket_num']}
             )
             messages.success(request, msg)
         return redirect('ayuda')
@@ -372,7 +375,8 @@ class MemoriaCorreccionUpdateView(LoginRequiredMixin, ChecksMixin, UpdateView):
         except Exception as err:  # smtplib.SMTPAuthenticationError etc
             messages.warning(
                 request,
-                _('No se envió por correo la notificación de admisión de la memoria: ' f'{err}'),
+                _('No se envió por correo la notificación de admisión de la memoria: %(err)s')
+                % {'err': err},
             )
 
 
@@ -512,7 +516,9 @@ class EvaluacionView(LoginRequiredMixin, ChecksMixin, TemplateView):
             proyecto.save(update_fields=['esta_evaluado'])
 
         messages.success(
-            request, _(f'Se ha guardado la evaluación del proyecto «{proyecto.titulo}».')
+            request,
+            _('Se ha guardado la evaluación del proyecto «%(titulo)s».')
+            % {'titulo': proyecto.titulo},
         )
         return redirect('proyectos_evaluados_table', proyecto.convocatoria_id)
 
@@ -625,12 +631,16 @@ class MemoriasZaguanView(LoginRequiredMixin, PermissionRequiredMixin, TemplateVi
         except Exception as err:  # smtplib.SMTPAuthenticationError etc
             messages.warning(
                 request,
-                _(f'No fue posible avisar al administrador del repositorio: {err}'),
+                _('No fue posible avisar al administrador del repositorio: %(err)s')
+                % {'err': err},
             )
 
         messages.success(
             request,
-            mark_safe(_(f'Memorias enviadas. La respuesta de Zaguán fue:<br />{respuesta}')),
+            mark_safe(
+                _('Memorias enviadas. La respuesta de Zaguán fue:<br />%(respuesta)s')
+                % {'respuesta': respuesta}
+            ),
         )
         return redirect('memorias_zaguan', self.kwargs['anyo'])
         # TODO: Se podría crear un callback donde el repositorio notifique cómo ha ido el proceso,
@@ -684,9 +694,9 @@ class ProyectoAceptarView(LoginRequiredMixin, ChecksMixin, SuccessMessageMixin, 
         proyecto = get_object_or_404(Proyecto, pk=self.kwargs['pk'])
         if proyecto.estado != 'APROBADO':
             self.permission_denied_message = _(
-                f'''El estado actual del proyecto ({proyecto.get_estado_display()})
-                no permite aceptar/rechazar las condiciones.'''
-            )
+                'El estado actual del proyecto (%(estado)s)'
+                ' no permite aceptar/rechazar las condiciones.'
+            ) % {'estado': proyecto.get_estado_display()}
             return False
 
         fecha_limite = proyecto.convocatoria.fecha_max_aceptacion_resolucion
@@ -696,11 +706,10 @@ class ProyectoAceptarView(LoginRequiredMixin, ChecksMixin, SuccessMessageMixin, 
             )
             return False
         if date.today() > fecha_limite:
-            fecha_limite_str = localize(fecha_limite)
             self.permission_denied_message = _(
-                f'''Se ha superado la fecha límite ({fecha_limite_str})
-                 para aceptar/rechazar las condiciones.'''
-            )
+                'Se ha superado la fecha límite (%(fecha_limite)s)'
+                ' para aceptar/rechazar las condiciones.'
+            ) % {'fecha_limite': localize(fecha_limite)}
             return False
 
         return self.es_coordinador(self.kwargs['pk'])
@@ -989,10 +998,10 @@ class InvitacionView(LoginRequiredMixin, ChecksMixin, CreateView):
             )
             return False
         if date.today() > fecha_limite:
-            fecha_limite_str = localize(fecha_limite)
             self.permission_denied_message = _(
-                f'''Se ha superado la fecha límite ({fecha_limite_str})
+                '''Se ha superado la fecha límite (%(fecha_limite)s)
                 para que los invitados puedan aceptar participar en el proyecto.'''
+                % {'fecha_limite': localize(fecha_limite)}
             )
             return False
 
@@ -1019,11 +1028,12 @@ class ParticipanteAceptarView(LoginRequiredMixin, RedirectView):
             messages.error(
                 request,
                 _(
-                    f'''No puede aceptar esta invitación porque ya forma parte del número
-                    máximo de equipos de trabajo permitido ({num_max_equipos}).
+                    '''No puede aceptar esta invitación porque ya forma parte del número
+                    máximo de equipos de trabajo permitido (%(num_max_equipos)s).
                     Para poder aceptar esta invitación, antes debería renunciar a participar
                     en algún otro proyecto.'''
-                ),
+                )
+                % {'num_max_equipos': num_max_equipos},
             )
             return super().post(request, *args, **kwargs)
 
@@ -1031,9 +1041,10 @@ class ParticipanteAceptarView(LoginRequiredMixin, RedirectView):
             messages.error(
                 request,
                 _(
-                    f'''El estado actual del proyecto ({proyecto.get_estado_display()})
+                    '''El estado actual del proyecto (%(estado)s)
                     no permite aceptar invitaciones a participar en él.'''
-                ),
+                )
+                % {'estado': proyecto.get_estado_display()},
             )
             return super().post(request, *args, **kwargs)
 
@@ -1045,12 +1056,12 @@ class ParticipanteAceptarView(LoginRequiredMixin, RedirectView):
             )
             return False
         if date.today() > fecha_limite:
-            fecha_limite_str = localize(fecha_limite)
             messages.error(
                 request,
                 _(
-                    f'''Se ha superado la fecha límite ({fecha_limite_str})
+                    '''Se ha superado la fecha límite (%(fecha_limite)s)
                     para que los invitados puedan aceptar participar en el proyecto.'''
+                    % {'fecha_limite': localize(fecha_limite)}
                 ),
             )
             return super().post(request, *args, **kwargs)
@@ -1065,7 +1076,9 @@ class ParticipanteAceptarView(LoginRequiredMixin, RedirectView):
         pp.save()
 
         messages.success(
-            request, _(f'Ha pasado a ser participante del proyecto «{proyecto.titulo}».')
+            request,
+            _('Ha pasado a ser participante del proyecto «%(titulo)s».')
+            % {'titulo': proyecto.titulo},
         )
         return super().post(request, *args, **kwargs)
 
@@ -1108,10 +1121,11 @@ class ParticipanteAnyadirView(LoginRequiredMixin, ChecksMixin, TemplateView):
         if not usuario.is_active:
             texto = mark_safe(
                 _(
-                    f'''Usuario inactivo en el sistema de Gestión de Identidades.<br>
-                    <a href="{ reverse('ayuda') }">Solicite en Ayudica</a> que se le asigne
+                    '''Usuario inactivo en el sistema de Gestión de Identidades.<br>
+                    <a href="%(url)s">Solicite en Ayudica</a> que se le asigne
                     la vinculación «Participantes externos Proyectos Innovación Docente».'''
                 )
+                % {'url': reverse('ayuda')}
             )
             messages.error(request, f'ERROR: {texto}')
             return redirect('participante_anyadir', proyecto.id)
@@ -1123,9 +1137,10 @@ class ParticipanteAnyadirView(LoginRequiredMixin, ChecksMixin, TemplateView):
             messages.error(
                 request,
                 _(
-                    f'''No puede añadir este usuario porque ya forma parte
-                    del número máximo de equipos de trabajo permitido ({num_max_equipos}).'''
-                ),
+                    '''No puede añadir este usuario porque ya forma parte
+                    del número máximo de equipos de trabajo permitido (%(num_max_equipos)s).'''
+                )
+                % {'num_max_equipos': num_max_equipos},
             )
             return redirect('participante_anyadir', proyecto.id)
 
@@ -1157,10 +1172,12 @@ class ParticipanteAnyadirView(LoginRequiredMixin, ChecksMixin, TemplateView):
             )
             return False
         if date.today() > fecha_limite:
-            fecha_limite_str = localize(fecha_limite)
-            self.permission_denied_message = _(
-                f'''Se ha superado la fecha límite ({fecha_limite_str}) para
-                las modificaciones excepcionales del equipo de trabajo de un proyecto.'''
+            self.permission_denied_message = (
+                _(
+                    '''Se ha superado la fecha límite (%(fecha_limite)s) para
+                    las modificaciones excepcionales del equipo de trabajo de un proyecto.'''
+                )
+                % {'fecha_limite': localize(fecha_limite)}
             )
             return False
 
@@ -1188,7 +1205,9 @@ class ParticipanteDeclinarView(LoginRequiredMixin, RedirectView):
         pp.save()
 
         messages.success(
-            request, _(f'Ha rehusado ser participante del proyecto «{proyecto.titulo}».')
+            request,
+            _('Ha rehusado ser participante del proyecto «%(titulo)s».')
+            % {'titulo': proyecto.titulo},
         )
         return super().post(request, *args, **kwargs)
 
@@ -1214,7 +1233,9 @@ class ParticipanteRenunciarView(LoginRequiredMixin, RedirectView):
         pp.save()
 
         messages.success(
-            request, _(f'Ha renunciado a participar en el proyecto «{proyecto.titulo}».')
+            request,
+            _('Ha renunciado a participar en el proyecto «%(titulo)s».')
+            % {'titulo': proyecto.titulo},
         )
         return super().post(request, *args, **kwargs)
 
@@ -1475,10 +1496,9 @@ class ProyectoCreateView(LoginRequiredMixin, ChecksMixin, CreateView):
             )
             return False
         if date.today() < fecha_minima:
-            fecha_limite_str = localize(fecha_minima)
             self.permission_denied_message = _(
-                f'''El plazo de solicitudes se abrirá el {fecha_limite_str}.'''
-            )
+                'El plazo de solicitudes se abrirá el %(fecha_minima)s.'
+            ) % {'fecha_minima': localize(fecha_minima)}
             return False
 
         fecha_maxima = convocatoria.fecha_max_solicitudes
@@ -1489,11 +1509,9 @@ class ProyectoCreateView(LoginRequiredMixin, ChecksMixin, CreateView):
             )
             return False
         if date.today() > fecha_maxima:
-            fecha_limite_str = localize(fecha_maxima)
             self.permission_denied_message = _(
-                f'''Se ha superado la fecha límite ({fecha_limite_str})
-                 para presentar solicitudes.'''
-            )
+                'Se ha superado la fecha límite (%(fecha_maxima)s) para presentar solicitudes.'
+            ) % {'fecha_maxima': localize(fecha_maxima)}
             return False
 
         return self.es_pas_o_pdi()
@@ -1523,9 +1541,8 @@ class ProyectoAnularView(LoginRequiredMixin, ChecksMixin, RedirectView):
         proyecto = get_object_or_404(Proyecto, pk=self.kwargs.get('pk'))
         if proyecto.estado not in ('BORRADOR', 'SOLICITADO'):
             self.permission_denied_message = _(
-                f'''El estado actual del proyecto ({proyecto.get_estado_display()})
-                no permite anular la solicitud.'''
-            )
+                'El estado actual del proyecto (%(estado)s) no permite anular la solicitud.'
+            ) % {'estado': proyecto.get_estado_display()}
             return False
 
         return self.es_coordinador(self.kwargs['pk']) or self.request.user.has_perm(
@@ -1703,24 +1720,20 @@ class MemoriaPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
         proyecto = get_object_or_404(Proyecto, pk=self.kwargs.get('pk'))
         if proyecto.estado not in ('ACEPTADO', 'MEM_NO_ADMITIDA'):
             self.permission_denied_message = _(
-                f'''El estado actual del proyecto ({proyecto.get_estado_display()})
-                no permite modificar la memoria.'''
-            )
+                'El estado actual del proyecto (%(estado)s) no permite modificar la memoria.'
+            ) % {'estado': proyecto.get_estado_display()}
             return False
 
         fecha_maxima = proyecto.convocatoria.fecha_max_memorias
         if not fecha_maxima:
             self.permission_denied_message = _(
-                'No se ha establecido en la convocatoria'
-                ' la fecha límite para presentar memorias.'
+                'No se ha establecido en la convocatoria la fecha límite para presentar memorias.'
             )
             return False
         if date.today() > fecha_maxima:
-            fecha_limite_str = localize(fecha_maxima)
             self.permission_denied_message = _(
-                f'''Se ha superado la fecha límite ({fecha_limite_str})
-                 para presentar memorias.'''
-            )
+                'Se ha superado la fecha límite (%(fecha_maxima)s) para presentar memorias.'
+            ) % {'fecha_maxima': localize(fecha_maxima)}
             return False
 
         return self.es_coordinador(self.kwargs['pk'])
@@ -1757,11 +1770,9 @@ class MemoriaUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
             )
             return False
         if date.today() > fecha_maxima:
-            fecha_limite_str = localize(fecha_maxima)
             self.permission_denied_message = _(
-                f'''Se ha superado la fecha límite ({fecha_limite_str})
-                 para presentar memorias.'''
-            )
+                'Se ha superado la fecha límite (%(fecha_maxima)s) para presentar memorias.'
+            ) % {'fecha_maxima': localize(fecha_maxima)}
             return False
 
         return self.es_coordinador(self.kwargs['proyecto_id']) or self.request.user.has_perm(
@@ -1883,13 +1894,13 @@ class ProyectoEvaluacionesTableView(LoginRequiredMixin, PermissionRequiredMixin,
         hitos = ('fecha_max_aceptacion_resolucion', 'fecha_max_alegaciones')
         for hito in hitos:
             if not getattr(convocatoria, hito):
-                fecha_faltante = convocatoria._meta.get_field(hito).verbose_name
                 messages.warning(
                     request,
                     _(
-                        f'Recuerde introducir en la convocatoria la {fecha_faltante}'
+                        'Recuerde introducir en la convocatoria la %(fecha_faltante)s'
                         ' desde el menú Gestión → Administrar convocatorias.'
-                    ),
+                    )
+                    % {'fecha_faltante': convocatoria._meta.get_field(hito).verbose_name},
                 )
         return super().get(request, *args, **kwargs)
 
@@ -1934,13 +1945,13 @@ class ProyectoMemoriasTableView(LoginRequiredMixin, PermissionRequiredMixin, Sin
         hitos = ('fecha_max_memorias', 'fecha_max_gastos')
         for hito in hitos:
             if not getattr(convocatoria, hito):
-                fecha_faltante = convocatoria._meta.get_field(hito).verbose_name
                 messages.warning(
                     request,
                     _(
-                        f'Recuerde introducir en la convocatoria la {fecha_faltante}'
+                        'Recuerde introducir en la convocatoria la %(fecha_faltante)s'
                         ' desde el menú Gestión → Administrar convocatorias.'
-                    ),
+                    )
+                    % {'fecha_faltante': convocatoria._meta.get_field(hito).verbose_name},
                 )
         return super().get(request, *args, **kwargs)
 
@@ -2002,9 +2013,10 @@ class ProyectosNotificarView(LoginRequiredMixin, PermissionRequiredMixin, Redire
             messages.warning(
                 request,
                 _(
-                    'No se enviaron por correo las notificaciones de la resolución '
-                    f'a los proyectos con dotación: {err}'
-                ),
+                    'No se enviaron por correo las notificaciones de la resolución'
+                    ' a los proyectos con dotación: %(err)s'
+                )
+                % {'err': err},
             )
 
         try:
@@ -2015,9 +2027,10 @@ class ProyectosNotificarView(LoginRequiredMixin, PermissionRequiredMixin, Redire
             messages.warning(
                 request,
                 _(
-                    'No se enviaron por correo las notificaciones de la resolución '
-                    f'a los proyectos sin dotación: {err}'
-                ),
+                    'No se enviaron por correo las notificaciones de la resolución'
+                    ' a los proyectos sin dotación: %(err)s'
+                )
+                % {'err': err},
             )
 
         if variante == '_provisional':
@@ -2070,13 +2083,13 @@ class ProyectoTableView(LoginRequiredMixin, PermissionRequiredMixin, PagedFilter
         )
         for hito in hitos:
             if not getattr(convocatoria, hito):
-                fecha_faltante = convocatoria._meta.get_field(hito).verbose_name
                 messages.warning(
                     request,
                     _(
-                        f'Recuerde introducir en la convocatoria la {fecha_faltante}'
+                        'Recuerde introducir en la convocatoria la %(fecha_faltante)s'
                         ' en el menú Gestión → Administrar convocatorias.'
-                    ),
+                    )
+                    % {'fecha_faltante': convocatoria._meta.get_field(hito).verbose_name},
                 )
         return super().get(request, *args, **kwargs)
 
@@ -2114,11 +2127,12 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
             messages.error(
                 request,
                 _(
-                    f'''No puede presentar esta solicitud porque ya forma parte
-                    del número máximo de equipos de trabajo permitido ({num_max_equipos}).
+                    '''No puede presentar esta solicitud porque ya forma parte
+                    del número máximo de equipos de trabajo permitido (%(num_max_equipos)s).
                     Para poder presentar esta solicitud de proyecto, antes debería renunciar
                     a participar en algún otro proyecto.'''
-                ),
+                )
+                % {'num_max_equipos': num_max_equipos},
             )
             return super().post(request, *args, **kwargs)
 
@@ -2136,9 +2150,10 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
             messages.error(
                 request,
                 _(
-                    f'La ayuda solicitada ({proyecto.ayuda} €) excede el máximo '
-                    f'permitido para este programa ({proyecto.programa.max_ayuda} €).'
-                ),
+                    'La ayuda solicitada (%(ayuda)s €) excede el máximo'
+                    ' permitido para este programa (%(max_ayuda)s €).'
+                )
+                % {'ayuda': proyecto.ayuda, 'max_ayuda': proyecto.programa.max_ayuda},
             )
             return super().post(request, *args, **kwargs)
 
@@ -2192,9 +2207,10 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
             messages.warning(
                 request,
                 _(
-                    'No se enviaron por correo las invitaciones a participar en el proyecto: '
-                    f'{err}'
-                ),
+                    'No se enviaron por correo las invitaciones a participar en el proyecto:'
+                    ' %(err)s'
+                )
+                % {'err': err},
             )
 
     def _enviar_solicitudes_visto_bueno_centro(self, request, proyecto):
@@ -2229,7 +2245,9 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
             )
         except Exception as err:  # smtplib.SMTPAuthenticationError etc
             messages.warning(
-                request, _(f'No se envió por correo la solicitud de Visto Bueno del centro: {err}')
+                request,
+                _('No se envió por correo la solicitud de Visto Bueno del centro: %(err)s')
+                % {'err': err},
             )
 
     def _is_email_valid(self, email):
@@ -2265,7 +2283,8 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
         except Exception as err:  # smtplib.SMTPAuthenticationError etc
             messages.warning(
                 request,
-                _(f'No se envió por correo la solicitud de Visto Bueno del estudio: {err}'),
+                _('No se envió por correo la solicitud de Visto Bueno del estudio: %(err)s')
+                % {'err': err},
             )
 
     def test_func(self):
@@ -2273,9 +2292,8 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
 
         if proyecto.estado != 'BORRADOR':
             self.permission_denied_message = _(
-                f'''El estado actual del proyecto ({proyecto.get_estado_display()})
-                no permite presentar la solicitud.'''
-            )
+                'El estado actual del proyecto (%(estado)s) no permite presentar la solicitud.'
+            ) % {'estado': proyecto.get_estado_display()}
             return False
 
         fecha_minima = proyecto.convocatoria.fecha_min_solicitudes
@@ -2286,10 +2304,9 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
             )
             return False
         if date.today() < fecha_minima:
-            fecha_limite_str = localize(fecha_minima)
             self.permission_denied_message = _(
-                f'''El plazo de solicitudes se abrirá el {fecha_limite_str}.'''
-            )
+                '''El plazo de solicitudes se abrirá el %(fecha_minima)s.'''
+            ) % {'fecha_minima': localize(fecha_minima)}
             return False
 
         fecha_maxima = proyecto.convocatoria.fecha_max_solicitudes
@@ -2300,11 +2317,9 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
             )
             return False
         if date.today() > fecha_maxima:
-            fecha_limite_str = localize(fecha_maxima)
             self.permission_denied_message = _(
-                f'''Se ha superado la fecha límite ({fecha_limite_str})
-                 para presentar solicitudes.'''
-            )
+                'Se ha superado la fecha límite (%(fecha_maxima)s) para presentar solicitudes.'
+            ) % {'fecha_maxima': localize(fecha_maxima)}
             return False
 
         return self.es_coordinador(self.kwargs['pk'])
@@ -2480,11 +2495,9 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
                 )
                 return False
             if date.today() > fecha_limite:
-                fecha_limite_str = localize(fecha_limite)
                 self.permission_denied_message = _(
-                    f'''Se ha superado la fecha límite ({fecha_limite_str})
-                    para dar el visto bueno.'''
-                )
+                    'Se ha superado la fecha límite (%(fecha_limite)s) para dar el visto bueno.'
+                ) % {'fecha_limite': localize(fecha_limite)}
                 return False
 
             return True
@@ -2536,9 +2549,9 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
 
             if not proyecto.en_borrador():
                 self.permission_denied_message = _(
-                    f'''El estado actual del proyecto ({proyecto.get_estado_display()})
-                    no permite modificar los campos de la solicitud.'''
-                )
+                    'El estado actual del proyecto (%(estado)s) no permite modificar'
+                    ' los campos de la solicitud.'
+                ) % {'estado': proyecto.get_estado_display()}
                 return False
 
             return True
