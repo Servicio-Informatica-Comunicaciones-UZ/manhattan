@@ -211,10 +211,11 @@ class InvitacionForm(forms.ModelForm):
             raise forms.ValidationError(
                 mark_safe(
                     _(
-                        f'''Usuario inactivo en el sistema de Gestión de Identidades.<br>
-                        <a href="{ reverse('ayuda') }">Solicite en Ayudica</a> que se le asigne
+                        '''Usuario inactivo en el sistema de Gestión de Identidades.<br>
+                        <a href="%(url)s">Solicite en Ayudica</a> que se le asigne
                         la vinculación «Participantes externos Proyectos Innovación Docente».'''
                     )
+                    % {'url': reverse('ayuda')}
                 )
             )
 
@@ -222,10 +223,11 @@ class InvitacionForm(forms.ModelForm):
         if not usuario.email:
             raise forms.ValidationError(
                 _(
-                    f'No fue posible invitar al usuario «{nip}» porque no tiene '
+                    'No fue posible invitar al usuario «%(nip)s» porque no tiene '
                     'establecida ninguna dirección de correo electrónico en el sistema '
                     'de Gestión de Identidades.'
                 )
+                % {'nip': nip}
             )
 
         cleaned_data['usuario'] = usuario
@@ -233,10 +235,8 @@ class InvitacionForm(forms.ModelForm):
         vinculados = self.proyecto.get_usuarios_vinculados()
         if usuario in vinculados:
             raise forms.ValidationError(
-                _(
-                    f'No puede invitar a {usuario.full_name} '
-                    'porque ya está vinculado a este proyecto.'
-                )
+                _('No puede invitar a %(nombre)s porque ya está vinculado a este proyecto.')
+                % {'nombre': usuario.full_name}
             )
         # En algunos programas la participación de los estudiantes puede estar limitada
         # (por ejemplo a dos por proyecto)
@@ -250,10 +250,13 @@ class InvitacionForm(forms.ModelForm):
                 nombres_estudiantes = ', '.join(list(map(lambda e: e.full_name, estudiantes)))
                 raise forms.ValidationError(
                     _(
-                        'Ya se ha alcanzado el máximo de participación de '
-                        f'{self.proyecto.programa.max_estudiantes} estudiantes '
-                        f'por proyecto: {nombres_estudiantes}.'
+                        'Ya se ha alcanzado el máximo de participación de'
+                        ' %(max)s estudiantes por proyecto: %(nombres)s.'
                     )
+                    % {
+                        'max': self.proyecto.programa.max_estudiantes,
+                        'nombres': nombres_estudiantes,
+                    }
                 )
 
         return cleaned_data
