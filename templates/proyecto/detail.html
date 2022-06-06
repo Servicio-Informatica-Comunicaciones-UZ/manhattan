@@ -33,6 +33,14 @@
      Mientras tanto aparecerán en estado «Pendiente».{% endblocktrans %}
     </p>
   </div>
+  {% elif permitir_edicion and proyecto.estado == 'ACEPTADO' %}
+  <div class="alert alert-info fade show noprint">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+    <span class="fas fa-info-circle"></span>
+    <p>
+      {% trans 'Bajo la tabla de datos básicos del proyecto puede encontrar el apartado para editar la <strong>memoria</strong>.' %}
+    </p>
+  </div>
   {% endif %}
 
   {% with logo_programa='img/'|concat:proyecto.programa.nombre_corto|concat:'.png' %}
@@ -45,7 +53,8 @@
     <a href="{% url 'proyecto_update_field' proyecto.id 'titulo' %}" class="btn btn-info btn-sm">
       <span class="fas fa-pencil-alt" aria-hidden="true"></span>&nbsp; {% trans 'Modificar' %}
     </a>
-    {% endif %}</h1>
+    {% endif %}
+  </h1>
   <hr />
   <br />
 
@@ -93,7 +102,7 @@
 
       <tr>
         <th scope="row"><strong>{% trans 'Unidad de planificación' %}</strong>:</th>
-        <td>{{ proyecto.get_unidad_planificacion | default:"—"}}</td>
+        <td>{{ proyecto.get_unidad_planificacion | default:"—" }}</td>
       </tr>
 
       <tr>
