@@ -33,7 +33,7 @@
      Mientras tanto aparecerán en estado «Pendiente».{% endblocktrans %}
     </p>
   </div>
-  {% elif permitir_edicion and proyecto.estado == 'ACEPTADO' %}
+  {% elif proyecto.aceptacion_coordinador and es_coordinador %}
   <div class="alert alert-info fade show noprint">
     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
     <span class="fas fa-info-circle"></span>
