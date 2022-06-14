@@ -16,15 +16,15 @@
     {% trans 'Cuando esté satisfecho, pulse el botón «<strong>Presentar</strong>».' %}
     {% trans 'Una vez haya presentado la memoria para su corrección, ya no podrá modificarla.' %}<br /><br />
 
-    {% blocktrans with fecha=proyecto.convocatoria.fecha_max_memorias %}
+    {% blocktranslate with fecha=proyecto.convocatoria.fecha_max_memorias %}
     Recuerde que la fecha límite para la presentación de memorias es el {{ fecha }}.
-    {% endblocktrans %}<br />
+    {% endblocktranslate %}<br />
     <strong>{% trans 'No se admitirá ninguna memoria fuera de plazo.' %}</strong><br /><br />
 
     <!--
     <strong>{% trans '¡No espere hasta el último momento para presentar la memoria!' %}</strong><br />
-    {% blocktrans %}En caso de que el corrector rechace la memoria, podrá subsanar sus defectos
-    <strong>sólo</strong> mientras esté dentro del plazo de presentación.{% endblocktrans %}
+    {% blocktranslate %}En caso de que el corrector rechace la memoria, podrá subsanar sus defectos
+    <strong>sólo</strong> mientras esté dentro del plazo de presentación.{% endblocktranslate %}
     -->
     {% trans 'En el botón «Plantilla infografía» puede descargar el modelo para rellenar y enviar a innova.docen@unizar.es (opcional).' %}
   </div>
@@ -206,7 +206,8 @@
         Probablemente sería mejor permitir que los gestores puedan subir cada año una plantilla nueva a `media`.
       {% endcomment %}
       {% with infografia='pptx/'|concat:proyecto.programa.nombre_corto|concat:'.pptx' %}
-      <a href="{% static infografia %}" class="btn btn-secondary">
+      <a href="{% static infografia %}" class="btn btn-secondary"
+        title="{% trans 'Modelo para rellenar y enviar a innova.docen@unizar.es' %}">
         <span class="fas fa-file-powerpoint"></span> {% trans 'Plantilla infografía' %}
       </a>
       {% endwith %}
@@ -234,10 +235,10 @@
         </button>
       </div>
       <div class="modal-body">
-        <p>{% trans "Una vez presentada ya no podrá hacer ningún cambio." %}</p>
+        <p>{% trans 'Una vez presentada <strong>ya no podrá hacer ningún cambio</strong>.' %}</p>
         <p>
-          {% blocktrans %}Se generará el PDF final de la memoria, y el corrector
-          podrá aprobarla o rechazarla.{% endblocktrans %}
+          {% blocktranslate %}Se generará el PDF final de la memoria, y el corrector
+          podrá aprobarla o rechazarla.{% endblocktranslate %}
         </p>
       </div>
       <div class="modal-footer">
