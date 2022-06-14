@@ -200,13 +200,6 @@ class ChecksMixin(UserPassesTestMixin):
 
     def esta_vinculado_o_es_decano_o_es_coordinador(self, proyecto_id):
         """Devuelve si el usuario actual está autorizado para ver la solicitud del proyecto."""
-        self.permission_denied_message = _(
-            'Usted no está vinculado a este proyecto, '
-            'ni es decano/director del centro del proyecto, '
-            'ni es coordinador del plan de estudios del proyecto, '
-            'ni es evaluador de la solicitud, '
-            'ni es corrector de la memoria del proyecto.'
-        )
         usuario_actual = self.request.user
         esta_autorizado = (
             self.esta_vinculado(proyecto_id)
@@ -215,6 +208,13 @@ class ChecksMixin(UserPassesTestMixin):
             or self.es_evaluador_del_proyecto(proyecto_id)
             or self.es_corrector_del_proyecto(proyecto_id)
             or usuario_actual.has_perm('indo.ver_proyecto')  # Gestores
+        )
+        self.permission_denied_message = _(
+            'Usted no está vinculado a este proyecto, '
+            'ni es decano/director del centro del proyecto, '
+            'ni es coordinador del plan de estudios del proyecto, '
+            'ni es evaluador de la solicitud, '
+            'ni es corrector de la memoria del proyecto.'
         )
 
         return esta_autorizado
