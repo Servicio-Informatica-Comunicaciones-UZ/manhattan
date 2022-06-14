@@ -610,7 +610,9 @@ class Proyecto(models.Model):
         help_text=_('Indicar los gastos autorizados indicados por la Comisión.'),
         null=True,
     )
-    puntuacion = models.PositiveIntegerField(_('Puntuación obtenida'), null=True)
+    puntuacion = models.DecimalField(
+        verbose_name=_('Puntuación obtenida'), max_digits=3, decimal_places=1, null=True
+    )
     observaciones = models.TextField(_('Observaciones internas'), null=True)
     # Aceptación por el coordinador de las condiciones decididas por la Comisión
     aceptacion_coordinador = models.BooleanField(_('Aceptación por el coordinador'), null=True)
