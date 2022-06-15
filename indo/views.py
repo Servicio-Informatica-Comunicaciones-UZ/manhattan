@@ -1709,7 +1709,13 @@ class MemoriaPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
         generar_pdf(documento_html, pdf_destino)  # Proceso lento, lo ejecutamos en segundo plano.
 
         messages.success(
-            request, _('La memoria de su proyecto ha sido presentada para su corrección.')
+            request,
+            _('La memoria de su proyecto ha sido presentada para su corrección.')
+            + '<br /><br />'
+            + _(
+                'Puede descargar el modelo de infografía para rellenarla y enviarla por email'
+                ' a innova.docen@unizar.es (opcional).'
+            ),
         )
         registrar_evento(
             self.request, 'presentacion_memoria', 'Presentacion de la memoria', proyecto
