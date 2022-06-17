@@ -1,4 +1,4 @@
-{% block subject %}Resolución provisional sobre el proyecto «{{proyecto.titulo}}»{% endblock %}
+{% block subject %}Resolución provisional sobre el proyecto {{proyecto.id}} - «{{proyecto.titulo}}»{% endblock %}
 {% block plain %}
 Resolución Provisional Convocatoria de Innovación Docente {{proyecto.convocatoria.id}}/{{proyecto.convocatoria.id|add:1}} de la Universidad de Zaragoza
 ---------------------------------------------------------------------

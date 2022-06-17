@@ -1,4 +1,4 @@
-{% block subject %}Resolución provisional sobre el proyecto «{{proyecto.titulo}}»{% endblock %}
+{% block subject %}Resolución provisional sobre el proyecto {{proyecto.id}} - «{{proyecto.titulo}}»{% endblock %}
 {% block plain %}
 Resolución Provisional Convocatoria de Innovación Docente {{proyecto.convocatoria.id}}/{{proyecto.convocatoria.id|add:1}} de la Universidad de Zaragoza
 ---------------------------------------------------------------------
@@ -16,10 +16,8 @@ que será desarrollado durante el presente curso académico.
 
 Se pueden consultar tanto la convocatoria como la resolución provisional en <http://tablon.unizar.es>.
 
-La ayuda económica mínima concedida al proyecto es de {{proyecto.ayuda_provisional}} euros,
-quedando pendiente de concreción hasta la resolución definitiva.
-En ningún caso la resolución definitiva fijará una ayuda inferior a
-la de esta resolución provisional.
+La ayuda económica concedida al proyecto es de {{proyecto.ayuda_provisional}} euros.
+
 Te recordamos que dicha ayuda económica deberá destinarse
 exclusivamente a los siguientes conceptos:
 

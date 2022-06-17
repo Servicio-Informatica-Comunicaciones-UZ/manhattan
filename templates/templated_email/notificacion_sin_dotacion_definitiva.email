@@ -1,4 +1,4 @@
-{% block subject %}Resolución definitiva sobre el proyecto «{{proyecto.titulo}}»{% endblock %}
+{% block subject %}Resolución definitiva sobre el proyecto {{proyecto.id}} - «{{proyecto.titulo}}»{% endblock %}
 {% block plain %}
 Resolución Definitiva Convocatoria de Innovación Docente {{proyecto.convocatoria.id}}/{{proyecto.convocatoria.id|add:1}} de la Universidad de Zaragoza
 ---------------------------------------------------------------------
