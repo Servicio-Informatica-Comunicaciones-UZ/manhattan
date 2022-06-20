@@ -1698,7 +1698,7 @@ class MemoriaPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
             base_url=base_url,
         )
 
-        # Generar ruta tipo `BASE_DIR/media/2021/PIIDUZ_42.pdf`
+        # Generar ruta tipo `BASE_DIR/media/memoria/2021/PIIDUZ_42.pdf`
         pdf_destino = os.path.join(
             settings.MEDIA_ROOT,
             'memoria',
@@ -2655,7 +2655,8 @@ class ProyectosUsuarioView(LoginRequiredMixin, ChecksMixin, TemplateView):
         anyo = self.kwargs['anyo']
         context = super().get_context_data(**kwargs)
         context['convocatorias'] = Convocatoria.objects.order_by('-id').all()[:5]
-        context['proyectos_coordinados'] = (
+
+        proyectos_coordinados = (
             Proyecto.objects.filter(
                 convocatoria__id=anyo,
                 participantes__usuario=usuario,
@@ -2665,11 +2666,7 @@ class ProyectosUsuarioView(LoginRequiredMixin, ChecksMixin, TemplateView):
             .order_by('programa__nombre_corto', 'linea__nombre', 'titulo')
             .all()
         )
-        convocatoria = get_object_or_None(Convocatoria, pk=kwargs['anyo'])
-        context['permitir_solicitar'] = (
-            self.es_pas_o_pdi() and date.today() <= convocatoria.fecha_max_solicitudes
-        )
-        context['proyectos_participados'] = (
+        proyectos_participados = (
             Proyecto.objects.filter(
                 convocatoria__id=anyo,
                 participantes__usuario=usuario,
@@ -2679,15 +2676,36 @@ class ProyectosUsuarioView(LoginRequiredMixin, ChecksMixin, TemplateView):
             .order_by('programa__nombre_corto', 'linea__nombre', 'titulo')
             .all()
         )
-        context['proyectos_invitado'] = (
+        proyectos_invitado = (
             Proyecto.objects.filter(
                 convocatoria__id=anyo,
                 participantes__usuario=usuario,
                 participantes__tipo_participacion_id='invitado',
             )
-            .exclude(estado__in=['BORRADOR', 'ANULADO', 'DENEGADO'])
+            .exclude(estado__in=['BORRADOR', 'ANULADO'])
             .order_by('programa__nombre_corto', 'linea__nombre', 'titulo')
             .all()
+        )
+
+        # No mostrar si la Comisión ha aprobado o no el proyecto
+        # hasta que se publique la resolución.
+        convocatoria = get_object_or_None(Convocatoria, pk=kwargs['anyo'])
+        if not convocatoria.notificada_resolucion_provisional:
+
+            def enmascara_estado(p):
+                p.estado = 'SOLICITADO' if p.estado in ('DENEGADO', 'APROBADO') else p.estado
+                return p
+
+            proyectos_coordinados = [enmascara_estado(p) for p in proyectos_coordinados]
+            proyectos_participados = [enmascara_estado(p) for p in proyectos_participados]
+            proyectos_invitado = [enmascara_estado(p) for p in proyectos_invitado]
+
+        context['proyectos_coordinados'] = proyectos_coordinados
+        context['proyectos_participados'] = proyectos_participados
+        context['proyectos_invitado'] = proyectos_invitado
+
+        context['permitir_solicitar'] = (
+            self.es_pas_o_pdi() and date.today() <= convocatoria.fecha_max_solicitudes
         )
 
         try:
