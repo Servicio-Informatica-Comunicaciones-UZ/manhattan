@@ -158,7 +158,7 @@
   <br />
 
   <!-- Aceptación de las condiciones concedidas -->
-  {% if proyecto.aceptacion_comision and es_coordinador %}
+  {% if proyecto.aceptacion_comision and es_coordinador and proyecto.convocatoria.notificada_resolucion_provisional %}
     <h3>{% trans 'Aceptación de las condiciones' %}</h3>
 
     <p>
