@@ -1736,7 +1736,8 @@ class MemoriaPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
                 'No se ha establecido en la convocatoria la fecha límite para presentar memorias.'
             )
             return False
-        if date.today() > fecha_maxima:
+        # Se permite presentar fuera de plazo a Proyectos con MEM_NO_ADMITIDA     
+        if (date.today() > fecha_maxima) and (proyecto.estado != 'MEM_NO_ADMITIDA'): 
             self.permission_denied_message = _(
                 'Se ha superado la fecha límite (%(fecha_maxima)s) para presentar memorias.'
             ) % {'fecha_maxima': localize(fecha_maxima)}
@@ -1775,7 +1776,8 @@ class MemoriaUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
                 ' la fecha límite para presentar memorias.'
             )
             return False
-        if date.today() > fecha_maxima:
+        # Se permite modificar fuera de plazo a Proyectos con MEM_NO_ADMITIDA
+        if (date.today() > fecha_maxima) and (proyecto.estado != 'MEM_NO_ADMITIDA'):
             self.permission_denied_message = _(
                 'Se ha superado la fecha límite (%(fecha_maxima)s) para presentar memorias.'
             ) % {'fecha_maxima': localize(fecha_maxima)}
