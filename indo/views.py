@@ -917,6 +917,20 @@ class ProyectoResolucionUpdateView(
         return reverse_lazy('evaluaciones_table', args=[self.object.convocatoria_id])
 
 
+class ProyectoResolucionVerView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
+    """Mostrar la resolución de la Comisión Evaluadora sobre un proyecto."""
+
+    permission_required = 'indo.ver_resolucion'
+    permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
+    model = Proyecto
+    template_name = 'gestion/proyecto/resolucion.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['anyo'] = self.object.convocatoria.id
+        return context
+
+
 class ProyectoUPTableView(LoginRequiredMixin, PermissionRequiredMixin, SingleTableView):
     """Muestra las unidades de planificación de los proyectos, y los gastos autorizados."""
 
@@ -1736,8 +1750,8 @@ class MemoriaPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
                 'No se ha establecido en la convocatoria la fecha límite para presentar memorias.'
             )
             return False
-        # Se permite presentar fuera de plazo a Proyectos con MEM_NO_ADMITIDA     
-        if (date.today() > fecha_maxima) and (proyecto.estado != 'MEM_NO_ADMITIDA'): 
+        # Se permite presentar fuera de plazo a Proyectos con MEM_NO_ADMITIDA
+        if (date.today() > fecha_maxima) and (proyecto.estado != 'MEM_NO_ADMITIDA'):
             self.permission_denied_message = _(
                 'Se ha superado la fecha límite (%(fecha_maxima)s) para presentar memorias.'
             ) % {'fecha_maxima': localize(fecha_maxima)}

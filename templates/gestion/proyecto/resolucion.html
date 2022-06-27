@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% load custom_tags i18n %}
+
+{% block title %}{% trans 'Resolución de la Comisión sobre el proyecto' %}: {{ proyecto.titulo }}{% endblock title %}
+{% block description %}{% trans 'Resolución de la Comisión sobre el proyecto' %}: {{ proyecto.titulo }}{% endblock description %}
+
+{% block content %}
+<div class="container-blanco">
+
+  {# DetailView proporciona el objeto de contexto `proyecto` #}
+  <h1 id="cabecera">{% trans "Resolución de la comisión evaluadora sobre el proyecto" %}</h1>
+  <h2><small>{{ proyecto.titulo }}</small></h2>
+  <hr />
+  <br />
+
+  <div class="table-responsive">
+    <table class="table table-hover table-striped table-sm" aria-describedby="Datos básicos del proyecto">
+      <tr>
+        <th scope="row"><strong>{% trans 'ID del proyecto' %}</strong>:</th>
+        <td>{{ proyecto.id }}</td>
+      </tr>
+      {% if proyecto.codigo %}
+        <tr>
+          <th scope="row"><strong>{% trans 'Código del proyecto' %}</strong>:</th>
+          <td>{{ proyecto.codigo }}</td>
+        </tr>
+      {% endif %}
+      <tr>
+        <th scope="row"><strong>{% trans 'Convocatoria' %}</strong>:</th>
+        <td>{{ proyecto.convocatoria_id }}</td>
+      </tr>
+      <tr>
+        <th scope="row"><strong>{% trans 'Programa' %}</strong>:</th>
+        <td>{{ proyecto.programa.nombre_corto }} ({{ proyecto.programa.nombre_largo }})</td>
+      </tr>
+
+      {% if proyecto.linea %}
+      <tr>
+        <th scope="row"><strong>{% trans 'Línea' %}</strong>:</th>
+        <td>{{ proyecto.linea.nombre }}</td>
+      </tr>
+      {% endif %}
+
+      {% if proyecto.centro %}
+      <tr>
+        <th scope="row"><strong>{% trans 'Centro' %}</strong>:</th>
+        <td>{{ proyecto.centro.nombre }}</td>
+      </tr>
+      {% endif %}
+
+      {% if proyecto.estudio %}
+      <tr>
+        <th scope="row"><strong>{% trans 'Estudio' %}</strong>:</th>
+        <td>{{ proyecto.estudio.nombre }}</td>
+      </tr>
+      {% endif %}
+
+      <tr>
+        <th scope="row"><strong>{% trans 'Unidad de planificación' %}</strong>:</th>
+        <td>{{ proyecto.get_unidad_planificacion | default:"—"}}</td>
+      </tr>
+
+      {% if proyecto.coordinador %}
+      <tr>
+        <th scope="row"><strong>{% trans 'Coordinador' %}</strong>:</th>
+        <td>{{ proyecto.coordinador.full_name }}</td>
+      </tr>
+      {% endif %}
+
+      {% if proyecto.coordinador_2 %}
+      <tr>
+        <th scope="row"><strong>{% trans 'Coordinador 2' %}</strong>:</th>
+        <td>{{ proyecto.coordinador_2.full_name }}</td>
+      </tr>
+      {% endif %}
+
+      <tr>
+        <th scope="row"><strong>{% trans 'Estado' %}</strong>:</th>
+        <td>{{ proyecto.get_estado_display }}</td>
+      </tr>
+
+      {% if proyecto.programa.requiere_visto_bueno_centro %}
+      <tr>
+        <th scope="row"><strong>{% trans 'Visto bueno del centro' %}</strong>:</th>
+        <td>{{ proyecto.visto_bueno_centro | yesno:"Sí,No,—" }}</td>
+      </tr>
+      {% endif %}
+
+      {% if proyecto.programa.requiere_visto_bueno_estudio %}
+      <tr>
+        <th scope="row"><strong>{% trans 'Visto bueno del estudio' %}</strong>:</th>
+        <td>{{ proyecto.visto_bueno_estudio | yesno:"Sí,No,—" }}</td>
+      </tr>
+      {% endif %}
+
+    </table>
+  </div>
+  <br />
+
+
+  <h3>{{ proyecto | get_attr_verbose_name:"aceptacion_comision" }}</h3>
+  <p>{{ proyecto.aceptacion_comision| yesno:"Sí,No,—" }}</p>
+
+  <h3>{{ proyecto | get_attr_verbose_name:'ayuda_provisional' }}</h3>
+  <p>{{ proyecto.ayuda_provisional | default_if_none:'—' }}</p>
+
+  <h3>{{ proyecto | get_attr_verbose_name:'ayuda_definitiva' }}</h3>
+  <p>{{ proyecto.ayuda_definitiva | default_if_none:'—' }}</p>
+
+  <h3>{{ proyecto | get_attr_verbose_name:"tipo_gasto" }}</h3>
+  <p>{{ proyecto.tipo_gasto | default:"—" | limpiar | linebreaks}}</p>
+
+  <h3>{{ proyecto | get_attr_verbose_name:'puntuacion' }}</h3>
+  <p>{{ proyecto.puntuacion  | default_if_none:'—' }}</p>
+
+  <h3>{{ proyecto | get_attr_verbose_name:"observaciones" }}</h3>
+  <p>{{ proyecto.observaciones | default:"—" | limpiar | linebreaks }}</p>
+
+   <!-- Botones -->
+  <br style="clear: both;" />
+  <div class="btn-group" role="group" aria-label="Botones">
+    <a href="{% url 'evaluaciones_table' anyo %}" class="btn btn-info">
+      <span class="fas fa-step-backward"></span> {% trans 'Retroceder' %}
+    </a>
+  </div>
+</div>
+
+{% endblock content %}

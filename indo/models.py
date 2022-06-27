@@ -643,6 +643,7 @@ class Proyecto(models.Model):
             ('editar_corrector', _('Puede modificar el corrector de un proyecto.')),
             ('ver_evaluacion', _('Puede ver la evaluación de cualquier proyecto.')),
             ('ver_memorias', _('Puede ver el listado y cualquier memoria de proyecto.')),
+            ('ver_resolucion', _('Puede ver las resoluciones de la Comisión Evaluadora.')),
             ('ver_up', _('Puede ver el listado de UP y gastos de los proyectos.')),
             ('ver_economico', _('Puede ver/editar el cierre económico de los proyectos.')),
             ('zaguan', _('Puede enviar memorias al repositorio institucional.')),
