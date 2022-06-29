@@ -1750,7 +1750,9 @@ class MemoriaPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
                 'No se ha establecido en la convocatoria la fecha límite para presentar memorias.'
             )
             return False
-        # Se permite presentar fuera de plazo a Proyectos con MEM_NO_ADMITIDA
+        # Se permite presentar fuera de plazo a proyectos con MEM_NO_ADMITIDA (subsanaciones)
+        # NOTE Se puede entrar en un bucle infinito de inadmisión-subsanación!
+        # Idealmente las subsanaciones deberían aparecer en la convocatoria con una fecha límite.
         if (date.today() > fecha_maxima) and (proyecto.estado != 'MEM_NO_ADMITIDA'):
             self.permission_denied_message = _(
                 'Se ha superado la fecha límite (%(fecha_maxima)s) para presentar memorias.'
@@ -2662,8 +2664,8 @@ class ProyectosUsuarioView(LoginRequiredMixin, ChecksMixin, TemplateView):
         # `LOGIN_URL` usa el año actual, pero la convocatoria sale a mitad de año
         convocatoria = get_object_or_None(Convocatoria, pk=kwargs['anyo'])
         if not convocatoria:
-            ultima_convo = Convocatoria.get_ultima()
-            return redirect('mis_proyectos', ultima_convo.id)
+            ultima_convocatoria = Convocatoria.get_ultima()
+            return redirect('mis_proyectos', ultima_convocatoria.id)
         return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -2716,6 +2718,7 @@ class ProyectosUsuarioView(LoginRequiredMixin, ChecksMixin, TemplateView):
             proyectos_participados = [enmascara_estado(p) for p in proyectos_participados]
             proyectos_invitado = [enmascara_estado(p) for p in proyectos_invitado]
 
+        context['convocatoria'] = convocatoria
         context['proyectos_coordinados'] = proyectos_coordinados
         context['proyectos_participados'] = proyectos_participados
         context['proyectos_invitado'] = proyectos_invitado
