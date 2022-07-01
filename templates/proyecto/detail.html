@@ -207,6 +207,19 @@
       </p>
     {% endif %}
 
+    {% now 'Y-m-d' as fecha_actual %}
+    {% with proyecto.convocatoria.fecha_max_aceptos as fecha_max_aceptos %}
+      {% if fecha_max_aceptos|date:'Y-m-d' < fecha_actual %}
+        <div class="alert alert-info fade show noprint">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+          <span class="fas fa-info-circle"></span>
+          <p>{% blocktranslate %}
+            El plazo para aceptar/declinar invitaciones finalizó el {{ fecha_max_aceptos }}.
+          {% endblocktranslate %}</p>
+        </div>
+      {% endif %}
+    {% endwith %}
+
     <div class="table-responsive">
       <table class="table table-hover table-striped table-sm cabecera-azul" aria-label="invitaciones">
         <thead>
