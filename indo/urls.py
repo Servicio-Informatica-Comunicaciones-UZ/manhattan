@@ -43,6 +43,7 @@ from .views import (
     ProyectoFichaView,
     ProyectoMemoriasTableView,
     ProyectoResolucionUpdateView,
+    ProyectoResolucionVerView,
     ProyectoTableView,
     ProyectoPresentarView,
     ProyectoUpdateFieldView,
@@ -180,6 +181,11 @@ urlpatterns = [
     ),
     path(
         'gestion/proyecto/<int:pk>/correccion/', CorreccionVerView.as_view(), name='ver_correccion'
+    ),
+    path(
+        'gestion/proyecto/<int:pk>/resolucion/',
+        ProyectoResolucionVerView.as_view(),
+        name='ver_resolucion',
     ),
     # Memoria
     path('memoria/<int:pk>/', MemoriaDetailView.as_view(), name='memoria_detail'),

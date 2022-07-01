@@ -917,6 +917,20 @@ class ProyectoResolucionUpdateView(
         return reverse_lazy('evaluaciones_table', args=[self.object.convocatoria_id])
 
 
+class ProyectoResolucionVerView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
+    """Mostrar la resolución de la Comisión Evaluadora sobre un proyecto."""
+
+    permission_required = 'indo.ver_resolucion'
+    permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
+    model = Proyecto
+    template_name = 'gestion/proyecto/resolucion.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['anyo'] = self.object.convocatoria.id
+        return context
+
+
 class ProyectoUPTableView(LoginRequiredMixin, PermissionRequiredMixin, SingleTableView):
     """Muestra las unidades de planificación de los proyectos, y los gastos autorizados."""
 
@@ -1736,7 +1750,10 @@ class MemoriaPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
                 'No se ha establecido en la convocatoria la fecha límite para presentar memorias.'
             )
             return False
-        if date.today() > fecha_maxima:
+        # Se permite presentar fuera de plazo a proyectos con MEM_NO_ADMITIDA (subsanaciones)
+        # NOTE Se puede entrar en un bucle infinito de inadmisión-subsanación!
+        # Idealmente las subsanaciones deberían aparecer en la convocatoria con una fecha límite.
+        if (date.today() > fecha_maxima) and (proyecto.estado != 'MEM_NO_ADMITIDA'):
             self.permission_denied_message = _(
                 'Se ha superado la fecha límite (%(fecha_maxima)s) para presentar memorias.'
             ) % {'fecha_maxima': localize(fecha_maxima)}
@@ -1775,7 +1792,8 @@ class MemoriaUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
                 ' la fecha límite para presentar memorias.'
             )
             return False
-        if date.today() > fecha_maxima:
+        # Se permite modificar fuera de plazo a Proyectos con MEM_NO_ADMITIDA
+        if (date.today() > fecha_maxima) and (proyecto.estado != 'MEM_NO_ADMITIDA'):
             self.permission_denied_message = _(
                 'Se ha superado la fecha límite (%(fecha_maxima)s) para presentar memorias.'
             ) % {'fecha_maxima': localize(fecha_maxima)}
@@ -2646,8 +2664,8 @@ class ProyectosUsuarioView(LoginRequiredMixin, ChecksMixin, TemplateView):
         # `LOGIN_URL` usa el año actual, pero la convocatoria sale a mitad de año
         convocatoria = get_object_or_None(Convocatoria, pk=kwargs['anyo'])
         if not convocatoria:
-            ultima_convo = Convocatoria.get_ultima()
-            return redirect('mis_proyectos', ultima_convo.id)
+            ultima_convocatoria = Convocatoria.get_ultima()
+            return redirect('mis_proyectos', ultima_convocatoria.id)
         return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -2700,6 +2718,7 @@ class ProyectosUsuarioView(LoginRequiredMixin, ChecksMixin, TemplateView):
             proyectos_participados = [enmascara_estado(p) for p in proyectos_participados]
             proyectos_invitado = [enmascara_estado(p) for p in proyectos_invitado]
 
+        context['convocatoria'] = convocatoria
         context['proyectos_coordinados'] = proyectos_coordinados
         context['proyectos_participados'] = proyectos_participados
         context['proyectos_invitado'] = proyectos_invitado

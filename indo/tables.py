@@ -159,13 +159,13 @@ class EvaluadoresTable(tables.Table):
 
 
 class EvaluacionProyectosTable(tables.Table):
-    """Muestra los proyectos presentados, enlaces a evaluaciones, y resolución de la Comisión."""
+    """Muestra los proyectos presentados, enlaces a evaluaciones, y resolución de la Comisión Evaluadora."""
 
     def render_titulo(self, record):
         enlace = reverse('proyecto_detail', args=[record.id])
         return mark_safe(f'<a href="{enlace}">{record.titulo}</a>')
 
-    # `empty_values`` es necesario para que se muestre la renderización,
+    # `empty_values` es necesario para que se muestre la renderización,
     # porque el campo no tiene ningún valor en la tabla.
     evaluaciones = tables.Column(empty_values=(), orderable=False, verbose_name='Evaluaciones')
     resolucion = tables.Column(empty_values=(), orderable=False, verbose_name=_('Resolución'))
@@ -180,17 +180,21 @@ class EvaluacionProyectosTable(tables.Table):
         return mark_safe(enlaces) if enlaces else '—'
 
     def render_resolucion(self, record):
-        enlace = reverse('resolucion_update', args=[record.id])
+        enlace_ver = reverse('ver_resolucion', args=[record.id])
+        enlace_editar = reverse('resolucion_update', args=[record.id])
         aceptacion = (
-            f'''<span class="fas fa-check-circle text-success" title="{_('Aceptado')}"></span>'''
+            f'''<span class="fas fa-eye text-success" title="{_('Aceptado')}"></span>'''
             if record.aceptacion_comision is True
-            else f'''<span class="fas fa-times-circle text-danger" title="{_('Denegado')}">
+            else f'''<span class="fas fa-eye text-danger" title="{_('Denegado')}">
                  </span>'''
             if record.aceptacion_comision is False
             else ''
         )
         return mark_safe(
-            f'''{aceptacion} <a href="{enlace}" title="{_('Editar la resolución de la Comisión')}"
+            f'''<a href="{enlace_ver}" title="{_('Ver la resolución de la Comisión')}"
+                aria-label="{_('Ver la resolución')}">{aceptacion}</a>
+
+                <a href="{enlace_editar}" title="{_('Editar la resolución de la Comisión')}"
                 aria-label="{_('Editar la resolución')}">
                   <span class="fas fa-pencil-alt"></span>
                 </a>'''
