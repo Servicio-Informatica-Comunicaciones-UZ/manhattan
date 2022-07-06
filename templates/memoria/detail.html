@@ -11,8 +11,8 @@
     </button>
 
     <span class="fas fa-info-circle"></span>
-    {% trans 'Aquí puede ver y editar la memoria del proyecto.' %}<br />
-    {% trans 'Puede editar su memoria tantas veces como desee.' %}<br />
+    {% trans 'Una vez <strong>finalizado el proyecto</strong>, aquí puede ver y editar su memoria.' %}<br />
+    {% trans 'Puede editar la memoria tantas veces como desee.' %}<br />
     {% trans 'Cuando esté satisfecho, pulse el botón «<strong>Presentar</strong>».' %}
     {% trans 'Una vez haya presentado la memoria para su corrección, ya no podrá modificarla.' %}<br /><br />
 
@@ -26,7 +26,7 @@
     {% blocktranslate %}En caso de que el corrector rechace la memoria, podrá subsanar sus defectos
     <strong>sólo</strong> mientras esté dentro del plazo de presentación.{% endblocktranslate %}
     -->
-    {% trans 'En el botón «Plantilla infografía» puede descargar el modelo para rellenar y enviar a innova.docen@unizar.es (opcional).' %}
+    {% trans 'Después de finalizar el proyecto y presentar la memoria, en el botón «Plantilla infografía» puede descargar el modelo para rellenar y enviar a innova.docen@unizar.es (opcional).' %}
   </div>
 
   {% with logo_programa='img/'|concat:proyecto.programa.nombre_corto|concat:'.png' %}
