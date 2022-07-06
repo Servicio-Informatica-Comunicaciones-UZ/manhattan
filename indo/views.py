@@ -1391,6 +1391,7 @@ class ParticipanteCertificadoView(LoginRequiredMixin, PermissionRequiredMixin, T
 
         proyectos_participados = (
             Proyecto.objects.filter(estado__in=['MEM_ADMITIDA', 'FINALIZADO_SIN_MEMORIA'])
+            .filter(aceptacion_economico=True)
             .filter(
                 participantes__usuario=usuario,
                 participantes__tipo_participacion_id__in=[
