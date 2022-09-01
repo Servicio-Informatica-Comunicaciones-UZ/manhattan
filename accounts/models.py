@@ -137,13 +137,14 @@ class CustomUser(AbstractUser):
         return f'{apellidos}, {nombre}'
 
     # Metodos sobrescritos
+    def __str__(self):
+        return self.username
+
     def get_full_name(self):
         """Devuelve el nombre completo (nombre y los dos apellidos)."""
         return self.full_name
 
     # Métodos adicionales
-    def __str__(self):
-        return self.username
 
     def actualizar(self, request):
         """Actualiza el usuario con los datos de Gestión de Identidades."""
