@@ -10,7 +10,7 @@ charset-normalizer==2.1.1
 cryptography==37.0.4
 cssselect2==0.6.0
 defusedxml==0.7.1
-django==4.1
+django==4.1.1
 django-annoying==0.10.6
 django-crispy-forms==1.14.0
 django-filter==22.1
@@ -32,7 +32,7 @@ pycparser==2.21
 pydyf==0.2.0
 pyjwt==2.4.0
 pypandoc==1.8.1
-pyphen==0.12.0
+pyphen==0.13.0
 python-magic==0.4.27
 python3-openid==3.2.0
 python3-saml==1.14.0
