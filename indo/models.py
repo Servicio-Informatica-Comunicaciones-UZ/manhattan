@@ -1,4 +1,7 @@
 import datetime
+
+from typing import Optional
+
 from django.core.validators import FileExtensionValidator
 from django.db import connection, models
 from django.urls import reverse
@@ -658,7 +661,7 @@ class Proyecto(models.Model):
     def en_borrador(self):
         return self.estado == 'BORRADOR'
 
-    def get_pp_coordinador_or_none(self, tipo):
+    def get_pp_coordinador_or_none(self, tipo) -> Optional[ParticipanteProyecto]:
         """Busca el coordinador o coordinador_2 del proyecto"""
         try:
             return self.participantes.get(tipo_participacion_id=tipo)
@@ -796,7 +799,7 @@ class Proyecto(models.Model):
         datos_proyectos.insert(0, cabeceras)
         return datos_proyectos
 
-    def get_unidad_planificacion(self):
+    def get_unidad_planificacion(self) -> Optional[str]:
         """Devuelve el ID de la Unidad de Planificación del proyecto
 
         PIEC, PIPOUZ, PIET: UP del centro del proyecto

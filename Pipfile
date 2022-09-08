@@ -7,9 +7,12 @@ verify_ssl = true
 black = "*"
 coverage = "*"
 django-debug-toolbar = "*"
+django-stubs = "*"
+mypy = "*"
 pre-commit = "*"
 pylint = "*"
 rope = "*"
+types-bleach = "*"
 
 [packages]
 bleach = {extras = ["css"], version = "*"}
