@@ -1,7 +1,8 @@
+# Standard library
+from __future__ import annotations
 import datetime
 
-from typing import Optional
-
+# Django
 from django.core.validators import FileExtensionValidator
 from django.db import connection, models
 from django.urls import reverse
@@ -107,10 +108,13 @@ class Convocatoria(models.Model):
         return str(f'{self.id}-{self.id + 1}')
 
     @classmethod
-    def get_ultima(cls):
+    def get_ultima(cls) -> Convocatoria:
         """Devuelve la última convocatoria."""
 
-        return Convocatoria.objects.order_by('-id').first()
+        ultima_convocatoria = Convocatoria.objects.order_by('-id').first()
+        if not ultima_convocatoria:
+            raise Convocatoria.DoesNotExist
+        return ultima_convocatoria
 
 
 class Criterio(models.Model):
@@ -661,7 +665,7 @@ class Proyecto(models.Model):
     def en_borrador(self):
         return self.estado == 'BORRADOR'
 
-    def get_pp_coordinador_or_none(self, tipo) -> Optional[ParticipanteProyecto]:
+    def get_pp_coordinador_or_none(self, tipo) -> ParticipanteProyecto | None:
         """Busca el coordinador o coordinador_2 del proyecto"""
         try:
             return self.participantes.get(tipo_participacion_id=tipo)
@@ -799,7 +803,7 @@ class Proyecto(models.Model):
         datos_proyectos.insert(0, cabeceras)
         return datos_proyectos
 
-    def get_unidad_planificacion(self) -> Optional[str]:
+    def get_unidad_planificacion(self) -> str | None:
         """Devuelve el ID de la Unidad de Planificación del proyecto
 
         PIEC, PIPOUZ, PIET: UP del centro del proyecto
@@ -833,7 +837,7 @@ class Proyecto(models.Model):
         coordinadores = [self.coordinador, self.coordinador_2]
         return list(filter(None, coordinadores))
 
-    def get_dict_valoraciones(self, user_id):
+    def get_dict_valoraciones(self, user_id: int) -> dict[int, Valoracion]:
         """Devuelve diccionario criterio_id => valoración con las valoraciones de un evaluador."""
         return {
             valoracion.criterio_id: valoracion

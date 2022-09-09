@@ -1,14 +1,12 @@
 # Standard library
+from datetime import date
 from time import sleep
+
+# from os.path import splitext
 import csv
 import json
 import os
 import sys
-
-# import magic
-from datetime import date
-
-# from os.path import splitext
 
 # Third-party
 from annoying.functions import get_config, get_object_or_None
@@ -17,10 +15,13 @@ from django_tables2.export.views import ExportMixin
 from django_tables2.views import SingleTableView
 from social_django.utils import load_strategy
 from templated_email import send_templated_mail
+from typing import Any
 
 # Alternativa: Usar Headless Chromium con <https://github.com/pyppeteer/pyppeteer>
 from bleach.css_sanitizer import CSSSanitizer
 from weasyprint import HTML  # https://weasyprint.org/ - No soporta Javascript
+
+# import magic
 import bleach
 import pypandoc
 import requests
@@ -40,7 +41,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.forms.models import modelform_factory
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
@@ -52,6 +53,7 @@ from django.views.generic import DetailView, ListView, RedirectView, TemplateVie
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 # Local Django
+from accounts.models import CustomUser
 from accounts.pipeline import get_identidad
 from .filters import ParticipanteProyectoCentroFilter, ProyectoFilter
 from .forms import (
@@ -122,7 +124,7 @@ def actualizar_usuarios(request, anyo):
 class ChecksMixin(UserPassesTestMixin):
     """Proporciona comprobaciones para autorizar o no una acción a un usuario."""
 
-    def es_coordinador(self, proyecto_id):
+    def es_coordinador(self, proyecto_id: int) -> bool:
         """Devuelve si el usuario actual es coordinador del proyecto indicado."""
         self.permission_denied_message = _('Usted no es coordinador de este proyecto.')
         proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
@@ -156,7 +158,7 @@ class ChecksMixin(UserPassesTestMixin):
 
         return True if pp else False
 
-    def esta_vinculado(self, proyecto_id):
+    def esta_vinculado(self, proyecto_id: int) -> bool:
         """Devuelve si el usuario actual está vinculado al proyecto indicado."""
         self.permission_denied_message = _('Usted no está vinculado a este proyecto.')
         proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
@@ -169,7 +171,7 @@ class ChecksMixin(UserPassesTestMixin):
 
         return True if pp else False
 
-    def es_pas_o_pdi(self):
+    def es_pas_o_pdi(self) -> bool:
         """Devuelve si el usuario actual es PAS o PDI de la UZ o de sus centros adscritos."""
         self.permission_denied_message = _('Usted no está contratado como PAS o PDI.')
         usuario_actual = self.request.user
@@ -186,7 +188,7 @@ class ChecksMixin(UserPassesTestMixin):
             col_autorizado in colectivos_del_usuario for col_autorizado in ['PAS', 'ADS', 'PDI']
         )
 
-    def es_decano_o_director(self, proyecto_id):
+    def es_decano_o_director(self, proyecto_id: int) -> bool:
         """Devuelve si el usuario actual es decano/director del centro del proyecto."""
         self.permission_denied_message = _('Usted no es decano/director del centro del proyecto.')
         proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
@@ -198,7 +200,7 @@ class ChecksMixin(UserPassesTestMixin):
         nip_decano = centro.nip_decano
         return usuario_actual.username == str(nip_decano)
 
-    def esta_vinculado_o_es_decano_o_es_coordinador(self, proyecto_id):
+    def esta_vinculado_o_es_decano_o_es_coordinador(self, proyecto_id: int) -> bool:
         """Devuelve si el usuario actual está autorizado para ver la solicitud del proyecto."""
         usuario_actual = self.request.user
         esta_autorizado = (
@@ -219,7 +221,7 @@ class ChecksMixin(UserPassesTestMixin):
 
         return esta_autorizado
 
-    def es_coordinador_estudio(self, proyecto_id):
+    def es_coordinador_estudio(self, proyecto_id: int) -> bool:
         """Devuelve si el usuario actual es coordinador del estudio del proyecto."""
         self.permission_denied_message = _(
             'Usted no es coordinador del plan de estudios del proyecto.'
@@ -235,7 +237,7 @@ class ChecksMixin(UserPassesTestMixin):
         ]
         return usuario_actual.username in nip_coordinadores
 
-    def es_evaluador_del_proyecto(self, proyecto_id):
+    def es_evaluador_del_proyecto(self, proyecto_id: int) -> bool:
         """Devuelve si el usuario actual es evaluador del proyecto indicado."""
         self.permission_denied_message = _('Usted no es evaluador de este proyecto.')
         proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
@@ -243,13 +245,18 @@ class ChecksMixin(UserPassesTestMixin):
 
         return usuario_actual in proyecto.evaluadores.all()
 
-    def es_corrector_del_proyecto(self, proyecto_id):
+    def es_corrector_del_proyecto(self, proyecto_id: int) -> bool:
         """Devuelve si el usuario actual es corrector de la memoria del proyecto indicado."""
         self.permission_denied_message = _('Usted no es corrector de la memoria de este proyecto.')
         proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
         usuario_actual = self.request.user
 
         return usuario_actual == proyecto.corrector
+
+
+class AuthenticatedHttpRequest(HttpRequest):
+    # https://stackoverflow.com/questions/66187530/how-to-get-mypy-to-recognize-login-required-decorator/68886255#68886255
+    user: CustomUser
 
 
 class AyudaView(LoginRequiredMixin, TemplateView):
@@ -267,9 +274,9 @@ class AyudaView(LoginRequiredMixin, TemplateView):
         payload = {
             'asunto': request.POST.get('asunto'),
             'descripcion': request.POST.get('descripcion'),
-            'email': self.request.user.email,
+            'email': request.user.email,
         }
-        resp = requests.post(settings.ADD_TICKET_URL, data=payload)
+        resp = requests.post(get_config('ADD_TICKET_URL'), data=payload)
         received_data = json.loads(resp.content.decode('utf-8'))
         if not resp.ok:
             msg = mark_safe(
@@ -303,7 +310,7 @@ class CorreccionVerView(LoginRequiredMixin, PermissionRequiredMixin, DetailView)
         context = super().get_context_data(**kwargs)
         context.update(
             {
-                'anyo': self.object.convocatoria.id,
+                'anyo': self.get_object().convocatoria.id,
                 'url_anterior': self.request.headers.get('Referer', reverse('home')),
             }
         )
@@ -352,7 +359,7 @@ class MemoriaCorreccionUpdateView(LoginRequiredMixin, ChecksMixin, UpdateView):
     def test_func(self):
         return self.es_corrector_del_proyecto(self.kwargs['pk'])
 
-    def _enviar_notificacion(self, request, proyecto):
+    def _enviar_notificacion(self, request: HttpRequest, proyecto: Proyecto) -> Any:
         """Envía un mensaje al coordinador del proyecto."""
         if request.POST.get('aceptacion_corrector') == 'True':
             plantilla = 'memoria_admitida'
@@ -367,7 +374,7 @@ class MemoriaCorreccionUpdateView(LoginRequiredMixin, ChecksMixin, UpdateView):
                 context={
                     'proyecto': proyecto,
                     'coordinador': proyecto.coordinador,
-                    'vicerrector': settings.VICERRECTOR.strip('"'),
+                    'vicerrector': get_config('VICERRECTOR').strip('"'),
                     'observaciones': request.POST.get('observaciones_corrector'),
                 },
                 cc=(settings.DEFAULT_FROM_EMAIL,),  # Enviar copia al vicerrectorado
@@ -586,7 +593,7 @@ class MemoriasZaguanView(LoginRequiredMixin, PermissionRequiredMixin, TemplateVi
             .filter(es_publicable=True)
             .order_by('programa__nombre_corto', 'linea__nombre', 'titulo')
         )
-        contexto['url_memorias'] = settings.SITE_URL + settings.MEDIA_URL + 'memoria/'
+        contexto['url_memorias'] = get_config('SITE_URL') + get_config('MEDIA_URL') + 'memoria/'
 
         cadena_xml = render_to_string('memoria/marc_list.xml', context=contexto, request=request)
 
@@ -595,7 +602,9 @@ class MemoriasZaguanView(LoginRequiredMixin, PermissionRequiredMixin, TemplateVi
         headers = {'user-agent': 'zaguan_indo'}
 
         try:
-            resp = requests.post(settings.REPO_WSURL, data=payload, files=files, headers=headers)
+            resp = requests.post(
+                get_config('REPO_WSURL'), data=payload, files=files, headers=headers
+            )
             resp.raise_for_status()
         except requests.exceptions.SSLError:
             raise requests.exceptions.SSLError(
@@ -1331,7 +1340,7 @@ class ParticipanteHaceConstarView(LoginRequiredMixin, PermissionRequiredMixin, T
         )
 
         contexto = {
-            'vicerrector': settings.VICERRECTOR.strip('"'),
+            'vicerrector': get_config('VICERRECTOR').strip('"'),
             'usuario': usuario,
             'proyecto_list': proyectos_participados,
             'convocatoria': convocatoria,
@@ -1405,7 +1414,7 @@ class ParticipanteCertificadoView(LoginRequiredMixin, PermissionRequiredMixin, T
         )
 
         contexto = {
-            'secretario': settings.SECRETARIO.strip('"'),
+            'secretario': get_config('SECRETARIO').strip('"'),
             'usuario': usuario,
             'proyecto_list': proyectos_participados,
         }
@@ -1644,7 +1653,9 @@ class MemoriaMarcxmlView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.update({'url_memorias': settings.SITE_URL + settings.MEDIA_URL + 'memoria/'})
+        context.update(
+            {'url_memorias': get_config('SITE_URL') + get_config('MEDIA_URL') + 'memoria/'}
+        )
         return context
 
     def get(self, request, *args, **kwargs):
@@ -1660,7 +1671,9 @@ class MemoriasMarcxmlListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.update({'url_memorias': settings.SITE_URL + settings.MEDIA_URL + 'memoria/'})
+        context.update(
+            {'url_memorias': get_config('SITE_URL') + get_config('MEDIA_URL') + 'memoria/'}
+        )
         return context
 
     def get_queryset(self):
@@ -1814,31 +1827,31 @@ class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context['anyo'] = self.object.convocatoria.id
+        context['anyo'] = self.get_object().convocatoria.id
 
         context['participantes'] = (
-            self.object.participantes.filter(tipo_participacion='participante')
+            self.get_object()
+            .participantes.filter(tipo_participacion='participante')
             .order_by('usuario__first_name', 'usuario__last_name')
             .all()
         )
 
         context['invitados'] = (
-            self.object.participantes.filter(
-                tipo_participacion__in=['invitado', 'invitacion_rehusada']
-            )
+            self.get_object()
+            .participantes.filter(tipo_participacion__in=['invitado', 'invitacion_rehusada'])
             .order_by('tipo_participacion', 'usuario__first_name', 'usuario__last_name')
             .all()
         )
 
-        context['campos'] = json.loads(self.object.programa.campos)
+        context['campos'] = json.loads(self.get_object().programa.campos)
 
         context['permitir_edicion'] = (
-            self.es_coordinador(self.object.id) and self.object.en_borrador()
+            self.es_coordinador(self.get_object().id) and self.object.en_borrador()
         ) or self.request.user.has_perm('indo.editar_proyecto')
 
         context['permitir_invitar'] = (
             context['permitir_edicion']
-            and date.today() <= self.object.convocatoria.fecha_max_aceptos
+            and date.today() <= self.get_object().convocatoria.fecha_max_aceptos
         )
 
         context['permitir_anyadir_sin_invitacion'] = self.request.user.has_perm(
@@ -1857,8 +1870,8 @@ class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
         # No mostrar si la Comisión ha aprobado o no el proyecto
         # hasta que se publique la resolución.
         if (
-            self.object.estado in ('DENEGADO', 'APROBADO')
-            and not self.object.convocatoria.notificada_resolucion_provisional
+            self.get_object().estado in ('DENEGADO', 'APROBADO')
+            and not self.get_object().convocatoria.notificada_resolucion_provisional
         ):
             context['object'].estado = 'SOLICITADO'
 
@@ -1952,7 +1965,7 @@ class ProyectoFichaView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['anyo'] = self.object.convocatoria.id
+        context['anyo'] = self.get_object().convocatoria.id
         return context
 
 
@@ -2078,11 +2091,11 @@ class ProyectosNotificarView(LoginRequiredMixin, PermissionRequiredMixin, Redire
             context={
                 'proyecto': proyecto,
                 'coordinador': proyecto.coordinador,
-                'site_url': settings.SITE_URL,
-                'ayuda_url': settings.SITE_URL + reverse('ayuda'),
-                'vicerrector': settings.VICERRECTOR.strip('"'),
+                'site_url': get_config('SITE_URL'),
+                'ayuda_url': get_config('SITE_URL') + reverse('ayuda'),
+                'vicerrector': get_config('VICERRECTOR').strip('"'),
             },
-            cc=(settings.DEFAULT_FROM_EMAIL,),  # Enviar copia al vicerrectorado
+            cc=(get_config('DEFAULT_FROM_EMAIL'),),  # Enviar copia al vicerrectorado
         )
 
 
@@ -2171,7 +2184,11 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
             )
             return super().post(request, *args, **kwargs)
 
-        if proyecto.ayuda > proyecto.programa.max_ayuda:
+        if (
+            proyecto.ayuda
+            and proyecto.programa.max_ayuda
+            and proyecto.ayuda > proyecto.programa.max_ayuda
+        ):
             messages.error(
                 request,
                 _(

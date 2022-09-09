@@ -1,6 +1,11 @@
+# Third-party
 from django_tables2 import SingleTableView
 
-from .models import Evento, Registro
+# Django
+from django.http import HttpRequest
+
+# Local Django
+from .models import Evento, Proyecto, Registro
 
 
 class PagedFilteredTableView(SingleTableView):
@@ -33,7 +38,9 @@ def get_client_ip(request):
     return request.META.get('REMOTE_ADDR')
 
 
-def registrar_evento(request, nombre_evento, descripcion, proyecto):
+def registrar_evento(
+    request: HttpRequest, nombre_evento: str, descripcion: str, proyecto: Proyecto
+) -> None:
     evento = Evento.objects.get(nombre=nombre_evento)
     ip_address = get_client_ip(request)
 

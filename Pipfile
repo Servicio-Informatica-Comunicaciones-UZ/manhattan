@@ -13,6 +13,7 @@ pre-commit = "*"
 pylint = "*"
 rope = "*"
 types-bleach = "*"
+types-requests = "*"
 
 [packages]
 bleach = {extras = ["css"], version = "*"}

@@ -1,4 +1,5 @@
 # Standard library
+from __future__ import annotations
 import json
 
 # Third-party
@@ -180,7 +181,7 @@ class CustomUser(AbstractUser):
         return num_equipos
 
     @classmethod
-    def crear_usuario(cls, request, nip):
+    def crear_usuario(cls, request, nip: str) -> CustomUser:
         """Crea un registro de usuario con el NIP indicado y los datos de Gestión Identidades."""
 
         usuario = cls.objects.create_user(username=nip)

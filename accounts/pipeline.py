@@ -8,13 +8,15 @@ from lxml.etree import XMLSyntaxError
 from requests import Session
 from requests.auth import HTTPBasicAuth
 from requests.exceptions import ConnectionError as RequestConnectionError
+from social_core.strategy import BaseStrategy
 
 # Django
 from django.contrib import messages
-from django.core.validators import ValidationError, validate_email
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 
 
-def get_identidad(strategy, response, user, *args, **kwargs):
+def get_identidad(strategy: BaseStrategy, response, user, *args, **kwargs) -> None:
     """Actualiza el usuario con los datos obtenidos de Gestión de Identidades."""
 
     wsdl = get_config('WSDL_IDENTIDAD')
@@ -74,7 +76,7 @@ def get_identidad(strategy, response, user, *args, **kwargs):
     strategy.storage.user.changed(user)
 
 
-def is_email_valid(email):
+def is_email_valid(email: str) -> bool:
     """Validate email address"""
     try:
         validate_email(email)
