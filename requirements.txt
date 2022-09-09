@@ -23,7 +23,7 @@ html5lib==1.1
 huey==2.4.3
 idna==3.3
 isodate==0.6.1
-lxml==4.6.5
+lxml==4.9.1
 mysqlclient==2.1.1
 oauthlib==3.2.0
 pillow==9.2.0
