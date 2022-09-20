@@ -815,7 +815,7 @@ class Proyecto(models.Model):
             return (
                 f'{self.coordinador.departamentos[0].unidad_planificacion}'
                 + f' ({self.coordinador.departamentos[0].nombre})'
-                if self.coordinador.departamentos
+                if self.coordinador and self.coordinador.departamentos
                 else None
             )
         return None
