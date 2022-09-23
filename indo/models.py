@@ -10,6 +10,13 @@ from django.utils.translation import gettext_lazy as _
 
 
 class Centro(models.Model):
+    """
+    Modelo que representa un centro de estudios.
+
+    `academico_id_nk` es el código del centro en Sigma.
+    `rrhh_id_nk` es el código del centro en People.
+    """
+
     id = models.AutoField(primary_key=True)
     academico_id_nk = models.IntegerField(_('cód. académico'), blank=True, null=True)
     rrhh_id_nk = models.CharField(_('cód. RRHH'), max_length=4, blank=True, null=True)
@@ -61,6 +68,8 @@ class Centro(models.Model):
 
 
 class Convocatoria(models.Model):
+    """Modelo que representa una convocatoria de proyectos de innovación docente."""
+
     id = models.PositiveSmallIntegerField(_('año'), primary_key=True)
     num_max_equipos = models.PositiveSmallIntegerField(
         _('número máximo de equipos en que puede participar una persona'), default=4
@@ -118,7 +127,7 @@ class Convocatoria(models.Model):
 
 
 class Criterio(models.Model):
-    """Criterios para evaluar proyectos por la ACPUA."""
+    """Modelo para los criterios de evaluación por la ACPUA de una solicitud de proyecto."""
 
     class Tipo(models.TextChoices):
         """Tipo de criterio.
@@ -155,6 +164,8 @@ class Criterio(models.Model):
 
 
 class Departamento(models.Model):
+    """Modelo para representar un departamento."""
+
     id = models.AutoField(primary_key=True)
     academico_id_nk = models.IntegerField('cód. académico', blank=True, db_index=True, null=True)
     rrhh_id_nk = models.CharField('cód. RRHH', max_length=4, blank=True, null=True)
@@ -182,6 +193,8 @@ class Departamento(models.Model):
 
 
 class Estudio(models.Model):
+    """Modelo para representar un estudio."""
+
     OPCIONES_RAMA = (
         ('B', _('Formación básica sin rama')),
         ('H', _('Artes y Humanidades')),
@@ -205,7 +218,11 @@ class Estudio(models.Model):
 
 
 class EvaluadorProyecto(models.Model):
-    """Asignación de evaluadores a proyectos"""
+    """
+    Asignación de evaluadores a proyectos (tabla `evaluadores_proyectos`).
+
+    El campo `ha_evaluado` indica si el evaluador ya ha evaluado el proyecto o no.
+    """
 
     evaluador = models.ForeignKey(
         'accounts.CustomUser', on_delete=models.PROTECT, related_name='evaluadores_proyectos'
@@ -228,7 +245,7 @@ class Evento(models.Model):
 
 
 class Licencia(models.Model):
-    """Licencia de publicación de la memoria"""
+    """Modelo para las licencias con las que se podrá publicar la memoria de un proyecto."""
 
     identificador = models.CharField(
         max_length=255,
@@ -243,6 +260,10 @@ class Licencia(models.Model):
 
 
 class Linea(models.Model):
+    """
+    Los programas pueden tener líneas. Este modelo representa una línea.
+    """
+
     nombre = models.CharField(max_length=191)
     programa = models.ForeignKey('Programa', on_delete=models.PROTECT, related_name='lineas')
 
@@ -251,6 +272,12 @@ class Linea(models.Model):
 
 
 class Plan(models.Model):
+    """
+    Modelo para representar un plan de estudios.
+
+    El campo `id_nk` es el código del plan en Sigma.
+    """
+
     id_nk = models.PositiveSmallIntegerField(_('Cód. plan'))
     nip_coordinador = models.PositiveIntegerField(_('NIP del coordinador'), blank=True, null=True)
     nombre_coordinador = models.CharField(
@@ -263,6 +290,13 @@ class Plan(models.Model):
 
 
 class ParticipanteProyecto(models.Model):
+    """
+    Modelo para representar las vinculaciones de los usuarios a los proyectos.
+
+    Se puede ser coordinador, coordinador auxiliar, invitado, participante
+    o invitado que ha declinado la invitación.
+    """
+
     proyecto = models.ForeignKey(
         'Proyecto', on_delete=models.PROTECT, related_name='participantes'
     )
@@ -286,6 +320,8 @@ class ParticipanteProyecto(models.Model):
 
 
 class Programa(models.Model):
+    """Modelo para representar un programa."""
+
     nombre_corto = models.CharField(max_length=15, help_text=_('Ejemplo: PRACUZ'))
     nombre_largo = models.CharField(
         max_length=127, help_text=_('Ejemplo: Programa de Recursos en Abierto para Centros')
@@ -312,6 +348,8 @@ class Programa(models.Model):
 
 
 class Proyecto(models.Model):
+    """Modelo para representar un proyecto de innovación docente."""
+
     id = models.AutoField(primary_key=True)
     id_uxxi = models.CharField(
         _('Nº UXXI'),
@@ -638,6 +676,8 @@ class Proyecto(models.Model):
     aceptacion_economico = models.BooleanField(_('Cierre económico'), default=False)
 
     class Meta:
+        """Este código crea una lista de tuplas con los distintos permisos y su descripción."""
+
         permissions = [
             ('listar_proyectos', _('Puede ver el listado de todos los proyectos.')),
             ('ver_proyecto', _('Puede ver cualquier proyecto.')),
@@ -666,7 +706,11 @@ class Proyecto(models.Model):
         return self.estado == 'BORRADOR'
 
     def get_pp_coordinador_or_none(self, tipo) -> ParticipanteProyecto | None:
-        """Busca el coordinador o coordinador_2 del proyecto"""
+        """
+        Busca la vinculación del coordinador o coordinador_2 (según se indique) del proyecto.
+
+        Si no la encuentra devuelve `None`.
+        """
         try:
             return self.participantes.get(tipo_participacion_id=tipo)
         except ParticipanteProyecto.DoesNotExist:
@@ -804,14 +848,17 @@ class Proyecto(models.Model):
         return datos_proyectos
 
     def get_unidad_planificacion(self) -> str | None:
-        """Devuelve el ID de la Unidad de Planificación del proyecto
+        """Devuelve el ID y nombre de la Unidad de Planificación del proyecto.
 
-        PIEC, PIPOUZ, PIET: UP del centro del proyecto
-        PIIDUZ, PRAUZ, MOOC, PISOC: UP del departamento del coordinador del proyecto
+        * PIEC, PIPOUZ, PIET: La UP es la del centro del proyecto.
+          Vg: 103 (Facultad de Filosofía y Letras)
+        * PIIDUZ, PRAUZ, MOOC, PISOC: La UP es la del departamento del coordinador del proyecto.
+          Vg: 273 (Departamento de Dirección de Marketing e Investigación de Mercados)
         """
         if self.programa.nombre_corto in ('PIEC', 'PIPOUZ', 'PIET'):
             return f'{self.centro.unidad_planificacion} ({self.centro.nombre})'
         elif self.programa.nombre_corto in ('PIIDUZ', 'PRAUZ', 'MOOC', 'PISOC'):
+            # Si el coordinador está en más de un departamento, tomamos el primero.
             return (
                 f'{self.coordinador.departamentos[0].unidad_planificacion}'
                 + f' ({self.coordinador.departamentos[0].nombre})'
@@ -822,18 +869,18 @@ class Proyecto(models.Model):
 
     @property
     def coordinador(self):
-        """Devuelve el usuario coordinador del proyecto"""
+        """Devuelve el usuario coordinador del proyecto (o `None` si no lo encuentra)."""
         pp_coordinador = self.get_pp_coordinador_or_none('coordinador')
         return pp_coordinador.usuario if pp_coordinador else None
 
     @property
     def coordinador_2(self):
-        """Devuelve el segundo coordinador del proyecto (los PIET podían tener 2)."""
+        """Devuelve el segundo coordinador del proyecto si lo hay (los PIET podían tenerlo)."""
         pp_coordinador_2 = self.get_pp_coordinador_or_none('coordinador_2')
         return pp_coordinador_2.usuario if pp_coordinador_2 else None
 
     def get_coordinadores(self):
-        """Devuelve los usuarios coordinadores del proyecto."""
+        """Devuelve una lista con los usuarios coordinadores del proyecto."""
         coordinadores = [self.coordinador, self.coordinador_2]
         return list(filter(None, coordinadores))
 
@@ -850,7 +897,7 @@ class Proyecto(models.Model):
 
     @property
     def usuarios_participantes(self):
-        """Devuelve una lista de los usuarios participantes en el proyecto."""
+        """Devuelve una lista de los usuarios de tipo `participante` del proyecto."""
         participantes_proyecto = (
             self.participantes.filter(tipo_participacion='participante')
             .order_by('usuario__first_name', 'usuario__last_name')
@@ -860,7 +907,7 @@ class Proyecto(models.Model):
 
     def get_usuarios_vinculados(self):
         """
-        Devuelve todos los usuarios vinculados al proyecto
+        Devuelve una lista de todos los usuarios vinculados al proyecto
         (invitados, participantes, etc).
         """
         return list(map(lambda p: p.usuario, self.participantes.all()))
@@ -871,7 +918,7 @@ class Proyecto(models.Model):
         return self.participantes.filter(tipo_participacion='participante').count()
 
     def tiene_invitados(self):
-        """Devuelve si el proyecto tiene al menos un invitado."""
+        """Devuelve si el proyecto tiene al menos un participante de tipo `invitado`."""
         num_invitados = self.participantes.filter(tipo_participacion='invitado').count()
         return num_invitados >= 1
 
@@ -881,7 +928,7 @@ class Proyecto(models.Model):
 
 
 class MemoriaApartado(models.Model):
-    """Apartados de la memoria"""
+    """Modelo para representar cada apartado que tendrán las memorias en una convocatoria."""
 
     convocatoria = models.ForeignKey(
         'Convocatoria', on_delete=models.PROTECT, related_name='apartados_memoria'
@@ -899,7 +946,7 @@ class MemoriaApartado(models.Model):
 
 
 class MemoriaSubapartado(models.Model):
-    """Subapartados de la memoria"""
+    """Modelo para representar los subapartados de un apartado de la memoria."""
 
     class Tipo(models.TextChoices):
         """Tipo de subapartado.
@@ -935,7 +982,7 @@ class MemoriaSubapartado(models.Model):
 
 
 class MemoriaRespuesta(models.Model):
-    """Respuestas a los subapartados de la memoria"""
+    """Modelo para representar la respuesta del coordinador a un subapartado de la memoria."""
 
     proyecto = models.ForeignKey(
         'Proyecto', on_delete=models.PROTECT, related_name='respuestas_memoria'
@@ -980,7 +1027,7 @@ class MemoriaRespuesta(models.Model):
 
 
 class Opcion(models.Model):
-    """Respuestas posibles a los criterios, cada una con una puntuación."""
+    """Respuestas posibles a un criterio de evaluación, cada una con una puntuación."""
 
     criterio = models.ForeignKey('Criterio', on_delete=models.PROTECT, related_name='opciones')
     puntuacion = models.PositiveSmallIntegerField(_('puntuación'))
@@ -996,7 +1043,9 @@ class Opcion(models.Model):
 
 
 class Registro(models.Model):
-    fecha = models.DateTimeField(auto_now_add=True)
+    """Modelo para representar el registro de un evento."""
+
+    fecha = models.DateTimeField(auto_now_add=True)  # Fecha y hora del evento, automática.
     descripcion = models.CharField(max_length=255)
     evento = models.ForeignKey('Evento', on_delete=models.PROTECT)
     proyecto = models.ForeignKey('Proyecto', on_delete=models.PROTECT)
@@ -1007,7 +1056,7 @@ class Registro(models.Model):
 
 
 class Resolucion(models.Model):
-    """Datos sobre una resolución publicada en el tablón de anuncios."""
+    """Modelo para representar una resolución publicada en el tablón de anuncios."""
 
     fecha = models.DateField(default=datetime.date.today)
     titulo = models.CharField(_('título'), max_length=255)
@@ -1041,11 +1090,15 @@ class RightsSupport(models.Model):
 
 
 class TipoEstudio(models.Model):
+    """Modelo para representar los tipos de estudios (Grado, Máster, etc)."""
+
     id = models.PositiveSmallIntegerField(_('Cód. tipo estudio'), primary_key=True)
     nombre = models.CharField(max_length=63)
 
 
 class TipoParticipacion(models.Model):
+    """Modelo para representar los tipos de participación en los proyectos."""
+
     nombre = models.CharField(primary_key=True, max_length=63)
 
 
