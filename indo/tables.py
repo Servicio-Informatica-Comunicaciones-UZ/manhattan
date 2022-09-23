@@ -159,7 +159,7 @@ class EvaluadoresTable(tables.Table):
 
 
 class EvaluacionProyectosTable(tables.Table):
-    """Muestra los proyectos presentados, enlaces a evaluaciones, y resolución de la Comisión Evaluadora."""
+    """Muestra los proyectos presentados, enlaces a evaluaciones, y resolución de la Comisión."""
 
     def render_titulo(self, record):
         enlace = reverse('proyecto_detail', args=[record.id])
@@ -191,7 +191,7 @@ class EvaluacionProyectosTable(tables.Table):
             else ''
         )
         return mark_safe(
-            f'''<a href="{enlace_ver}" title="{_('Ver la resolución de la Comisión')}"
+            f'''<a href="{enlace_ver}" title="{_('Ver la resolución de la Comisión Evaluadora')}"
                 aria-label="{_('Ver la resolución')}">{aceptacion}</a>
 
                 <a href="{enlace_editar}" title="{_('Editar la resolución de la Comisión')}"
@@ -429,6 +429,10 @@ class ProyectosCierreEconomicoTable(tables.Table):
         )
 
     def render_aceptacion_economico(self, record):
+        # La memoria tiene que estar aceptada para poder cerrar el proyecto.
+        if not record.aceptacion_corrector:
+            return '—'
+
         if record.aceptacion_economico:
             return mark_safe(
                 f'''<span class="fas fa-check-circle text-success" title="{_('Cerrado')}">

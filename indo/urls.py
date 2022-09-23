@@ -103,11 +103,6 @@ urlpatterns = [
         name='cierre_economico_table',
     ),
     path(
-        'gestion/proyectos/<int:anyo>/evaluaciones/',
-        ProyectoEvaluacionesTableView.as_view(),
-        name='evaluaciones_table',
-    ),
-    path(
         'gestion/proyectos/<int:anyo>/csv-evaluaciones/',
         ProyectoEvaluacionesCsvView.as_view(),
         name='csv_evaluaciones',
@@ -123,14 +118,19 @@ urlpatterns = [
         name='csv_up_gastos',
     ),
     path(
-        'gestion/proyectos/<int:anyo>/notificar/',
-        ProyectosNotificarView.as_view(),
-        name='notificar_proyectos',
-    ),
-    path(
         'gestion/proyectos/<int:anyo>/correctores/',
         ProyectoCorrectorTableView.as_view(),
         name='proyecto_corrector_table',
+    ),
+    path(
+        'gestion/proyectos/<int:anyo>/evaluaciones/',
+        ProyectoEvaluacionesTableView.as_view(),
+        name='evaluaciones_table',
+    ),
+    path(
+        'gestion/proyectos/<int:anyo>/evaluadores/',
+        ProyectoEvaluadorTableView.as_view(),
+        name='evaluadores_table',
     ),
     path(
         'gestion/proyectos/<int:anyo>/memorias/',
@@ -138,14 +138,14 @@ urlpatterns = [
         name='memorias_table',
     ),
     path(
+        'gestion/proyectos/<int:anyo>/notificar/',
+        ProyectosNotificarView.as_view(),
+        name='notificar_proyectos',
+    ),
+    path(
         'gestion/proyectos/<int:anyo>/unidades-planificacion/',
         ProyectoUPTableView.as_view(),
         name='up_table',
-    ),
-    path(
-        'gestion/proyectos/<int:anyo>/evaluadores/',
-        ProyectoEvaluadorTableView.as_view(),
-        name='evaluadores_table',
     ),
     path(
         'gestion/proyectos/<int:anyo>/usuario',
@@ -175,12 +175,12 @@ urlpatterns = [
         name='evaluadorproyecto_delete',
     ),
     path(
+        'gestion/proyecto/<int:pk>/correccion/', CorreccionVerView.as_view(), name='ver_correccion'
+    ),
+    path(
         'gestion/proyecto/<int:pk>/editar-resolucion/',
         ProyectoResolucionUpdateView.as_view(),
         name='resolucion_update',
-    ),
-    path(
-        'gestion/proyecto/<int:pk>/correccion/', CorreccionVerView.as_view(), name='ver_correccion'
     ),
     path(
         'gestion/proyecto/<int:pk>/resolucion/',
@@ -234,28 +234,25 @@ urlpatterns = [
     # Proyecto
     path('proyecto/new/', ProyectoCreateView.as_view(), name='proyecto_new'),
     path('proyecto/<int:pk>/', ProyectoDetailView.as_view(), name='proyecto_detail'),
-    path('proyecto/<int:pk>/ficha', ProyectoFichaView.as_view(), name='proyecto_ficha'),
-    path(
-        'proyecto/<int:pk>/edit/<campo>/',
-        ProyectoUpdateFieldView.as_view(),
-        name='proyecto_update_field',
-    ),
     path(
         'proyecto/<int:pk>/aceptar-condiciones/',
         ProyectoAceptarView.as_view(),
         name='proyecto_aceptar',
     ),
-    path(
-        'proyecto/<int:pk>/ver-condiciones/',
-        ProyectoVerCondicionesView.as_view(),
-        name='proyecto_ver_condiciones',
-    ),
     path('proyecto/<int:pk>/anular/', ProyectoAnularView.as_view(), name='proyecto_anular'),
+    path(
+        'proyecto/<int:pk>/edit/<campo>/',
+        ProyectoUpdateFieldView.as_view(),
+        name='proyecto_update_field',
+    ),
+    path('proyecto/<int:pk>/ficha', ProyectoFichaView.as_view(), name='proyecto_ficha'),
     path(
         'proyecto/<int:pk>/presentar/', ProyectoPresentarView.as_view(), name='proyecto_presentar'
     ),
     path(
-        'proyectos/<int:anyo>/mis-proyectos/', ProyectosUsuarioView.as_view(), name='mis_proyectos'
+        'proyecto/<int:pk>/ver-condiciones/',
+        ProyectoVerCondicionesView.as_view(),
+        name='proyecto_ver_condiciones',
     ),
     path(
         'proyectos/<int:anyo>/aceptados/',
@@ -266,6 +263,9 @@ urlpatterns = [
         'proyectos/<int:anyo>/aceptados-por-centros/',
         ProyectosAceptadosCentrosListView.as_view(),
         name='proyectos_aceptados_por_centros',
+    ),
+    path(
+        'proyectos/<int:anyo>/mis-proyectos/', ProyectosUsuarioView.as_view(), name='mis_proyectos'
     ),
     path('resoluciones', ResolucionListView.as_view(), name='resoluciones'),
 ]

@@ -21,18 +21,86 @@
 
 {% block content %}
 <div class="container-blanco">
-  <h1>{% trans 'Actualizar solicitud de proyecto' %}</h1>
+  <h1>{% trans 'Actualizar proyecto' %}</h1>
   <hr />
   <br />
 
-  <form action="" method="post">
+  <div class="table-responsive">
+    <table class="table table-hover table-striped table-sm" aria-label="Datos del proyecto">
+      <tr>
+        <th scope="row"><strong>{% trans 'Título del proyecto' %}</strong>:</th>
+        <td>{{ proyecto.titulo }}</td>
+      </tr>
+
+      <tr>
+        <th scope="row"><strong>{% trans 'ID del proyecto' %}</strong>:</th>
+        <td>{{ proyecto.id }}</td>
+      </tr>
+
+      {% if proyecto.codigo %}
+        <tr>
+          <th scope="row"><strong>{% trans 'Código del proyecto' %}</strong>:</th>
+          <td>{{ proyecto.codigo }}</td>
+        </tr>
+      {% endif %}
+
+      <tr>
+        <th scope="row"><strong>{% trans 'Convocatoria' %}</strong>:</th>
+        <td>{{ proyecto.convocatoria_id }}</td>
+      </tr>
+
+      <tr>
+        <th scope="row"><strong>{% trans 'Programa' %}</strong>:</th>
+        <td>{{ proyecto.programa.nombre_corto }} ({{ proyecto.programa.nombre_largo }})</td>
+      </tr>
+
+      {% if proyecto.linea %}
+      <tr>
+        <th scope="row"><strong>{% trans 'Línea' %}</strong>:</th>
+        <td>{{ proyecto.linea.nombre }}</td>
+      </tr>
+      {% endif %}
+
+      {% if proyecto.centro %}
+      <tr>
+        <th scope="row"><strong>{% trans 'Centro' %}</strong>:</th>
+        <td>{{ proyecto.centro.nombre }}</td>
+      </tr>
+      {% endif %}
+
+      {% if proyecto.estudio %}
+      <tr>
+        <th scope="row"><strong>{% trans 'Estudio' %}</strong>:</th>
+        <td>{{ proyecto.estudio.nombre }}</td>
+      </tr>
+      {% endif %}
+
+      <tr>
+        <th scope="row"><strong>{% trans 'Unidad de planificación' %}</strong>:</th>
+        <td>{{ proyecto.get_unidad_planificacion | default:"—"}}</td>
+      </tr>
+
+      <tr>
+        <th scope="row"><strong>{% trans 'Coordinador' %}</strong>:</th>
+        <td>{{ proyecto.coordinador.full_name }}</td>
+      </tr>
+
+    </table>
+  </div>
+  <br />
+
+  <form action="#" method="post">
     {% csrf_token %}
-    {% if campo == 'ayuda' %}
+
+    {% if campo == 'aceptacion_economico' and not proyecto.aceptacion_corrector %}
+      ¡No se puede cerrar el proyecto porque todavía no se ha aceptado la memoria!<br>
+    {% elif campo == 'ayuda' %}
       {{ form | crispy }}
     {% else %}
       {{ form.as_p }}
     {% endif %}
     <br style="clear: both;" />
+
     <div class="btn-group" role="group" aria-label="Botones">
       <a href="{{ url_anterior }}" class="btn btn-info">
         <span class="fas fa-step-backward"></span> {% trans 'Retroceder' %}

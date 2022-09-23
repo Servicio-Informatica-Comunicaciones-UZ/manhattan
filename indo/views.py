@@ -2396,7 +2396,35 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
             )
             proyecto.save(update_fields=['financiacion_txt'])
 
+        # Al aprobar el cierre económico, enviar correo a los participantes y el coordinador.
+        if 'aceptacion_economico' in form.fields and form.cleaned_data['aceptacion_economico']:
+            self._enviar_notificaciones(self.request, proyecto)
+
         return super().form_valid(form)
+
+    def _enviar_notificaciones(self, request: HttpRequest, proyecto: Proyecto) -> Any:
+        """Envía un mensaje a cada participante del proyecto, y a su coordinador."""
+        destinatarios = proyecto.usuarios_participantes
+        destinatarios.append(proyecto.coordinador)
+
+        try:
+            for destinatario in destinatarios:
+                send_templated_mail(
+                    template_name='cierre_proyecto',
+                    from_email=None,  # settings.DEFAULT_FROM_EMAIL
+                    recipient_list=[destinatario.email],
+                    context={
+                        'destinatario': destinatario,
+                        'proyecto': proyecto,
+                    },
+                )
+                sleep(0.1)  # Tiene que pasar un mínimo de 100ms entre un mensaje y el siguiente
+        except Exception as err:  # smtplib.SMTPAuthenticationError etc
+            messages.warning(
+                request,
+                _('No se enviaron por correo las notificaciones de cierre del proyecto: %(err)s')
+                % {'err': err},
+            )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -2404,6 +2432,7 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
             {
                 'anyo': self.object.convocatoria.id,
                 'campo': self.kwargs['campo'],
+                'proyecto': self.object,
                 'url_anterior': self.request.headers.get('Referer', reverse('home')),
             }
         )
