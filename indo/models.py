@@ -334,7 +334,10 @@ class Programa(models.Model):
     )
     # Para que el coordinador de un proyecto pueda editar un campo,
     # éste debe estar incluido en la tupla `permitidos_coordinador` de views.py.
-    campos = models.TextField(null=True)
+    campos = models.TextField(
+        null=True,
+        help_text='Nombre de los campos que tendrá una solicitud de proyecto del programa (JSON)',
+    )
     convocatoria = models.ForeignKey('Convocatoria', on_delete=models.PROTECT)
     requiere_visto_bueno_centro = models.BooleanField(
         _('¿Requiere el visto bueno del director o decano?'), default='False'
