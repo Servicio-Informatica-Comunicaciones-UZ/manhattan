@@ -1,0 +1,31 @@
+{% block subject %}Cierre del proyecto «{{proyecto.titulo}}»{% endblock %}
+{% block plain %}
+{% if destinatario.sexo == 'F' %}
+Estimada {{destinatario.full_name}}:
+{% elif destinatario.sexo == 'M' %}
+Estimado {{destinatario.full_name}}:
+{% else %}
+Estimad@ {{destinatario.full_name}}:
+{% endif %}
+
+Le comunico que, tras la verificaciones oportunas, se ha comprobado que el proyecto
+«{{proyecto.titulo}}»
+que usted coordina o del que es miembro, cumple con todos los requisitos
+necesarios establecidos en la convocatoria, por lo que ha sido autorizada
+su finalización y la certificación del mismo.
+
+A diferencia de otras convocatorias los certificados ya no se expiden de
+oficio, sino que se realizarán previa petición de la persona interesada,
+que podrá solicitarlo _a partir del día siguiente_ a la recepción de este
+correo, por las siguientes vías:
+
+* Si es trabajador de UNIZAR (PDI/PAS) tiene que hacer la petición a
+  través de la aplicación de Recursos Humanos <https://rrhh.unizar.es>.
+* Si es estudiante o personal externo a UNIZAR tiene que hacer la
+  petición a través del correo electrónico <innova.docen@unizar.es>.
+
+Aprovecho para agradecerle su interés y colaboración en esta convocatoria.
+
+Un cordial saludo,
+  Vicerrectorado de Política Académica
+{% endblock %}
