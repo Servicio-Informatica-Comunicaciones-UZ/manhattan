@@ -104,11 +104,10 @@ class HaceConstarForm(forms.Form):
 
 
 class CertificadoForm(forms.Form):
-    nif = forms.CharField(
-        label=_('NIF'),
+    numero_documento = forms.CharField(
+        label=_('Número de documento'),
         help_text=_(
-            'En ausencia de NIP asociado, NIF de la persona para la que desee generar'
-            ' el Certificado.'
+            'NIF/NIE/Nº pasaporte de la persona para la que desee generar el Certificado.'
         ),
         max_length=20,
         required=True,

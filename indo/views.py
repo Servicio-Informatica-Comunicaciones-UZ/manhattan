@@ -1385,17 +1385,19 @@ class ParticipanteCertificadoView(LoginRequiredMixin, PermissionRequiredMixin, T
         return context
 
     def post(self, request, *args, **kwargs):
-        nif = request.POST.get('nif')
+        numero_documento = request.POST.get('numero_documento')
         User = get_user_model()
 
-        if nif:
-            usuario = get_object_or_None(User, username=nif)
+        if numero_documento:
+            usuario = get_object_or_None(User, numero_documento=numero_documento)
         else:
-            messages.error(request, _('Debe introducir un NIF.'))
+            messages.error(request, _('Debe introducir un NIF/NIE/Nº pasaporte.'))
             return super().get(request, *args, **kwargs)
 
         if not usuario:
-            messages.error(request, _('No se ha encontrado ese usuario.'))
+            messages.error(
+                request, _('No se ha encontrado ningún usuario con ese número de documento.')
+            )
             return super().get(request, *args, **kwargs)
 
         proyectos_participados = (
