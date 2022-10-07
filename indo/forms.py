@@ -104,13 +104,33 @@ class HaceConstarForm(forms.Form):
 
 
 class CertificadoForm(forms.Form):
+    nip = forms.IntegerField(
+        label=_('NIP'),
+        help_text=_(
+            'Número de Identificación Personal en la Universidad de Zaragoza'
+            ' de la persona para la que desee generar el Certificado.'
+        ),
+        min_value=0,
+        max_value=9_999_999,
+        required=False,
+    )
+
     numero_documento = forms.CharField(
         label=_('Número de documento'),
         help_text=_(
             'NIF/NIE/Nº pasaporte de la persona para la que desee generar el Certificado.'
         ),
         max_length=20,
-        required=True,
+        required=False,
+    )
+
+    email = forms.EmailField(
+        label=_('E-mail'),
+        help_text=_(
+            'Dirección de correo electrónico de la persona para la que desee generar'
+            ' el Certificado.'
+        ),
+        required=False,
     )
 
 

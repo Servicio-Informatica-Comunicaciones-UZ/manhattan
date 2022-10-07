@@ -1365,8 +1365,8 @@ class ParticipanteCertificadoView(LoginRequiredMixin, PermissionRequiredMixin, T
     """
     Generar PDF de Certificado de participación de proyectos de una persona.
 
-    Destinado a los usuarios sin NIP.
-    Los usuarios con NIP pueden obtener sus certificados en People.
+    Destinado a los usuarios que no son trabajadores de la Universidad de Zaragoza.
+    Los usuarios trabajadores pueden obtener sus certificados en People.
     """
 
     permission_required = 'indo.hace_constar'
@@ -1385,19 +1385,41 @@ class ParticipanteCertificadoView(LoginRequiredMixin, PermissionRequiredMixin, T
         return context
 
     def post(self, request, *args, **kwargs):
+        nip = request.POST.get('nip')
         numero_documento = request.POST.get('numero_documento')
+        email = request.POST.get('email')
+
         User = get_user_model()
 
-        if numero_documento:
-            usuario = get_object_or_None(User, numero_documento=numero_documento)
+        if nip:
+            usuario = get_object_or_None(User, username=nip)
+        elif numero_documento:
+            try:
+                usuario = get_object_or_None(User, numero_documento=numero_documento)
+            except Exception:
+                messages.error(
+                    request,
+                    _(
+                        'Se produjo un error al buscar ese número de documento'
+                        ' (¿tal vez esté duplicado?).'
+                    ),
+                )
+                return super().get(request, *args, **kwargs)
+        elif email:
+            try:
+                usuario = get_object_or_None(User, email=email)
+            except Exception:
+                messages.error(
+                    request,
+                    _('Se produjo un error al buscar ese e-mail (¿tal vez esté duplicado?).'),
+                )
+                return super().get(request, *args, **kwargs)
         else:
-            messages.error(request, _('Debe introducir un NIF/NIE/Nº pasaporte.'))
+            messages.error(request, _('Debe introducir un NIP, NIF/NIE/Nº pasaporte o e-mail.'))
             return super().get(request, *args, **kwargs)
 
         if not usuario:
-            messages.error(
-                request, _('No se ha encontrado ningún usuario con ese número de documento.')
-            )
+            messages.error(request, _('No se ha encontrado ese usuario.'))
             return super().get(request, *args, **kwargs)
 
         proyectos_participados = (
