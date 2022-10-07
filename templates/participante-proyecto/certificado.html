@@ -55,7 +55,13 @@
 
       <ul>
         {% for proyecto in proyecto_list %}
-          <li>{{ proyecto.titulo }} (id {{ proyecto.id }}{% if proyecto.codigo%}, código {{ proyecto.codigo }}{% endif %}, convocatoria {{ proyecto.convocatoria_id }}),
+          <li>{{ proyecto.titulo }} (id {{ proyecto.id }},
+            {% if proyecto.codigo%}
+              código {{ proyecto.codigo }},
+            {% elif proyecto.programa.nombre_corto %}
+              programa {{ proyecto.programa.nombre_corto }},
+            {% endif %}
+          curso {{ proyecto.convocatoria }}),
           {% if proyecto.coordinador.id == usuario.id or proyecto.coordinador2.id == usuario.id%}
                {% if usuario.sexo == "F" %}como Coordinadora{% else %} como Coordinador {% endif %}.</li>
           {% else %}
