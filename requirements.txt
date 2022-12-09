@@ -4,7 +4,7 @@ attrs==22.1.0
 bleach[css]==5.0.1
 brotli==1.0.9
 cached-property==1.5.2
-certifi==2022.6.15
+certifi==2022.12.7
 cffi==1.15.1
 charset-normalizer==2.1.1
 cryptography==38.0.1
