@@ -16,6 +16,7 @@ pylint = "*"
 rope = "*"
 types-bleach = "*"
 types-requests = "*"
+isort = "*"
 
 [packages]
 bleach = {extras = ["css"], version = "*"}
