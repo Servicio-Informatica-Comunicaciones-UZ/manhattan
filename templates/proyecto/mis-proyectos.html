@@ -4,340 +4,340 @@
 {% block description %}{% trans "Proyectos vinculados al usuario" %}{% endblock description %}
 
 {% block content %}
-<div class="container-blanco">
-  <select aria-label="Cambiar de convocatoria" class="custom-select form-select" name="convocatoria" onchange="location = this.value;" style="float: right; width: 150px;">
-    {% for convocatoria in convocatorias %}
-      <option value="{% url 'mis_proyectos' convocatoria.id %}"
-        {% if convocatoria.id == anyo %}selected="selected"{% endif %}
-      >{{convocatoria}}</option>
-    {% endfor %}
-  </select>
+    <div class="container-blanco">
+        <select aria-label="Cambiar de convocatoria" class="custom-select form-select" name="convocatoria" onchange="location = this.value;" style="float: right; width: 150px;">
+            {% for convocatoria in convocatorias %}
+                <option value="{% url 'mis_proyectos' convocatoria.id %}"
+                    {% if convocatoria.id == anyo %}selected="selected"{% endif %}
+                >{{convocatoria}}</option>
+            {% endfor %}
+        </select>
 
-  <h1 id="coordinados">{% trans "Proyectos coordinados" %} <small>{{ anyo }}</small></h1>
-  <hr />
-  <br />
+        <h1 id="coordinados">{% trans "Proyectos coordinados" %} <small>{{ anyo }}</small></h1>
+        <hr />
+        <br />
 
-  {% if proyectos_coordinados %}
-    <div class="table-responsive">
-      <table class="table table-hover table-striped table-sm cabecera-azul" aria-describedby="coordinados">
-        <thead>
-          <tr>
-            <th scope="col">{% trans 'Programa' %}</th>
-            <th scope="col">{% trans 'Línea' %}</th>
-            <th scope="col">{% trans 'Título' %}</th>
-            <th scope="col">{% trans 'Estado' %}</th>
-          </tr>
-        </thead>
-        {% for proyecto in proyectos_coordinados %}
-          <tr>
-            <td>{{proyecto.programa.nombre_corto}}</td>
-            <td>{{proyecto.linea.nombre}}</td>
-            <td><a href="{% url 'proyecto_detail' proyecto.id %}">{{ proyecto.titulo }}</a></td>
-            <td>{{proyecto.get_estado_display}}</td>
-          </tr>
-        {% endfor %}
-      </table>
+        {% if proyectos_coordinados %}
+            <div class="table-responsive">
+                <table class="table table-hover table-striped table-sm cabecera-azul" aria-describedby="coordinados">
+                    <thead>
+                        <tr>
+                            <th scope="col">{% trans 'Programa' %}</th>
+                            <th scope="col">{% trans 'Línea' %}</th>
+                            <th scope="col">{% trans 'Título' %}</th>
+                            <th scope="col">{% trans 'Estado' %}</th>
+                        </tr>
+                    </thead>
+                    {% for proyecto in proyectos_coordinados %}
+                        <tr>
+                            <td>{{proyecto.programa.nombre_corto}}</td>
+                            <td>{% if proyecto.linea %}{{proyecto.linea.nombre}}{% endif %}</td>
+                            <td><a href="{% url 'proyecto_detail' proyecto.id %}">{{ proyecto.titulo }}</a></td>
+                            <td>{{proyecto.get_estado_display}}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        {% else %}
+            <p>{% trans 'No coordina ningún proyecto.' %}</p>
+        {% endif %}
+
+        {% if permitir_solicitar %}
+            <p><a href="{% url 'proyecto_new' %}" class="btn btn-info">{% trans "Solicitar nuevo proyecto" %}</a></p>
+        {% endif %}
+        <br /><br />
+
+        <h1 id="participados">{% trans "Proyectos en los que participo" %} <small>{{ anyo }}</small></h1>
+        <hr />
+        <br />
+
+        {% if proyectos_participados %}
+            <div class="table-responsive">
+                <table class="table table-hover table-striped table-sm cabecera-azul" aria-describedby="participados">
+                    <thead>
+                        <tr>
+                            <th scope="col">{% trans 'Programa' %}</th>
+                            <th scope="col">{% trans 'Línea' %}</th>
+                            <th scope="col">{% trans 'Título' %}</th>
+                            <th scope="col">{% trans 'Coordinador' %}</th>
+                            <th scope="col">{% trans 'Estado' %}</th>
+                            <th scope="col">{% trans 'Acción' %}</th>
+                        </tr>
+                    </thead>
+
+                    {% for proyecto in proyectos_participados %}
+                        <tr>
+                            <td>{{proyecto.programa.nombre_corto}}</td>
+                            <td>{% if proyecto.linea %}{{proyecto.linea.nombre}}{% endif %}</td>
+                            <td><a href="{% url 'proyecto_detail' proyecto.id %}">{{ proyecto.titulo }}</a></td>
+                            <td>{{proyecto.coordinador.full_name}}</td>
+                            <td>{{proyecto.get_estado_display}}</td>
+                            <td>
+                                <button
+                                    class="btn btn-secondary btn-sm prepararRenunciar"
+                                    data-id="{{proyecto.id}}"
+                                    data-titulo="{{proyecto.titulo}}"
+                                    data-toggle="modal"
+                                    data-target="#renunciarModal"
+                                    type="button"
+                                >
+                                    <span class="fas fa-times"></span> {% trans 'Renunciar' %}
+                                </button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        {% else %}
+            <p>{% trans 'No participa en ningún proyecto.' %}</p>
+        {% endif %}
+        <br /><br />
+
+        <h1 id="invitaciones">{% trans "Invitaciones a proyectos" %} <small>{{ anyo }}</small></h1>
+        <hr />
+        <br />
+
+        {% if proyectos_invitado %}
+
+            {% now 'Y-m-d' as fecha_actual %}
+            {% with convocatoria.fecha_max_aceptos as fecha_max_aceptos %}
+                {% if fecha_max_aceptos|date:'Y-m-d' < fecha_actual %}
+                    <div class="alert alert-info fade show noprint">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                        <span class="fas fa-info-circle"></span>
+                        <p>{% blocktranslate %}
+                            El plazo para aceptar/declinar invitaciones finalizó el {{ fecha_max_aceptos }}.
+                        {% endblocktranslate %}</p>
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <div class="table-responsive">
+                <table class="table table-hover table-striped table-sm cabecera-azul" aria-describedby="invitaciones">
+                    <thead>
+                        <tr>
+                            <th scope="col">{% trans 'Programa' %}</th>
+                            <th scope="col">{% trans 'Línea' %}</th>
+                            <th scope="col">{% trans 'Título' %}</th>
+                            <th scope="col">{% trans 'Coordinador' %}</th>
+                            <th scope="col">{% trans 'Estado' %}</th>
+                            <th scope="col">{% trans 'Acción' %}</th>
+                        </tr>
+                    </thead>
+
+                    {% for proyecto in proyectos_invitado %}
+                        <tr>
+                            <td>{{proyecto.programa.nombre_corto}}</td>
+                            <td>{% if proyecto.linea %}{{proyecto.linea.nombre}}{% endif %}</td>
+                            <td><a href="{% url 'proyecto_detail' proyecto.id %}">{{ proyecto.titulo }}</a></td>
+                            <td>{{proyecto.coordinador.full_name}}</td>
+                            <td>{{proyecto.get_estado_display}}</td>
+                            <td>
+                                {% if fecha_actual > convocatoria.fecha_max_aceptos|date:"Y-m-d" %}
+                                    <span title="{% trans 'Fecha límite superada' %}">—</span>
+                                {% else %}
+                                    <form action="{% url 'participante_aceptar' proyecto_id=proyecto.id %}" id="aceptar-form" method="post">
+                                        {% csrf_token %}
+                                        <div class="btn-group" role="group" aria-label="Botones">
+                                            <button
+                                                class="btn btn-secondary btn-sm prepararDeclinar"
+                                                data-id="{{proyecto.id}}"
+                                                data-titulo="{{proyecto.titulo}}"
+                                                data-toggle="modal"
+                                                data-target="#declinarModal"
+                                                type="button"
+                                            >
+                                                <span class="fas fa-times"></span> {% trans 'Declinar' %}
+                                            </button>
+                                            <button type="submit" class="btn btn-primary btn-sm">
+                                                <span class="fas fa-check"></span> {% trans "Aceptar" %}
+                                            </button>
+                                        </div>
+                                    </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        {% else %}
+            <p>{% trans 'No está invitado a ningún proyecto.' %}<br>
+                {% trans 'Las invitaciones no son efectivas hasta que el coordinador <strong>presenta</strong> su solicitud de proyecto.' %}</p>
+        {% endif %}
+        <br /><br />
+
+        {% if proyectos_centros_dirigidos %}
+            <h1 id="del-centro">{% trans "Proyectos impulsados por mi centro" %} <small>{{ anyo }}</small></h1>
+            <hr />
+            <br />
+
+            <div class="table-responsive">
+                <table class="table table-hover table-striped table-sm cabecera-azul" aria-describedby="del-centro">
+                    <thead>
+                        <tr>
+                            <th scope="col">{% trans 'Programa' %}</th>
+                            <th scope="col">{% trans 'Línea' %}</th>
+                            <th scope="col">{% trans 'Título' %}</th>
+                            <th scope="col">{% trans 'Coordinador' %}</th>
+                            <th scope="col">{% trans 'Estado' %}</th>
+                            <th scope="col">{% trans 'Visto bueno' %}</th>
+                            <th scope="col">{% trans 'Acción' %}</th>
+                        </tr>
+                    </thead>
+                    {% for proyecto in proyectos_centros_dirigidos %}
+                        <tr>
+                            <td>{{proyecto.programa.nombre_corto}}</td>
+                            <td>{% if proyecto.linea %}{{proyecto.linea.nombre}}{% endif %}</td>
+                            <td><a href="{% url 'proyecto_detail' proyecto.id %}">{{ proyecto.titulo }}</a></td>
+                            <td>{{proyecto.coordinador.full_name}}</td>
+                            <td>{{proyecto.get_estado_display}}</td>
+                            <td>{{proyecto.visto_bueno_centro | yesno:"Sí,No,—"}}</td>
+                            <td>
+                                {% if proyecto.estado == 'SOLICITADO' %}
+                                    <a href="{% url 'proyecto_update_field' proyecto.id 'visto_bueno_centro' %}" class="btn btn-info btn-sm">
+                                        <span class="fas fa-pencil-alt" aria-hidden="true"></span>&nbsp; {% trans 'Editar' %}
+                                    </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        {% endif %}
+        <br /><br />
+
+        {% if proyectos_estudios_coordinados %}
+            <h1 id="del-estudio">{% trans "Proyectos estratégicos de mis estudios" %} <small>{{ anyo }}</small></h1>
+            <hr />
+            <br />
+
+            <div class="table-responsive">
+                <table class="table table-hover table-striped table-sm cabecera-azul" aria-describedby="del-estudio">
+                    <thead>
+                        <tr>
+                            <th scope="col">{% trans 'Programa' %}</th>
+                            <th scope="col">{% trans 'Línea' %}</th>
+                            <th scope="col">{% trans 'Título' %}</th>
+                            <th scope="col">{% trans 'Coordinador' %}</th>
+                            <th scope="col">{% trans 'Estado' %}</th>
+                            <th scope="col">{% trans 'Visto bueno' %}</th>
+                            <th scope="col">{% trans 'Acción' %}</th>
+                        </tr>
+                    </thead>
+                    {% for proyecto in proyectos_estudios_coordinados %}
+                        <tr>
+                            <td>{{proyecto.programa.nombre_corto}}</td>
+                            <td>{% if proyecto.linea %}{{proyecto.linea.nombre}}{% endif %}</td>
+                            <td><a href="{% url 'proyecto_detail' proyecto.id %}">{{ proyecto.titulo }}</a></td>
+                            <td>{{proyecto.coordinador.full_name}}</td>
+                            <td>{{proyecto.get_estado_display}}</td>
+                            <td>{{proyecto.visto_bueno_estudio | yesno:"Sí,No,—"}}</td>
+                            <td>
+                                {% if proyecto.estado == 'SOLICITADO' %}
+                                    <a href="{% url 'proyecto_update_field' proyecto.id 'visto_bueno_estudio' %}" class="btn btn-info btn-sm">
+                                        <span class="fas fa-pencil-alt" aria-hidden="true"></span>&nbsp; {% trans 'Editar' %}
+                                    </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        {% endif %}
     </div>
-  {% else %}
-    <p>{% trans 'No coordina ningún proyecto.' %}</p>
-  {% endif %}
 
-  {% if permitir_solicitar %}
-    <p><a href="{% url 'proyecto_new' %}" class="btn btn-info">{% trans "Solicitar nuevo proyecto" %}</a></p>
-  {% endif %}
-  <br /><br />
-
-  <h1 id="participados">{% trans "Proyectos en los que participo" %} <small>{{ anyo }}</small></h1>
-  <hr />
-  <br />
-
-  {% if proyectos_participados %}
-    <div class="table-responsive">
-      <table class="table table-hover table-striped table-sm cabecera-azul" aria-describedby="participados">
-        <thead>
-          <tr>
-            <th scope="col">{% trans 'Programa' %}</th>
-            <th scope="col">{% trans 'Línea' %}</th>
-            <th scope="col">{% trans 'Título' %}</th>
-            <th scope="col">{% trans 'Coordinador' %}</th>
-            <th scope="col">{% trans 'Estado' %}</th>
-            <th scope="col">{% trans 'Acción' %}</th>
-          </tr>
-        </thead>
-
-        {% for proyecto in proyectos_participados %}
-          <tr>
-            <td>{{proyecto.programa.nombre_corto}}</td>
-            <td>{{proyecto.linea.nombre}}</td>
-            <td><a href="{% url 'proyecto_detail' proyecto.id %}">{{ proyecto.titulo }}</a></td>
-            <td>{{proyecto.coordinador.full_name}}</td>
-            <td>{{proyecto.get_estado_display}}</td>
-            <td>
-              <button
-                class="btn btn-secondary btn-sm prepararRenunciar"
-                data-id="{{proyecto.id}}"
-                data-titulo="{{proyecto.titulo}}"
-                data-toggle="modal"
-                data-target="#renunciarModal"
-                type="button"
-              >
-                <span class="fas fa-times"></span> {% trans 'Renunciar' %}
-              </button>
-            </td>
-          </tr>
-        {% endfor %}
-      </table>
-    </div>
-  {% else %}
-    <p>{% trans 'No participa en ningún proyecto.' %}</p>
-  {% endif %}
-  <br /><br />
-
-  <h1 id="invitaciones">{% trans "Invitaciones a proyectos" %} <small>{{ anyo }}</small></h1>
-  <hr />
-  <br />
-
-  {% if proyectos_invitado %}
-
-    {% now 'Y-m-d' as fecha_actual %}
-    {% with convocatoria.fecha_max_aceptos as fecha_max_aceptos %}
-      {% if fecha_max_aceptos|date:'Y-m-d' < fecha_actual %}
-        <div class="alert alert-info fade show noprint">
-          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-          <span class="fas fa-info-circle"></span>
-          <p>{% blocktranslate %}
-            El plazo para aceptar/declinar invitaciones finalizó el {{ fecha_max_aceptos }}.
-          {% endblocktranslate %}</p>
+    <div
+        class="modal fade"
+        id="declinarModal"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="declinarModalLabel"
+        aria-hidden="true"
+    >
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="declinarModalLabel">{% trans "¿Seguro que desea rehusar la invitación?" %}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="advertencia"></div>
+                    <p>{% trans "Esta acción es irreversible." %}</p>
+                    <p>{% trans "Una vez haya declinado la invitación, ya no podrá echarse atrás y aceptarla." %}</p>
+                </div>
+                <div class="modal-footer">
+                    <form action="{% url 'participante_declinar' %}" id="declinar-form" method="post">
+                        {% csrf_token %}
+                        <div class="campo-oculto"></div>
+                        <button type="button" class="btn btn-info" data-dismiss="modal">
+                            <span class="fas fa-times"></span> {% trans 'Cancelar' %}
+                        </button>
+                        <button type="submit" class="btn btn-warning">
+                            <span class="fas fa-user-times"></span> {% trans 'Declinar' %}
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
-      {% endif %}
-    {% endwith %}
+    </div>
 
-    <div class="table-responsive">
-      <table class="table table-hover table-striped table-sm cabecera-azul" aria-describedby="invitaciones">
-        <thead>
-          <tr>
-            <th scope="col">{% trans 'Programa' %}</th>
-            <th scope="col">{% trans 'Línea' %}</th>
-            <th scope="col">{% trans 'Título' %}</th>
-            <th scope="col">{% trans 'Coordinador' %}</th>
-            <th scope="col">{% trans 'Estado' %}</th>
-            <th scope="col">{% trans 'Acción' %}</th>
-          </tr>
-        </thead>
-
-        {% for proyecto in proyectos_invitado %}
-          <tr>
-            <td>{{proyecto.programa.nombre_corto}}</td>
-            <td>{{proyecto.linea.nombre}}</td>
-            <td><a href="{% url 'proyecto_detail' proyecto.id %}">{{ proyecto.titulo }}</a></td>
-            <td>{{proyecto.coordinador.full_name}}</td>
-            <td>{{proyecto.get_estado_display}}</td>
-            <td>
-              {% if fecha_actual > convocatoria.fecha_max_aceptos|date:"Y-m-d" %}
-                <span title="{% trans 'Fecha límite superada' %}">—</span>
-              {% else %}
-                <form action="{% url 'participante_aceptar' proyecto_id=proyecto.id %}" id="aceptar-form" method="post">
-                  {% csrf_token %}
-                  <div class="btn-group" role="group" aria-label="Botones">
-                    <button
-                      class="btn btn-secondary btn-sm prepararDeclinar"
-                      data-id="{{proyecto.id}}"
-                      data-titulo="{{proyecto.titulo}}"
-                      data-toggle="modal"
-                      data-target="#declinarModal"
-                      type="button"
-                    >
-                      <span class="fas fa-times"></span> {% trans 'Declinar' %}
+    <div
+        class="modal fade"
+        id="renunciarModal"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="renunciarModalLabel"
+        aria-hidden="true"
+    >
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="renunciarModalLabel">{% trans "¿Seguro que ya no desea participar?" %}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                        <span aria-hidden="true">&times;</span>
                     </button>
-                    <button type="submit" class="btn btn-primary btn-sm">
-                      <span class="fas fa-check"></span> {% trans "Aceptar" %}
-                    </button>
-                  </div>
-                </form>
-              {% endif %}
-            </td>
-          </tr>
-        {% endfor %}
-      </table>
+                </div>
+                <div class="modal-body">
+                    <div class="advertencia"></div>
+                    <p>{% trans "Esta acción es irreversible." %}</p>
+                    <p>{% trans "Una vez haya renunciado a participar, ya no podrá echarse atrás." %}</p>
+                </div>
+                <div class="modal-footer">
+                    <form action="{% url 'participante_renunciar' %}" id="renunciar-form" method="post">
+                        {% csrf_token %}
+                        <div class="campo-oculto"></div>
+                        <button type="button" class="btn btn-info" data-dismiss="modal">
+                            <span class="fas fa-times"></span> {% trans 'Cancelar' %}
+                        </button>
+                        <button type="submit" class="btn btn-warning">
+                            <span class="fas fa-user-times"></span> {% trans 'Renunciar' %}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-  {% else %}
-    <p>{% trans 'No está invitado a ningún proyecto.' %}<br>
-    {% trans 'Las invitaciones no son efectivas hasta que el coordinador <strong>presenta</strong> su solicitud de proyecto.' %}</p>
-  {% endif %}
-  <br /><br />
-
-  {% if proyectos_centros_dirigidos %}
-    <h1 id="del-centro">{% trans "Proyectos impulsados por mi centro" %} <small>{{ anyo }}</small></h1>
-    <hr />
-    <br />
-
-    <div class="table-responsive">
-      <table class="table table-hover table-striped table-sm cabecera-azul" aria-describedby="del-centro">
-        <thead>
-          <tr>
-            <th scope="col">{% trans 'Programa' %}</th>
-            <th scope="col">{% trans 'Línea' %}</th>
-            <th scope="col">{% trans 'Título' %}</th>
-            <th scope="col">{% trans 'Coordinador' %}</th>
-            <th scope="col">{% trans 'Estado' %}</th>
-            <th scope="col">{% trans 'Visto bueno' %}</th>
-            <th scope="col">{% trans 'Acción' %}</th>
-          </tr>
-        </thead>
-        {% for proyecto in proyectos_centros_dirigidos %}
-          <tr>
-            <td>{{proyecto.programa.nombre_corto}}</td>
-            <td>{{proyecto.linea.nombre}}</td>
-            <td><a href="{% url 'proyecto_detail' proyecto.id %}">{{ proyecto.titulo }}</a></td>
-            <td>{{proyecto.coordinador.full_name}}</td>
-            <td>{{proyecto.get_estado_display}}</td>
-            <td>{{proyecto.visto_bueno_centro | yesno:"Sí,No,—"}}</td>
-            <td>
-              {% if proyecto.estado == 'SOLICITADO' %}
-                <a href="{% url 'proyecto_update_field' proyecto.id 'visto_bueno_centro' %}" class="btn btn-info btn-sm">
-                  <span class="fas fa-pencil-alt" aria-hidden="true"></span>&nbsp; {% trans 'Editar' %}
-                </a>
-              {% endif %}
-            </td>
-          </tr>
-        {% endfor %}
-      </table>
-    </div>
-  {% endif %}
-  <br /><br />
-
-  {% if proyectos_estudios_coordinados %}
-    <h1 id="del-estudio">{% trans "Proyectos estratégicos de mis estudios" %} <small>{{ anyo }}</small></h1>
-    <hr />
-    <br />
-
-    <div class="table-responsive">
-      <table class="table table-hover table-striped table-sm cabecera-azul" aria-describedby="del-estudio">
-        <thead>
-          <tr>
-            <th scope="col">{% trans 'Programa' %}</th>
-            <th scope="col">{% trans 'Línea' %}</th>
-            <th scope="col">{% trans 'Título' %}</th>
-            <th scope="col">{% trans 'Coordinador' %}</th>
-            <th scope="col">{% trans 'Estado' %}</th>
-            <th scope="col">{% trans 'Visto bueno' %}</th>
-            <th scope="col">{% trans 'Acción' %}</th>
-          </tr>
-        </thead>
-        {% for proyecto in proyectos_estudios_coordinados %}
-          <tr>
-            <td>{{proyecto.programa.nombre_corto}}</td>
-            <td>{{proyecto.linea.nombre}}</td>
-            <td><a href="{% url 'proyecto_detail' proyecto.id %}">{{ proyecto.titulo }}</a></td>
-            <td>{{proyecto.coordinador.full_name}}</td>
-            <td>{{proyecto.get_estado_display}}</td>
-            <td>{{proyecto.visto_bueno_estudio | yesno:"Sí,No,—"}}</td>
-            <td>
-              {% if proyecto.estado == 'SOLICITADO' %}
-                <a href="{% url 'proyecto_update_field' proyecto.id 'visto_bueno_estudio' %}" class="btn btn-info btn-sm">
-                  <span class="fas fa-pencil-alt" aria-hidden="true"></span>&nbsp; {% trans 'Editar' %}
-                </a>
-              {% endif %}
-            </td>
-          </tr>
-        {% endfor %}
-      </table>
-    </div>
-  {% endif %}
-</div>
-
-<div
-  class="modal fade"
-  id="declinarModal"
-  tabindex="-1"
-  role="dialog"
-  aria-labelledby="declinarModalLabel"
-  aria-hidden="true"
->
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="declinarModalLabel">{% trans "¿Seguro que desea rehusar la invitación?" %}</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="advertencia"></div>
-        <p>{% trans "Esta acción es irreversible." %}</p>
-        <p>{% trans "Una vez haya declinado la invitación, ya no podrá echarse atrás y aceptarla." %}</p>
-      </div>
-      <div class="modal-footer">
-        <form action="{% url 'participante_declinar' %}" id="declinar-form" method="post">
-          {% csrf_token %}
-          <div class="campo-oculto"></div>
-          <button type="button" class="btn btn-info" data-dismiss="modal">
-            <span class="fas fa-times"></span> {% trans 'Cancelar' %}
-          </button>
-          <button type="submit" class="btn btn-warning">
-            <span class="fas fa-user-times"></span> {% trans 'Declinar' %}
-          </button>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div
-  class="modal fade"
-  id="renunciarModal"
-  tabindex="-1"
-  role="dialog"
-  aria-labelledby="renunciarModalLabel"
-  aria-hidden="true"
->
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="renunciarModalLabel">{% trans "¿Seguro que ya no desea participar?" %}</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="advertencia"></div>
-        <p>{% trans "Esta acción es irreversible." %}</p>
-        <p>{% trans "Una vez haya renunciado a participar, ya no podrá echarse atrás." %}</p>
-      </div>
-      <div class="modal-footer">
-        <form action="{% url 'participante_renunciar' %}" id="renunciar-form" method="post">
-          {% csrf_token %}
-          <div class="campo-oculto"></div>
-          <button type="button" class="btn btn-info" data-dismiss="modal">
-            <span class="fas fa-times"></span> {% trans 'Cancelar' %}
-          </button>
-          <button type="submit" class="btn btn-warning">
-            <span class="fas fa-user-times"></span> {% trans 'Renunciar' %}
-          </button>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
 {% endblock content %}
 
 {% block extrajs %}
-<script type="text/javascript">
-  $(".prepararDeclinar").click(function(e) {
-    $("#declinarModal .advertencia").html(
-      "<p>¿Seguro que no desea participar en el proyecto «" + $(this).data("titulo") + "»?</p>"
-    );
-    $("#declinarModal .campo-oculto").html(
-      "<input type='hidden' id='proyecto_id' name='proyecto_id' value='" + $(this).data("id") + "'>"
-    );
-  });
-  $(document).on("click", ".prepararRenunciar", function() {
-    $("#renunciarModal .advertencia").html(
-      "<p>¿Seguro que desea renunciar a participar en el proyecto «" + $(this).data("titulo") + "»?</p>"
-    );
-    $("#renunciarModal .campo-oculto").html(
-      "<input type='hidden' id='proyecto_id' name='proyecto_id' value='" + $(this).data("id") + "'>"
-    );
-  });
-</script>
+    <script type="text/javascript">
+        $(".prepararDeclinar").click(function(e) {
+            $("#declinarModal .advertencia").html(
+                "<p>¿Seguro que no desea participar en el proyecto «" + $(this).data("titulo") + "»?</p>"
+            );
+            $("#declinarModal .campo-oculto").html(
+                "<input type='hidden' id='proyecto_id' name='proyecto_id' value='" + $(this).data("id") + "'>"
+            );
+        });
+        $(document).on("click", ".prepararRenunciar", function() {
+            $("#renunciarModal .advertencia").html(
+                "<p>¿Seguro que desea renunciar a participar en el proyecto «" + $(this).data("titulo") + "»?</p>"
+            );
+            $("#renunciarModal .campo-oculto").html(
+                "<input type='hidden' id='proyecto_id' name='proyecto_id' value='" + $(this).data("id") + "'>"
+            );
+        });
+    </script>
 {% endblock extrajs %}
