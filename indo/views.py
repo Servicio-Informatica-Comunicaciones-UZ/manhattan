@@ -1,32 +1,20 @@
-# Standard library
-from datetime import date
-from time import sleep
-
-# from os.path import splitext
 import csv
 import json
 import os
 import sys
+from datetime import date
 
-# Third-party
-from annoying.functions import get_config, get_object_or_None
-from django_summernote.widgets import SummernoteWidget
-from django_tables2.export.views import ExportMixin
-from django_tables2.views import SingleTableView
-from social_django.utils import load_strategy
-from templated_email import send_templated_mail
+# from os.path import splitext
+from time import sleep
 from typing import Any
 
-# Alternativa: Usar Headless Chromium con <https://github.com/pyppeteer/pyppeteer>
-from bleach.css_sanitizer import CSSSanitizer
-from weasyprint import HTML  # https://weasyprint.org/ - No soporta Javascript
+import bleach
 
 # import magic
-import bleach
 import pypandoc
 import requests
-
-# Django
+from annoying.functions import get_config, get_object_or_None
+from bleach.css_sanitizer import CSSSanitizer
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -51,18 +39,26 @@ from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.generic import DetailView, ListView, RedirectView, TemplateView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django_summernote.widgets import SummernoteWidget
+from django_tables2.export.views import ExportMixin
+from django_tables2.views import SingleTableView
+from social_django.utils import load_strategy
+from templated_email import send_templated_mail
 
-# Local Django
+# Alternativa: Usar Headless Chromium con <https://github.com/pyppeteer/pyppeteer>
+from weasyprint import HTML  # https://weasyprint.org/ - No soporta Javascript
+
 from accounts.models import CustomUser
 from accounts.pipeline import get_identidad
+
 from .filters import ParticipanteProyectoCentroFilter, ProyectoFilter
 from .forms import (
     AsignarCorrectorForm,
     AyudaForm,
+    CertificadoForm,
     CorreccionForm,
     CorrectorForm,
     EvaluadorForm,
-    CertificadoForm,
     HaceConstarForm,
     InvitacionForm,
     MemoriaRespuestaForm,
@@ -77,7 +73,6 @@ from .models import (
     Criterio,
     EvaluadorProyecto,
     MemoriaRespuesta,
-    # MemoriaSubapartado,
     ParticipanteProyecto,
     Plan,
     Proyecto,
@@ -87,15 +82,15 @@ from .models import (
 )
 from .tables import (
     CorrectoresTable,
-    EvaluadoresTable,
     EvaluacionProyectosTable,
+    EvaluadoresTable,
     MemoriaProyectosTable,
     MemoriasAsignadasTable,
+    ProyectoCorrectorTable,
     ProyectosAceptadosTable,
     ProyectosCierreEconomicoTable,
     ProyectosEvaluadosTable,
     ProyectosTable,
-    ProyectoCorrectorTable,
     ProyectoUPTable,
 )
 from .tasks import generar_pdf
@@ -594,6 +589,9 @@ class MemoriasZaguanView(LoginRequiredMixin, PermissionRequiredMixin, TemplateVi
             .order_by('programa__nombre_corto', 'linea__nombre', 'titulo')
         )
         contexto['url_memorias'] = get_config('SITE_URL') + get_config('MEDIA_URL') + 'memoria/'
+        contexto['url_infografias'] = (
+            get_config('SITE_URL') + get_config('MEDIA_URL') + 'infografia/'
+        )
 
         cadena_xml = render_to_string('memoria/marc_list.xml', context=contexto, request=request)
 

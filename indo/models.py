@@ -1,5 +1,6 @@
 # Standard library
 from __future__ import annotations
+
 import datetime
 
 # Django
@@ -336,7 +337,10 @@ class Programa(models.Model):
     # éste debe estar incluido en la tupla `permitidos_coordinador` de views.py.
     campos = models.TextField(
         null=True,
-        help_text='Nombre de los campos que tendrá una solicitud de proyecto del programa (JSON)',
+        help_text=_(
+            'Nombres de los campos que tendrá una solicitud de proyecto del programa (JSON).'
+            ' Ej: ["contexto", "objetivos", "metodos_estudio", "mejoras", "continuidad"]'
+        ),
     )
     convocatoria = models.ForeignKey('Convocatoria', on_delete=models.PROTECT)
     requiere_visto_bueno_centro = models.BooleanField(
@@ -677,6 +681,7 @@ class Proyecto(models.Model):
         _('Observaciones del corrector de la memoria'), null=True
     )
     aceptacion_economico = models.BooleanField(_('Cierre económico'), default=False)
+    tiene_infografia = models.BooleanField(_('¿Tiene infografía?'), default=False)
 
     class Meta:
         """Este código crea una lista de tuplas con los distintos permisos y su descripción."""
