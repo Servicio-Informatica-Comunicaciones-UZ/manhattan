@@ -25,7 +25,7 @@ idna==3.3
 isodate==0.6.1
 lxml==4.6.5
 mysqlclient==2.1.1
-oauthlib==3.2.0
+oauthlib==3.2.2
 pillow==9.2.0
 platformdirs==2.5.2
 pycparser==2.21
