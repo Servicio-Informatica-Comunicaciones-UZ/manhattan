@@ -7,7 +7,7 @@ cached-property==1.5.2
 certifi==2022.6.15
 cffi==1.15.1
 charset-normalizer==2.1.1
-cryptography==38.0.1
+cryptography==39.0.1
 cssselect2==0.6.0
 defusedxml==0.7.1
 django==4.1.1
