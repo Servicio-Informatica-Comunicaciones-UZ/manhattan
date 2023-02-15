@@ -38,11 +38,13 @@
         <subfield code="a">{{ proyecto.descripcion_txt }}</subfield>
     </datafield>
 
-    <datafield tag="540" ind1=" " ind2=" "> {# Terms Governing Use and Reproduction Note #}
-        <subfield code="9">info:eu-repo/semantics/openAccess</subfield>
-        <subfield code="a">{{ proyecto.licencia.identificador }}</subfield>
-        <subfield code="u">{{ proyecto.licencia.url }}</subfield>
-    </datafield>
+    {% if proyecto.licencia %}
+        <datafield tag="540" ind1=" " ind2=" "> {# Terms Governing Use and Reproduction Note #}
+            <subfield code="9">info:eu-repo/semantics/openAccess</subfield>
+            <subfield code="a">{{ proyecto.licencia.identificador }}</subfield>
+            <subfield code="u">{{ proyecto.licencia.url }}</subfield>
+        </datafield>
+    {% endif %}
 
     {# La etiqueta 700 se repetirá tantas veces como sea necesario para albergar a todos los autores #}
     {% if proyecto.coordinador_2 %}
