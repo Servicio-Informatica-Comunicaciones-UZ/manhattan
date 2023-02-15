@@ -17,7 +17,7 @@ types-requests = "*"
 
 [packages]
 bleach = {extras = ["css"], version = "*"}
-django = "==4.1.1"  # Remember to re-generate `requirements.txt`: `pipenv requirements`
+django = "==4.1.7"  # Remember to re-generate `requirements.txt`: `pipenv requirements`
 django-annoying = "*"
 django-crispy-forms = "*"
 django-filter = "*"
