@@ -34,7 +34,7 @@ class Centro(models.Model):
     )
     email_decano = models.EmailField(_('email del decano o director'), blank=True, null=True)
     tratamiento_decano = models.CharField(
-        _('cargo'), max_length=25, blank=True, null=True, help_text=_('Decano/a ó director(a).')
+        _('cargo'), max_length=254, blank=True, null=True, help_text=_('Decano/a ó director(a).')
     )
     nip_secretario = models.PositiveIntegerField(_('NIP del secretario'), blank=True, null=True)
     nombre_secretario = models.CharField(
