@@ -21,10 +21,10 @@ from datetime import date
 from pathlib import Path
 
 from django.urls import reverse_lazy
+from huey import SqliteHuey
 
 # from huey import RedisHuey
 # from redis import ConnectionPool
-from huey import SqliteHuey
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -101,6 +101,7 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     # 3rd Party
     'crispy_forms',  # https://github.com/django-crispy-forms/django-crispy-forms
+    'crispy_bootstrap4',  # https://pypi.org/project/crispy-bootstrap4/
     'django_summernote',  # https://github.com/summernote/django-summernote
     'django_tables2',  # https://github.com/jieter/django-tables2
     'huey.contrib.djhuey',  # https://github.com/coleifer/huey
@@ -194,6 +195,7 @@ TEMPLATES = [
 ]
 
 # http://django-crispy-forms.readthedocs.io/en/latest/install.html#template-packs
+CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap4'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 # CRISPY_TEMPLATE_PACK = "bootstrap5"
 # CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
@@ -422,7 +424,7 @@ SUMMERNOTE_CONFIG = {
 }
 
 # BLEACH
-ADDITIONAL_ALLOWED_TAGS = [
+ADDITIONAL_ALLOWED_TAGS = {
     'br',
     'del',
     'div',
@@ -452,7 +454,7 @@ ADDITIONAL_ALLOWED_TAGS = [
     'thead',
     'tr',
     'u',
-]
+}
 ALLOWED_ATTRIBUTES = {
     '*': ['class', 'id', 'style'],
     'a': ['alt', 'href', 'target', 'title'],
@@ -460,8 +462,8 @@ ALLOWED_ATTRIBUTES = {
     'acronym': ['title'],
     'img': ['alt', 'src'],
 }
-ALLOWED_CSS_PROPERTIES = ['background-color', 'color', 'text-align', 'width']
-ALLOWED_PROTOCOLS = ['data', 'http', 'https', 'mailto']
+ALLOWED_CSS_PROPERTIES = {'background-color', 'color', 'text-align', 'width'}
+ALLOWED_PROTOCOLS = {'data', 'http', 'https', 'mailto'}
 
 # WEB SERVICE de GESTIÓN DE IDENTIDADES
 WSDL_IDENTIDAD = os.environ.get('WSDL_IDENTIDAD')

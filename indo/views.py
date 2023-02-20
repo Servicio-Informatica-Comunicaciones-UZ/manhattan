@@ -3,14 +3,10 @@ import json
 import os
 import sys
 from datetime import date
-
-# from os.path import splitext
 from time import sleep
 from typing import Any
 
 import bleach
-
-# import magic
 import pypandoc
 import requests
 from annoying.functions import get_config, get_object_or_None
@@ -44,8 +40,6 @@ from django_tables2.export.views import ExportMixin
 from django_tables2.views import SingleTableView
 from social_django.utils import load_strategy
 from templated_email import send_templated_mail
-
-# Alternativa: Usar Headless Chromium con <https://github.com/pyppeteer/pyppeteer>
 from weasyprint import HTML  # https://weasyprint.org/ - No soporta Javascript
 
 from accounts.models import CustomUser
@@ -95,6 +89,10 @@ from .tables import (
 )
 from .tasks import generar_pdf
 from .utils import PagedFilteredTableView, registrar_evento
+
+# import magic
+# from os.path import splitext
+# Alternativa a Weasyprint: Usar Headless Chromium con <https://github.com/pyppeteer/pyppeteer>
 
 
 @permission_required('admin')
@@ -2515,8 +2513,8 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
                 cleaned_data[campo] = mark_safe(
                     bleach.clean(
                         texto,
-                        tags=(
-                            bleach.sanitizer.ALLOWED_TAGS + get_config('ADDITIONAL_ALLOWED_TAGS')
+                        tags=bleach.sanitizer.ALLOWED_TAGS.union(
+                            get_config('ADDITIONAL_ALLOWED_TAGS')
                         ),
                         attributes=get_config('ALLOWED_ATTRIBUTES'),
                         css_sanitizer=CSSSanitizer(
