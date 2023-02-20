@@ -1,317 +1,327 @@
 {% load custom_tags i18n static %}<!DOCTYPE html>
 <html lang="es">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
-    <!-- Bootstrap CSS -->
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"
-      integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn"
-      crossorigin="anonymous"
-    />
+        <!-- Bootstrap CSS -->
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"
+            integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn"
+            crossorigin="anonymous"
+        />
 
-    {# SubResource Integrity: openssl dgst -sha384 -binary FICHERO | openssl base64 #}
-    <link
-      rel="stylesheet"
-      href="https://use.fontawesome.com/releases/v6.1.1/css/all.css"
-      integrity="sha384-/frq1SRXYH/bSyou/HUp/hib7RVN1TawQYja658FEOodR/FQBKVqT9Ol+Oz3Olq5"
-      crossorigin="anonymous"
-    />
-    <link rel="stylesheet" href="{% static 'css/base.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/iconos.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/latolatinfonts.css' %}" />
-    {% block extracss %}{% endblock extracss %}
+        {# SubResource Integrity: openssl dgst -sha384 -binary FICHERO | openssl base64 #}
+        <link
+            rel="stylesheet"
+            href="https://use.fontawesome.com/releases/v6.1.1/css/all.css"
+            integrity="sha384-/frq1SRXYH/bSyou/HUp/hib7RVN1TawQYja658FEOodR/FQBKVqT9Ol+Oz3Olq5"
+            crossorigin="anonymous"
+        />
+        <link rel="stylesheet" href="{% static 'css/base.css' %}" />
+        <link rel="stylesheet" href="{% static 'css/iconos.css' %}" />
+        <link rel="stylesheet" href="{% static 'css/latolatinfonts.css' %}" />
+        {% block extracss %}{% endblock extracss %}
 
-    <title>{% block title %}{% trans "Proyectos de Innovación Docente" %}{% endblock title %}</title>
+        <title>{% block title %}{% trans "Proyectos de Innovación Docente" %}{% endblock title %}</title>
 
-    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicons/apple-touch-icon.png' %}" />
-    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicons/favicon-32x32.png' %}" />
-    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicons/favicon-16x16.png' %}" />
-    <link rel="manifest" href="{% static 'favicons/site.webmanifest' %}" />
-    <link rel="mask-icon" href="{% static 'favicons/safari-pinned-tab.svg' %}" color="#dd2222" />
-    <meta name="apple-mobile-web-app-title" content="Manhattan" />
-    <meta name="application-name" content="Manhattan" />
-    <meta name="msapplication-TileColor" content="#da532c" />
-    <meta name="theme-color" content="#de3131" />
-    <link rel="shortcut icon" href="{% static 'favicons/favicon.ico' %}" />
-    <meta name="msapplication-config" content="{% static 'favicons/browserconfig.xml' %}" />
+        <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicons/apple-touch-icon.png' %}" />
+        <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicons/favicon-32x32.png' %}" />
+        <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicons/favicon-16x16.png' %}" />
+        <link rel="manifest" href="{% static 'favicons/site.webmanifest' %}" />
+        <link rel="mask-icon" href="{% static 'favicons/safari-pinned-tab.svg' %}" color="#dd2222" />
+        <meta name="apple-mobile-web-app-title" content="Manhattan" />
+        <meta name="application-name" content="Manhattan" />
+        <meta name="msapplication-TileColor" content="#da532c" />
+        <meta name="theme-color" content="#de3131" />
+        <link rel="shortcut icon" href="{% static 'favicons/favicon.ico' %}" />
+        <meta name="msapplication-config" content="{% static 'favicons/browserconfig.xml' %}" />
 
-    <meta
-      name="description"
-      content="{% block description %}{% trans 'Proyectos de innovación docente' %}{% endblock description %}"
-    />
-    <meta
-      name="author"
-      content="Área de Aplicaciones. Servicio de Informática y Comunicaciones de la Universidad de Zaragoza."
-    />
-  </head>
+        <meta
+            name="description"
+            content="{% block description %}{% trans 'Proyectos de innovación docente' %}{% endblock description %}"
+        />
+        <meta
+            name="author"
+            content="Área de Aplicaciones. Servicio de Informática y Comunicaciones de la Universidad de Zaragoza."
+        />
+    </head>
 
-  <body>
-    <nav class="navbar fixed-top navbar-expand-md navbar-dark bg-azul mb-4">
-      <a class="navbar-brand" href="http://www.unizar.es">
-        <span class="icon-logoUZ"></span> <span class="screen-reader">{% trans "Universidad de Zaragoza" %}</span>
-      </a>
-
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-toggle="collapse"
-        data-target="#navbarCollapse"
-        aria-controls="navbarCollapse"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <div class="collapse navbar-collapse" id="navbarCollapse">
-        <ul class="navbar-nav" style="margin-left: 150px;">
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'home' %}">
-              <span class="fas fa-project-diagram"></span>&nbsp;
-              {% trans "Proyectos de Innovación Docente" %}
+    <body>
+        <nav class="navbar fixed-top navbar-expand-md navbar-dark bg-azul mb-4">
+            <a class="navbar-brand" href="http://www.unizar.es">
+                <span class="icon-logoUZ"></span> <span class="screen-reader">{% trans "Universidad de Zaragoza" %}</span>
             </a>
-          </li>
-        </ul>
 
-        {% if not anyo %}
-            {% now 'Y' as anyo %} {# `server_error()` and `permission_denied()` don't receive any context #}
-        {% endif %}
-
-        <ul class="navbar-nav ml-auto">
-          {% if user.is_authenticated %}
-            {% if user|has_group:"Gestores" %}
-              <li class="nav-item dropdown">
-                <a
-                  class="nav-link dropdown-toggle"
-                  href=""
-                  id="gestionMenu"
-                  data-toggle="dropdown"
-                  aria-haspopup="true"
-                  aria-expanded="false"
-                >
-                  <span class="fas fa-cog"></span>&nbsp; {% trans "Gestión" %}
-                </a>
-                <div class="dropdown-menu" aria-labelledby="gestionMenu">
-                  <a class="dropdown-item" href="{% url 'admin:indo_convocatoria_changelist' %}">
-                    <span class="far fa-calendar-alt"></span>&nbsp; {% trans "Administrar convocatorias" %}
-                  </a>
-                  <a class="dropdown-item" href="{% url 'admin:indo_criterio_changelist' %}">
-                    <span class="fas fa-check-double"></span>&nbsp; {% trans "Administrar criterios de evaluación" %}
-                  </a>
-                  <a class="dropdown-item" href="{% url 'admin:indo_opcion_changelist' %}">
-                    <span class="fas fa-list-ol"></span>&nbsp; {% trans "Administrar opciones de los criterios" %}
-                  </a>
-                  <a class="dropdown-item" href="{% url 'admin:indo_resolucion_changelist' %}">
-                    <span class="fas fa-landmark"></span>&nbsp; {% trans "Administrar resoluciones" %}
-                  </a>
-                  <div class="dropdown-divider"></div>
-                  <!-- ========================= -->
-                  <a class="dropdown-item" href="{% url 'proyectos_table' anyo %}">
-                    <span class="fas fa-th-list"></span>&nbsp; {% trans "Proyectos" %}
-                  </a>
-                  <a class="dropdown-item" href="{% url 'proyectos_de_un_usuario_form' anyo %}">
-                    <span class="fas fa-th-list"></span>&nbsp; {% trans "Proyectos de un usuario" %}
-                  </a>
-                  <a class="dropdown-item" href="{% url 'evaluadores_table' anyo %}">
-                    <span class="fas fa-balance-scale"></span>&nbsp; {% trans "Asignación de evaluadores" %}
-                  </a>
-                  <a class="dropdown-item" href="{% url 'evaluaciones_table' anyo %}">
-                    <span class="fas fa-gavel"></span>&nbsp; {% trans "Evaluaciones de los proyectos" %}
-                  </a>
-                  <a class="dropdown-item" href="{% url 'up_table' anyo %}">
-                    <span class="fas fa-hand-holding-usd"></span>&nbsp; {% trans "Unidades de planificación y gastos" %}
-                  </a>
-                  <a class="dropdown-item" href="{% url 'hace_constar' anyo %}">
-                    <span class="far fa-file-pdf"></span>&nbsp; {% trans 'Generar Hace constar' %}
-                  </a>
-                  <a class="dropdown-item" href="{% url 'certificado' %}">
-                    <span class="far fa-file-pdf"></span>&nbsp; {% trans 'Generar Certificado' %}
-                  </a>
-                  <div class="dropdown-divider"></div>
-                  <!-- ========================= -->
-                  <a class="dropdown-item" href="{% url 'correctores_table' %}">
-                    <span class="fas fa-users"></span>&nbsp; {% trans "Correctores de las memorias" %}
-                  </a>
-                  <a class="dropdown-item" href="{% url 'proyecto_corrector_table' anyo %}">
-                    <span class="fas fa-balance-scale"></span>&nbsp; {% trans "Asignación de correctores" %}
-                  </a>
-                  <a class="dropdown-item" href="{% url 'memorias_table' anyo %}">
-                    <span class="fas fa-gavel"></span>&nbsp; {% trans "Memorias de los proyectos" %}
-                  </a>
-                  <a class="dropdown-item" href="{% url 'memorias_zaguan' anyo %}">
-                    <span class="fas fa-upload"></span>&nbsp; {% trans 'Enviar memorias a Zaguán' %}
-                  </a>
-                  <div class="dropdown-divider"></div>
-                  <!-- ========================= -->
-                  <a class="dropdown-item" href="{% url 'cierre_economico_table' anyo %}">
-                    <span class="fas fa-money-check-alt"></span>&nbsp; {% trans "Cierre económico de los proyectos" %}
-                  </a>
-                </div>
-              </li>
-            {% endif %}  {# if user|has_group:"Gestores" #}
-
-            {% if user|has_group:"Correctores" %}
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'memorias_asignadas_table' anyo %}">
-                  <span class="fas fa-balance-scale"></span>&nbsp; {% trans "Memorias" %}
-                </a>
-              </li>
-            {% endif %}
-
-            {% if user|has_group:"Evaluadores" %}
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'proyectos_evaluados_table' anyo %}">
-                  <span class="fas fa-balance-scale"></span>&nbsp; {% trans "Evaluaciones" %}
-                </a>
-              </li>
-            {% endif %}
-
-          {% endif %}  {# if user.is_authenticated #}
-
-          <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle"
-              href=""
-              id="proyectosMenu"
-              data-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
-              <span class="fas fa-project-diagram"></span>&nbsp; {% trans "Proyectos" %}
-            </a>
-            <div class="dropdown-menu" aria-labelledby="proyectosMenu">
-              {% if user.is_authenticated %}
-                <a class="dropdown-item" href="{% url 'mis_proyectos' anyo %}">
-                  <span class="fas fa-user-tag"></span> &nbsp;{% trans "Mis proyectos" %}
-                </a>
-              {% endif %}
-              <a class="dropdown-item" href="{% url 'proyectos_aceptados_por_centros' anyo %}">
-                <span class="fas fa-check"></span>&nbsp; {% trans "Proyectos aceptados por centro" %}
-              </a>
-              <a class="dropdown-item" href="{% url 'proyectos_aceptados' anyo %}">
-                <span class="fas fa-check"></span>&nbsp; {% trans "Todos los proyectos aceptados" %}
-              </a>
-            </div>
-          </li>
-
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'resoluciones' %}">
-              <span class="fas fa-landmark"></span>&nbsp; {% trans "Resoluciones" %}
-            </a>
-          </li>
-
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'ayuda' %}">
-              <span class="fas fa-question-circle"></span>&nbsp; {% trans "Ayuda" %}
-            </a>
-          </li>
-
-          {% if user.is_authenticated %}
-            <li class="nav-item dropdown">
-              <a
-                class="nav-link dropdown-toggle"
-                href="#"
-                id="userMenu"
-                data-toggle="dropdown"
-                aria-haspopup="true"
+            <button
+                class="navbar-toggler"
+                type="button"
+                data-toggle="collapse"
+                data-target="#navbarCollapse"
+                aria-controls="navbarCollapse"
                 aria-expanded="false"
-              >
-                <span class="fas fa-user"></span>&nbsp; {{ user.username }}
-              </a>
-              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
-                {% if not user.social_auth.get %}
-                  <a class="dropdown-item" href="{% url 'password_change' %}">
-                    <span class="fas fa-key"></span> {% trans "Cambiar contraseña" %}
-                  </a>
-                  <div class="dropdown-divider"></div>
+                aria-label="Toggle navigation"
+            >
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav" style="margin-left: 150px;">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">
+                            <span class="fas fa-project-diagram"></span>&nbsp;
+                            {% trans "Proyectos de Innovación Docente" %}
+                        </a>
+                    </li>
+                </ul>
+
+                {% if not anyo %}
+                    {% now 'Y' as anyo %} {# `server_error()` and `permission_denied()` don't receive any context #}
                 {% endif %}
-                {# Follow https://github.com/python-social-auth/social-core/issues/199 #}
-                <a class="dropdown-item" href="{% url 'logout' %}">
-                  <span class="fas fa-sign-out-alt"></span> {% trans "Cerrar sesión" %}
-                </a>
-              </div>
-            </li>
-          {% else %}
-            <li class="nav-item">
-              <a class="nav-link" href="{% sso_url %}">
-                <span class="fas fa-sign-in-alt"></span>&nbsp; {% trans "Iniciar sesión" %}
-              </a>
-            </li>
-          {% endif %}
-        </ul>
-      </div>
-    </nav>
 
-    <div class="container">
-      {% include 'partials/messages.html' %}
-      {% block content %} {% endblock content %}
-    </div>
+                <ul class="navbar-nav ml-auto">
+                    {% if user.is_authenticated %}
+                        {# ============================== GESTIÓN ============================== #}
+                        {% if user|has_group:"Gestores" %}
+                            <li class="nav-item dropdown">
+                                <a
+                                    class="nav-link dropdown-toggle"
+                                    href=""
+                                    id="gestionMenu"
+                                    data-toggle="dropdown"
+                                    aria-haspopup="true"
+                                    aria-expanded="false"
+                                >
+                                    <span class="fas fa-cog"></span>&nbsp; {% trans "Gestión" %}
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="gestionMenu">
+                                    <a class="dropdown-item" href="{% url 'admin:indo_convocatoria_changelist' %}">
+                                        <span class="far fa-calendar-alt"></span>&nbsp; {% trans "Administrar convocatorias" %}
+                                    </a>
+                                    <a class="dropdown-item" href="{% url 'admin:indo_criterio_changelist' %}">
+                                        <span class="fas fa-check-double"></span>&nbsp; {% trans "Administrar criterios de evaluación" %}
+                                    </a>
+                                    <a class="dropdown-item" href="{% url 'admin:indo_opcion_changelist' %}">
+                                        <span class="fas fa-list-ol"></span>&nbsp; {% trans "Administrar opciones de los criterios" %}
+                                    </a>
+                                    <a class="dropdown-item" href="{% url 'admin:indo_resolucion_changelist' %}">
+                                        <span class="fas fa-landmark"></span>&nbsp; {% trans "Administrar resoluciones" %}
+                                    </a>
+                                    <div class="dropdown-divider"></div>
+                                    <!-- ========================= -->
+                                    <a class="dropdown-item" href="{% url 'proyectos_table' anyo %}">
+                                        <span class="fas fa-th-list"></span>&nbsp; {% trans "Proyectos" %}
+                                    </a>
+                                    <a class="dropdown-item" href="{% url 'proyectos_de_un_usuario_form' anyo %}">
+                                        <span class="fas fa-th-list"></span>&nbsp; {% trans "Proyectos de un usuario" %}
+                                    </a>
+                                    <a class="dropdown-item" href="{% url 'evaluadores_table' anyo %}">
+                                        <span class="fas fa-balance-scale"></span>&nbsp; {% trans "Asignación de evaluadores" %}
+                                    </a>
+                                    <a class="dropdown-item" href="{% url 'evaluaciones_table' anyo %}">
+                                        <span class="fas fa-gavel"></span>&nbsp; {% trans "Evaluaciones de los proyectos" %}
+                                    </a>
+                                    <a class="dropdown-item" href="{% url 'up_table' anyo %}">
+                                        <span class="fas fa-hand-holding-usd"></span>&nbsp; {% trans "Unidades de planificación y gastos" %}
+                                    </a>
+                                    <a class="dropdown-item" href="{% url 'hace_constar' anyo %}">
+                                        <span class="far fa-file-pdf"></span>&nbsp; {% trans 'Generar Hace constar' %}
+                                    </a>
+                                    <a class="dropdown-item" href="{% url 'certificado' %}">
+                                        <span class="far fa-file-pdf"></span>&nbsp; {% trans 'Generar Certificado' %}
+                                    </a>
+                                    <div class="dropdown-divider"></div>
+                                    <!-- ========================= -->
+                                    <a class="dropdown-item" href="{% url 'correctores_table' %}">
+                                        <span class="fas fa-users"></span>&nbsp; {% trans "Correctores de las memorias" %}
+                                    </a>
+                                    <a class="dropdown-item" href="{% url 'proyecto_corrector_table' anyo %}">
+                                        <span class="fas fa-balance-scale"></span>&nbsp; {% trans "Asignación de correctores" %}
+                                    </a>
+                                    <a class="dropdown-item" href="{% url 'memorias_table' anyo %}">
+                                        <span class="fas fa-gavel"></span>&nbsp; {% trans "Memorias de los proyectos" %}
+                                    </a>
+                                    <a class="dropdown-item" href="{% url 'memorias_zaguan' anyo %}">
+                                        <span class="fas fa-upload"></span>&nbsp; {% trans 'Enviar memorias a Zaguán' %}
+                                    </a>
+                                    <div class="dropdown-divider"></div>
+                                    <!-- ========================= -->
+                                    <a class="dropdown-item" href="{% url 'cierre_economico_table' anyo %}">
+                                        <span class="fas fa-money-check-alt"></span>&nbsp; {% trans "Cierre económico de los proyectos" %}
+                                    </a>
+                                </div>
+                            </li>
+                        {% endif %}  {# if user|has_group:"Gestores" #}
 
-    <footer class="footer">
-      <div class="container-fluid p-3 p-md-5">
-        <div class="row">
-          <div class="col-lg-8">
-            {% now "Y" as anyo_actual %}
-            &copy; {{ anyo_actual }} {% trans "Universidad de Zaragoza" %}<br />
-            &copy; {{ anyo_actual }} {% trans "Servicio de Informática y Comunicaciones de la Universidad de Zaragoza" %} (<a href="http://sicuz.unizar.es">SICUZ</a>)
-          </div>
+                        {# ============================== MEMORIAS ============================== #}
+                        {% if user|has_group:"Correctores" %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'memorias_asignadas_table' anyo %}">
+                                    <span class="fas fa-balance-scale"></span>&nbsp; {% trans "Memorias" %}
+                                </a>
+                            </li>
+                        {% endif %}
 
-          <div class="col-lg-2" style="text-align: right;">
-            Universidad de Zaragoza<br />
-            C/ Pedro Cerbuna, 12<br />
-            ES-50009 Zaragoza<br />
-            España / Spain<br />
-            Tel: +34 976761000<br />
-            ciu@unizar.es<br />
-            Q-5018001-G<br />
-          </div>
+                        {# ============================== EVALUACIONES ============================== #}
+                        {% if user|has_group:"Evaluadores" %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'proyectos_evaluados_table' anyo %}">
+                                    <span class="fas fa-balance-scale"></span>&nbsp; {% trans "Evaluaciones" %}
+                                </a>
+                            </li>
+                        {% endif %}
 
-          <div class="col-lg-2">
-            <a href="http://www.unizar.es">
-              <span class="icon-logoUZ"></span><span class="screen-reader">{% trans "Universidad de Zaragoza" %}</span>
-            </a>
-          </div>
+                    {% endif %}  {# if user.is_authenticated #}
+
+                    {# ============================== PROYECTOS ============================== #}
+                    <li class="nav-item dropdown">
+                        <a
+                            class="nav-link dropdown-toggle"
+                            href=""
+                            id="proyectosMenu"
+                            data-toggle="dropdown"
+                            aria-haspopup="true"
+                            aria-expanded="false"
+                        >
+                            <span class="fas fa-project-diagram"></span>&nbsp; {% trans "Proyectos" %}
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="proyectosMenu">
+                            {% if user.is_authenticated %}
+                                <a class="dropdown-item" href="{% url 'mis_proyectos' anyo %}">
+                                    <span class="fas fa-user-tag"></span> &nbsp;{% trans "Mis proyectos" %}
+                                </a>
+                            {% endif %}
+                            <a class="dropdown-item" href="{% url 'proyectos_aceptados_por_centros' anyo %}">
+                                <span class="fas fa-check"></span>&nbsp; {% trans "Proyectos aceptados por centro" %}
+                            </a>
+                            <a class="dropdown-item" href="{% url 'proyectos_aceptados' anyo %}">
+                                <span class="fas fa-check"></span>&nbsp; {% trans "Todos los proyectos aceptados" %}
+                            </a>
+                            <a class="dropdown-item" href="https://zaguan.unizar.es/collection/innovacion-docente">
+                                <span class="fas fa-book"></span>&nbsp; {% trans "Memorias de proyectos anteriores" %}
+                            </a>
+                        </div>
+                    </li>
+
+                    {# ============================== RESOLUCIONES ============================== #}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'resoluciones' %}">
+                            <span class="fas fa-landmark"></span>&nbsp; {% trans "Resoluciones" %}
+                        </a>
+                    </li>
+
+                    {# ============================== AYUDA ============================== #}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'ayuda' %}">
+                            <span class="fas fa-question-circle"></span>&nbsp; {% trans "Ayuda" %}
+                        </a>
+                    </li>
+
+                    {# ============================== USUARIO ============================== #}
+                    {% if user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a
+                                class="nav-link dropdown-toggle"
+                                href="#"
+                                id="userMenu"
+                                data-toggle="dropdown"
+                                aria-haspopup="true"
+                                aria-expanded="false"
+                            >
+                                <span class="fas fa-user"></span>&nbsp; {{ user.username }}
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
+                                {% if not user.social_auth.get %}
+                                    <a class="dropdown-item" href="{% url 'password_change' %}">
+                                        <span class="fas fa-key"></span> {% trans "Cambiar contraseña" %}
+                                    </a>
+                                    <div class="dropdown-divider"></div>
+                                {% endif %}
+                                {# Follow https://github.com/python-social-auth/social-core/issues/199 #}
+                                <a class="dropdown-item" href="{% url 'logout' %}">
+                                    <span class="fas fa-sign-out-alt"></span> {% trans "Cerrar sesión" %}
+                                </a>
+                            </div>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% sso_url %}">
+                                <span class="fas fa-sign-in-alt"></span>&nbsp; {% trans "Iniciar sesión" %}
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </nav>
+
+        <div class="container">
+            {% include 'partials/messages.html' %}
+            {% block content %} {% endblock content %}
         </div>
-        <hr style="border-color: #3b3b3b;" />
 
-        <ul class="footer-links">
-          <li><a href="http://www.unizar.es/aviso-legal" target="_blank" rel="noopener noreferrer">{% trans "Aviso legal" %}</a></li>
-          <li>
-            <a href="http://www.unizar.es/condiciones-generales-de-uso" target="_blank" rel="noopener noreferrer"
-              >{% trans "Condiciones generales de uso" %}</a
-            >
-          </li>
-          <li>
-            <a href="http://www.unizar.es/politica-de-privacidad" target="_blank" rel="noopener noreferrer"
-              >{% trans "Política de privacidad" %}</a
-            >
-          </li>
-        </ul>
-      </div>
-    </footer>
+        <footer class="footer">
+            <div class="container-fluid p-3 p-md-5">
+                <div class="row">
+                    <div class="col-lg-8">
+                        {% now "Y" as anyo_actual %}
+                        &copy; {{ anyo_actual }} {% trans "Universidad de Zaragoza" %}<br />
+                        &copy; {{ anyo_actual }} {% trans "Servicio de Informática y Comunicaciones de la Universidad de Zaragoza" %} (<a href="http://sicuz.unizar.es">SICUZ</a>)
+                    </div>
 
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script
-      src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
-      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
-      integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.min.js"
-      integrity="sha384-VHvPCCyXqtD5DqJeNxl2dtTyhF78xXNXdkwX1CZeRusQfRKp+tA7hAShOK/B/fQ2"
-      crossorigin="anonymous"
-    ></script>
+                    <div class="col-lg-2" style="text-align: right;">
+                        Universidad de Zaragoza<br />
+                        C/ Pedro Cerbuna, 12<br />
+                        ES-50009 Zaragoza<br />
+                        España / Spain<br />
+                        Tel: +34 976761000<br />
+                        ciu@unizar.es<br />
+                        Q-5018001-G<br />
+                    </div>
 
-    {% block extrajs %}{% endblock extrajs %}
-  </body>
-</html>
+                    <div class="col-lg-2">
+                        <a href="http://www.unizar.es">
+                            <span class="icon-logoUZ"></span><span class="screen-reader">{% trans "Universidad de Zaragoza" %}</span>
+                        </a>
+                    </div>
+                </div>
+                <hr style="border-color: #3b3b3b;" />
+
+                <ul class="footer-links">
+                    <li><a href="http://www.unizar.es/aviso-legal" target="_blank" rel="noopener noreferrer">{% trans "Aviso legal" %}</a></li>
+                    <li>
+                        <a href="http://www.unizar.es/condiciones-generales-de-uso" target="_blank" rel="noopener noreferrer"
+                        >{% trans "Condiciones generales de uso" %}</a
+                            >
+                        </li>
+                        <li>
+                            <a href="http://www.unizar.es/politica-de-privacidad" target="_blank" rel="noopener noreferrer"
+                            >{% trans "Política de privacidad" %}</a
+                                >
+                            </li>
+                        </ul>
+                    </div>
+                </footer>
+
+                <!-- Optional JavaScript -->
+                <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+                <script
+                    src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+                    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+                    crossorigin="anonymous"
+                ></script>
+                <script
+                    src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+                    integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+                    crossorigin="anonymous"
+                ></script>
+                <script
+                    src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.min.js"
+                    integrity="sha384-VHvPCCyXqtD5DqJeNxl2dtTyhF78xXNXdkwX1CZeRusQfRKp+tA7hAShOK/B/fQ2"
+                    crossorigin="anonymous"
+                ></script>
+
+                {% block extrajs %}{% endblock extrajs %}
+            </body>
+        </html>
