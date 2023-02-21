@@ -3,7 +3,6 @@ from django.urls import path
 
 from . import views
 
-
 urlpatterns = [
     # `manhattan_project.urls` incluye `django_social.urls`,
     # que define `/login/saml` y `/login/complete`.

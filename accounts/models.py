@@ -1,26 +1,23 @@
-# Standard library
 from __future__ import annotations
+
 import json
 
-# Third-party
+import zeep
 from annoying.functions import get_config, get_object_or_None
+from django.contrib.auth.models import AbstractUser, UserManager
+from django.core.exceptions import ValidationError
+from django.db import models
+from django.utils.translation import gettext_lazy as _
 from lxml.etree import XMLSyntaxError
 from requests import Session
 from requests.auth import HTTPBasicAuth
 from requests.exceptions import ConnectionError as RequestConnectionError
 from social_django.models import UserSocialAuth
 from social_django.utils import load_strategy
-import zeep
 
-# Django
-from django.contrib.auth.models import AbstractUser, UserManager
-from django.core.exceptions import ValidationError
-from django.db import models
-from django.utils.translation import gettext_lazy as _
-
-# local Django
-from .pipeline import get_identidad
 from indo.models import Centro, Departamento
+
+from .pipeline import get_identidad
 
 
 class CustomUserManager(UserManager):

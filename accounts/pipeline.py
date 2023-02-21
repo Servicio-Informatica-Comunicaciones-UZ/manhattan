@@ -1,19 +1,15 @@
-# standard library
 import json
 
-# third-party
 import zeep
 from annoying.functions import get_config
+from django.contrib import messages
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from lxml.etree import XMLSyntaxError
 from requests import Session
 from requests.auth import HTTPBasicAuth
 from requests.exceptions import ConnectionError as RequestConnectionError
 from social_core.strategy import BaseStrategy
-
-# Django
-from django.contrib import messages
-from django.core.exceptions import ValidationError
-from django.core.validators import validate_email
 
 
 def get_identidad(strategy: BaseStrategy, response, user, *args, **kwargs) -> None:

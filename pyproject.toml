@@ -1,7 +1,7 @@
 [tool.black]
 skip-string-normalization = true
 line-length = 99
-target-version = ['py37']
+target-version = ['py310']
 include = '\.pyi?$'
 exclude = '''
 
@@ -27,6 +27,7 @@ exclude = '''
 multi_line_output = 3
 include_trailing_comma = true
 force_grid_wrap = 0
+profile = "black"
 use_parentheses = true
 line_length = 99
 

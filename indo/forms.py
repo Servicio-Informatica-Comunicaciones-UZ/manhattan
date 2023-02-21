@@ -1,26 +1,22 @@
-# Standard library
 from datetime import date
 
-# Third-party
 from crispy_forms.bootstrap import InlineField, StrictButton
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import ButtonHolder, Div, Fieldset, Layout, Submit
-from django_summernote.fields import SummernoteTextField
-from django_summernote.widgets import SummernoteWidget
-from social_django.models import UserSocialAuth
-from social_django.utils import load_strategy
-
-# Django
 from django import forms
 from django.contrib.auth.models import Group
 from django.db.models import BLANK_CHOICE_DASH
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
+from django_summernote.fields import SummernoteTextField
+from django_summernote.widgets import SummernoteWidget
+from social_django.models import UserSocialAuth
+from social_django.utils import load_strategy
 
-# Local Django
 from accounts.models import CustomUser
 from accounts.pipeline import get_identidad
+
 from .models import (
     EvaluadorProyecto,
     Linea,

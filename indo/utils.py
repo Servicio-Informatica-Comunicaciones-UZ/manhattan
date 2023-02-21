@@ -1,10 +1,6 @@
-# Third-party
+from django.http import HttpRequest
 from django_tables2 import SingleTableView
 
-# Django
-from django.http import HttpRequest
-
-# Local Django
 from .models import Evento, Proyecto, Registro
 
 
