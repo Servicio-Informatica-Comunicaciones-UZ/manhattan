@@ -5,42 +5,42 @@
 {% block title %}{% trans "Unidades de planificación y gastos de los proyectos" %}{% endblock title %}
 
 {% block content %}
-<div class='container-blanco'>
-  <select aria-label="Cambiar de convocatoria" class="custom-select form-select" name="convocatoria" onchange="location = this.value;" style="float: right; width: 150px;">
-    {% for convocatoria in convocatorias %}
-      <option value="{% url 'up_table' convocatoria.id %}"
-        {% if convocatoria.id == anyo %}selected="selected"{% endif %}
-      >{{convocatoria}}</option>
-    {% endfor %}
-  </select>
+    <div class='container-blanco'>
+        <select aria-label="Cambiar de convocatoria" class="custom-select form-select" name="convocatoria" onchange="location = this.value;" style="float: right; width: 150px;">
+            {% for convocatoria in convocatorias %}
+                <option value="{% url 'up_table' convocatoria.id %}"
+                    {% if convocatoria.id == anyo %}selected="selected"{% endif %}
+                >{{convocatoria}}</option>
+            {% endfor %}
+        </select>
 
-  <h1 id="presentados">{% trans "Unidades de planificación y gastos de los proyectos" %} <small>{{ anyo }}</small></h1>
-  <hr />
-  <br />
+        <h1 id="presentados">{% trans "Unidades de planificación y gastos de los proyectos" %} <small>{{ anyo }}</small></h1>
+        <hr />
+        <br />
 
-  <div class="alert alert-info alert-dismissible fade show">
-      <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
-      <span aria-hidden="true">&times;</span>
-  </button>
+        <div class="alert alert-info alert-dismissible fade show">
+            <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
+                <span aria-hidden="true">&times;</span>
+            </button>
 
-    <span class="fas fa-info-circle"></span>
-    <p>{% trans 'En esta página puede ver para cada proyecto aceptado:' %}</p>
-    <ul>
-      <li>{% trans 'Su unidad de planificación.' %}</li>
-      <li>{% trans 'La ayuda concedida y los tipos de gasto autorizados.' %}</li>
-      <li>{% trans 'Introducir el número que se le haya asignado en Universitas XXI.' %}</li>
-      <!-- li>{% trans 'Descargar una hoja de cálculo con esta información.' %}</li -->
-    </ul>
-  </div><br />
+            <span class="fas fa-info-circle"></span>
+            <p>{% trans 'En esta página puede ver para cada proyecto aceptado:' %}</p>
+            <ul>
+                <li>{% trans 'Su unidad de planificación.' %}</li>
+                <li>{% trans 'La ayuda concedida y los tipos de gasto autorizados.' %}</li>
+                <li>{% trans 'Introducir el número que se le haya asignado en Universitas XXI.' %}</li>
+                <!-- li>{% trans 'Descargar una hoja de cálculo con esta información.' %}</li -->
+            </ul>
+        </div><br />
 
-  {% render_table table %}
+        {% render_table table %}
 
-  <br style="clear: both" />
-  <div class="btn-group" role="group" aria-label="Botones">
-    <a href="{% url 'csv_up_gastos' anyo %}" class="btn btn-info">
-      <span class="fas fa-file-csv"></span>&nbsp; {% trans "Descargar UPs y gastos" %}
-    </a>
-  </div>
-</div>
+        <br style="clear: both" />
+        <div class="btn-group" role="group" aria-label="Botones">
+            <a href="{% url 'csv_up_gastos' anyo %}" class="btn btn-info">
+                <span class="fas fa-file-csv"></span>&nbsp; {% trans "Descargar UPs y gastos" %}
+            </a>
+        </div>
+    </div>
 
 {% endblock content %}

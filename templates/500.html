@@ -4,29 +4,29 @@
 {% block description %}{% trans "500 Error interno del servidor" %}{% endblock description %}
 
 {% block content %}
-<div class="container-blanco">
-  <h1>{% trans "500 Error interno del servidor" %}</h1>
-  <hr />
-  <br />
+    <div class="container-blanco">
+        <h1>{% trans "500 Error interno del servidor" %}</h1>
+        <hr />
+        <br />
 
-  <div style="text-align: center">
-    <!-- Retro Robot - Cobalt by VexStrips released into the Public Domain / Creative Commons Zero 1.0 Public Domain License  -->
-    <p><img src="{% static 'img/311840.png' %}" alt="Robotito roto" /></p>
-    <h1 class="text-danger">{% trans '¡Aúpa! Algo no ha funcionado bien.' %}</h1>
-    <h2 class="text-muted">{% trans 'Y, esta vez, seguramente sí sea culpa del informático.' %}</h2>
+        <div style="text-align: center">
+            <!-- Retro Robot - Cobalt by VexStrips released into the Public Domain / Creative Commons Zero 1.0 Public Domain License  -->
+            <p><img src="{% static 'img/311840.png' %}" alt="Robotito roto" /></p>
+            <h1 class="text-danger">{% trans '¡Aúpa! Algo no ha funcionado bien.' %}</h1>
+            <h2 class="text-muted">{% trans 'Y, esta vez, seguramente sí sea culpa del informático.' %}</h2>
 
-    <p>
-      {% url 'ayuda' as ayuda_url %}
-      {% blocktranslate %}Si lo desea, puede <a href="{{ ayuda_url }}">abrir un parte en Ayudica</a> informando del error.{% endblocktranslate %}<br />
-      {% trans 'Explique de forma clara, completa y concisa qué pasos ha seguido para provocar el error.' %}<br />
-      {% trans 'Indique también el día y hora exacta en que se ha producido.' %}
-    </p>
+            <p>
+                {% url 'ayuda' as ayuda_url %}
+                {% blocktranslate %}Si lo desea, puede <a href="{{ ayuda_url }}">abrir un parte en Ayudica</a> informando del error.{% endblocktranslate %}<br />
+                {% trans 'Explique de forma clara, completa y concisa qué pasos ha seguido para provocar el error.' %}<br />
+                {% trans 'Indique también el día y hora exacta en que se ha producido.' %}
+            </p>
 
-    {% comment %}
+            {% comment %}
     The default 500 view passes no variables to the `500.html` template
     and is rendered with an empty `Context` to lessen the chance of additional errors.
     {% endcomment %}
 
-  </div>
-</div>
+        </div>
+    </div>
 {% endblock content %}

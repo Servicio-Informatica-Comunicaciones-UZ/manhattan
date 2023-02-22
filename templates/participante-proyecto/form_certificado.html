@@ -5,36 +5,36 @@
 {% block description %}{% trans "Generar «Hace Certificado» para un participante" %}{% endblock description %}
 
 {% block content %}
-<div class="container-blanco">
+    <div class="container-blanco">
 
-  <div class="alert alert-info">
-    <span class="fas fa-info-circle"></span>
-    {% blocktranslate %}
-      <p>Puede introducir <strong>indistintamente</strong> el NIP,  NIF/NIE/número de pasaporte
-         o dirección de correo electrónico de la persona para la que desee generar el Certificado.</p>
-      <p>Se generará un fichero PDF que podrá descargar y enviar a Heraldo para que sea firmado.</p>
-    {% endblocktranslate %}
-  </div>
+        <div class="alert alert-info">
+            <span class="fas fa-info-circle"></span>
+            {% blocktranslate %}
+                <p>Puede introducir <strong>indistintamente</strong> el NIP,  NIF/NIE/número de pasaporte
+                    o dirección de correo electrónico de la persona para la que desee generar el Certificado.</p>
+                <p>Se generará un fichero PDF que podrá descargar y enviar a Heraldo para que sea firmado.</p>
+            {% endblocktranslate %}
+        </div>
 
 
 
-  <h1>{% trans "Generar Certificado" %} </h1>
-  <hr />
-  <br />
+        <h1>{% trans "Generar Certificado" %} </h1>
+        <hr />
+        <br />
 
-  <form action="" method="post">
-    {% csrf_token %}
+        <form action="" method="post">
+            {% csrf_token %}
 
-    {{ form | crispy }}
+            {{ form | crispy }}
 
-    <div class="btn-group" role="group" aria-label="{{ _('Botones') }}">
-        <a href="{{ url_anterior }}" class="btn btn-info">
-        <span class="fas fa-step-backward"></span> {% trans 'Retroceder' %}
-      </a>
-      <button class="btn btn-success" type="submit">
-        <span class="fas fa-file-pdf"></span> {% trans 'Generar PDF' %}
-      </button>
+            <div class="btn-group" role="group" aria-label="{{ _('Botones') }}">
+                <a href="{{ url_anterior }}" class="btn btn-info">
+                    <span class="fas fa-step-backward"></span> {% trans 'Retroceder' %}
+                </a>
+                <button class="btn btn-success" type="submit">
+                    <span class="fas fa-file-pdf"></span> {% trans 'Generar PDF' %}
+                </button>
+            </div>
+        </form>
     </div>
-  </form>
-</div>
 {% endblock content %}

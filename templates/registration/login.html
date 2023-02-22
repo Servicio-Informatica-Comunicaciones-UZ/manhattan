@@ -3,24 +3,24 @@
 {% block title %}{% trans "Inicio de sesión" %}{% endblock title %}
 {% block description %}{% trans "Inicio de sesión local" %}{% endblock description %}
 {% block extracss %}
-  <link rel="stylesheet" href="{% static 'css/signin.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/signin.css' %}" />
 {% endblock extracss %}
 
 {% block content %}
-<div class="jumbotron">
-  <a href="{% url 'home' %}"><span class="fas fa-project-diagram" style="font-size: 400%;"></span></a>
-  <br /><br />
+    <div class="jumbotron">
+        <a href="{% url 'home' %}"><span class="fas fa-project-diagram" style="font-size: 400%;"></span></a>
+        <br /><br />
 
-  <form class="form-signin" method="post">
-    {% csrf_token %}
+        <form class="form-signin" method="post">
+            {% csrf_token %}
 
-    <label for="id_username" class="sr-only">{% trans "Usuario" %}</label>
-    <input type="text" id="id_username" name="username" class="form-control" placeholder="Usuario" required autofocus />
+            <label for="id_username" class="sr-only">{% trans "Usuario" %}</label>
+            <input type="text" id="id_username" name="username" class="form-control" placeholder="Usuario" required autofocus />
 
-    <label for="id_password" class="sr-only">{% trans "Contraseña" %}</label>
-    <input type="password" id="id_password" name="password" class="form-control" placeholder="Contraseña" required />
+            <label for="id_password" class="sr-only">{% trans "Contraseña" %}</label>
+            <input type="password" id="id_password" name="password" class="form-control" placeholder="Contraseña" required />
 
-    <button class="btn btn-lg btn-primary btn-block" type="submit">{% trans "Iniciar sesión" %}</button>
-  </form>
-</div>
+            <button class="btn btn-lg btn-primary btn-block" type="submit">{% trans "Iniciar sesión" %}</button>
+        </form>
+    </div>
 {% endblock content %}

@@ -4,39 +4,39 @@
 {% block description %}{% trans "Eliminar participante de proyecto" %}{% endblock description %}
 
 {% block content %}
-<div class="container-blanco">
-  {% if object.tipo_participacion.nombre == "invitado" %}
-    <h1>{% trans "Eliminar invitado" %}</h1>
-  {% else %}
-    <h1>{% trans "Eliminar participante" %}</h1>
-  {% endif %}
-  <hr />
-  <br />
+    <div class="container-blanco">
+        {% if object.tipo_participacion.nombre == "invitado" %}
+            <h1>{% trans "Eliminar invitado" %}</h1>
+        {% else %}
+            <h1>{% trans "Eliminar participante" %}</h1>
+        {% endif %}
+        <hr />
+        <br />
 
-  <form action="" method="post">
-    {% csrf_token %}
-    {% if object.tipo_participacion.nombre in "invitado,invitacion_rehusada" %}
-      <p>
-        {% blocktrans with nombre=object.usuario.full_name titulo=object.proyecto.titulo%}
-        ¿Seguro que desea eliminar la invitación a {{ nombre }} al proyecto «{{ titulo }}»?
-        {% endblocktrans %}
-      </p>
-    {% else %}
-      <p>
-        {% blocktrans with nombre=object.usuario.full_name titulo=object.proyecto.titulo%}
-        ¿Seguro que desea retirarle a {{ nombre }} la participación en el proyecto «{{ titulo }}»?
-        {% endblocktrans %}
-      </p>
-    {% endif %}
-    <div class="btn-group" role="group" aria-label="Botones">
-      <a href="{% url 'proyecto_detail' object.proyecto.id %}" class="btn btn-info">
-        <span class="fas fa-step-backward"></span> {% trans 'Retroceder' %}
-      </a>
-      <button class="btn btn-warning" type="submit">
-        <span class="fas fa-trash-alt"></span> {% trans 'Eliminar' %}
-      </button>
+        <form action="" method="post">
+            {% csrf_token %}
+            {% if object.tipo_participacion.nombre in "invitado,invitacion_rehusada" %}
+                <p>
+                    {% blocktrans with nombre=object.usuario.full_name titulo=object.proyecto.titulo%}
+                        ¿Seguro que desea eliminar la invitación a {{ nombre }} al proyecto «{{ titulo }}»?
+                    {% endblocktrans %}
+                </p>
+            {% else %}
+                <p>
+                    {% blocktrans with nombre=object.usuario.full_name titulo=object.proyecto.titulo%}
+                        ¿Seguro que desea retirarle a {{ nombre }} la participación en el proyecto «{{ titulo }}»?
+                    {% endblocktrans %}
+                </p>
+            {% endif %}
+            <div class="btn-group" role="group" aria-label="Botones">
+                <a href="{% url 'proyecto_detail' object.proyecto.id %}" class="btn btn-info">
+                    <span class="fas fa-step-backward"></span> {% trans 'Retroceder' %}
+                </a>
+                <button class="btn btn-warning" type="submit">
+                    <span class="fas fa-trash-alt"></span> {% trans 'Eliminar' %}
+                </button>
+            </div>
+        </form>
+
     </div>
-  </form>
-
-</div>
 {% endblock content %}

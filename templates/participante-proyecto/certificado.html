@@ -1,84 +1,84 @@
 {% load custom_tags i18n static %}<!DOCTYPE html>
 <html lang="es">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
-    <!-- Bootstrap CSS -->
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
-      crossorigin="anonymous"
-    />
-    {# SubResource Integrity: openssl dgst -sha384 -binary FICHERO | openssl base64 #}
-    <link
-      rel="stylesheet"
-      href="https://use.fontawesome.com/releases/v5.11.2/css/all.css"
-      integrity="sha384-KA6wR/X5RY4zFAHpv/CnoG2UW1uogYfdnP67Uv7eULvTveboZJg0qUpmJZb5VqzN"
-      crossorigin="anonymous"
-    />
-    <link rel="stylesheet" href="{% static 'css/base.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/iconos.css' %}" />
-    <style>
-      @page {
-        @bottom-left {
-          content: "Firmado electrónicamente y con autenticidad contrastable según el artículo 27.3 c) de la Ley 39/2015, por {{ secretario }}, Secretaria General de la Universidad de Zaragoza.";
-          font-size: 9pt;
-          font-family: sans-serif;
-        }
-      }
-    </style>
+        <!-- Bootstrap CSS -->
+        <link
+            rel="stylesheet"
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+            integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+            crossorigin="anonymous"
+        />
+        {# SubResource Integrity: openssl dgst -sha384 -binary FICHERO | openssl base64 #}
+        <link
+            rel="stylesheet"
+            href="https://use.fontawesome.com/releases/v5.11.2/css/all.css"
+            integrity="sha384-KA6wR/X5RY4zFAHpv/CnoG2UW1uogYfdnP67Uv7eULvTveboZJg0qUpmJZb5VqzN"
+            crossorigin="anonymous"
+        />
+        <link rel="stylesheet" href="{% static 'css/base.css' %}" />
+        <link rel="stylesheet" href="{% static 'css/iconos.css' %}" />
+        <style>
+            @page {
+                @bottom-left {
+                    content: "Firmado electrónicamente y con autenticidad contrastable según el artículo 27.3 c) de la Ley 39/2015, por {{ secretario }}, Secretaria General de la Universidad de Zaragoza.";
+                font-size: 9pt;
+                font-family: sans-serif;
+            }
+            }
+        </style>
 
-    <title>{% trans "Certificado" %}</title>
+        <title>{% trans "Certificado" %}</title>
 
-    <meta name="description" content="{% trans 'Certificado de participación en Proyectos de Innovación Docente' %}" />
-    <meta
-      name="author"
-      content="Área de Aplicaciones. Servicio de Informática y Comunicaciones de la Universidad de Zaragoza."
-    />
-  </head>
+        <meta name="description" content="{% trans 'Certificado de participación en Proyectos de Innovación Docente' %}" />
+        <meta
+            name="author"
+            content="Área de Aplicaciones. Servicio de Informática y Comunicaciones de la Universidad de Zaragoza."
+        />
+    </head>
 
-  <body>
-    <div class="container-blanco" style="text-align:justify">
-      <p style="font-size: 400%; color: #223d71"><span class="icon-logoUZ"></span></p>
+    <body>
+        <div class="container-blanco" style="text-align:justify">
+            <p style="font-size: 400%; color: #223d71"><span class="icon-logoUZ"></span></p>
 
-      <p><strong>Dª. {{ secretario }}, Secretaria General de la Universidad de Zaragoza</strong></p>
+            <p><strong>Dª. {{ secretario }}, Secretaria General de la Universidad de Zaragoza</strong></p>
 
-      <p><strong>CERTIFICA</strong></p>
+            <p><strong>CERTIFICA</strong></p>
 
-      <p>
-        Que, {% if usuario.sexo == "F" %} Dª.{% else %} D. {% endif %} {{ usuario.full_name }} con número de documento {{ usuario.numero_documento }} ha participado en los siguientes
-        Proyectos de Innovación Docente de la Universidad de Zaragoza:
-      </p>
+            <p>
+                Que, {% if usuario.sexo == "F" %} Dª.{% else %} D. {% endif %} {{ usuario.full_name }} con número de documento {{ usuario.numero_documento }} ha participado en los siguientes
+                Proyectos de Innovación Docente de la Universidad de Zaragoza:
+            </p>
 
-      <ul>
-        {% for proyecto in proyecto_list %}
-          <li>{{ proyecto.titulo }} (id {{ proyecto.id }},
-            {% if proyecto.codigo%}
-              código {{ proyecto.codigo }},
-            {% elif proyecto.programa.nombre_corto %}
-              programa {{ proyecto.programa.nombre_corto }},
-            {% endif %}
-          curso {{ proyecto.convocatoria }}),
-          {% if proyecto.coordinador.id == usuario.id or proyecto.coordinador2.id == usuario.id%}
-               {% if usuario.sexo == "F" %}como Coordinadora{% else %} como Coordinador {% endif %}.</li>
-          {% else %}
-              proyecto coordinado por {{ proyecto.coordinador.full_name }}.</li>
-          {% endif %}
-        <br>
-        {% endfor %}
-      </ul>
+            <ul>
+                {% for proyecto in proyecto_list %}
+                    <li>{{ proyecto.titulo }} (id {{ proyecto.id }},
+                        {% if proyecto.codigo%}
+                            código {{ proyecto.codigo }},
+                        {% elif proyecto.programa.nombre_corto %}
+                            programa {{ proyecto.programa.nombre_corto }},
+                        {% endif %}
+                        curso {{ proyecto.convocatoria }}),
+                        {% if proyecto.coordinador.id == usuario.id or proyecto.coordinador2.id == usuario.id%}
+                            {% if usuario.sexo == "F" %}como Coordinadora{% else %} como Coordinador {% endif %}.</li>
+                        {% else %}
+                            proyecto coordinado por {{ proyecto.coordinador.full_name }}.</li>
+                        {% endif %}
+                        <br>
+                {% endfor %}
+            </ul>
 
 
 
-      <p>
-        Y para que conste, se expide el presente a los efectos oportunos y a petición de la persona interesada.
-      </p>
+            <p>
+                Y para que conste, se expide el presente a los efectos oportunos y a petición de la persona interesada.
+            </p>
 
-      <p>En Zaragoza, a fecha de la firma,</p>
+            <p>En Zaragoza, a fecha de la firma,</p>
 
-    </div>
-  </body>
+        </div>
+    </body>
 </html>

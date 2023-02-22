@@ -4,28 +4,28 @@
 {% block description %}{% trans "Eliminar evaluador de proyecto" %}{% endblock description %}
 
 {% block content %}
-<div class="container-blanco">
-  <h1>{% trans "Eliminar evaluador" %}</h1>
-  <hr />
-  <br />
+    <div class="container-blanco">
+        <h1>{% trans "Eliminar evaluador" %}</h1>
+        <hr />
+        <br />
 
-  <form action="" method="post">
-    {% csrf_token %}
-    <p>
-      {% blocktrans with nombre=object.evaluador.full_name titulo=object.proyecto.titulo%}
-      ¿Seguro que desea retirar a {{ nombre }} como evaluador(a) del proyecto «{{ titulo }}»?
-      {% endblocktrans %}
-    </p>
+        <form action="" method="post">
+            {% csrf_token %}
+            <p>
+                {% blocktrans with nombre=object.evaluador.full_name titulo=object.proyecto.titulo%}
+                    ¿Seguro que desea retirar a {{ nombre }} como evaluador(a) del proyecto «{{ titulo }}»?
+                {% endblocktrans %}
+            </p>
 
-    <div class="btn-group" role="group" aria-label="Botones">
-      <a href="{% url 'evaluadores_update' object.proyecto.id %}" class="btn btn-info">
-        <span class="fas fa-step-backward"></span> {% trans 'Retroceder' %}
-      </a>
-      <button class="btn btn-warning" type="submit">
-        <span class="fas fa-trash-alt"></span> {% trans 'Eliminar' %}
-      </button>
+            <div class="btn-group" role="group" aria-label="Botones">
+                <a href="{% url 'evaluadores_update' object.proyecto.id %}" class="btn btn-info">
+                    <span class="fas fa-step-backward"></span> {% trans 'Retroceder' %}
+                </a>
+                <button class="btn btn-warning" type="submit">
+                    <span class="fas fa-trash-alt"></span> {% trans 'Eliminar' %}
+                </button>
+            </div>
+        </form>
+
     </div>
-  </form>
-
-</div>
 {% endblock content %}

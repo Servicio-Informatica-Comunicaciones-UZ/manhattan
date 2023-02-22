@@ -4,79 +4,79 @@
 {% block title %}{% trans 'Ficha del proyecto' %}: {{ proyecto.titulo }}{% endblock title %}
 
 {% block content %}
-<div class="container-blanco">
+    <div class="container-blanco">
 
-  {% with logo_programa='img/'|concat:proyecto.programa.nombre_corto|concat:'.png' %}
-  <p style='text-align: right;'><img src="{% static logo_programa %}" alt="Logo programa" height="240" /></p>
-  {% endwith %}
+        {% with logo_programa='img/'|concat:proyecto.programa.nombre_corto|concat:'.png' %}
+            <p style='text-align: right;'><img src="{% static logo_programa %}" alt="Logo programa" height="240" /></p>
+        {% endwith %}
 
-  {# DetailView proporciona el objeto de contexto `proyecto` #}
-  <h1 id="titulo">{{ proyecto.titulo }}</h1>
-  <hr />
-  <br />
+        {# DetailView proporciona el objeto de contexto `proyecto` #}
+        <h1 id="titulo">{{ proyecto.titulo }}</h1>
+        <hr />
+        <br />
 
-  <div class="table-responsive">
-    <table class="table table-hover table-striped table-sm" aria-label="titulo">
-      <tr>
-        <th scope="row"><strong>{% trans 'Programa' %}</strong>:</th>
-        <td>{{ proyecto.programa.nombre_corto }} ({{ proyecto.programa.nombre_largo }})</td>
-      </tr>
+        <div class="table-responsive">
+            <table class="table table-hover table-striped table-sm" aria-label="titulo">
+                <tr>
+                    <th scope="row"><strong>{% trans 'Programa' %}</strong>:</th>
+                    <td>{{ proyecto.programa.nombre_corto }} ({{ proyecto.programa.nombre_largo }})</td>
+                </tr>
 
-      {% if proyecto.linea %}
-      <tr>
-        <th scope="row"><strong>{% trans 'Línea' %}</strong>:</th>
-        <td>{{ proyecto.linea.nombre }}</td>
-      </tr>
-      {% endif %}
+                {% if proyecto.linea %}
+                    <tr>
+                        <th scope="row"><strong>{% trans 'Línea' %}</strong>:</th>
+                        <td>{{ proyecto.linea.nombre }}</td>
+                    </tr>
+                {% endif %}
 
-      <tr>
-        <th scope="row"><strong>{% trans 'Convocatoria' %}</strong>:</th>
-        <td>{{ proyecto.convocatoria_id }}</td>
-      </tr>
+                <tr>
+                    <th scope="row"><strong>{% trans 'Convocatoria' %}</strong>:</th>
+                    <td>{{ proyecto.convocatoria_id }}</td>
+                </tr>
 
-      <tr>
-        <th scope="row"><strong>{% trans 'ID del proyecto' %}</strong>:</th>
-        <td>{{ proyecto.id }}</td>
-      </tr>
+                <tr>
+                    <th scope="row"><strong>{% trans 'ID del proyecto' %}</strong>:</th>
+                    <td>{{ proyecto.id }}</td>
+                </tr>
 
-      {% if proyecto.codigo %}
-      <tr>
-        <th scope="row"><strong>{% trans 'Código del proyecto' %}</strong>:</th>
-        <td>{{ proyecto.codigo }}</td>
-      </tr>
-      {% endif %}
+                {% if proyecto.codigo %}
+                    <tr>
+                        <th scope="row"><strong>{% trans 'Código del proyecto' %}</strong>:</th>
+                        <td>{{ proyecto.codigo }}</td>
+                    </tr>
+                {% endif %}
 
-      {% if proyecto.centro %}
-      <tr>
-        <th scope="row"><strong>{% trans 'Centro' %}</strong>:</th>
-        <td>{{ proyecto.centro.nombre }}</td>
-      </tr>
-      {% endif %}
+                {% if proyecto.centro %}
+                    <tr>
+                        <th scope="row"><strong>{% trans 'Centro' %}</strong>:</th>
+                        <td>{{ proyecto.centro.nombre }}</td>
+                    </tr>
+                {% endif %}
 
-      {% if proyecto.estudio %}
-      <tr>
-        <th scope="row"><strong>{% trans 'Estudio' %}</strong>:</th>
-        <td>{{ proyecto.estudio.nombre }}</td>
-      </tr>
-      {% endif %}
+                {% if proyecto.estudio %}
+                    <tr>
+                        <th scope="row"><strong>{% trans 'Estudio' %}</strong>:</th>
+                        <td>{{ proyecto.estudio.nombre }}</td>
+                    </tr>
+                {% endif %}
 
-      <tr>
-        <th scope="row"><strong>{% trans 'Unidad de planificación' %}</strong>:</th>
-        <td>{{ proyecto.get_unidad_planificacion | default:"—"}}</td>
-      </tr>
+                <tr>
+                    <th scope="row"><strong>{% trans 'Unidad de planificación' %}</strong>:</th>
+                    <td>{{ proyecto.get_unidad_planificacion | default:"—"}}</td>
+                </tr>
 
-      <tr>
-        <th scope="row"><strong>{% trans 'Coordinador' %}</strong>:</th>
-        <td>{{ proyecto.coordinador.full_name }}</td>
-      </tr>
+                <tr>
+                    <th scope="row"><strong>{% trans 'Coordinador' %}</strong>:</th>
+                    <td>{{ proyecto.coordinador.full_name }}</td>
+                </tr>
 
-    </table>
-  </div>
-  <br />
+            </table>
+        </div>
+        <br />
 
-  <h3>{% trans 'Descripción' %}</h3>
-  <div>{{ proyecto.descripcion | limpiar }}</div>
+        <h3>{% trans 'Descripción' %}</h3>
+        <div>{{ proyecto.descripcion | limpiar }}</div>
 
-</div>
+    </div>
 
 {% endblock content %}

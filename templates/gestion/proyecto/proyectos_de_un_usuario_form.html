@@ -5,38 +5,38 @@
 {% block description %}{% trans "Buscar los proyectos a los que está vinculado un usuario" %}{% endblock description %}
 
 {% block content %}
-<div class="container-blanco">
+    <div class="container-blanco">
 
-  <div class="alert alert-info">
-    <span class="fas fa-info-circle"></span>
-    <p>{% blocktranslate %}
-      Puede introducir <strong>indistintamente</strong> el NIP o el correo de la persona
-      para la que desee buscar los proyectos a los que está vinculado.
-    {% endblocktranslate %}</p>
-  </div>
+        <div class="alert alert-info">
+            <span class="fas fa-info-circle"></span>
+            <p>{% blocktranslate %}
+                Puede introducir <strong>indistintamente</strong> el NIP o el correo de la persona
+                para la que desee buscar los proyectos a los que está vinculado.
+            {% endblocktranslate %}</p>
+        </div>
 
-  <select aria-label="Cambiar de convocatoria" class="custom-select form-select" name="convocatoria" onchange="location = this.value;" style="float: right; width: 150px;">
-    {% for convocatoria in convocatorias %}
-      <option value="{% url 'proyectos_de_un_usuario_form' convocatoria.id %}"
-        {% if convocatoria.id == anyo %}selected="selected"{% endif %}
-      >{{convocatoria}}</option>
-    {% endfor %}
-  </select>
+        <select aria-label="Cambiar de convocatoria" class="custom-select form-select" name="convocatoria" onchange="location = this.value;" style="float: right; width: 150px;">
+            {% for convocatoria in convocatorias %}
+                <option value="{% url 'proyectos_de_un_usuario_form' convocatoria.id %}"
+                    {% if convocatoria.id == anyo %}selected="selected"{% endif %}
+                >{{convocatoria}}</option>
+            {% endfor %}
+        </select>
 
-  <h1>{% trans "Buscar los proyectos de un usuario" %} <small>{{ anyo }}</small></h1>
-  <hr />
-  <br />
+        <h1>{% trans "Buscar los proyectos de un usuario" %} <small>{{ anyo }}</small></h1>
+        <hr />
+        <br />
 
-  <form action="" method="post">
-    {% csrf_token %}
+        <form action="" method="post">
+            {% csrf_token %}
 
-    {{ form | crispy }}
+            {{ form | crispy }}
 
-    <div class="btn-group" role="group" aria-label="{{ _('Botones') }}">
-      <button class="btn btn-success" type="submit">
-        <span class="fa-solid fa-magnifying-glass"></span> {% trans 'Buscar' %}
-      </button>
+            <div class="btn-group" role="group" aria-label="{{ _('Botones') }}">
+                <button class="btn btn-success" type="submit">
+                    <span class="fa-solid fa-magnifying-glass"></span> {% trans 'Buscar' %}
+                </button>
+            </div>
+        </form>
     </div>
-  </form>
-</div>
 {% endblock content %}

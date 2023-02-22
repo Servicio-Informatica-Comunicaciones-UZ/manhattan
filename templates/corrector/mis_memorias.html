@@ -5,30 +5,30 @@
 {% block title %}{% trans "Memorias asignadas" %}{% endblock title %}
 
 {% block content %}
-<div class='container-blanco'>
-    <select aria-label="Cambiar de convocatoria" class="custom-select form-select" name="convocatoria" onchange="location = this.value;" style="float: right; width: 150px;">
-        {% for convocatoria in convocatorias %}
-            <option value="{% url 'memorias_asignadas_table' convocatoria.id %}"
-                {% if convocatoria.id == anyo %}selected="selected"{% endif %}
-            >{{convocatoria}}</option>
-        {% endfor %}
-    </select>
+    <div class='container-blanco'>
+        <select aria-label="Cambiar de convocatoria" class="custom-select form-select" name="convocatoria" onchange="location = this.value;" style="float: right; width: 150px;">
+            {% for convocatoria in convocatorias %}
+                <option value="{% url 'memorias_asignadas_table' convocatoria.id %}"
+                    {% if convocatoria.id == anyo %}selected="selected"{% endif %}
+                >{{convocatoria}}</option>
+            {% endfor %}
+        </select>
 
-    <h1 id="asignadas">{% trans "Memorias asignadas" %} <small>{{ anyo }}</small></h1>
-    <hr />
-    <br />
+        <h1 id="asignadas">{% trans "Memorias asignadas" %} <small>{{ anyo }}</small></h1>
+        <hr />
+        <br />
 
-    <div class="alert alert-info fade show">
-        <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
-            <span aria-hidden="true">&times;</span>
-        </button>
+        <div class="alert alert-info fade show">
+            <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
+                <span aria-hidden="true">&times;</span>
+            </button>
 
-        <span class="fas fa-info-circle"></span>
-        {% blocktranslate %}
-            Aquí puede ver las memorias de proyecto que se le han asignado para su corrección en la convocatoria {{anyo}}.
-        {% endblocktranslate %}
-    </div><br />
+            <span class="fas fa-info-circle"></span>
+            {% blocktranslate %}
+                Aquí puede ver las memorias de proyecto que se le han asignado para su corrección en la convocatoria {{anyo}}.
+            {% endblocktranslate %}
+        </div><br />
 
-    {% render_table table %}
-</div>
+        {% render_table table %}
+    </div>
 {% endblock content %}

@@ -2,47 +2,47 @@
 {% load i18n %}
 
 {% block title %}
-  {% trans "Enviar memorias a Zaguán" %} ({{ anyo }})
+    {% trans "Enviar memorias a Zaguán" %} ({{ anyo }})
 {% endblock title %}
 
 {% block content %}
-  <div class='container-blanco'>
-    <select aria-label="Cambiar de convocatoria" class="custom-select form-select" name="convocatoria" onchange="location = this.value;" style="float: right; width: 150px;">
-      {% for convocatoria in convocatorias %}
-        <option value="{% url 'memorias_zaguan' convocatoria.id %}"
-          {% if convocatoria.id == anyo %}selected="selected"{% endif %}
-        >{{convocatoria}}</option>
-      {% endfor %}
-    </select>
+    <div class='container-blanco'>
+        <select aria-label="Cambiar de convocatoria" class="custom-select form-select" name="convocatoria" onchange="location = this.value;" style="float: right; width: 150px;">
+            {% for convocatoria in convocatorias %}
+                <option value="{% url 'memorias_zaguan' convocatoria.id %}"
+                    {% if convocatoria.id == anyo %}selected="selected"{% endif %}
+                >{{convocatoria}}</option>
+            {% endfor %}
+        </select>
 
-    <h1 id="titular">{% trans "Enviar memorias a Zaguán" %} <small>{{ anyo }}</small></h1>
-    <hr />
-    <br />
+        <h1 id="titular">{% trans "Enviar memorias a Zaguán" %} <small>{{ anyo }}</small></h1>
+        <hr />
+        <br />
 
-    <div class="alert alert-info alert-dismissible fade show">
-      <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
-        <span aria-hidden="true">&times;</span>
-      </button>
+        <div class="alert alert-info alert-dismissible fade show">
+            <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
+                <span aria-hidden="true">&times;</span>
+            </button>
 
-      <span class="fas fa-info-circle"></span>
-      {% blocktranslate %}
-        Desde esta página puede cargar en el repositorio institucional
-        las memorias de la convocatoria seleccionada ({{anyo}}).
-      {% endblocktranslate %}
-    </div><br />
+            <span class="fas fa-info-circle"></span>
+            {% blocktranslate %}
+                Desde esta página puede cargar en el repositorio institucional
+                las memorias de la convocatoria seleccionada ({{anyo}}).
+            {% endblocktranslate %}
+        </div><br />
 
 
-    <br style="clear: both;" />
+        <br style="clear: both;" />
 
-    <form action="" method="post">
-      {% csrf_token %}
+        <form action="" method="post">
+            {% csrf_token %}
 
-      <div class="btn-group" role="group" aria-label="{{ _('Botones') }}">
-        <button class="btn btn-warning" type="submit">
-          <span class="fas fa-upload"></span>&nbsp; {% blocktranslate %}Enviar memorias {{anyo}}{% endblocktranslate %}
-        </button>
-      </div>
-    </form><br />
+            <div class="btn-group" role="group" aria-label="{{ _('Botones') }}">
+                <button class="btn btn-warning" type="submit">
+                    <span class="fas fa-upload"></span>&nbsp; {% blocktranslate %}Enviar memorias {{anyo}}{% endblocktranslate %}
+                </button>
+            </div>
+        </form><br />
 
-  </div>
+    </div>
 {% endblock content %}

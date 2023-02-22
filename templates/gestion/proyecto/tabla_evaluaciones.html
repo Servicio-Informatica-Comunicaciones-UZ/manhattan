@@ -5,96 +5,96 @@
 {% block title %}{% trans "Evaluaciones de los proyectos" %}{% endblock title %}
 
 {% block content %}
-<div class='container-blanco'>
-  <select aria-label="Cambiar de convocatoria" class="custom-select form-select" name="convocatoria" onchange="location = this.value;" style="float: right; width: 150px;">
-    {% for convocatoria in convocatorias %}
-      <option value="{% url 'evaluaciones_table' convocatoria.id %}"
-        {% if convocatoria.id == anyo %}selected="selected"{% endif %}
-      >{{convocatoria}}</option>
-    {% endfor %}
-  </select>
+    <div class='container-blanco'>
+        <select aria-label="Cambiar de convocatoria" class="custom-select form-select" name="convocatoria" onchange="location = this.value;" style="float: right; width: 150px;">
+            {% for convocatoria in convocatorias %}
+                <option value="{% url 'evaluaciones_table' convocatoria.id %}"
+                    {% if convocatoria.id == anyo %}selected="selected"{% endif %}
+                >{{convocatoria}}</option>
+            {% endfor %}
+        </select>
 
-  <h1 id="presentados">{% trans "Evaluaciones de los proyectos" %} <small>{{ anyo }}</small></h1>
-  <hr />
-  <br />
+        <h1 id="presentados">{% trans "Evaluaciones de los proyectos" %} <small>{{ anyo }}</small></h1>
+        <hr />
+        <br />
 
-  <div class="alert alert-info alert-dismissible fade show" role="alert">
-    <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
-      <span aria-hidden="true">&times;</span>
-    </button>
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
+                <span aria-hidden="true">&times;</span>
+            </button>
 
-    <span class="fas fa-info-circle"></span>
-    <p>{% trans 'Desde esta página puede:' %}</p>
-    <ol>
-      <li>{% trans 'Ver las evaluaciones de cada uno de los proyectos presentados en esta convocatoria.' %}</li>
-      <li>{% trans 'Descargar una hoja de cálculo con todas las evaluaciones.' %}<br>
-          {% trans 'La aplicación no calcula la puntuación final; puede usar esta hoja en Excel/LibreOffice Calc/Google Sheets para sumar los campos adecuados.' %}</li>
-      <li>{% trans 'Introducir la resolución de la Comisión Evaluadora para cada proyecto (aprobación o no, y, en su caso, ayuda concedida, tipos de gastos posibles, etc.' %}</li>
-      <li>{% trans 'Una vez se haya introducido la resolución de todos los proyectos, enviar las notificaciones de aprobación a los coordinadores.' %}
-          {% trans 'Recuerde establecer en el menú Gestión → Administrar convocatorias las <strong>fechas límite</strong> para que los coordinadores acepten las condiciones concedidas y puedan presentar alegaciones.' %}<br>
-	  {% trans 'A los coordinadores de los proyectos <strong>rechazados</strong> deberá comunicarles la resolución <strong>manualmente</strong>.' %}<br></li>
-    </ol>
-  </div><br />
+            <span class="fas fa-info-circle"></span>
+            <p>{% trans 'Desde esta página puede:' %}</p>
+            <ol>
+                <li>{% trans 'Ver las evaluaciones de cada uno de los proyectos presentados en esta convocatoria.' %}</li>
+                <li>{% trans 'Descargar una hoja de cálculo con todas las evaluaciones.' %}<br>
+                    {% trans 'La aplicación no calcula la puntuación final; puede usar esta hoja en Excel/LibreOffice Calc/Google Sheets para sumar los campos adecuados.' %}</li>
+                <li>{% trans 'Introducir la resolución de la Comisión Evaluadora para cada proyecto (aprobación o no, y, en su caso, ayuda concedida, tipos de gastos posibles, etc.' %}</li>
+                <li>{% trans 'Una vez se haya introducido la resolución de todos los proyectos, enviar las notificaciones de aprobación a los coordinadores.' %}
+                    {% trans 'Recuerde establecer en el menú Gestión → Administrar convocatorias las <strong>fechas límite</strong> para que los coordinadores acepten las condiciones concedidas y puedan presentar alegaciones.' %}<br>
+                    {% trans 'A los coordinadores de los proyectos <strong>rechazados</strong> deberá comunicarles la resolución <strong>manualmente</strong>.' %}<br></li>
+            </ol>
+        </div><br />
 
-  {% render_table table %}
+        {% render_table table %}
 
 
-  <br style="clear: both;" />
-  <div class="btn-group" role="group" aria-label="Botones">
+        <br style="clear: both;" />
+        <div class="btn-group" role="group" aria-label="Botones">
 
-    <a href="{% url 'csv_evaluaciones' anyo %}" class="btn btn-info">
-      <span class="fas fa-file-csv"></span>&nbsp; {% trans "Descargar evaluaciones" %}
-    </a>
+            <a href="{% url 'csv_evaluaciones' anyo %}" class="btn btn-info">
+                <span class="fas fa-file-csv"></span>&nbsp; {% trans "Descargar evaluaciones" %}
+            </a>
 
-    {% if not convocatoria.notificada_resolucion_provisional or not convocatoria.notificada_resolucion_definitiva %}
-      <button class="btn btn-danger" data-toggle="modal" data-target="#enviarModal" type="button">
-        <span class="fas fa-paper-plane"></span>&nbsp;
-        {% if not convocatoria.notificada_resolucion_provisional %}
-          {% trans 'Notificar resolución provisional' %}
-        {% else %}
-          {% trans 'Notificar resolución definitiva' %}
-        {% endif %}
-      </button>
-    {% endif %}
+            {% if not convocatoria.notificada_resolucion_provisional or not convocatoria.notificada_resolucion_definitiva %}
+                <button class="btn btn-danger" data-toggle="modal" data-target="#enviarModal" type="button">
+                    <span class="fas fa-paper-plane"></span>&nbsp;
+                    {% if not convocatoria.notificada_resolucion_provisional %}
+                        {% trans 'Notificar resolución provisional' %}
+                    {% else %}
+                        {% trans 'Notificar resolución definitiva' %}
+                    {% endif %}
+                </button>
+            {% endif %}
 
-  </div>
+        </div>
 
-</div>
-
-<div class="modal fade" id="enviarModal" tabindex="-1" role="dialog" aria-labelledby="enviarModalLabel"
-  aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="enviarModalLabel">{% trans "¿Seguro que desea enviar las notificaciones?" %}</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <p>
-          {% blocktrans %}Se enviarán notificaciones a los coordinadores de <strong>todos</strong> los proyectos
-          <strong>aprobados</strong> por la Comisión.<br><br>
-          Recuerde establecer en el menú Gestión → Administrar convocatorias las <strong>fechas límite</strong>
-          para que los coordinadores acepten las condiciones concedidas y puedan presentar alegaciones.<br><br>
-          A los coordinadores de los proyectos <strong>rechazados</strong>
-          deberá comunicarles la resolución <strong>manualmente</strong> por correo electrónico.
-          {% endblocktrans %}
-        </p>
-      </div>
-      <div class="modal-footer">
-        <form action="{% url 'notificar_proyectos' anyo=anyo %}" id="notificar-form" method="post">
-          {% csrf_token %}
-          <button type="button" class="btn btn-info" data-dismiss="modal">
-            <span class="fas fa-times"></span> {% trans "Cancelar" %}
-          </button>
-          <button type="submit" class="btn btn-danger">
-            <span class="fas fa-paper-plane"></span> {% trans "Enviar" %}
-          </button>
-        </form>
-      </div>
     </div>
-  </div>
-</div>
+
+    <div class="modal fade" id="enviarModal" tabindex="-1" role="dialog" aria-labelledby="enviarModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="enviarModalLabel">{% trans "¿Seguro que desea enviar las notificaciones?" %}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        {% blocktrans %}Se enviarán notificaciones a los coordinadores de <strong>todos</strong> los proyectos
+                            <strong>aprobados</strong> por la Comisión.<br><br>
+                            Recuerde establecer en el menú Gestión → Administrar convocatorias las <strong>fechas límite</strong>
+                            para que los coordinadores acepten las condiciones concedidas y puedan presentar alegaciones.<br><br>
+                            A los coordinadores de los proyectos <strong>rechazados</strong>
+                            deberá comunicarles la resolución <strong>manualmente</strong> por correo electrónico.
+                        {% endblocktrans %}
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <form action="{% url 'notificar_proyectos' anyo=anyo %}" id="notificar-form" method="post">
+                        {% csrf_token %}
+                        <button type="button" class="btn btn-info" data-dismiss="modal">
+                            <span class="fas fa-times"></span> {% trans "Cancelar" %}
+                        </button>
+                        <button type="submit" class="btn btn-danger">
+                            <span class="fas fa-paper-plane"></span> {% trans "Enviar" %}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
 {% endblock content %}

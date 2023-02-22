@@ -4,25 +4,25 @@
 {% block title %}{% translate 'Proyectos por centros' %}{% endblock title %}
 
 {% block content %}
-<div class="container-blanco">
-  <select aria-label="Cambiar de convocatoria" class="custom-select form-select" name="convocatoria" onchange="location = this.value;" style="float: right; width: 150px;">
-    {% for convocatoria in convocatorias %}
-      <option value="{% url 'proyectos_aceptados_por_centros' convocatoria.id %}"
-        {% if convocatoria.id == anyo %}selected="selected"{% endif %}
-      >{{convocatoria}}</option>
-    {% endfor %}
-  </select>
+    <div class="container-blanco">
+        <select aria-label="Cambiar de convocatoria" class="custom-select form-select" name="convocatoria" onchange="location = this.value;" style="float: right; width: 150px;">
+            {% for convocatoria in convocatorias %}
+                <option value="{% url 'proyectos_aceptados_por_centros' convocatoria.id %}"
+                    {% if convocatoria.id == anyo %}selected="selected"{% endif %}
+                >{{convocatoria}}</option>
+            {% endfor %}
+        </select>
 
-  <h1 id="cabecera">{% translate 'Proyectos por centros' %} <small>{{ anyo }}</small></h1>
-  <hr />
-  <br />
-  {% for centro in object_list %}
-    <a href="{% url 'proyectos_aceptados' anyo %}?proyecto__centro__academico_id_nk={{ centro.academico_id_nk | urlencode }}">
-      {% with logo_centro='img/centros/'|concat:centro.academico_id_nk|concat:'.png' %}
-        <img src="{% static logo_centro %}" alt="{{ centro.nombre }}" style="margin: 20px; width: 289px;" title="{{ centro.nombre }}" />
-      {% endwith %}
-    </a>
-  {% endfor %}
-</div>
+        <h1 id="cabecera">{% translate 'Proyectos por centros' %} <small>{{ anyo }}</small></h1>
+        <hr />
+        <br />
+        {% for centro in object_list %}
+            <a href="{% url 'proyectos_aceptados' anyo %}?proyecto__centro__academico_id_nk={{ centro.academico_id_nk | urlencode }}">
+                {% with logo_centro='img/centros/'|concat:centro.academico_id_nk|concat:'.png' %}
+                    <img src="{% static logo_centro %}" alt="{{ centro.nombre }}" style="margin: 20px; width: 289px;" title="{{ centro.nombre }}" />
+                {% endwith %}
+            </a>
+        {% endfor %}
+    </div>
 
 {% endblock content %}

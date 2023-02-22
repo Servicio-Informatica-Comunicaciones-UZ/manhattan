@@ -6,72 +6,72 @@
 {% block title %}{% trans "Proyectos de un usuario" %}{% endblock title %}
 
 {% block extracss %}
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.11.5/b-2.2.2/b-html5-2.2.2/datatables.min.css"/>
- {% endblock extracss %}
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.11.5/b-2.2.2/b-html5-2.2.2/datatables.min.css"/>
+{% endblock extracss %}
 
 {% block content %}
-<div class="container-blanco">
-  <select aria-label="Cambiar de convocatoria" class="custom-select form-select"
-    name="convocatoria" onchange="location = this.value;" style="float: right; width: 150px;">
-    {% for convocatoria in convocatorias %}
-      <option value="{% url 'proyectos_de_un_usuario' convocatoria.id usuario.id %}"
-        {% if convocatoria.id == anyo %}selected="selected"{% endif %}
-      >{{convocatoria}}</option>
-    {% endfor %}
-  </select>
+    <div class="container-blanco">
+        <select aria-label="Cambiar de convocatoria" class="custom-select form-select"
+            name="convocatoria" onchange="location = this.value;" style="float: right; width: 150px;">
+            {% for convocatoria in convocatorias %}
+                <option value="{% url 'proyectos_de_un_usuario' convocatoria.id usuario.id %}"
+                    {% if convocatoria.id == anyo %}selected="selected"{% endif %}
+                >{{convocatoria}}</option>
+            {% endfor %}
+        </select>
 
-  <h1 id="vinculados">{% trans "Proyectos de un usuario" %} <small>{{ anyo }}</small></h1>
-  <hr />
-  <br />
+        <h1 id="vinculados">{% trans "Proyectos de un usuario" %} <small>{{ anyo }}</small></h1>
+        <hr />
+        <br />
 
-  <h2>{{ usuario.full_name }}</h2>
-  <br />
+        <h2>{{ usuario.full_name }}</h2>
+        <br />
 
-  <div>
-    {% if vinculaciones %}
-      <table id="tabla_proyectos" class="table table-striped table-hover cabecera-azul compact"
-        style="width: 100%;">
-        <thead>
-          <tr>
-            <th scope="col">{% trans 'ID' %}</th>
-            <th scope="col">{% trans 'Título' %}</th>
-            <th scope="col">{% trans 'Estado' %}</th>
-            <th scope="col">{% trans 'Calidad' %}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for pp in vinculaciones %}
-            <tr>
-              <td>{{ pp.proyecto_id }}</td>
-              <td><a href="{% url 'proyecto_detail' pp.proyecto_id %}">{{ pp.proyecto.titulo }}</a></td>
-              <td>{{ pp.proyecto.get_estado_display }}</td>
-              <td>{{ pp.get_cargo }}</td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    {% else %}
-      {% trans 'Este usuario no está vinculado a ningún proyecto en esta convocatoria.' %}
-    {% endif %}
-  </div>
+        <div>
+            {% if vinculaciones %}
+                <table id="tabla_proyectos" class="table table-striped table-hover cabecera-azul compact"
+                    style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th scope="col">{% trans 'ID' %}</th>
+                            <th scope="col">{% trans 'Título' %}</th>
+                            <th scope="col">{% trans 'Estado' %}</th>
+                            <th scope="col">{% trans 'Calidad' %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pp in vinculaciones %}
+                            <tr>
+                                <td>{{ pp.proyecto_id }}</td>
+                                <td><a href="{% url 'proyecto_detail' pp.proyecto_id %}">{{ pp.proyecto.titulo }}</a></td>
+                                <td>{{ pp.proyecto.get_estado_display }}</td>
+                                <td>{{ pp.get_cargo }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                {% trans 'Este usuario no está vinculado a ningún proyecto en esta convocatoria.' %}
+            {% endif %}
+        </div>
 
 {% endblock content %}
 
 
 {% block extrajs %}
-<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.11.5/b-2.2.2/b-html5-2.2.2/datatables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.11.5/b-2.2.2/b-html5-2.2.2/datatables.min.js"></script>
 
-<script>
-  // https://datatables.net/reference/option/
-  $(document).ready(function () {
-    $('#tabla_proyectos').DataTable({
-      "info": false,
-      "language": {% include 'partials/datatables_es.js' %},
-      'order': [[3, 'asc'], [0, 'asc']],  /* Ordenar por el tipo de participación */
-      "ordering": true,
-      "paging": false,
-      "searching": false,
-    });
-  });
-</script>
+    <script>
+        // https://datatables.net/reference/option/
+        $(document).ready(function () {
+            $('#tabla_proyectos').DataTable({
+                "info": false,
+                "language": {% include 'partials/datatables_es.js' %},
+                'order': [[3, 'asc'], [0, 'asc']],  /* Ordenar por el tipo de participación */
+                "ordering": true,
+                "paging": false,
+                "searching": false,
+            });
+        });
+    </script>
 {% endblock extrajs %}

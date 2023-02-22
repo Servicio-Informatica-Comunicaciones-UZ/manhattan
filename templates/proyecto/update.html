@@ -4,111 +4,111 @@
 {% block description %}{% trans 'Actualizar solicitud de proyecto' %}{% endblock description %}
 
 {% block extracss %}<style>
-  label {
-    display: block;
-    font-size: 1.75rem;
-    font-weight: 500;
-    line-height: 1.2;
-    margin-bottom: 0.5rem;
-    margin-top: 0;
-  }
+    label {
+        display: block;
+        font-size: 1.75rem;
+        font-weight: 500;
+        line-height: 1.2;
+        margin-bottom: 0.5rem;
+        margin-top: 0;
+    }
 
-  .helptext {
-    color: #6c757d !important;
-    display: block;
-  }</style>
+    .helptext {
+        color: #6c757d !important;
+        display: block;
+    }</style>
 {% endblock extracss %}
 
 {% block content %}
-<div class="container-blanco">
-  <h1>{% trans 'Actualizar proyecto' %}</h1>
-  <hr />
-  <br />
+    <div class="container-blanco">
+        <h1>{% trans 'Actualizar proyecto' %}</h1>
+        <hr />
+        <br />
 
-  <div class="table-responsive">
-    <table class="table table-hover table-striped table-sm" aria-label="Datos del proyecto">
-      <tr>
-        <th scope="row"><strong>{% trans 'Título del proyecto' %}</strong>:</th>
-        <td>{{ proyecto.titulo }}</td>
-      </tr>
+        <div class="table-responsive">
+            <table class="table table-hover table-striped table-sm" aria-label="Datos del proyecto">
+                <tr>
+                    <th scope="row"><strong>{% trans 'Título del proyecto' %}</strong>:</th>
+                    <td>{{ proyecto.titulo }}</td>
+                </tr>
 
-      <tr>
-        <th scope="row"><strong>{% trans 'ID del proyecto' %}</strong>:</th>
-        <td>{{ proyecto.id }}</td>
-      </tr>
+                <tr>
+                    <th scope="row"><strong>{% trans 'ID del proyecto' %}</strong>:</th>
+                    <td>{{ proyecto.id }}</td>
+                </tr>
 
-      {% if proyecto.codigo %}
-        <tr>
-          <th scope="row"><strong>{% trans 'Código del proyecto' %}</strong>:</th>
-          <td>{{ proyecto.codigo }}</td>
-        </tr>
-      {% endif %}
+                {% if proyecto.codigo %}
+                    <tr>
+                        <th scope="row"><strong>{% trans 'Código del proyecto' %}</strong>:</th>
+                        <td>{{ proyecto.codigo }}</td>
+                    </tr>
+                {% endif %}
 
-      <tr>
-        <th scope="row"><strong>{% trans 'Convocatoria' %}</strong>:</th>
-        <td>{{ proyecto.convocatoria_id }}</td>
-      </tr>
+                <tr>
+                    <th scope="row"><strong>{% trans 'Convocatoria' %}</strong>:</th>
+                    <td>{{ proyecto.convocatoria_id }}</td>
+                </tr>
 
-      <tr>
-        <th scope="row"><strong>{% trans 'Programa' %}</strong>:</th>
-        <td>{{ proyecto.programa.nombre_corto }} ({{ proyecto.programa.nombre_largo }})</td>
-      </tr>
+                <tr>
+                    <th scope="row"><strong>{% trans 'Programa' %}</strong>:</th>
+                    <td>{{ proyecto.programa.nombre_corto }} ({{ proyecto.programa.nombre_largo }})</td>
+                </tr>
 
-      {% if proyecto.linea %}
-      <tr>
-        <th scope="row"><strong>{% trans 'Línea' %}</strong>:</th>
-        <td>{{ proyecto.linea.nombre }}</td>
-      </tr>
-      {% endif %}
+                {% if proyecto.linea %}
+                    <tr>
+                        <th scope="row"><strong>{% trans 'Línea' %}</strong>:</th>
+                        <td>{{ proyecto.linea.nombre }}</td>
+                    </tr>
+                {% endif %}
 
-      {% if proyecto.centro %}
-      <tr>
-        <th scope="row"><strong>{% trans 'Centro' %}</strong>:</th>
-        <td>{{ proyecto.centro.nombre }}</td>
-      </tr>
-      {% endif %}
+                {% if proyecto.centro %}
+                    <tr>
+                        <th scope="row"><strong>{% trans 'Centro' %}</strong>:</th>
+                        <td>{{ proyecto.centro.nombre }}</td>
+                    </tr>
+                {% endif %}
 
-      {% if proyecto.estudio %}
-      <tr>
-        <th scope="row"><strong>{% trans 'Estudio' %}</strong>:</th>
-        <td>{{ proyecto.estudio.nombre }}</td>
-      </tr>
-      {% endif %}
+                {% if proyecto.estudio %}
+                    <tr>
+                        <th scope="row"><strong>{% trans 'Estudio' %}</strong>:</th>
+                        <td>{{ proyecto.estudio.nombre }}</td>
+                    </tr>
+                {% endif %}
 
-      <tr>
-        <th scope="row"><strong>{% trans 'Unidad de planificación' %}</strong>:</th>
-        <td>{{ proyecto.get_unidad_planificacion | default:"—"}}</td>
-      </tr>
+                <tr>
+                    <th scope="row"><strong>{% trans 'Unidad de planificación' %}</strong>:</th>
+                    <td>{{ proyecto.get_unidad_planificacion | default:"—"}}</td>
+                </tr>
 
-      <tr>
-        <th scope="row"><strong>{% trans 'Coordinador' %}</strong>:</th>
-        <td>{{ proyecto.coordinador.full_name }}</td>
-      </tr>
+                <tr>
+                    <th scope="row"><strong>{% trans 'Coordinador' %}</strong>:</th>
+                    <td>{{ proyecto.coordinador.full_name }}</td>
+                </tr>
 
-    </table>
-  </div>
-  <br />
+            </table>
+        </div>
+        <br />
 
-  <form action="#" method="post">
-    {% csrf_token %}
+        <form action="#" method="post">
+            {% csrf_token %}
 
-    {% if campo == 'aceptacion_economico' and not proyecto.aceptacion_corrector %}
-      ¡No se puede cerrar el proyecto porque todavía no se ha aceptado la memoria!<br>
-    {% elif campo == 'ayuda' %}
-      {{ form | crispy }}
-    {% else %}
-      {{ form.as_p }}
-    {% endif %}
-    <br style="clear: both;" />
+            {% if campo == 'aceptacion_economico' and not proyecto.aceptacion_corrector %}
+                ¡No se puede cerrar el proyecto porque todavía no se ha aceptado la memoria!<br>
+            {% elif campo == 'ayuda' %}
+                {{ form | crispy }}
+            {% else %}
+                {{ form.as_p }}
+            {% endif %}
+            <br style="clear: both;" />
 
-    <div class="btn-group" role="group" aria-label="Botones">
-      <a href="{{ url_anterior }}" class="btn btn-info">
-        <span class="fas fa-step-backward"></span> {% trans 'Retroceder' %}
-      </a>
-      <button class="btn btn-warning" type="submit">
-        <span class="fas fa-check"></span> {% trans 'Actualizar' %}
-      </button>
+            <div class="btn-group" role="group" aria-label="Botones">
+                <a href="{{ url_anterior }}" class="btn btn-info">
+                    <span class="fas fa-step-backward"></span> {% trans 'Retroceder' %}
+                </a>
+                <button class="btn btn-warning" type="submit">
+                    <span class="fas fa-check"></span> {% trans 'Actualizar' %}
+                </button>
+            </div>
+        </form>
     </div>
-  </form>
-</div>
 {% endblock content %}

@@ -21,79 +21,79 @@
 {% endblock extracss %}
 
 {% block content %}
-<div class="container-blanco">
-    <h1>{% trans 'Actualizar la resolución de la comisión sobre el proyecto' %}</h1>
-    <hr />
-    <br />
+    <div class="container-blanco">
+        <h1>{% trans 'Actualizar la resolución de la comisión sobre el proyecto' %}</h1>
+        <hr />
+        <br />
 
-    <div class="alert alert-info fade show">
-        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-
-        <span class="fas fa-info-circle"></span>
-        <p>{% trans 'Aquí puede editar la resolución de la Comisión Evaluadora sobre el proyecto.' %}</p>
-        <p>{% blocktrans %}
-          Si el proyecto es denegado, simplemente ponga «0» y «Ninguno» en los campos Ayuda económica y Tipo de gasto.<br><br>
-
-          Las notificaciones sobre la resolución se envían automáticamente <strong>sólo a los proyectos aprobados</strong>,
-          por lo que en caso de denegación puede poner en el campo Observaciones «Ninguna» o una anotación privada.
-        {% endblocktrans %}</p>
-    </div><br />
-
-    {% if proyecto.programa.requiere_visto_bueno_estudio and not proyecto.visto_bueno_estudio %}
-        <div class="alert alert-warning fade show">
+        <div class="alert alert-info fade show">
             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 
-            <span class="fas fa-exclamation-triangle"></span>
-            <p>{% blocktrans with nombre_programa=proyecto.programa.nombre_corto %}
-                El programa {{ nombre_programa }} requiere del visto bueno de un coordinador del estudio,
-                y este proyecto <strong>no</strong> lo tiene.
+            <span class="fas fa-info-circle"></span>
+            <p>{% trans 'Aquí puede editar la resolución de la Comisión Evaluadora sobre el proyecto.' %}</p>
+            <p>{% blocktrans %}
+                Si el proyecto es denegado, simplemente ponga «0» y «Ninguno» en los campos Ayuda económica y Tipo de gasto.<br><br>
+
+                Las notificaciones sobre la resolución se envían automáticamente <strong>sólo a los proyectos aprobados</strong>,
+                por lo que en caso de denegación puede poner en el campo Observaciones «Ninguna» o una anotación privada.
             {% endblocktrans %}</p>
         </div><br />
-    {% endif %}
 
-    {% if proyecto.programa.requiere_visto_bueno_centro and not proyecto.visto_bueno_centro %}
-        <div class="alert alert-warning fade show">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        {% if proyecto.programa.requiere_visto_bueno_estudio and not proyecto.visto_bueno_estudio %}
+            <div class="alert alert-warning fade show">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 
-            <span class="fas fa-exclamation-triangle"></span>
-            <p>{% blocktrans with nombre_programa=proyecto.programa.nombre_corto %}
-                Este proyecto <strong>carece</strong> del visto bueno del responsable del centro,
-                preceptivo en el programa {{ nombre_programa }}.
-            {% endblocktrans %}</p>
-        </div><br />
-    {% endif %}
+                <span class="fas fa-exclamation-triangle"></span>
+                <p>{% blocktrans with nombre_programa=proyecto.programa.nombre_corto %}
+                    El programa {{ nombre_programa }} requiere del visto bueno de un coordinador del estudio,
+                    y este proyecto <strong>no</strong> lo tiene.
+                {% endblocktrans %}</p>
+            </div><br />
+        {% endif %}
 
-    {% if not proyecto.tiene_participantes %}
-        <div class="alert alert-warning fade show">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        {% if proyecto.programa.requiere_visto_bueno_centro and not proyecto.visto_bueno_centro %}
+            <div class="alert alert-warning fade show">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 
-            <span class="fas fa-exclamation-triangle"></span>
-            <p>{% trans 'En este proyecto <strong>no</strong> hay ningún participante además del coordinador.' %}</p>
-        </div><br />
-    {% endif %}
+                <span class="fas fa-exclamation-triangle"></span>
+                <p>{% blocktrans with nombre_programa=proyecto.programa.nombre_corto %}
+                    Este proyecto <strong>carece</strong> del visto bueno del responsable del centro,
+                    preceptivo en el programa {{ nombre_programa }}.
+                {% endblocktrans %}</p>
+            </div><br />
+        {% endif %}
 
-    <p><label>Proyecto:</label> {{ proyecto.titulo }}</p>
+        {% if not proyecto.tiene_participantes %}
+            <div class="alert alert-warning fade show">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 
-    {% if proyecto.estado not in 'SOLICITADO,APROBADO,DENEGADO,ACEPTADO' %}
-      <div class="alert alert-danger fade show">
-        <span class="fas fa-bomb"></span>
-        <p>{% trans 'El estado actual de este proyecto no permite modificar la resolución de la Comisión.' %}</p>
-      </div>
-      <br />
-    {% else %}
-      <form action="" method="post">
-        {% csrf_token %}
-        {{ form | crispy }}
-        <br style="clear: both;" />
-        <div class="btn-group" role="group" aria-label="Botones">
-            <a href="{% url 'evaluaciones_table' proyecto.convocatoria_id %}" class="btn btn-info">
-                <span class="fas fa-step-backward"></span> {% trans 'Retroceder' %}
-            </a>
-            <button class="btn btn-warning" type="submit">
-                <span class="fas fa-check"></span> {% trans 'Actualizar' %}
-            </button>
-        </div>
-      </form>
-    {% endif %}
-</div>
+                <span class="fas fa-exclamation-triangle"></span>
+                <p>{% trans 'En este proyecto <strong>no</strong> hay ningún participante además del coordinador.' %}</p>
+            </div><br />
+        {% endif %}
+
+        <p><label>Proyecto:</label> {{ proyecto.titulo }}</p>
+
+        {% if proyecto.estado not in 'SOLICITADO,APROBADO,DENEGADO,ACEPTADO' %}
+            <div class="alert alert-danger fade show">
+                <span class="fas fa-bomb"></span>
+                <p>{% trans 'El estado actual de este proyecto no permite modificar la resolución de la Comisión.' %}</p>
+            </div>
+            <br />
+        {% else %}
+            <form action="" method="post">
+                {% csrf_token %}
+                {{ form | crispy }}
+                <br style="clear: both;" />
+                <div class="btn-group" role="group" aria-label="Botones">
+                    <a href="{% url 'evaluaciones_table' proyecto.convocatoria_id %}" class="btn btn-info">
+                        <span class="fas fa-step-backward"></span> {% trans 'Retroceder' %}
+                    </a>
+                    <button class="btn btn-warning" type="submit">
+                        <span class="fas fa-check"></span> {% trans 'Actualizar' %}
+                    </button>
+                </div>
+            </form>
+        {% endif %}
+    </div>
 {% endblock content %}

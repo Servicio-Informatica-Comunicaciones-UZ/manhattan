@@ -4,51 +4,51 @@
 {% block description %}{% trans 'Declaración de aceptación de la realización de un proyecto' %}{% endblock description %}
 
 {% block content %}
-<div class="container-blanco">
-  <h2>{% trans 'Declaración de aceptación de la realización de un proyecto' %}</h2>
-  <h2><small>Convocatoria de Innovación Docente {{proyecto.convocatoria}}</small></h2>
-  <hr />
-  <br />
+    <div class="container-blanco">
+        <h2>{% trans 'Declaración de aceptación de la realización de un proyecto' %}</h2>
+        <h2><small>Convocatoria de Innovación Docente {{proyecto.convocatoria}}</small></h2>
+        <hr />
+        <br />
 
-  <p>{% if proyecto.coordinador.sexo == 'F' %}Doña{% else %}Don{% endif %}
-  {{proyecto.coordinador.full_name}}, con NIF {{proyecto.coordinador.numero_documento}},
-  como {% if proyecto.coordinador.sexo == 'F' %}coordinadora{% else %}coordinador{% endif %}
-  responsable, solicitante del proyecto con título «{{proyecto.titulo}}»</p>
+        <p>{% if proyecto.coordinador.sexo == 'F' %}Doña{% else %}Don{% endif %}
+            {{proyecto.coordinador.full_name}}, con NIF {{proyecto.coordinador.numero_documento}},
+            como {% if proyecto.coordinador.sexo == 'F' %}coordinadora{% else %}coordinador{% endif %}
+            responsable, solicitante del proyecto con título «{{proyecto.titulo}}»</p>
 
-  <p>ACEPTA:</p>
+        <p>ACEPTA:</p>
 
-  <p>Llevar a cabo el proyecto en las condiciones en las que ha sido aprobado
-  por la Comisión Evaluadora,
-  {% if proyecto.ayuda_provisional %}
-    con una ayuda económica asignada de <strong>{{ proyecto.ayuda_definitiva | default:proyecto.ayuda_provisional }}</strong>
-    euros para {{proyecto.tipo_gasto}}.
-  {% else %}
-    sin financiación.
-  {% endif %}</p>
+        <p>Llevar a cabo el proyecto en las condiciones en las que ha sido aprobado
+            por la Comisión Evaluadora,
+            {% if proyecto.ayuda_provisional %}
+                con una ayuda económica asignada de <strong>{{ proyecto.ayuda_definitiva | default:proyecto.ayuda_provisional }}</strong>
+                euros para {{proyecto.tipo_gasto}}.
+            {% else %}
+                sin financiación.
+            {% endif %}</p>
 
-  {# Esta plantilla es usada por ProyectoVerCondicionesView y ProyectoAceptarView #}
-  {% now "Y-m-d" as fecha_actual %}
-  {% if proyecto.estado == 'APROBADO' and fecha_actual <= proyecto.convocatoria.fecha_max_aceptacion_resolucion|date:"Y-m-d" %}
-  <form action="" method="post">
-    {% csrf_token %}
+        {# Esta plantilla es usada por ProyectoVerCondicionesView y ProyectoAceptarView #}
+        {% now "Y-m-d" as fecha_actual %}
+        {% if proyecto.estado == 'APROBADO' and fecha_actual <= proyecto.convocatoria.fecha_max_aceptacion_resolucion|date:"Y-m-d" %}
+            <form action="" method="post">
+                {% csrf_token %}
 
-    <fieldset>
-      <input type="radio" name="aceptacion_coordinador" id="acepto" value="true" required="required" />
-      <label for="acepto">{% trans 'Acepto' %}</label>
-      <input type="radio" name = "aceptacion_coordinador" id="rechazo" value="false" />
-      <label for="rechazo">{% trans 'Rechazo' %}</label>
-    </fieldset>
+                <fieldset>
+                    <input type="radio" name="aceptacion_coordinador" id="acepto" value="true" required="required" />
+                    <label for="acepto">{% trans 'Acepto' %}</label>
+                    <input type="radio" name = "aceptacion_coordinador" id="rechazo" value="false" />
+                    <label for="rechazo">{% trans 'Rechazo' %}</label>
+                </fieldset>
 
-    <br style="clear: both;" />
-    <div class="btn-group" role="group" aria-label="Botones">
-      <a href="{% url 'proyecto_detail' proyecto.id %}" class="btn btn-info">
-        <span class="fas fa-step-backward"></span> {% trans 'Retroceder' %}
-      </a>
-      <button class="btn btn-warning" type="submit">
-        <span class="fas fa-check"></span> {% trans 'Declarar' %}
-      </button>
+                <br style="clear: both;" />
+                <div class="btn-group" role="group" aria-label="Botones">
+                    <a href="{% url 'proyecto_detail' proyecto.id %}" class="btn btn-info">
+                        <span class="fas fa-step-backward"></span> {% trans 'Retroceder' %}
+                    </a>
+                    <button class="btn btn-warning" type="submit">
+                        <span class="fas fa-check"></span> {% trans 'Declarar' %}
+                    </button>
+                </div>
+            </form>
+        {% endif %}
     </div>
-  </form>
-  {% endif %}
-</div>
 {% endblock content %}

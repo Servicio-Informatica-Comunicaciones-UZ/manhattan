@@ -21,35 +21,35 @@
 {% endblock extracss %}
 
 {% block content %}
-<div class="container-blanco">
-    <h1>{% trans 'Actualizar corrector de la memoria' %}</h1>
-    <hr />
-    <br />
+    <div class="container-blanco">
+        <h1>{% trans 'Actualizar corrector de la memoria' %}</h1>
+        <hr />
+        <br />
 
-    <div class="alert alert-info alert-dismissible fade show">
-        <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
-            <span aria-hidden="true">&times;</span>
-        </button>
-
-        <span class="fas fa-info-circle"></span>
-        {% blocktrans %}
-        <p>Aquí puede asignar un corrector a la memoria de un proyecto.</p>
-        {% endblocktrans %}
-    </div><br />
-
-    <p><label>Proyecto:</label> {{ proyecto.titulo }}</p>
-    <form action="" method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <br style="clear: both;" />
-        <div class="btn-group" role="group" aria-label="Botones">
-            <a href="{% url 'proyecto_corrector_table' proyecto.convocatoria_id %}" class="btn btn-info">
-                <span class="fas fa-step-backward"></span> {% trans 'Retroceder' %}
-            </a>
-            <button class="btn btn-warning" type="submit">
-                <span class="fas fa-check"></span> {% trans 'Actualizar' %}
+        <div class="alert alert-info alert-dismissible fade show">
+            <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
+                <span aria-hidden="true">&times;</span>
             </button>
-        </div>
-    </form>
-</div>
+
+            <span class="fas fa-info-circle"></span>
+            {% blocktrans %}
+                <p>Aquí puede asignar un corrector a la memoria de un proyecto.</p>
+            {% endblocktrans %}
+        </div><br />
+
+        <p><label>Proyecto:</label> {{ proyecto.titulo }}</p>
+        <form action="" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <br style="clear: both;" />
+            <div class="btn-group" role="group" aria-label="Botones">
+                <a href="{% url 'proyecto_corrector_table' proyecto.convocatoria_id %}" class="btn btn-info">
+                    <span class="fas fa-step-backward"></span> {% trans 'Retroceder' %}
+                </a>
+                <button class="btn btn-warning" type="submit">
+                    <span class="fas fa-check"></span> {% trans 'Actualizar' %}
+                </button>
+            </div>
+        </form>
+    </div>
 {% endblock content %}

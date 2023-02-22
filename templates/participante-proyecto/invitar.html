@@ -4,115 +4,115 @@
 {% block description %}{% trans "Invitar a un proyecto" %}{% endblock description %}
 
 {% block content %}
-<div class="container-blanco">
-  <div class="alert alert-info">
-    <span class="fas fa-info-circle"></span>
-    {% url 'ayuda' as ayuda_url %}
-    {% blocktranslate %}
-      <p>Introduzca el NIP de la persona que desee invitar a su proyecto.</p>
+    <div class="container-blanco">
+        <div class="alert alert-info">
+            <span class="fas fa-info-circle"></span>
+            {% url 'ayuda' as ayuda_url %}
+            {% blocktranslate %}
+                <p>Introduzca el NIP de la persona que desee invitar a su proyecto.</p>
 
-      <p>
-        <strong>Cuando usted presente</strong> su solicitud de proyecto, se enviará un correo electrónico
-        (meramente notificativo) a cada persona invitada.<br />
-        Cada persona invitada deberá iniciar sesión en esta web con su NIP y contraseña administrativa. Se le mostrarán
-        todas las invitaciones a proyectos que se le hayan efectuado, que podrá aceptar o declinar individualmente.<br />
-        Hasta entonces la invitación aparecerá en estado «Pendiente».<br />
-        Las personas que acepten la invitación pasarán a ser participantes del proyecto.
-      </p>
+                <p>
+                    <strong>Cuando usted presente</strong> su solicitud de proyecto, se enviará un correo electrónico
+                    (meramente notificativo) a cada persona invitada.<br />
+                    Cada persona invitada deberá iniciar sesión en esta web con su NIP y contraseña administrativa. Se le mostrarán
+                    todas las invitaciones a proyectos que se le hayan efectuado, que podrá aceptar o declinar individualmente.<br />
+                    Hasta entonces la invitación aparecerá en estado «Pendiente».<br />
+                    Las personas que acepten la invitación pasarán a ser participantes del proyecto.
+                </p>
 
-      <p><strong>Si la persona ya tiene NIP:</strong><p>
+                <p><strong>Si la persona ya tiene NIP:</strong><p>
 
-      <p>Todas las personas que en algún momento han sido estudiantes, personal de la Universidad,
-         o mantenido alguna otra vinculación con la UZ, tienen asignado un Número de Identificación Personal (NIP).
-         Este NIP <em>se mantiene en el tiempo</em>, si bien podría desactivarse si la vinculación deja de existir.</p>
+                    <p>Todas las personas que en algún momento han sido estudiantes, personal de la Universidad,
+                        o mantenido alguna otra vinculación con la UZ, tienen asignado un Número de Identificación Personal (NIP).
+                        Este NIP <em>se mantiene en el tiempo</em>, si bien podría desactivarse si la vinculación deja de existir.</p>
 
-      <p>
-        Si la persona tiene un usuario pero está <strong>inactivo</strong>:
-      </p>
+                    <p>
+                        Si la persona tiene un usuario pero está <strong>inactivo</strong>:
+                    </p>
 
-      <ol>
-        <li>
-          Usted, como coordinador, comunique dicho NIP al Vicerrectorado de Política Académica
-          <a href="{{ ayuda_url }}">a través del sistema de gestión de incidencias Ayudica</a>,
-          solicitando que se le asigne la vinculación «Participantes externos Proyectos Innovación Docente» (66)
-          en el Sistema de Gestión de Identidades.
-        </li>
-        <li>Una vez se haya asignado la vinculación, usted será notificado desde Ayudica.
-          Al día siguiente el usuario ya estará activo y podrá proceder a invitarle al proyecto.<br />
-          La vinculación será válida durante un año.
-        </li>
-      </ol>
+                    <ol>
+                        <li>
+                            Usted, como coordinador, comunique dicho NIP al Vicerrectorado de Política Académica
+                            <a href="{{ ayuda_url }}">a través del sistema de gestión de incidencias Ayudica</a>,
+                            solicitando que se le asigne la vinculación «Participantes externos Proyectos Innovación Docente» (66)
+                            en el Sistema de Gestión de Identidades.
+                        </li>
+                        <li>Una vez se haya asignado la vinculación, usted será notificado desde Ayudica.
+                            Al día siguiente el usuario ya estará activo y podrá proceder a invitarle al proyecto.<br />
+                            La vinculación será válida durante un año.
+                        </li>
+                    </ol>
 
-      <p>Si la persona ya ha tenido relación con la Universidad de Zaragoza pero <strong>no recuerda su NIP</strong>,
-        puede <a href="https://identidad.unizar.es/identidad/ide901recuperarNIP.faces" target="_blank" rel="noopener noreferrer">
-        recuperarlo</a> <span class="fas fa-link" style="float: none; font-size: 100%;"></span>.</p>
+                    <p>Si la persona ya ha tenido relación con la Universidad de Zaragoza pero <strong>no recuerda su NIP</strong>,
+                        puede <a href="https://identidad.unizar.es/identidad/ide901recuperarNIP.faces" target="_blank" rel="noopener noreferrer">
+                            recuperarlo</a> <span class="fas fa-link" style="float: none; font-size: 100%;"></span>.</p>
 
-      <p>Si la persona conoce su NIP pero <strong>no recuerda su contraseña administrativa</strong>,
-        puede <a href="https://identidad.unizar.es/identidad/ide902recuperarContrasena.faces" target="_blank" rel="noopener noreferrer">
-        recuperarla</a> <span class="fas fa-link" style="float: none; font-size: 100%;"></span>.<br>
-        Consulte <a href="https://ayudica.unizar.es/otrs/public.pl?Action=PublicFAQZoom;ItemID=454;" target="_blank" rel="noopener noreferrer">esta página</a> <span class="fas fa-link" style="float: none; font-size: 100%;"></span>para más detalles.</p>
+                    <p>Si la persona conoce su NIP pero <strong>no recuerda su contraseña administrativa</strong>,
+                        puede <a href="https://identidad.unizar.es/identidad/ide902recuperarContrasena.faces" target="_blank" rel="noopener noreferrer">
+                            recuperarla</a> <span class="fas fa-link" style="float: none; font-size: 100%;"></span>.<br>
+                        Consulte <a href="https://ayudica.unizar.es/otrs/public.pl?Action=PublicFAQZoom;ItemID=454;" target="_blank" rel="noopener noreferrer">esta página</a> <span class="fas fa-link" style="float: none; font-size: 100%;"></span>para más detalles.</p>
 
-      <p>La persona debe tener registrada alguna dirección de correo electrónico en el sistema de
-        <a href="https://identidad.unizar.es" target="_blank" rel="noopener noreferrer">Gestión de Identidades</a>
-        <span class="fas fa-link" style="float: none; font-size: 100%;"></span>de la Universidad.<br>
-        Si no tiene ninguna dirección de email, y no recuerda su contraseña administrativa, puede
-        <a href="https://aesso.unizar.es/" target="_blank" rel="noopener noreferrer">recuperarla</a>
-        <span class="fas fa-link" style="float: none; font-size: 100%;"></span>usando
-        <a href="https://clave.gob.es/" target="_blank" rel="noopener noreferrer">Cl@ve</a>
-        <span class="fas fa-link" style="float: none; font-size: 100%;"></span>o un certificado electrónico.
-      </p>
+                    <p>La persona debe tener registrada alguna dirección de correo electrónico en el sistema de
+                        <a href="https://identidad.unizar.es" target="_blank" rel="noopener noreferrer">Gestión de Identidades</a>
+                        <span class="fas fa-link" style="float: none; font-size: 100%;"></span>de la Universidad.<br>
+                        Si no tiene ninguna dirección de email, y no recuerda su contraseña administrativa, puede
+                        <a href="https://aesso.unizar.es/" target="_blank" rel="noopener noreferrer">recuperarla</a>
+                        <span class="fas fa-link" style="float: none; font-size: 100%;"></span>usando
+                        <a href="https://clave.gob.es/" target="_blank" rel="noopener noreferrer">Cl@ve</a>
+                        <span class="fas fa-link" style="float: none; font-size: 100%;"></span>o un certificado electrónico.
+                    </p>
 
-      <p><strong>Si la persona nunca ha estado vinculada a la Universidad de Zaragoza:</strong></p>
+                    <p><strong>Si la persona nunca ha estado vinculada a la Universidad de Zaragoza:</strong></p>
 
-      <ol>
-        <li>
-          Infórmele de que puede obtener un NIP (identificador de usuario) visitando la
-          <a href="https://identidad.unizar.es/autoregistro" target="_blank" rel="noopener noreferrer">
-          página de autorregistro</a>
-          <span class="fas fa-link" style="float: none; font-size: 100%;"></span>.<br />
-          Recuerde que el NIP se mantiene en el tiempo; si la persona ya ha tenido un NIP anteriormente, <em>no</em> debe volver a registrarse.
-        </li>
-        <li>
-          Una vez que la persona disponga de un NIP, siga las instrucciones indicadas en el apartado anterior.
-      </ol>
+                    <ol>
+                        <li>
+                            Infórmele de que puede obtener un NIP (identificador de usuario) visitando la
+                            <a href="https://identidad.unizar.es/autoregistro" target="_blank" rel="noopener noreferrer">
+                                página de autorregistro</a>
+                            <span class="fas fa-link" style="float: none; font-size: 100%;"></span>.<br />
+                            Recuerde que el NIP se mantiene en el tiempo; si la persona ya ha tenido un NIP anteriormente, <em>no</em> debe volver a registrarse.
+                        </li>
+                        <li>
+                            Una vez que la persona disponga de un NIP, siga las instrucciones indicadas en el apartado anterior.
+                        </ol>
 
-      <p>Una vez presente su solicitud, ya no podrá hacer ninguna modificación (ni siquiera añadir más invitados).<br />
-         Para evitar incidencias, ¡no deje las invitaciones para el último momento!
-      </p>
-    {% endblocktranslate %}
-  </div>
+                        <p>Una vez presente su solicitud, ya no podrá hacer ninguna modificación (ni siquiera añadir más invitados).<br />
+                            Para evitar incidencias, ¡no deje las invitaciones para el último momento!
+                        </p>
+            {% endblocktranslate %}
+        </div>
 
-  {% if not proyecto.en_borrador %}
-    <div class="alert alert-warning alert-dismissible" role="alert">
-      <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
-        <span aria-hidden="true">&times;</span>
-      </button>
-      <span class="fas fa-exclamation-triangle"></span>
-      {% blocktranslate %}
-        Esta solicitud de proyecto ya ha sido presentada, por lo que <strong>no se enviará ninguna notificación al invitado</strong>.
-        Informe al coordinador que deberá contactar con el invitado por otro canal, para avisarle que ya puede entrar en la aplicación
-        con su NIP y contraseña para aceptar la invitación.
-      {% endblocktranslate %}
-    </div>
-  {% endif %}
+        {% if not proyecto.en_borrador %}
+            <div class="alert alert-warning alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <span class="fas fa-exclamation-triangle"></span>
+                {% blocktranslate %}
+                    Esta solicitud de proyecto ya ha sido presentada, por lo que <strong>no se enviará ninguna notificación al invitado</strong>.
+                    Informe al coordinador que deberá contactar con el invitado por otro canal, para avisarle que ya puede entrar en la aplicación
+                    con su NIP y contraseña para aceptar la invitación.
+                {% endblocktranslate %}
+            </div>
+        {% endif %}
 
-  <h1>{% blocktranslate with titulo=proyecto.titulo %}Invitar al proyecto «{{ titulo }}»{% endblocktranslate %}</h1>
-  <hr />
-  <br />
+        <h1>{% blocktranslate with titulo=proyecto.titulo %}Invitar al proyecto «{{ titulo }}»{% endblocktranslate %}</h1>
+        <hr />
+        <br />
 
-  <form action="" method="post">
-    {% csrf_token %}
-    {{ form|crispy }}
+        <form action="" method="post">
+            {% csrf_token %}
+            {{ form|crispy }}
 
-    <div class="btn-group" role="group" aria-label="Botones">
-      <a href="{% url 'proyecto_detail' proyecto.id %}" class="btn btn-info"
-        ><span class="fas fa-step-backward"></span> {% trans 'Retroceder' %}</a
-      >
-      <button class="btn btn-warning" type="submit" title="{% trans 'Invitar' %}">
-        <span class="fas fa-check"></span> {% trans 'Invitar' %}
-      </button>
-    </div>
-  </form>
+            <div class="btn-group" role="group" aria-label="Botones">
+                <a href="{% url 'proyecto_detail' proyecto.id %}" class="btn btn-info"
+                ><span class="fas fa-step-backward"></span> {% trans 'Retroceder' %}</a
+                    >
+                    <button class="btn btn-warning" type="submit" title="{% trans 'Invitar' %}">
+                        <span class="fas fa-check"></span> {% trans 'Invitar' %}
+                    </button>
+                </div>
+            </form>
 
-</div>
+        </div>
 {% endblock content %}

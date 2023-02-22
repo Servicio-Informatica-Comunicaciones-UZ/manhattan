@@ -4,39 +4,39 @@
 {% block title %}{% trans "Evaluación" %}: {{ proyecto.titulo }}{% endblock title %}
 
 {% block content %}
-<div class='container-blanco'>
-    <h1 id="cabecera">{% trans "Evaluación" %} <small>{{ proyecto.titulo }}</small></h1>
-    <hr />
-    <br />
+    <div class='container-blanco'>
+        <h1 id="cabecera">{% trans "Evaluación" %} <small>{{ proyecto.titulo }}</small></h1>
+        <hr />
+        <br />
 
-    <div class="alert alert-info alert-dismissible fade show">
-        <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
-            <span aria-hidden="true">&times;</span>
-        </button>
+        <div class="alert alert-info alert-dismissible fade show">
+            <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
+                <span aria-hidden="true">&times;</span>
+            </button>
 
-        <span class="fas fa-info-circle"></span>
-        {% trans 'Aquí puede ver la evaluación del proyecto.' %}
-    </div><br />
+            <span class="fas fa-info-circle"></span>
+            {% trans 'Aquí puede ver la evaluación del proyecto.' %}
+        </div><br />
 
-    {% for criterio in criterios %}
-    <p><strong>{{ criterio.descripcion }}</strong></p>
+        {% for criterio in criterios %}
+            <p><strong>{{ criterio.descripcion }}</strong></p>
 
-    {% with valoracion=dict_valoraciones|get_item:criterio.id %}
+            {% with valoracion=dict_valoraciones|get_item:criterio.id %}
 
-    {% if criterio.tipo == 'opcion' %}
-    {% if valoracion.opcion %}
-    <p>{{ valoracion.opcion.puntuacion }}: {{ valoracion.opcion.descripcion }}</p>
-    {% else %}
-    <p>—</p>
-    {% endif %}
-    {% elif criterio.tipo == 'texto' %}
-    <div>{{ valoracion.texto | default:'—'}}</div>
-    {% endif %}
+                {% if criterio.tipo == 'opcion' %}
+                    {% if valoracion.opcion %}
+                        <p>{{ valoracion.opcion.puntuacion }}: {{ valoracion.opcion.descripcion }}</p>
+                    {% else %}
+                        <p>—</p>
+                    {% endif %}
+                {% elif criterio.tipo == 'texto' %}
+                    <div>{{ valoracion.texto | default:'—'}}</div>
+                {% endif %}
 
-    {% endwith %}
+            {% endwith %}
 
-    <br />
-    {% endfor %}
+            <br />
+        {% endfor %}
 
-</div>
+    </div>
 {% endblock content %}

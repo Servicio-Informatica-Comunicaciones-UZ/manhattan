@@ -4,20 +4,20 @@
 {% block description %}{% trans "Resoluciones publicadas en el tablón de anuncios" %}{% endblock description %}
 
 {% block content %}
-<div class="container-blanco">
-  <h1>{% trans "Resoluciones" %}</h1>
-  <hr />
-  <br />
+    <div class="container-blanco">
+        <h1>{% trans "Resoluciones" %}</h1>
+        <hr />
+        <br />
 
-  <ul class="listado">
-  {% for resolucion in resolucion_list %}
-    <li> {{ resolucion.fecha }}
-    <a href="{{ resolucion.url }}" target="_blank" rel="noopener noreferrer">{{ resolucion.titulo }}</a>
-    <span class="fas fa-link" style="float: none; font-size: 100%;"></span></li>
-  {% empty %}
-    <li>{% trans 'Todavía no se ha publicado ninguna resolución.' %}</li>
-  {% endfor %}
-  </ul>
+        <ul class="listado">
+            {% for resolucion in resolucion_list %}
+                <li> {{ resolucion.fecha }}
+                    <a href="{{ resolucion.url }}" target="_blank" rel="noopener noreferrer">{{ resolucion.titulo }}</a>
+                    <span class="fas fa-link" style="float: none; font-size: 100%;"></span></li>
+            {% empty %}
+                <li>{% trans 'Todavía no se ha publicado ninguna resolución.' %}</li>
+            {% endfor %}
+        </ul>
 
-</div>
+    </div>
 {% endblock content %}

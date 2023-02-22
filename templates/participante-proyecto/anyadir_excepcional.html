@@ -4,41 +4,41 @@
 {% block description %}{% trans "Añadir participante de forma excepcional" %}{% endblock description %}
 
 {% block content %}
-<div class="container-blanco">
-  <div class="alert alert-info">
-    <span class="fas fa-info-circle"></span>
-    <p>{% blocktranslate %}
-    Con carácter <strong>excepcional</strong>, y con <strong>causas debidamente justificadas</strong>,
-    el coordinador podrá solicitar al Presidente de la Comisión
-    Evaluadora la modificación del equipo de trabajo.<br />
-    Aquí puede añadir un participante al equipo, sin que tenga que manifestar su aceptación.
-    {% endblocktranslate %}</p>
-  </div>
-
-  <h1>{% blocktranslate with titulo=proyecto.titulo %}Añadir participante de forma excepcional al proyecto «{{ titulo }}»{% endblocktranslate %}</h1>
-  <hr />
-  <br />
-
-  <form action="" method="post">
-    {% csrf_token %}
-
-    <div id="div_id_nip" class="form-group">
-        <label for="id_nip" class=" requiredField">{% trans 'NIP' %}<span class="asteriskField">*</span></label>
-        <div class="">
-            <input type="number" name="nip" class="numberinput form-control" required id="id_nip">
-            <small id="hint_id_nip" class="form-text text-muted">{% trans 'Número de Identificación Personal en la Universidad de Zaragoza de la persona a añadir.' %}</small>
+    <div class="container-blanco">
+        <div class="alert alert-info">
+            <span class="fas fa-info-circle"></span>
+            <p>{% blocktranslate %}
+                Con carácter <strong>excepcional</strong>, y con <strong>causas debidamente justificadas</strong>,
+                el coordinador podrá solicitar al Presidente de la Comisión
+                Evaluadora la modificación del equipo de trabajo.<br />
+                Aquí puede añadir un participante al equipo, sin que tenga que manifestar su aceptación.
+            {% endblocktranslate %}</p>
         </div>
-    </div>
 
-    <div class="btn-group" role="group" aria-label="Botones">
-      <a href="{% url 'proyecto_detail' proyecto.id %}" class="btn btn-info"
-        ><span class="fas fa-step-backward"></span> {% trans 'Retroceder' %}</a
-      >
-      <button class="btn btn-warning" type="submit" title="{% trans 'Añadir al titular de este NIP como participante' %}">
-        <span class="fas fa-user-plus"></span> {% trans 'Añadir' %}
-      </button>
-    </div>
-  </form>
+        <h1>{% blocktranslate with titulo=proyecto.titulo %}Añadir participante de forma excepcional al proyecto «{{ titulo }}»{% endblocktranslate %}</h1>
+        <hr />
+        <br />
 
-</div>
+        <form action="" method="post">
+            {% csrf_token %}
+
+            <div id="div_id_nip" class="form-group">
+                <label for="id_nip" class=" requiredField">{% trans 'NIP' %}<span class="asteriskField">*</span></label>
+                <div class="">
+                    <input type="number" name="nip" class="numberinput form-control" required id="id_nip">
+                    <small id="hint_id_nip" class="form-text text-muted">{% trans 'Número de Identificación Personal en la Universidad de Zaragoza de la persona a añadir.' %}</small>
+                </div>
+            </div>
+
+            <div class="btn-group" role="group" aria-label="Botones">
+                <a href="{% url 'proyecto_detail' proyecto.id %}" class="btn btn-info"
+                ><span class="fas fa-step-backward"></span> {% trans 'Retroceder' %}</a
+                    >
+                    <button class="btn btn-warning" type="submit" title="{% trans 'Añadir al titular de este NIP como participante' %}">
+                        <span class="fas fa-user-plus"></span> {% trans 'Añadir' %}
+                    </button>
+                </div>
+            </form>
+
+        </div>
 {% endblock content %}

@@ -6,72 +6,72 @@
 {% block title %}{% trans "Proyectos aceptados" %}{% endblock title %}
 
 {% block content %}
-  <div class="container-blanco">
-    <select
-      aria-label="Cambiar de convocatoria"
-      class="custom-select form-select"
-      name="convocatoria"
-      onchange="location = this.value;"
-      style="float: right; width: 150px"
-    >
-      {% for convocatoria in convocatorias %}
-        <option value="{% url 'proyectos_aceptados' convocatoria.id %}"
-          {% if convocatoria.id == anyo %}selected="selected"{% endif %}
-        >{{ convocatoria }}</option>
-      {% endfor %}
-    </select>
+    <div class="container-blanco">
+        <select
+            aria-label="Cambiar de convocatoria"
+            class="custom-select form-select"
+            name="convocatoria"
+            onchange="location = this.value;"
+            style="float: right; width: 150px"
+        >
+            {% for convocatoria in convocatorias %}
+                <option value="{% url 'proyectos_aceptados' convocatoria.id %}"
+                    {% if convocatoria.id == anyo %}selected="selected"{% endif %}
+                >{{ convocatoria }}</option>
+            {% endfor %}
+        </select>
 
-    <h1 id="presentados">{% trans "Proyectos aceptados" %} <small>{{ anyo }}</small></h1>
-    <hr />
-    <br />
+        <h1 id="presentados">{% trans "Proyectos aceptados" %} <small>{{ anyo }}</small></h1>
+        <hr />
+        <br />
 
-    <div class="alert alert-info alert-dismissible fade show">
-      <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
-        <span aria-hidden="true">&times;</span>
-      </button>
+        <div class="alert alert-info alert-dismissible fade show">
+            <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
+                <span aria-hidden="true">&times;</span>
+            </button>
 
-      <span class="fas fa-info-circle"></span>
-      <p>
-        {% blocktranslate %}
-          En esta página puede ver los proyectos de esta convocatoria que han sido aprobados por la
-          Comisión Evaluadora <strong>y</strong> aceptados por su coordinador.
-        {% endblocktranslate %}
-      </p>
-      {% if user.is_authenticated %}
-        {% now "Y" as anyo_actual %}
-        {% url 'mis_proyectos' anyo_actual as mis_proyectos_url %}
-        <p>
-          {% blocktranslate %}
-            Si usted es un coordinador que <strong>desea aceptar</strong> un proyecto aprobado por la
-            Comisión, vaya a «<a href="{{ mis_proyectos_url }}">Mis proyectos</a>», entre en el proyecto y pulse el botón de
-            aceptación de las condiciones que está bajo la tabla de datos básicos.
-          {% endblocktranslate %}
-        </p>
-      {% endif %}
+            <span class="fas fa-info-circle"></span>
+            <p>
+                {% blocktranslate %}
+                    En esta página puede ver los proyectos de esta convocatoria que han sido aprobados por la
+                    Comisión Evaluadora <strong>y</strong> aceptados por su coordinador.
+                {% endblocktranslate %}
+            </p>
+            {% if user.is_authenticated %}
+                {% now "Y" as anyo_actual %}
+                {% url 'mis_proyectos' anyo_actual as mis_proyectos_url %}
+                <p>
+                    {% blocktranslate %}
+                        Si usted es un coordinador que <strong>desea aceptar</strong> un proyecto aprobado por la
+                        Comisión, vaya a «<a href="{{ mis_proyectos_url }}">Mis proyectos</a>», entre en el proyecto y pulse el botón de
+                        aceptación de las condiciones que está bajo la tabla de datos básicos.
+                    {% endblocktranslate %}
+                </p>
+            {% endif %}
+        </div>
+        <br />
+
+        {% if centro %}
+            <p style="text-align: right">
+                {% with logo_centro='img/centros/'|concat:centro.academico_id_nk|concat:'.png' %}
+                    <img
+                        src="{% static logo_centro %}"
+                        alt="{{ centro.nombre }}"
+                        style="margin: 20px; width: 289px"
+                        title="{{ centro.nombre }}"
+                    />
+                {% endwith %}
+            </p>
+        {% endif %}
+
+        {% render_table table %}
+
+        <br style="clear: both" />
+        <div class="btn-group" role="group" aria-label="Botones">
+            <a href="{% export_url 'csv' %}" class="btn btn-info">
+                <span class="fas fa-file-csv"></span>&nbsp; {% trans "Descargar datos" %}
+            </a>
+        </div>
     </div>
-    <br />
-
-    {% if centro %}
-      <p style="text-align: right">
-        {% with logo_centro='img/centros/'|concat:centro.academico_id_nk|concat:'.png' %}
-          <img
-            src="{% static logo_centro %}"
-            alt="{{ centro.nombre }}"
-            style="margin: 20px; width: 289px"
-            title="{{ centro.nombre }}"
-          />
-        {% endwith %}
-      </p>
-    {% endif %}
-
-    {% render_table table %}
-
-    <br style="clear: both" />
-    <div class="btn-group" role="group" aria-label="Botones">
-      <a href="{% export_url 'csv' %}" class="btn btn-info">
-        <span class="fas fa-file-csv"></span>&nbsp; {% trans "Descargar datos" %}
-      </a>
-    </div>
-  </div>
 
 {% endblock content %}

@@ -4,43 +4,43 @@
 {% block description %}{% trans 'Actualizar memoria de proyecto' %}{% endblock description %}
 
 {% block content %}
-<div class="container-blanco">
-  <h1>{% trans 'Actualizar memoria de proyecto' %}</h1>
-  <h2><small>{{ object.proyecto.titulo }}</small></h2>
-  <hr />
-  <br />
+    <div class="container-blanco">
+        <h1>{% trans 'Actualizar memoria de proyecto' %}</h1>
+        <h2><small>{{ object.proyecto.titulo }}</small></h2>
+        <hr />
+        <br />
 
-  <div class="alert alert-info alert-dismissible fade show noprint">
-    <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
-      <span aria-hidden="true">&times;</span>
-    </button>
+        <div class="alert alert-info alert-dismissible fade show noprint">
+            <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
+                <span aria-hidden="true">&times;</span>
+            </button>
 
-    <span class="fas fa-info-circle"></span>
-    {% trans 'Aquí puede ver y editar este apartado de la memoria del proyecto.' %}<br />
-    {% trans 'Si lo precisa, puede insertar imágenes y tablas. <strong>No copie y pegue imágenes</strong> en el cuadro de texto: use el botón de la barra de herramientas para subirlas.' %}<br /><br />
-    {% trans 'Si copia y pega desde un procesador de textos (como Microsoft Word) y experimenta algún problema, pruebe a usar la combinación de teclas <strong>Ctrl+Mayús+V</strong> para pegar el texto sin formato.' %}<br /><br />
-    {% trans 'Hasta que presente la memoria, puede editar el campo tantas veces como desee.' %}
-    {% trans 'Una vez haya presentado la memoria para su corrección, ya no podrá modificarla.' %}<br /><br />
+            <span class="fas fa-info-circle"></span>
+            {% trans 'Aquí puede ver y editar este apartado de la memoria del proyecto.' %}<br />
+            {% trans 'Si lo precisa, puede insertar imágenes y tablas. <strong>No copie y pegue imágenes</strong> en el cuadro de texto: use el botón de la barra de herramientas para subirlas.' %}<br /><br />
+            {% trans 'Si copia y pega desde un procesador de textos (como Microsoft Word) y experimenta algún problema, pruebe a usar la combinación de teclas <strong>Ctrl+Mayús+V</strong> para pegar el texto sin formato.' %}<br /><br />
+            {% trans 'Hasta que presente la memoria, puede editar el campo tantas veces como desee.' %}
+            {% trans 'Una vez haya presentado la memoria para su corrección, ya no podrá modificarla.' %}<br /><br />
+        </div>
+        <br />
+
+        <h3>{{ object.subapartado.apartado.descripcion }}</h3>
+        <h4>{{ object.subapartado.descripcion }}</h4>
+
+        <form action="" method="post">
+            {% csrf_token %}
+            {# MemoriaRespuestaForm está definido en forms.py #}
+            {{ form.as_p }}
+            <br style="clear: both;" />
+            <div class="btn-group" role="group" aria-label="{{_('Botones')}}">
+                <a href="{% url 'memoria_detail' object.proyecto_id %}" class="btn btn-info"
+                    title="{% trans 'Cancelar - Se perderán los cambios no guardados' %}">
+                    <span class="fas fa-times"></span> {% trans 'Cancelar' %}
+                </a>
+                <button class="btn btn-warning" type="submit">
+                    <span class="fas fa-check"></span> {% trans 'Actualizar' %}
+                </button>
+            </div>
+        </form>
     </div>
-  <br />
-
-  <h3>{{ object.subapartado.apartado.descripcion }}</h3>
-  <h4>{{ object.subapartado.descripcion }}</h4>
-
-  <form action="" method="post">
-    {% csrf_token %}
-    {# MemoriaRespuestaForm está definido en forms.py #}
-    {{ form.as_p }}
-    <br style="clear: both;" />
-    <div class="btn-group" role="group" aria-label="{{_('Botones')}}">
-      <a href="{% url 'memoria_detail' object.proyecto_id %}" class="btn btn-info"
-        title="{% trans 'Cancelar - Se perderán los cambios no guardados' %}">
-        <span class="fas fa-times"></span> {% trans 'Cancelar' %}
-      </a>
-      <button class="btn btn-warning" type="submit">
-        <span class="fas fa-check"></span> {% trans 'Actualizar' %}
-      </button>
-    </div>
-  </form>
-</div>
 {% endblock content %}

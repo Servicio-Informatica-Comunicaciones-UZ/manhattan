@@ -1,76 +1,76 @@
 {% load custom_tags i18n static %}<!DOCTYPE html>
 <html lang="es">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
-    <!-- Bootstrap CSS -->
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
-      crossorigin="anonymous"
-    />
-    {# SubResource Integrity: openssl dgst -sha384 -binary FICHERO | openssl base64 #}
-    <link
-      rel="stylesheet"
-      href="https://use.fontawesome.com/releases/v5.11.2/css/all.css"
-      integrity="sha384-KA6wR/X5RY4zFAHpv/CnoG2UW1uogYfdnP67Uv7eULvTveboZJg0qUpmJZb5VqzN"
-      crossorigin="anonymous"
-    />
-    <link rel="stylesheet" href="{% static 'css/base.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/iconos.css' %}" />
-    <style>
-      @page {
-        @bottom-left {
-          content: "Firmado electrónicamente y con autenticidad contrastable según el artículo 27.3 c) de la Ley 39/2015.";
-          font-size: 9pt;
-          font-family: sans-serif;
-        }
-      }
-    </style>
+        <!-- Bootstrap CSS -->
+        <link
+            rel="stylesheet"
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+            integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+            crossorigin="anonymous"
+        />
+        {# SubResource Integrity: openssl dgst -sha384 -binary FICHERO | openssl base64 #}
+        <link
+            rel="stylesheet"
+            href="https://use.fontawesome.com/releases/v5.11.2/css/all.css"
+            integrity="sha384-KA6wR/X5RY4zFAHpv/CnoG2UW1uogYfdnP67Uv7eULvTveboZJg0qUpmJZb5VqzN"
+            crossorigin="anonymous"
+        />
+        <link rel="stylesheet" href="{% static 'css/base.css' %}" />
+        <link rel="stylesheet" href="{% static 'css/iconos.css' %}" />
+        <style>
+            @page {
+                @bottom-left {
+                    content: "Firmado electrónicamente y con autenticidad contrastable según el artículo 27.3 c) de la Ley 39/2015.";
+                font-size: 9pt;
+                font-family: sans-serif;
+            }
+            }
+        </style>
 
-    <title>{% trans "Hace constar" %}</title>
+        <title>{% trans "Hace constar" %}</title>
 
-    <meta name="description" content="{% trans 'Constancia de participación en proyectos de Innovación Docente' %}" />
-    <meta
-      name="author"
-      content="Área de Aplicaciones. Servicio de Informática y Comunicaciones de la Universidad de Zaragoza."
-    />
-  </head>
+        <meta name="description" content="{% trans 'Constancia de participación en proyectos de Innovación Docente' %}" />
+        <meta
+            name="author"
+            content="Área de Aplicaciones. Servicio de Informática y Comunicaciones de la Universidad de Zaragoza."
+        />
+    </head>
 
-  <body>
-    <div class="container-blanco">
-      <p style="font-size: 400%; color: #223d71"><span class="icon-logoUZ"></span></p>
+    <body>
+        <div class="container-blanco">
+            <p style="font-size: 400%; color: #223d71"><span class="icon-logoUZ"></span></p>
 
-      <p><strong>D. {{ vicerrector }}, Vicerrector de Política Académica de la Universidad de Zaragoza</strong></p>
+            <p><strong>D. {{ vicerrector }}, Vicerrector de Política Académica de la Universidad de Zaragoza</strong></p>
 
-      <p><strong>HACE CONSTAR</strong></p>
+            <p><strong>HACE CONSTAR</strong></p>
 
-      <p>
-        Que, D. {{ usuario.full_name }} con NIF {{ usuario.numero_documento }} participa en los
-        siguientes proyectos de la convocatoria de Proyectos de Innovación Docente para el curso
-        {{ convocatoria.id }}/{{ convocatoria.id|add:1 }} de la Universidad de Zaragoza:
-      </p>
+            <p>
+                Que, D. {{ usuario.full_name }} con NIF {{ usuario.numero_documento }} participa en los
+                siguientes proyectos de la convocatoria de Proyectos de Innovación Docente para el curso
+                {{ convocatoria.id }}/{{ convocatoria.id|add:1 }} de la Universidad de Zaragoza:
+            </p>
 
-      <ul>
-        {% for proyecto in proyecto_list %}
-        <li>{{ proyecto.titulo }} (id {{ proyecto.id }}), coordinado por {{ proyecto.coordinador.full_name }}</li>
-        {% endfor %}
-      </ul>
+            <ul>
+                {% for proyecto in proyecto_list %}
+                    <li>{{ proyecto.titulo }} (id {{ proyecto.id }}), coordinado por {{ proyecto.coordinador.full_name }}</li>
+                {% endfor %}
+            </ul>
 
-      <p>
-        El plazo de conclusión de los proyectos finalizará el {{ convocatoria.fecha_max_memorias }}.
-        A fecha actual no nos consta el grado de ejecución de los mismos.
-      </p>
+            <p>
+                El plazo de conclusión de los proyectos finalizará el {{ convocatoria.fecha_max_memorias }}.
+                A fecha actual no nos consta el grado de ejecución de los mismos.
+            </p>
 
-      <p>En Zaragoza, a fecha de la firma,</p>
+            <p>En Zaragoza, a fecha de la firma,</p>
 
-      <p style="margin-top: 50pt;">
-        Fdo.: {{ vicerrector }}<br />
-        Vicerrector de Política Académica
-      </p>
-    </div>
-  </body>
+            <p style="margin-top: 50pt;">
+                Fdo.: {{ vicerrector }}<br />
+                Vicerrector de Política Académica
+            </p>
+        </div>
+    </body>
 </html>

@@ -5,30 +5,30 @@
 {% block title %}{% trans "Cierre económico de los proyectos" %}{% endblock title %}
 
 {% block content %}
-<div class='container-blanco'>
-  <select aria-label="Cambiar de convocatoria" class="custom-select form-select" name="convocatoria" onchange="location = this.value;" style="float: right; width: 150px;">
-    {% for convocatoria in convocatorias %}
-      <option value="{% url 'cierre_economico_table' convocatoria.id %}"
-        {% if convocatoria.id == anyo %}selected="selected"{% endif %}
-      >{{convocatoria}}</option>
-    {% endfor %}
-  </select>
+    <div class='container-blanco'>
+        <select aria-label="Cambiar de convocatoria" class="custom-select form-select" name="convocatoria" onchange="location = this.value;" style="float: right; width: 150px;">
+            {% for convocatoria in convocatorias %}
+                <option value="{% url 'cierre_economico_table' convocatoria.id %}"
+                    {% if convocatoria.id == anyo %}selected="selected"{% endif %}
+                >{{convocatoria}}</option>
+            {% endfor %}
+        </select>
 
-  <h1 id="presentados">{% trans "Cierre económico de los proyectos" %} <small>{{ anyo }}</small></h1>
-  <hr />
-  <br />
+        <h1 id="presentados">{% trans "Cierre económico de los proyectos" %} <small>{{ anyo }}</small></h1>
+        <hr />
+        <br />
 
-  <div class="alert alert-info alert-dismissible fade show">
-      <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
-          <span aria-hidden="true">&times;</span>
-      </button>
+        <div class="alert alert-info alert-dismissible fade show">
+            <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
+                <span aria-hidden="true">&times;</span>
+            </button>
 
-    <span class="fas fa-info-circle"></span>
-    <p>{% trans 'En esta página puede ver el cierre económico de los proyectos.' %}</p>
-  </div><br />
+            <span class="fas fa-info-circle"></span>
+            <p>{% trans 'En esta página puede ver el cierre económico de los proyectos.' %}</p>
+        </div><br />
 
-  {% render_table table %}
+        {% render_table table %}
 
-</div>
+    </div>
 
 {% endblock content %}
