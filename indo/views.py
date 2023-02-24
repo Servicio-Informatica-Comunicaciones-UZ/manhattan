@@ -486,7 +486,11 @@ class EvaluacionView(LoginRequiredMixin, ChecksMixin, TemplateView):
 
     def post(self, request, *args, **kwargs):
         proyecto = get_object_or_404(Proyecto, pk=kwargs['pk'])
-        criterios = Criterio.objects.filter(convocatoria_id=proyecto.convocatoria_id).all()
+        criterios = (
+            Criterio.objects.filter(convocatoria_id=proyecto.convocatoria_id)
+            .filter(programas__contains=proyecto.programa.nombre_corto)
+            .all()
+        )
         dict_valoraciones = proyecto.get_dict_valoraciones(request.user.id)
 
         ha_evaluado = True  # Si ha dejado algún criterio sin responder, lo cambiaremos a False
@@ -497,7 +501,7 @@ class EvaluacionView(LoginRequiredMixin, ChecksMixin, TemplateView):
                 valoracion.evaluador = request.user
 
             respuesta = request.POST.get(str(criterio.id))
-            if not respuesta:
+            if respuesta is None:
                 ha_evaluado = False
 
             if criterio.tipo == 'opcion':
