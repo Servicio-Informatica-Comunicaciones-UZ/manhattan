@@ -489,22 +489,27 @@ class EvaluacionView(LoginRequiredMixin, ChecksMixin, TemplateView):
         criterios = Criterio.objects.filter(convocatoria_id=proyecto.convocatoria_id).all()
         dict_valoraciones = proyecto.get_dict_valoraciones(request.user.id)
 
+        ha_evaluado = True  # Si ha dejado algún criterio sin responder, lo cambiaremos a False
         for criterio in criterios:
             valoracion = dict_valoraciones.get(criterio.id)
             if not valoracion:
                 valoracion = Valoracion(proyecto_id=proyecto.id, criterio_id=criterio.id)
                 valoracion.evaluador = request.user
 
+            respuesta = request.POST.get(str(criterio.id))
+            if not respuesta:
+                ha_evaluado = False
+
             if criterio.tipo == 'opcion':
-                valoracion.opcion_id = request.POST.get(str(criterio.id))
+                valoracion.opcion_id = respuesta
             elif criterio.tipo == 'texto':
-                valoracion.texto = request.POST.get(str(criterio.id))
+                valoracion.texto = respuesta
             valoracion.save()
 
         asignacion = EvaluadorProyecto.objects.get(
             proyecto_id=proyecto.id, evaluador_id=request.user.id
         )
-        asignacion.ha_evaluado = True
+        asignacion.ha_evaluado = ha_evaluado
         asignacion.save()
 
         # Ponemos `esta_evaluado` a True cuando hayan evaluado todos los evaluadores del proyecto.
@@ -796,9 +801,11 @@ class ProyectosEvaluadosTableView(LoginRequiredMixin, UserPassesTestMixin, Singl
         return context
 
     def get_queryset(self):
-        return self.request.user.proyectos_del_evaluador.filter(
-            convocatoria_id=self.kwargs['anyo']
-        ).order_by('programa__nombre_corto', 'linea__nombre', 'titulo')
+        return self.request.user.evaluadores_proyectos.filter(
+            proyecto__convocatoria_id=self.kwargs['anyo']
+        ).order_by(
+            'proyecto__programa__nombre_corto', 'proyecto__linea__nombre', 'proyecto__titulo'
+        )
 
     def test_func(self):
         return self.request.user.groups.filter(name='Evaluadores').exists()

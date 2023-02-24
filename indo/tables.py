@@ -9,7 +9,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 # Local Django
-from .models import ParticipanteProyecto, Proyecto
+from .models import EvaluadorProyecto, ParticipanteProyecto, Proyecto
 
 
 class CorrectoresTable(tables.Table):
@@ -175,8 +175,10 @@ class EvaluacionProyectosTable(tables.Table):
         asignaciones = record.evaluadores_proyectos.all()
         for asignacion in asignaciones:
             if asignacion.ha_evaluado:
-                enlaces += f'''<a href="{reverse('ver_evaluacion', args=[asignacion.id])}" title="{_('Ver evaluación')}"
-                aria-label="{_('Ver evaluación')}"><span class="far fa-eye"></span></a> '''
+                enlaces += f'''<a href="{reverse('ver_evaluacion', args=[asignacion.id])}"
+                  title="{_('Ver evaluación')}"
+                  aria-label="{_('Ver evaluación')}"
+                ><span class="far fa-eye"></span></a> '''
         return mark_safe(enlaces) if enlaces else '—'
 
     def render_resolucion(self, record):
@@ -468,14 +470,16 @@ class ProyectosCierreEconomicoTable(tables.Table):
 class ProyectosEvaluadosTable(tables.Table):
     """Muestra los proyectos asignados a un usuario evaluador."""
 
-    def render_titulo(self, record):
-        enlace = reverse('proyecto_detail', args=[record.id])
-        return mark_safe(f"<a href='{enlace}'>{record.titulo}</a>")
+    titulo_proyecto = tables.Column(empty_values=(), orderable=False, verbose_name=_('Título'))
+
+    def render_titulo_proyecto(self, record):
+        enlace = reverse('proyecto_detail', args=[record.proyecto_id])
+        return mark_safe(f"<a href='{enlace}'>{record.proyecto.titulo}</a>")
 
     boton_evaluar = tables.Column(empty_values=(), orderable=False, verbose_name='')
 
     def render_boton_evaluar(self, record):
-        enlace = reverse('evaluacion', args=[record.id])
+        enlace = reverse('evaluacion', args=[record.proyecto_id])
         return mark_safe(
             f'''<a href="{enlace}" title="{_('Evaluar el proyecto')}"
           aria-label="{_('Evaluar el proyecto')}" class="btn btn-info btn-sm">
@@ -484,10 +488,18 @@ class ProyectosEvaluadosTable(tables.Table):
           </a>'''
         )
 
+    ha_evaluado = tables.BooleanColumn(verbose_name=_('Evaluado'))
+
     class Meta:
         attrs = {'class': 'table table-striped table-hover cabecera-azul'}
-        model = Proyecto
-        fields = ('programa', 'linea', 'titulo', 'boton_evaluar')
+        model = EvaluadorProyecto
+        fields = (
+            'proyecto__programa',
+            'proyecto__linea',
+            'titulo_proyecto',
+            'boton_evaluar',
+            'ha_evaluado',
+        )
         empty_text = _('Por el momento no se le ha asignado ningún proyecto.')
         template_name = 'django_tables2/bootstrap4.html'
         per_page = 20
