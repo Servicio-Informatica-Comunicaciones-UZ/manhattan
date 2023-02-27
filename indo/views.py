@@ -31,6 +31,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
 from django.utils.formats import localize
 from django.utils.safestring import mark_safe
+from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.generic import DetailView, ListView, RedirectView, TemplateView
@@ -2472,7 +2473,7 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
     def get_form_class(self, **kwargs):
         campo = self.kwargs['campo']
         if campo in ('centro', 'codigo', 'convocatoria', 'estado', 'estudio', 'linea', 'programa'):
-            raise Http404(_('No puede editar ese campo.'))
+            raise Http404(gettext('No puede editar ese campo.'))
 
         if campo not in (
             'titulo',  # Caja de texto simple
@@ -2717,7 +2718,7 @@ class ProyectosAceptadosTableView(ExportMixin, PagedFilteredTableView):
             try:
                 academico_id_nk = int(academico_id_nk)
             except ValueError:
-                raise Http404(_('El centro indicado no existe.'))
+                raise Http404(gettext('El centro indicado no existe.'))
             context['centro'] = get_object_or_404(Centro, academico_id_nk=academico_id_nk)
         return context
 
