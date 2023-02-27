@@ -2714,6 +2714,10 @@ class ProyectosAceptadosTableView(ExportMixin, PagedFilteredTableView):
         context['convocatorias'] = Convocatoria.objects.order_by('-id').all()[:5]
         academico_id_nk = self.request.GET.get('proyecto__centro__academico_id_nk', None)
         if academico_id_nk:
+            try:
+                academico_id_nk = int(academico_id_nk)
+            except ValueError:
+                raise Http404(_('El centro indicado no existe.'))
             context['centro'] = get_object_or_404(Centro, academico_id_nk=academico_id_nk)
         return context
 
