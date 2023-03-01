@@ -164,7 +164,7 @@ INSERT INTO indo_programa (nombre_corto, nombre_largo, max_ayuda, max_estudiante
 SELECT nombre_corto, nombre_largo, max_ayuda, max_estudiantes, campos,
   requiere_visto_bueno_centro, convocatoria_id + 1, requiere_visto_bueno_estudio
 FROM indo_programa
-WHERE convocatoria_id = 2020  -- Reemplazar 2020 por la última convocatoria.
+WHERE convocatoria_id = 2023  -- Reemplazar 2023 por la última convocatoria.
 ORDER BY id;
 
 -- Líneas
@@ -173,14 +173,16 @@ SELECT l.nombre, p2.id
 FROM indo_linea l
 JOIN indo_programa p ON l.programa_id = p.id
 JOIN indo_programa p2 ON p.nombre_corto = p2.nombre_corto
-WHERE p.convocatoria_id = 2020 AND p2.convocatoria_id = p.convocatoria_id + 1
+WHERE p.convocatoria_id = 2023  -- Reemplazar 2023 por la última convocatoria.
+  AND p2.convocatoria_id = p.convocatoria_id + 1
 ORDER BY p2.id, l.id;
 
 -- Rúbrica evaluación ACPUA
-INSERT INTO indo_criterio (parte, peso, descripcion, tipo, convocatoria_id)
-SELECT parte, peso, descripcion, tipo, convocatoria_id + 1
+-- Si se añaden o quitan programas de la convocatoria, actualizar manualmente el campo `programas`
+INSERT INTO indo_criterio (parte, peso, descripcion, tipo, convocatoria_id, programas)
+SELECT parte, peso, descripcion, tipo, convocatoria_id + 1, programas
 FROM indo_criterio
-WHERE convocatoria_id = 2020
+WHERE convocatoria_id = 2023  -- Reemplazar 2023 por la última convocatoria.
 ORDER BY parte, peso;
 
 -- Opciones de la rúbrica
@@ -189,14 +191,15 @@ SELECT o.puntuacion, o.descripcion, c2.id
 FROM indo_opcion o
 JOIN indo_criterio c1 ON o.criterio_id = c1.id
 JOIN indo_criterio c2 ON c1.parte = c2.parte AND c1.peso = c2.peso
-WHERE c1.convocatoria_id = 2020 AND c2.convocatoria_id = c1.convocatoria_id + 1
+WHERE c1.convocatoria_id = 2023  -- Reemplazar 2023 por la última convocatoria.
+  AND c2.convocatoria_id = c1.convocatoria_id + 1
 ORDER BY c2.id, o.puntuacion;
 
 -- Apartados memoria
 INSERT INTO indo_memoriaapartado (numero, descripcion, convocatoria_id)
 SELECT numero, descripcion, convocatoria_id + 1
 FROM indo_memoriaapartado
-WHERE convocatoria_id = 2020
+WHERE convocatoria_id = 2023  -- Reemplazar 2023 por la última convocatoria.
 ORDER BY numero;
 
 -- Subapartados memoria
@@ -205,6 +208,7 @@ SELECT peso, s.descripcion, ayuda, tipo, a2.id
 FROM indo_memoriasubapartado s
 JOIN indo_memoriaapartado a1 ON s.apartado_id = a1.id
 JOIN indo_memoriaapartado a2 ON a1.numero = a2.numero
-WHERE a1.convocatoria_id = 2020 AND a2.convocatoria_id = a1.convocatoria_id + 1
+WHERE a1.convocatoria_id = 2023  -- Reemplazar 2023 por la última convocatoria.
+  AND a2.convocatoria_id = a1.convocatoria_id + 1
 ORDER BY a2.id, peso;
 ```
