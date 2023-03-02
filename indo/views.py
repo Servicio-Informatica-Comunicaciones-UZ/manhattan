@@ -265,13 +265,37 @@ class AyudaView(LoginRequiredMixin, TemplateView):
         return context
 
     def post(self, request, *args, **kwargs):
+        # OTRS
         payload = {
             'asunto': request.POST.get('asunto'),
             'descripcion': request.POST.get('descripcion'),
             'email': request.user.email,
         }
+
+        # OsTicket
+        # payload = {
+        #     'email': request.user.email,
+        #     # Si usáramos un editor enriquecido
+        #     # 'message': 'data:text/html, ' + request.POST.get('descripcion'),
+        #     'message': request.POST.get('descripcion'),
+        #     'name': request.user.full_name,
+        #     'subject': request.POST.get('asunto'),
+        #     'topicId': '53',
+        # }
+
+        # OTRS
         resp = requests.post(get_config('ADD_TICKET_URL'), data=payload)
+        # OsTicket
+        # resp = requests.post(get_config('ADD_TICKET_URL'), json=payload)
+
+        # OTRS
         received_data = json.loads(resp.content.decode('utf-8'))
+        # OsTicket
+        # received_data = {
+        #     'msg': resp.content.decode('utf-8'),
+        #     'ticket_num': resp.content.decode('utf-8'),
+        # }
+
         if not resp.ok:
             msg = mark_safe(
                 _('ERROR: %(mensaje)s<br />Pruebe a crear el ticket en Ayudica.')
@@ -279,6 +303,7 @@ class AyudaView(LoginRequiredMixin, TemplateView):
             )
             messages.error(request, msg)
         else:
+            # OTRS
             msg = mark_safe(
                 _(
                     '''<strong>Solicitud realizada con éxito</strong>.<br />
@@ -288,6 +313,18 @@ class AyudaView(LoginRequiredMixin, TemplateView):
                 )
                 % {'ticket_num': received_data['ticket_num']}
             )
+            # OsTicket
+            # msg = mark_safe(
+            #     _(
+            #         '''<strong>Solicitud realizada con éxito</strong>.<br />
+            #         <p>Para aportar más información a la solicitud, entre al ticket nº
+            #         <a href=
+            # 'https://caufor.unizar.es/osticket/utils/ticket.php?t=%(ticket_num)s'>
+            # %(ticket_num)s</a>
+            #         y seleccione la opción «Contestar».</p>'''  # noqa: E501
+            #     )
+            #     % {'ticket_num': received_data['ticket_num']}
+            # )
             messages.success(request, msg)
         return redirect('ayuda')
 
