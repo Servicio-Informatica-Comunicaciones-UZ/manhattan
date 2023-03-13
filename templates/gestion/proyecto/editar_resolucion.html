@@ -26,8 +26,8 @@
         <hr />
         <br />
 
-        <div class="alert alert-info fade show">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <div class="alert alert-info alert-dismissible fade show">
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ _('Cerrar') }}"></button>
 
             <span class="fas fa-info-circle"></span>
             <p>{% trans 'Aquí puede editar la resolución de la Comisión Evaluadora sobre el proyecto.' %}</p>
@@ -40,8 +40,8 @@
         </div><br />
 
         {% if proyecto.programa.requiere_visto_bueno_estudio and not proyecto.visto_bueno_estudio %}
-            <div class="alert alert-warning fade show">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <div class="alert alert-warning fade show" role="alert">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ _('Cerrar') }}"></button>
 
                 <span class="fas fa-exclamation-triangle"></span>
                 <p>{% blocktrans with nombre_programa=proyecto.programa.nombre_corto %}
@@ -52,8 +52,8 @@
         {% endif %}
 
         {% if proyecto.programa.requiere_visto_bueno_centro and not proyecto.visto_bueno_centro %}
-            <div class="alert alert-warning fade show">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <div class="alert alert-warning fade show" role="alert">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ _('Cerrar') }}"></button>
 
                 <span class="fas fa-exclamation-triangle"></span>
                 <p>{% blocktrans with nombre_programa=proyecto.programa.nombre_corto %}
@@ -64,8 +64,8 @@
         {% endif %}
 
         {% if not proyecto.tiene_participantes %}
-            <div class="alert alert-warning fade show">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <div class="alert alert-warning fade show" role="alert">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ _('Cerrar') }}"></button>
 
                 <span class="fas fa-exclamation-triangle"></span>
                 <p>{% trans 'En este proyecto <strong>no</strong> hay ningún participante además del coordinador.' %}</p>
@@ -75,7 +75,7 @@
         <p><label>Proyecto:</label> {{ proyecto.titulo }}</p>
 
         {% if proyecto.estado not in 'SOLICITADO,APROBADO,DENEGADO,ACEPTADO' %}
-            <div class="alert alert-danger fade show">
+            <div class="alert alert-danger fade show" role="alert">
                 <span class="fas fa-bomb"></span>
                 <p>{% trans 'El estado actual de este proyecto no permite modificar la resolución de la Comisión.' %}</p>
             </div>

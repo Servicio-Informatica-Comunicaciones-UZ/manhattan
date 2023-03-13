@@ -104,9 +104,10 @@ repos:
         exclude: manage.py|setup.py|docker-entrypoint.sh|compile_python.sh
 
   - repo: https://github.com/rtts/djhtml
-    rev: "v1.5.2" # replace with the latest tag on GitHub
+    rev: "3.0.5" # replace with the latest tag on GitHub
     hooks:
       - id: djhtml
+        entry: djhtml --tabwidth 4
       - id: djcss
       - id: djjs
 

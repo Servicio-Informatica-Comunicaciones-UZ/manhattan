@@ -15,10 +15,10 @@
             {% endblocktranslate %}
         </div>
 
-        <select aria-label="Cambiar de convocatoria" class="custom-select form-select" name="convocatoria" onchange="location = this.value;" style="float: right; width: 150px;">
+        <select aria-label="Cambiar de convocatoria" class="form-select" name="convocatoria" onchange="location = this.value;" style="float: right; width: 150px;">
             {% for convocatoria in convocatorias %}
                 <option value="{% url 'hace_constar' convocatoria.id %}"
-                    {% if convocatoria.id == anyo %}selected="selected"{% endif %}
+                        {% if convocatoria.id == anyo %}selected="selected"{% endif %}
                 >{{convocatoria}}</option>
             {% endfor %}
         </select>

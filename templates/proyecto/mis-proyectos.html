@@ -5,10 +5,10 @@
 
 {% block content %}
     <div class="container-blanco">
-        <select aria-label="Cambiar de convocatoria" class="custom-select form-select" name="convocatoria" onchange="location = this.value;" style="float: right; width: 150px;">
+        <select aria-label="Cambiar de convocatoria" class="form-select" name="convocatoria" onchange="location = this.value;" style="float: right; width: 150px;">
             {% for convocatoria in convocatorias %}
                 <option value="{% url 'mis_proyectos' convocatoria.id %}"
-                    {% if convocatoria.id == anyo %}selected="selected"{% endif %}
+                        {% if convocatoria.id == anyo %}selected="selected"{% endif %}
                 >{{convocatoria}}</option>
             {% endfor %}
         </select>
@@ -77,8 +77,8 @@
                                     class="btn btn-secondary btn-sm prepararRenunciar"
                                     data-id="{{proyecto.id}}"
                                     data-titulo="{{proyecto.titulo}}"
-                                    data-toggle="modal"
-                                    data-target="#renunciarModal"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#renunciarModal"
                                     type="button"
                                 >
                                     <span class="fas fa-times"></span> {% trans 'Renunciar' %}
@@ -102,8 +102,9 @@
             {% now 'Y-m-d' as fecha_actual %}
             {% with convocatoria.fecha_max_aceptos as fecha_max_aceptos %}
                 {% if fecha_max_aceptos|date:'Y-m-d' < fecha_actual %}
-                    <div class="alert alert-info fade show noprint">
-                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <div class="alert alert-info alert-dismissible fade show noprint">
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ _('Cerrar') }}"></button>
+
                         <span class="fas fa-info-circle"></span>
                         <p>{% blocktranslate %}
                             El plazo para aceptar/declinar invitaciones finalizó el {{ fecha_max_aceptos }}.
@@ -143,14 +144,15 @@
                                                 class="btn btn-secondary btn-sm prepararDeclinar"
                                                 data-id="{{proyecto.id}}"
                                                 data-titulo="{{proyecto.titulo}}"
-                                                data-toggle="modal"
-                                                data-target="#declinarModal"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#declinarModal"
+                                                id="boton-declinar"
                                                 type="button"
                                             >
-                                                <span class="fas fa-times"></span> {% trans 'Declinar' %}
+                                                <span class="fas fa-times"></span>&nbsp;{% trans 'Declinar' %}
                                             </button>
                                             <button type="submit" class="btn btn-primary btn-sm">
-                                                <span class="fas fa-check"></span> {% trans "Aceptar" %}
+                                                <span class="fas fa-check"></span>&nbsp;{% trans "Aceptar" %}
                                             </button>
                                         </div>
                                     </form>
@@ -258,20 +260,18 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="declinarModalLabel">{% trans "¿Seguro que desea rehusar la invitación?" %}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ _('Cerrar') }}"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="advertencia"></div>
+                    <div class="advertencia" id="advertencia-declinar"></div>
                     <p>{% trans "Esta acción es irreversible." %}</p>
                     <p>{% trans "Una vez haya declinado la invitación, ya no podrá echarse atrás y aceptarla." %}</p>
                 </div>
                 <div class="modal-footer">
                     <form action="{% url 'participante_declinar' %}" id="declinar-form" method="post">
                         {% csrf_token %}
-                        <div class="campo-oculto"></div>
-                        <button type="button" class="btn btn-info" data-dismiss="modal">
+                        <div class="campo-oculto" id="campo-oculto-declinar"></div>
+                        <button type="button" class="btn btn-info" data-bs-dismiss="modal">
                             <span class="fas fa-times"></span> {% trans 'Cancelar' %}
                         </button>
                         <button type="submit" class="btn btn-warning">
@@ -295,20 +295,18 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="renunciarModalLabel">{% trans "¿Seguro que ya no desea participar?" %}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ _('Cerrar') }}"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="advertencia"></div>
+                    <div class="advertencia" id="advertencia-renunciar"></div>
                     <p>{% trans "Esta acción es irreversible." %}</p>
                     <p>{% trans "Una vez haya renunciado a participar, ya no podrá echarse atrás." %}</p>
                 </div>
                 <div class="modal-footer">
                     <form action="{% url 'participante_renunciar' %}" id="renunciar-form" method="post">
                         {% csrf_token %}
-                        <div class="campo-oculto"></div>
-                        <button type="button" class="btn btn-info" data-dismiss="modal">
+                        <div class="campo-oculto" id="campo-oculto-renunciar"></div>
+                        <button type="button" class="btn btn-info" data-bs-dismiss="modal">
                             <span class="fas fa-times"></span> {% trans 'Cancelar' %}
                         </button>
                         <button type="submit" class="btn btn-warning">
@@ -323,21 +321,26 @@
 
 {% block extrajs %}
     <script type="text/javascript">
-        $(".prepararDeclinar").click(function(e) {
-            $("#declinarModal .advertencia").html(
-                "<p>¿Seguro que no desea participar en el proyecto «" + $(this).data("titulo") + "»?</p>"
-            );
-            $("#declinarModal .campo-oculto").html(
-                "<input type='hidden' id='proyecto_id' name='proyecto_id' value='" + $(this).data("id") + "'>"
-            );
+        /* No aceptar invitación a participar en un proyecto */
+        document.querySelectorAll(".prepararDeclinar").forEach(element => {
+            element.addEventListener('click', ev => {
+                advertencia = document.getElementById("advertencia-declinar");
+                advertencia.innerHTML = "<p>¿Seguro que no desea participar en el proyecto «" + ev.target.getAttribute("data-titulo") + "»?</p>";
+
+                campoOculto = document.getElementById("campo-oculto-declinar");
+                campoOculto.innerHTML = "<input type='hidden' id='proyecto_id' name='proyecto_id' value='" + ev.target.getAttribute("data-id") + "'>";
+            });
         });
-        $(document).on("click", ".prepararRenunciar", function() {
-            $("#renunciarModal .advertencia").html(
-                "<p>¿Seguro que desea renunciar a participar en el proyecto «" + $(this).data("titulo") + "»?</p>"
-            );
-            $("#renunciarModal .campo-oculto").html(
-                "<input type='hidden' id='proyecto_id' name='proyecto_id' value='" + $(this).data("id") + "'>"
-            );
+
+        /* Renunciar a participar en un proyecto que ya se había aceptado */
+        document.querySelectorAll(".prepararRenunciar").forEach(element => {
+            element.addEventListener('click', ev => {
+                advertencia = document.getElementById("advertencia-renunciar");
+                advertencia.innerHTML = "<p>¿Seguro que desea renunciar a participar en el proyecto «" + ev.target.getAttribute("data-titulo") + "»?</p>";
+
+                campoOculto = document.getElementById("campo-oculto-renunciar");
+                campoOculto.innerHTML = "<input type='hidden' id='proyecto_id' name='proyecto_id' value='" + ev.target.getAttribute("data-id") + "'>";
+            });
         });
     </script>
 {% endblock extrajs %}

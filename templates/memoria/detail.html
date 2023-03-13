@@ -6,9 +6,7 @@
 {% block content %}
     <div class="container-blanco">
         <div class="alert alert-info alert-dismissible fade show noprint">
-            <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
-                <span aria-hidden="true">&times;</span>
-            </button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ _('Cerrar') }}"></button>
 
             <span class="fas fa-info-circle"></span>
             {% trans 'Una vez <strong>finalizado el proyecto</strong>, aquí puede ver y editar su memoria.' %}<br />
@@ -82,7 +80,7 @@
         <div class="table-responsive">
             {% if proyecto.coordinador %}
                 <table class="table table-hover table-striped table-sm"
-                    aria-label="coordinador">
+                       aria-label="coordinador">
                     <tr>
                         <th scope="row" style="font-weight: bold;">{% trans 'Coordinador' %}</th>
                         <td>{{ proyecto.coordinador.full_name }}</td>
@@ -103,7 +101,7 @@
             {% endif %}
             {% if proyecto.coordinador_2 %}
                 <table class="table table-hover table-striped table-sm"
-                    aria-label="coordinador 2">
+                       aria-label="coordinador 2">
                     <tr>
                         <th scope="row" style="font-weight: bold;">{% trans 'Coordinador 2' %}</th>
                         <td>{{ proyecto.coordinador_2.full_name }}</td>
@@ -134,7 +132,7 @@
 
         <div class="table-responsive">
             <table class="table table-hover table-striped table-sm cabecera-azul"
-                aria-label="participantes">
+                   aria-label="participantes">
                 <thead>
                     <tr>
                         <th scope="col">{% trans "Nombre y apellidos" %}</th>
@@ -199,7 +197,7 @@
         <br style="clear: both;" />
         <div class="btn-group noprint" role="group" aria-label="{{ _('Botones') }}">
             <a href="{{ url_anterior }}" class="btn btn-info"
-                title="{% trans 'Volver al proyecto' %}">
+               title="{% trans 'Volver al proyecto' %}">
                 <span class="fas fa-step-backward"></span> {% trans 'Retroceder' %}
             </a>
 
@@ -209,14 +207,14 @@
       {% endcomment %}
             {% with infografia='pptx/'|concat:proyecto.programa.nombre_corto|concat:'.pptx' %}
                 <a href="{% static infografia %}" class="btn btn-secondary"
-                    title="{% trans 'Modelo para rellenar y enviar a innova.docen@unizar.es' %}">
+                   title="{% trans 'Modelo para rellenar y enviar a innova.docen@unizar.es' %}">
                     <span class="fas fa-file-powerpoint"></span> {% trans 'Plantilla infografía' %}
                 </a>
             {% endwith %}
 
             {% if permitir_edicion %}
-                <button class="btn btn-danger" data-toggle="modal" data-target="#presentarModal"
-                    type="button">
+                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#presentarModal"
+                        type="button">
                     <span class="fas fa-file-export"></span> {% trans 'Presentar' %}
                 </button>
             {% endif %}
@@ -225,16 +223,14 @@
     </div>
 
     <div class="modal fade" id="presentarModal" tabindex="-1" role="dialog"
-        aria-labelledby="presentarModalLabel" aria-hidden="true">
+         aria-labelledby="presentarModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="presentarModalLabel">
                         {% trans "¿Seguro que desea presentar la memoria?" %}
                     </h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ _('Cerrar') }}"></button>
                 </div>
                 <div class="modal-body">
                     <p>{% trans 'Una vez presentada <strong>ya no podrá hacer ningún cambio</strong>.' %}</p>
@@ -245,9 +241,9 @@
                 </div>
                 <div class="modal-footer">
                     <form action="{% url 'memoria_presentar' pk=proyecto.id %}"
-                        id="presentar-form" method="post">
+                          id="presentar-form" method="post">
                         {% csrf_token %}
-                        <button type="button" class="btn btn-info" data-dismiss="modal">
+                        <button type="button" class="btn btn-info" data-bs-dismiss="modal">
                             <span class="fas fa-times"></span> {% trans "Cancelar" %}
                         </button>
                         <button type="submit" class="btn btn-warning">

@@ -147,21 +147,24 @@ class CorrectorForm(forms.Form):
         self.helper = FormHelper()
 
         self.helper.form_action = 'corrector_anyadir'
-        self.helper.form_class = 'form-inline'
-        # self.helper.wrapper_class = 'col-7'
-        # self.helper.label_class = 'margin-right-1'
-        # self.helper.field_class = 'margin-right-1'
-        self.helper.field_template = 'bootstrap4/layout/inline_field.html'
+        self.helper.form_class = 'row align-items-center'
+        self.helper.wrapper_class = 'col-10'
+        # self.helper.label_class = 'me-1'
+        # self.helper.field_class = 'me-1'
+        self.helper.field_template = 'bootstrap5/layout/floating_field.html'
         self.helper.layout = Layout(
             'nip',
-            ButtonHolder(
-                StrictButton(
-                    f"<span class='fas fa-user-plus'></span> {_('Añadir')}",
-                    css_class='btn btn-warning',
-                    title=_('Añadir al titular de este NIP como corrector'),
-                    type='submit',
+            Div(
+                ButtonHolder(
+                    StrictButton(
+                        f"<span class='fas fa-user-plus'></span> {_('Añadir')}",
+                        css_class='btn btn-warning',
+                        title=_('Añadir al titular de este NIP como corrector'),
+                        type='submit',
+                    ),
+                    css_class='ms-1',
                 ),
-                css_class='margin-left-1',
+                css_class='col-2 mb-4',
             ),
         )
 
@@ -295,7 +298,7 @@ class ProyectoFilterFormHelper(FormHelper):
     Ver https://django-crispy-forms.readthedocs.io/en/latest/form_helper.html
     """
 
-    form_class = 'form form-inline'
+    form_class = 'form row align-items-center'
     form_id = 'proyecto-filter-form'
     form_method = 'GET'
     form_tag = True
@@ -306,7 +309,10 @@ class ProyectoFilterFormHelper(FormHelper):
             Div(InlineField('estado', wrapper_class='col-4'), css_class='row'),
             css_class='col-10 border p-3',
         ),
-        ButtonHolder(Submit('submit', _('Filtrar')), css_class='col-2 text-center'),
+        Div(
+            ButtonHolder(Submit('submit', _('Filtrar'))),
+            css_class='col-2 text-center',
+        ),
     )
 
 

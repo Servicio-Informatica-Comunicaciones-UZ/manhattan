@@ -20,7 +20,7 @@ types-requests = "*"
 
 [packages]
 bleach = {extras = ["css"], version = "*"}
-crispy-bootstrap4 = "*"
+crispy-bootstrap5 = "*"
 django = "==4.1.7"  # Remember to re-generate `requirements.txt`: `pipenv requirements`
 django-annoying = "*"
 django-crispy-forms = "*"

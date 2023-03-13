@@ -6,10 +6,10 @@
 
 {% block content %}
     <div class='container-blanco'>
-        <select aria-label="Cambiar de convocatoria" class="custom-select form-select" name="convocatoria" onchange="location = this.value;" style="float: right; width: 150px;">
+        <select aria-label="Cambiar de convocatoria" class="form-select" name="convocatoria" onchange="location = this.value;" style="float: right; width: 150px;">
             {% for convocatoria in convocatorias %}
                 <option value="{% url 'evaluaciones_table' convocatoria.id %}"
-                    {% if convocatoria.id == anyo %}selected="selected"{% endif %}
+                        {% if convocatoria.id == anyo %}selected="selected"{% endif %}
                 >{{convocatoria}}</option>
             {% endfor %}
         </select>
@@ -18,10 +18,8 @@
         <hr />
         <br />
 
-        <div class="alert alert-info alert-dismissible fade show" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
-                <span aria-hidden="true">&times;</span>
-            </button>
+        <div class="alert alert-info alert-dismissible fade show">
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ _('Cerrar') }}"></button>
 
             <span class="fas fa-info-circle"></span>
             <p>{% trans 'Desde esta página puede:' %}</p>
@@ -47,7 +45,7 @@
             </a>
 
             {% if not convocatoria.notificada_resolucion_provisional or not convocatoria.notificada_resolucion_definitiva %}
-                <button class="btn btn-danger" data-toggle="modal" data-target="#enviarModal" type="button">
+                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#enviarModal" type="button">
                     <span class="fas fa-paper-plane"></span>&nbsp;
                     {% if not convocatoria.notificada_resolucion_provisional %}
                         {% trans 'Notificar resolución provisional' %}
@@ -62,14 +60,12 @@
     </div>
 
     <div class="modal fade" id="enviarModal" tabindex="-1" role="dialog" aria-labelledby="enviarModalLabel"
-        aria-hidden="true">
+         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="enviarModalLabel">{% trans "¿Seguro que desea enviar las notificaciones?" %}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ _('Cerrar') }}"></button>
                 </div>
                 <div class="modal-body">
                     <p>
@@ -85,7 +81,7 @@
                 <div class="modal-footer">
                     <form action="{% url 'notificar_proyectos' anyo=anyo %}" id="notificar-form" method="post">
                         {% csrf_token %}
-                        <button type="button" class="btn btn-info" data-dismiss="modal">
+                        <button type="button" class="btn btn-info" data-bs-dismiss="modal">
                             <span class="fas fa-times"></span> {% trans "Cancelar" %}
                         </button>
                         <button type="submit" class="btn btn-danger">

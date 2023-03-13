@@ -6,8 +6,9 @@
 {% block content %}
     <div class="container-blanco">
         {% if permitir_edicion and proyecto.en_borrador %}
-            <div class="alert alert-info fade show noprint">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <div class="alert alert-info alert-dismissible fade show noprint">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ _('Cerrar') }}"></button>
+
                 <span class="fas fa-info-circle"></span>
                 <p>
                     {% trans 'Puede editar su solicitud tantas veces como desee.' %}<br />
@@ -20,8 +21,9 @@
                 </p>
             </div>
         {% elif proyecto.estado == 'SOLICITADO' %}
-            <div class="alert alert-info fade show noprint">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <div class="alert alert-info alert-dismissible fade show noprint">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ _('Cerrar') }}"></button>
+
                 <span class="fas fa-info-circle"></span>
                 <p>
                     {% with proyecto.convocatoria.fecha_max_aceptos as fecha_max_aceptos %}
@@ -34,8 +36,9 @@
                 </p>
             </div>
         {% elif proyecto.aceptacion_coordinador and es_coordinador %}
-            <div class="alert alert-info fade show noprint">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <div class="alert alert-info alert-dismissible fade show noprint">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ _('Cerrar') }}"></button>
+
                 <span class="fas fa-info-circle"></span>
                 <p>
                     {% trans 'Bajo la tabla de datos básicos del proyecto puede encontrar el apartado para editar la <strong>memoria</strong>.' %}
@@ -210,8 +213,9 @@
             {% now 'Y-m-d' as fecha_actual %}
             {% with proyecto.convocatoria.fecha_max_aceptos as fecha_max_aceptos %}
                 {% if fecha_max_aceptos|date:'Y-m-d' < fecha_actual %}
-                    <div class="alert alert-info fade show noprint">
-                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <div class="alert alert-info alert-dismissible fade show noprint">
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ _('Cerrar') }}"></button>
+
                         <span class="fas fa-info-circle"></span>
                         <p>{% blocktranslate %}
                             El plazo para aceptar/declinar invitaciones finalizó el {{ fecha_max_aceptos }}.
@@ -304,8 +308,9 @@
         <!-- Añadir participante con carácter excepcional -->
         {% if permitir_anyadir_sin_invitacion %}
             <h4 id="anyadir-participante">{% trans 'Añadir participante de forma excepcional' %}</h4>
-            <div class="alert alert-info fade show noprint">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <div class="alert alert-info alert-dismissible fade show noprint">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ _('Cerrar') }}"></button>
+
                 <span class="fas fa-info-circle"></span>
                 <p>
                     {% blocktranslate %}Con carácter <strong>excepcional</strong>, y con
@@ -375,12 +380,12 @@
             </a>
 
             {% if permitir_edicion and proyecto.en_borrador or es_gestor and proyecto.estado == 'SOLICITADO' %}
-                <button class="btn btn-danger" data-toggle="modal" data-target="#anularModal" type="button">
+                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#anularModal" type="button">
                     <span class="fas fa-trash-alt"></span> {% trans 'Anular' %}
                 </button>
             {% endif %}
             {% if es_coordinador and proyecto.en_borrador %}
-                <button class="btn btn-warning" data-toggle="modal" data-target="#presentarModal" type="button">
+                <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#presentarModal" type="button">
                     <span class="fas fa-check"></span> {% trans 'Presentar' %}
                 </button>
             {% endif %}
@@ -388,14 +393,12 @@
     </div>
 
     <div class="modal fade" id="anularModal" tabindex="-1" role="dialog" aria-labelledby="anularModalLabel"
-        aria-hidden="true">
+         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="anularModalLabel">{% trans "¿Seguro que desea anular la solicitud?" %}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ _('Cerrar') }}"></button>
                 </div>
                 <div class="modal-body">
                     <p>
@@ -407,7 +410,7 @@
                 <div class="modal-footer">
                     <form action="{% url 'proyecto_anular' pk=proyecto.id %}" id="eliminar-form" method="post">
                         {% csrf_token %}
-                        <button type="button" class="btn btn-info" data-dismiss="modal">
+                        <button type="button" class="btn btn-info" data-bs-dismiss="modal">
                             <span class="fas fa-times"></span> {% trans "Cancelar" %}
                         </button>
                         <button type="submit" class="btn btn-danger">
@@ -420,14 +423,12 @@
     </div>
 
     <div class="modal fade" id="presentarModal" tabindex="-1" role="dialog" aria-labelledby="presentarModalLabel"
-        aria-hidden="true">
+         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="presentarModalLabel">{% trans "¿Seguro que desea presentar la solicitud?" %}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ _('Cerrar') }}"></button>
                 </div>
                 <div class="modal-body">
                     <p>{% trans "Una vez presentada ya no podrá hacer <strong>ningún cambio</strong> (ni siquiera invitar a más personas)." %}</p>
@@ -447,7 +448,7 @@
                 <div class="modal-footer">
                     <form action="{% url 'proyecto_presentar' pk=proyecto.id %}" id="presentar-form" method="post">
                         {% csrf_token %}
-                        <button type="button" class="btn btn-info" data-dismiss="modal">
+                        <button type="button" class="btn btn-info" data-bs-dismiss="modal">
                             <span class="fas fa-times"></span> {% trans "Cancelar" %}
                         </button>
                         <button type="submit" class="btn btn-warning">

@@ -10,9 +10,7 @@
         <br />
 
         <div class="alert alert-info alert-dismissible fade show">
-            <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
-                <span aria-hidden="true">&times;</span>
-            </button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ _('Cerrar') }}"></button>
 
             <span class="fas fa-info-circle"></span>
             {% trans 'Aquí puede ver/editar la evaluación del proyecto.' %}<br />
@@ -42,8 +40,8 @@
                         </select>
                     {% elif criterio.tipo == 'texto' %}
                         <textarea class="textarea form-control" name="{{ criterio.id }}"
-                            placeholder="{% trans 'Introduzca sus comentarios.' %}" rows="10"
-                            cols="80">{% if valoracion %}{{ valoracion.texto }}{% endif %}</textarea>
+                                  placeholder="{% trans 'Introduzca sus comentarios.' %}" rows="10"
+                                  cols="80">{% if valoracion %}{{ valoracion.texto }}{% endif %}</textarea>
                     {% endif %}
 
                 {% endwith %}
@@ -53,7 +51,7 @@
 
             <div class="btn-group" role="group" aria-label="Botones">
                 <a href="{% url 'proyectos_evaluados_table' proyecto.convocatoria_id %}"
-                    class="btn btn-info" title="{% trans 'Retroceder' %}">
+                   class="btn btn-info" title="{% trans 'Retroceder' %}">
                     <span class="fas fa-step-backward"></span> {% trans 'Retroceder' %}
                 </a>
                 <button class="btn btn-primary" type="submit" title="{% trans 'Guardar evaluación' %}">

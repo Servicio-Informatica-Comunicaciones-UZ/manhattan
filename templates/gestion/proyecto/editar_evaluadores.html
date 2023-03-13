@@ -27,9 +27,7 @@
         <br />
 
         <div class="alert alert-info alert-dismissible fade show">
-            <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
-                <span aria-hidden="true">&times;</span>
-            </button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ _('Cerrar') }}"></button>
 
             <span class="fas fa-info-circle"></span>
             {% blocktrans %}
@@ -57,10 +55,8 @@
         </div><br />
 
         {% if proyecto.programa.requiere_visto_bueno_estudio and not proyecto.visto_bueno_estudio %}
-            <div class="alert alert-warning alert-dismissible fade show">
-                <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ _('Cerrar') }}"></button>
 
                 <span class="fas fa-exclamation-triangle"></span>
                 <p>{% blocktrans with nombre_programa=proyecto.programa.nombre_corto %}
@@ -71,10 +67,8 @@
         {% endif %}
 
         {% if proyecto.programa.requiere_visto_bueno_centro and not proyecto.visto_bueno_centro %}
-            <div class="alert alert-warning alert-dismissible fade show">
-                <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ _('Cerrar') }}"></button>
 
                 <span class="fas fa-exclamation-triangle"></span>
                 <p>{% blocktrans with nombre_programa=proyecto.programa.nombre_corto %}
@@ -85,10 +79,8 @@
         {% endif %}
 
         {% if not proyecto.tiene_participantes %}
-            <div class="alert alert-warning alert-dismissible fade show">
-                <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ _('Cerrar') }}"></button>
 
                 <span class="fas fa-exclamation-triangle"></span>
                 <p>{% trans 'En este proyecto <strong>no</strong> hay ningún participante además del coordinador.' %}</p>

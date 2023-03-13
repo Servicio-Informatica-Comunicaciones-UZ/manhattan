@@ -9,14 +9,14 @@
     <div class="container-blanco">
         <select
             aria-label="Cambiar de convocatoria"
-            class="custom-select form-select"
+            class="form-select"
             name="convocatoria"
             onchange="location = this.value;"
             style="float: right; width: 150px"
         >
             {% for convocatoria in convocatorias %}
                 <option value="{% url 'proyectos_aceptados' convocatoria.id %}"
-                    {% if convocatoria.id == anyo %}selected="selected"{% endif %}
+                        {% if convocatoria.id == anyo %}selected="selected"{% endif %}
                 >{{ convocatoria }}</option>
             {% endfor %}
         </select>
@@ -26,9 +26,7 @@
         <br />
 
         <div class="alert alert-info alert-dismissible fade show">
-            <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
-                <span aria-hidden="true">&times;</span>
-            </button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ _('Cerrar') }}"></button>
 
             <span class="fas fa-info-circle"></span>
             <p>

@@ -11,9 +11,7 @@
         <br />
 
         <div class="alert alert-info alert-dismissible fade show">
-            <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
-                <span aria-hidden="true">&times;</span>
-            </button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ _('Cerrar') }}"></button>
 
             <span class="fas fa-info-circle"></span>
             {% trans "Aquí puede gestionar los usuarios que pueden corregir memorias." %}
@@ -42,20 +40,18 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="cesarModalLabel">{% trans "¿Seguro que desea cesar al corrector?" %}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ _('Cerrar') }}"></button>
                 </div>
 
                 <div class="modal-body">
-                    <div class="advertencia"></div> {# Rellenado por Javascript #}
+                    <div class="advertencia" id="advertencia"></div> {# Rellenado por Javascript #}
                 </div>
 
                 <div class="modal-footer">
                     <form action="{% url 'corrector_cesar' %}" id="cesar-form" method="post">
                         {% csrf_token %}
-                        <div class="campo-oculto"></div> {# Rellenado por Javascript #}
-                        <button type="button" class="btn btn-info" data-dismiss="modal">
+                        <div class="campo-oculto" id="campo-oculto"></div> {# Rellenado por Javascript #}
+                        <button type="button" class="btn btn-info" data-bs-dismiss="modal">
                             <span class="fas fa-times"></span> {% trans 'Cancelar' %}
                         </button>
                         <button type="submit" class="btn btn-warning">
@@ -70,13 +66,14 @@
 
 {% block extrajs %}
     <script type="text/javascript">
-        $(".prepararCesar").click(function(e) {
-            $("#cesarModal .advertencia").html(
-                "<p>¿Seguro que desea cesar a " + $(this).data("nombre") + " como corrector?</p>"
-            );
-            $("#cesarModal .campo-oculto").html(
-                "<input type='hidden' id='user_id' name='user_id' value='" + $(this).data("id") + "'>"
-            );
+        document.querySelectorAll(".prepararCesar").forEach(element => {
+            element.addEventListener('click', ev => {
+                advertencia = document.getElementById("advertencia");
+                advertencia.innerHTML = "<p>¿Seguro que desea cesar a " + ev.target.parentElement.getAttribute("data-nombre") + " como corrector?</p>";
+
+                campoOculto = document.getElementById("campo-oculto");
+                campoOculto.innerHTML = "<input type='hidden' id='user_id' name='user_id' value='" + ev.target.parentElement.getAttribute("data-id") + "'>";
+            });
         });
     </script>
 {% endblock extrajs %}

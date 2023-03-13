@@ -21,11 +21,11 @@ class CorrectoresTable(tables.Table):
     def render_eliminar(self, record):
         return mark_safe(
             f'''<button
-                    class="btn-no-button prepararCesar"
+                    class="btn prepararCesar"
                     data-id="{record.id}"
                     data-nombre="{record.full_name}"
-                    data-toggle="modal"
-                    data-target="#cesarModal"
+                    data-bs-toggle="modal"
+                    data-bs-target="#cesarModal"
                 >
                     <span
                         class="fas fa-trash-alt text-danger"
@@ -41,7 +41,7 @@ class CorrectoresTable(tables.Table):
         model = get_user_model()
         fields = ('username', 'full_name')
         empty_text = _('Por el momento no hay ningún corrector.')
-        template_name = 'django_tables2/bootstrap4.html'
+        template_name = 'django_tables2/bootstrap5.html'
         per_page = 20
 
 
@@ -68,7 +68,7 @@ class ProyectoCorrectorTable(tables.Table):
         model = Proyecto
         fields = ('programa', 'linea', 'id', 'titulo', 'corrector__full_name', 'editar')
         empty_text = _('Por el momento ningún coordinador ha aceptado ningún proyecto.')
-        template_name = 'django_tables2/bootstrap4.html'
+        template_name = 'django_tables2/bootstrap5.html'
         per_page = 20
 
 
@@ -154,7 +154,7 @@ class EvaluadoresTable(tables.Table):
             'editar',
         )
         empty_text = _('Por el momento no se ha presentado ninguna solicitud de proyecto.')
-        template_name = 'django_tables2/bootstrap4.html'
+        template_name = 'django_tables2/bootstrap5.html'
         per_page = 20
 
 
@@ -209,7 +209,7 @@ class EvaluacionProyectosTable(tables.Table):
         model = Proyecto
         fields = ('programa', 'linea', 'id', 'titulo', 'evaluaciones', 'resolucion')
         empty_text = _('Por el momento no se ha presentado ninguna solicitud de proyecto.')
-        template_name = 'django_tables2/bootstrap4.html'
+        template_name = 'django_tables2/bootstrap5.html'
         per_page = 20
 
 
@@ -293,7 +293,7 @@ class MemoriasAsignadasTable(tables.Table):
             'boton_valorar',
         )
         empty_text = _('Por el momento no se le ha asignado ninguna memoria.')
-        template_name = 'django_tables2/bootstrap4.html'
+        template_name = 'django_tables2/bootstrap5.html'
         per_page = 20
 
 
@@ -370,7 +370,7 @@ class MemoriaProyectosTable(tables.Table):
             'valoracion',
         )
         empty_text = _('Por el momento no se ha aceptado ningún proyecto.')
-        template_name = 'django_tables2/bootstrap4.html'
+        template_name = 'django_tables2/bootstrap5.html'
         # per_page = 20
 
 
@@ -407,7 +407,7 @@ class ProyectosAceptadosTable(tables.Table):
             'proyecto__descripcion_txt',
         )
         empty_text = _('Por el momento ningún coordinador ha aceptado ningún proyecto.')
-        template_name = 'django_tables2/bootstrap4.html'
+        template_name = 'django_tables2/bootstrap5.html'
 
 
 class ProyectosCierreEconomicoTable(tables.Table):
@@ -463,7 +463,7 @@ class ProyectosCierreEconomicoTable(tables.Table):
             'aceptacion_economico',
         )
         empty_text = _('Por el momento no se ha aceptado ningún proyecto.')
-        template_name = 'django_tables2/bootstrap4.html'
+        template_name = 'django_tables2/bootstrap5.html'
         # per_page = 20
 
 
@@ -501,7 +501,7 @@ class ProyectosEvaluadosTable(tables.Table):
             'ha_evaluado',
         )
         empty_text = _('Por el momento no se le ha asignado ningún proyecto.')
-        template_name = 'django_tables2/bootstrap4.html'
+        template_name = 'django_tables2/bootstrap5.html'
         per_page = 20
 
 
@@ -526,7 +526,7 @@ class ProyectosTable(tables.Table):
         model = Proyecto
         fields = ('programa', 'linea', 'id', 'titulo', 'coordinadores', 'estado')
         empty_text = _('Por el momento no se ha introducido ninguna solicitud de proyecto.')
-        template_name = 'django_tables2/bootstrap4.html'
+        template_name = 'django_tables2/bootstrap5.html'
         per_page = 20
 
 
@@ -579,4 +579,4 @@ class ProyectoUPTable(tables.Table):
             'editar_id_uxxi',
         )
         empty_text = _('Por el momento ningún coordinador ha aceptado ningún proyecto.')
-        template_name = 'django_tables2/bootstrap4.html'
+        template_name = 'django_tables2/bootstrap5.html'
