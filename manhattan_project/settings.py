@@ -197,6 +197,7 @@ TEMPLATES = [
 # http://django-crispy-forms.readthedocs.io/en/latest/install.html#template-packs
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_CLASS_CONVERTERS = {'select': 'form-select'}
 
 # SECURITY
 # ------------------------------------------------------------------------------
@@ -318,7 +319,9 @@ if DEBUG:
     # DJANGO-DEBUG-TOOLBAR - <https://github.com/jazzband/django-debug-toolbar>
     # ------------------------------------------------------------------------------
     # https://django-debug-toolbar.readthedocs.io/en/latest/installation.html#prerequisites
-    INSTALLED_APPS += ['debug_toolbar', 'django_fastdev']  # noqa F405
+    INSTALLED_APPS += [
+        'debug_toolbar',
+    ]  # 'django_fastdev']  # noqa F405
     # https://django-debug-toolbar.readthedocs.io/en/latest/installation.html#middleware
     MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']  # noqa F405
     # https://django-debug-toolbar.readthedocs.io/en/latest/configuration.html#debug-toolbar-config

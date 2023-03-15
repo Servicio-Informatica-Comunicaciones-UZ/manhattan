@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n %}
+{% load crispy_forms_tags i18n %}
 {% block title %}{% trans 'Actualizar evaluador del proyecto' %}{% endblock title %}
 {% block description %}{% trans 'Actualizar evaluador de proyecto' %}{% endblock description %}
 
@@ -124,7 +124,7 @@
         <!-- Añadir evaluador al proyecto -->
         <form action="" method="post">
             {% csrf_token %}
-            {{ form.as_p }}
+            {{ form | crispy }}
             <br style="clear: both;" />
 
             <div class="btn-group" role="group" aria-label="Botones">
