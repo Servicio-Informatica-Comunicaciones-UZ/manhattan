@@ -1,12 +1,13 @@
 {% extends 'base.html' %}
 {% load custom_tags i18n static %}
-{% load export_url from django_tables2 %}
-{% load render_table from django_tables2 %}
 
 {% block title %}{% trans "Proyectos de un usuario" %}{% endblock title %}
 
 {% block extracss %}
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.11.5/b-2.2.2/b-html5-2.2.2/datatables.min.css"/>
+    <!--
+    <link href="https://unpkg.com/tabulator-tables@5.4.4/dist/css/tabulator_bootstrap5.min.css" rel="stylesheet">
+    -->
+    <link href="https://cdn.datatables.net/v/bs5/jq-3.6.0/dt-1.13.4/datatables.min.css" rel="stylesheet"/>
 {% endblock extracss %}
 
 {% block content %}
@@ -29,12 +30,15 @@
 
         <div>
             {% if vinculaciones %}
-                <table id="tabla_proyectos" class="table table-striped table-hover cabecera-azul compact"
-                       style="width: 100%;">
+                <table
+                    id="tabla_proyectos"
+                    class="table table-striped table-hover cabecera-azul compact"
+                    style="width: 100%;"
+                >
                     <thead>
                         <tr>
                             <th scope="col">{% trans 'ID' %}</th>
-                            <th scope="col">{% trans 'Título' %}</th>
+                            <th scope="col" tabulator-formatter="html">{% trans 'Título' %}</th>
                             <th scope="col">{% trans 'Estado' %}</th>
                             <th scope="col">{% trans 'Calidad' %}</th>
                         </tr>
@@ -59,15 +63,21 @@
 
 
 {% block extrajs %}
-    <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.11.5/b-2.2.2/b-html5-2.2.2/datatables.min.js"></script>
+    <!--
+    <script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.4.4/dist/js/tabulator.min.js"></script>
+    <script>
+    var table = new Tabulator("#tabla_proyectos", {});
+    </script>
+    -->
 
+    <script src="https://cdn.datatables.net/v/bs5/jq-3.6.0/dt-1.13.4/datatables.min.js"></script>
     <script>
         // https://datatables.net/reference/option/
         $(document).ready(function () {
             $('#tabla_proyectos').DataTable({
                 "info": false,
                 "language": {% include 'partials/datatables_es.js' %},
-                'order': [[3, 'asc'], [0, 'asc']],  /* Ordenar por el tipo de participación */
+                'order': [[3, 'asc'], [0, 'asc']],  // Ordenar por el tipo de participación
                 "ordering": true,
                 "paging": false,
                 "searching": false,
