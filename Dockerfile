@@ -1,11 +1,13 @@
 # Pull base image
-FROM python:3.10-slim-bullseye
+FROM python:3.11-slim-bullseye
 LABEL maintainer="Enrique Matías Sánchez <quique@unizar.es>"
 
 # Set environment variables
+# Disable an automatic check for pip updates each time
 # Don't write .pyc files
 # All output to stdout will be flushed immediately
-ENV PYTHONDONTWRITEBYTECODE 1 \
+ENV PIP_DISABLE_PIP_VERSION_CHECK 1 \
+  PYTHONDONTWRITEBYTECODE 1 \
   PYTHONUNBUFFERED 1
 
 # Install packages needed to run your application (not build deps):

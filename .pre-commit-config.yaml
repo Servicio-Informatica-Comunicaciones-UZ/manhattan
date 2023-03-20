@@ -42,13 +42,13 @@ repos:
     rev: v3.3.1
     hooks:
       - id: pyupgrade
-        args: [--py310-plus]
+        args: [--py311-plus]
 
   - repo: https://github.com/psf/black
     rev: 23.1.0
     hooks:
       - id: black
-        language_version: python3.9
+        language_version: python3.11
 
   - repo: https://github.com/asottile/blacken-docs
     rev: 1.13.0
@@ -104,7 +104,7 @@ repos:
         exclude: manage.py|setup.py|docker-entrypoint.sh|compile_python.sh
 
   - repo: https://github.com/rtts/djhtml
-    rev: "3.0.5" # replace with the latest tag on GitHub
+    rev: "3.0.6" # replace with the latest tag on GitHub
     hooks:
       - id: djhtml
         entry: djhtml --tabwidth 4
