@@ -4,10 +4,10 @@ LABEL maintainer="Enrique Matías Sánchez <quique@unizar.es>"
 
 # Set environment variables
 # Disable an automatic check for pip updates each time
+ENV PIP_DISABLE_PIP_VERSION_CHECK 1
 # Don't write .pyc files
 # All output to stdout will be flushed immediately
-ENV PIP_DISABLE_PIP_VERSION_CHECK 1 \
-  PYTHONDONTWRITEBYTECODE 1 \
+ENV PYTHONDONTWRITEBYTECODE 1 \
   PYTHONUNBUFFERED 1
 
 # Install packages needed to run your application (not build deps):
