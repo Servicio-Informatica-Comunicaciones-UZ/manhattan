@@ -2585,7 +2585,7 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
 
             def clean(self):
                 cleaned_data = super(formulario, self).clean()
-                ayuda_solicitada = cleaned_data.get('ayuda')
+                ayuda_solicitada = cleaned_data.get('ayuda', 0)
                 if (
                     ayuda_solicitada > 0
                     and self.instance.coordinador.get_colectivo_principal() == 'ADS'

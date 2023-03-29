@@ -614,8 +614,6 @@ class Proyecto(models.Model):
     financiacion_txt = models.TextField(_('Financiación en texto plano'), null=True)
     ayuda = models.PositiveIntegerField(
         _('Ayuda económica solicitada'),
-        blank=True,
-        null=True,
         help_text=_(
             'Las normas de la convocatoria establecen el importe máximo '
             'que se puede solicitar según el programa.'
