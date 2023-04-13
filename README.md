@@ -166,6 +166,7 @@ SELECT nombre_corto, nombre_largo, max_ayuda, max_estudiantes, campos,
 FROM indo_programa
 WHERE convocatoria_id = 2023  -- Reemplazar 2023 por la última convocatoria.
 ORDER BY id;
+-- WARNING: Si se añaden nuevos programas, hay que actualizar el método `Proyecto.get_unidad_planificacion()`.
 
 -- Líneas
 INSERT INTO indo_linea (nombre, programa_id)

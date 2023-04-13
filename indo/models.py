@@ -856,12 +856,12 @@ class Proyecto(models.Model):
     def get_unidad_planificacion(self) -> str | None:
         """Devuelve el ID y nombre de la Unidad de Planificación del proyecto.
 
-        * PIEC, PIPOUZ, PIET: La UP es la del centro del proyecto.
+        * PIEC, PIPOUZ, PIET, PICT: La UP es la del centro del proyecto.
           Vg: 103 (Facultad de Filosofía y Letras)
         * PIIDUZ, PRAUZ, MOOC, PISOC: La UP es la del departamento del coordinador del proyecto.
           Vg: 273 (Departamento de Dirección de Marketing e Investigación de Mercados)
         """
-        if self.programa.nombre_corto in ('PIEC', 'PIPOUZ', 'PIET'):
+        if self.programa.nombre_corto in ('PIEC', 'PIPOUZ', 'PIET', 'PICT'):
             return f'{self.centro.unidad_planificacion} ({self.centro.nombre})'
         elif self.programa.nombre_corto in ('PIIDUZ', 'PRAUZ', 'MOOC', 'PISOC'):
             # Si el coordinador está en más de un departamento, tomamos el primero.
