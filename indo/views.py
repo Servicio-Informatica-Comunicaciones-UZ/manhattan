@@ -539,7 +539,7 @@ class EvaluacionView(LoginRequiredMixin, ChecksMixin, TemplateView):
                 valoracion.evaluador = request.user
 
             respuesta = request.POST.get(str(criterio.id))
-            if respuesta is None:
+            if not respuesta:
                 ha_evaluado = False
 
             if criterio.tipo == 'opcion':
