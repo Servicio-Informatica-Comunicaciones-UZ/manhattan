@@ -322,7 +322,7 @@ class AyudaView(LoginRequiredMixin, TemplateView):
                     %(ticket_num)s</a> y seleccione la opción «Contestar».</p>'''
                 )
                 % {'ticket_num': received_data['ticket_num']}
-            # )
+            )
             messages.success(request, msg)
         return redirect('ayuda')
 
