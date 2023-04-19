@@ -273,28 +273,28 @@ class AyudaView(LoginRequiredMixin, TemplateView):
         }
 
         # OsTicket
-        # payload = {
-        #     'email': request.user.email,
-        #     # Si usáramos un editor enriquecido
-        #     # 'message': 'data:text/html, ' + request.POST.get('descripcion'),
-        #     'message': request.POST.get('descripcion'),
-        #     'name': request.user.full_name,
-        #     'subject': request.POST.get('asunto'),
-        #     'topicId': '53',
-        # }
+        payload = {
+            'email': request.user.email,
+            # Si usáramos un editor enriquecido
+            # 'message': 'data:text/html, ' + request.POST.get('descripcion'),
+            'message': request.POST.get('descripcion'),
+            'name': request.user.full_name,
+            'subject': request.POST.get('asunto'),
+            'topicId': '53',
+        }
 
         # OTRS
-        resp = requests.post(get_config('ADD_TICKET_URL'), data=payload)
+        # resp = requests.post(get_config('ADD_TICKET_URL'), data=payload)
         # OsTicket
-        # resp = requests.post(get_config('ADD_TICKET_URL'), json=payload)
+        resp = requests.post(get_config('ADD_TICKET_URL'), json=payload)
 
         # OTRS
-        received_data = json.loads(resp.content.decode('utf-8'))
+        # received_data = json.loads(resp.content.decode('utf-8'))
         # OsTicket
-        # received_data = {
-        #     'msg': resp.content.decode('utf-8'),
-        #     'ticket_num': resp.content.decode('utf-8'),
-        # }
+        received_data = {
+            'msg': resp.content.decode('utf-8'),
+            'ticket_num': resp.content.decode('utf-8'),
+        }
 
         if not resp.ok:
             msg = mark_safe(
@@ -304,26 +304,24 @@ class AyudaView(LoginRequiredMixin, TemplateView):
             messages.error(request, msg)
         else:
             # OTRS
-            msg = mark_safe(
-                _(
-                    '''<strong>Solicitud realizada con éxito</strong>.<br />
-                    <p>Para aportar más información a la solicitud, entre al ticket nº
-                    <a href='https://ayudica.unizar.es/otrs/customer.pl?Action=CustomerTicketZoom;TicketNumber=%(ticket_num)s'>%(ticket_num)s</a>
-                    y seleccione la opción «Contestar».</p>'''  # noqa: E501
-                )
-                % {'ticket_num': received_data['ticket_num']}
-            )
-            # OsTicket
             # msg = mark_safe(
             #     _(
             #         '''<strong>Solicitud realizada con éxito</strong>.<br />
             #         <p>Para aportar más información a la solicitud, entre al ticket nº
-            #         <a href=
-            # 'https://caufor.unizar.es/osticket/utils/ticket.php?t=%(ticket_num)s'>
-            # %(ticket_num)s</a>
+            #         <a href='https://ayudica.unizar.es/otrs/customer.pl?Action=CustomerTicketZoom;TicketNumber=%(ticket_num)s'>%(ticket_num)s</a>
             #         y seleccione la opción «Contestar».</p>'''  # noqa: E501
             #     )
             #     % {'ticket_num': received_data['ticket_num']}
+            # )
+            # OsTicket
+            msg = mark_safe(
+                _(
+                    '''<strong>Solicitud realizada con éxito</strong>.<br />
+                    <p>Para aportar más información a la solicitud, entre al ticket nº
+                    <a href="https://caufor.unizar.es/osticket/utils/ticket.php?t=%(ticket_num)s">
+                    %(ticket_num)s</a> y seleccione la opción «Contestar».</p>'''
+                )
+                % {'ticket_num': received_data['ticket_num']}
             # )
             messages.success(request, msg)
         return redirect('ayuda')
@@ -2683,7 +2681,7 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
                 'prauz_tipo',
                 'prauz_contenido',
             )
-            if not self.kwargs['campo'] in permitidos_coordinador:
+            if self.kwargs['campo'] not in permitidos_coordinador:
                 self.permission_denied_message = _('No puede modificar este campo.')
                 return False
 
