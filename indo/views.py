@@ -861,6 +861,7 @@ class EvaluadorProyectoUpdateView(LoginRequiredMixin, PermissionRequiredMixin, C
     form_class = EvaluadorForm
 
     def get(self, request, *args, **kwargs):
+        get_object_or_404(Proyecto, pk=kwargs['proyecto_id'])
         User = get_user_model()
         # Obtenemos los NIPs de los usuarios con vinculación «Evaluador externo innovacion ACPUA».
         # Las vinculaciones las crea la administrativa del Secretariado de Calidad
