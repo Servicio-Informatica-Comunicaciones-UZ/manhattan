@@ -17,7 +17,7 @@
             {% for convocatoria in convocatorias %}
                 <option value="{% url 'proyectos_de_un_usuario' convocatoria.id usuario.id %}"
                         {% if convocatoria.id == anyo %}selected="selected"{% endif %}
-                >{{convocatoria}}</option>
+                >{{ convocatoria }}</option>
             {% endfor %}
         </select>
 
@@ -58,9 +58,8 @@
                 {% trans 'Este usuario no está vinculado a ningún proyecto en esta convocatoria.' %}
             {% endif %}
         </div>
-
+    </div>
 {% endblock content %}
-
 
 {% block extrajs %}
     <!--

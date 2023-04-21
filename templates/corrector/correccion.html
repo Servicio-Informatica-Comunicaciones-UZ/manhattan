@@ -4,7 +4,7 @@
 {% block title %}{% trans "Valoración de la memoria" %}: {{ proyecto.titulo }}{% endblock title %}
 
 {% block content %}
-    <div class='container-blanco'>
+    <div class="container-blanco">
         <h1 id="cabecera">{% trans "Valoración de la memoria" %} <small>{{ proyecto.titulo }}</small></h1>
         <hr />
         <br />
@@ -27,7 +27,7 @@
 
             <br style="clear: both;" />
 
-            <div class="btn-group" role="group" aria-label="{{_('Botones')}}">
+            <div class="btn-group" role="group" aria-label="{{ _('Botones') }}">
                 <a href="{% url 'memorias_asignadas_table' object.convocatoria_id %}" class="btn btn-info"
                    title="{% trans 'Cancelar - Se perderán los cambios no guardados' %}">
                     <span class="fas fa-times"></span> {% trans 'Cancelar' %}

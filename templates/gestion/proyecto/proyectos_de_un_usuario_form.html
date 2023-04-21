@@ -19,7 +19,7 @@
             {% for convocatoria in convocatorias %}
                 <option value="{% url 'proyectos_de_un_usuario_form' convocatoria.id %}"
                         {% if convocatoria.id == anyo %}selected="selected"{% endif %}
-                >{{convocatoria}}</option>
+                >{{ convocatoria }}</option>
             {% endfor %}
         </select>
 

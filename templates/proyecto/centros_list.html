@@ -9,7 +9,7 @@
             {% for convocatoria in convocatorias %}
                 <option value="{% url 'proyectos_aceptados_por_centros' convocatoria.id %}"
                         {% if convocatoria.id == anyo %}selected="selected"{% endif %}
-                >{{convocatoria}}</option>
+                >{{ convocatoria }}</option>
             {% endfor %}
         </select>
 
@@ -17,9 +17,11 @@
         <hr />
         <br />
         {% for centro in object_list %}
-            <a href="{% url 'proyectos_aceptados' anyo %}?proyecto__centro__academico_id_nk={{ centro.academico_id_nk | urlencode }}">
+            <a href="{% url 'proyectos_aceptados' anyo %}?proyecto__centro__academico_id_nk={{ centro.academico_id_nk | urlencode }}" style="text-decoration: none">
                 {% with logo_centro='img/centros/'|concat:centro.academico_id_nk|concat:'.png' %}
-                    <img src="{% static logo_centro %}" alt="{{ centro.nombre }}" style="margin: 20px; width: 289px;" title="{{ centro.nombre }}" />
+                    {# djlint:off H006 #}
+                    <img src="{% static logo_centro %}" alt="{{ centro.nombre }}" style="margin: 20px; width: 289px;" title="{{ centro.nombre }}" width="289" />
+                    {# djlint:on #}
                 {% endwith %}
             </a>
         {% endfor %}

@@ -4,6 +4,12 @@
 #   pre-commit run --all-files
 # Update this file:
 #   pre-commit autoupdate
+
+default_language_version:
+    python: python3.11
+
+exclude: .*migrations\/.*
+
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
@@ -18,6 +24,7 @@ repos:
       - id: check-executables-have-shebangs # Ensures that (non-binary) executables have a shebang
       - id: check-json # Checks json files for parseable syntax
       - id: check-merge-conflict # Checks for files that contain merge conflict strings
+      - id: check-toml # Checks toml files for parseable syntax
       - id: check-xml # Checks xml files for parseable syntax
       - id: check-yaml # Checks yaml files for parseable syntax
       - id: debug-statements # Check for debugger imports and py37+ `breakpoint()` calls in Python source.
@@ -44,8 +51,15 @@ repos:
       - id: pyupgrade
         args: [--py311-plus]
 
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: "v0.0.261"
+    hooks:
+      - id: ruff
+        args:
+          - --fix
+
   - repo: https://github.com/psf/black
-    rev: 23.1.0
+    rev: 23.3.0
     hooks:
       - id: black
         language_version: python3.11
@@ -92,16 +106,16 @@ repos:
   #   hooks:
   #     - id: yamllint
 
-  - repo: https://github.com/Lucas-C/pre-commit-hooks
-    rev: v1.4.2
-    hooks:
-      - id: forbid-crlf
-
   - repo: https://github.com/trbs/pre-commit-hooks-trbs
     rev: 1.2.4
     hooks:
       - id: forbid-executables
         exclude: manage.py|setup.py|docker-entrypoint.sh|compile_python.sh
+
+  - repo: https://github.com/Riverside-Healthcare/djLint
+    rev: v1.23.0
+    hooks:
+      - id: djlint-django
 
   - repo: https://github.com/rtts/djhtml
     rev: "3.0.6" # replace with the latest tag on GitHub

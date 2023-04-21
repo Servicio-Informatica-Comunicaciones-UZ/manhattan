@@ -4,7 +4,7 @@
 {% block title %}{% trans "Evaluación" %}: {{ proyecto.titulo }}{% endblock title %}
 
 {% block content %}
-    <div class='container-blanco'>
+    <div class="container-blanco">
         <h1 id="cabecera">{% trans "Evaluación" %} <small>{{ proyecto.titulo }}</small></h1>
         <hr />
         <br />
@@ -28,7 +28,7 @@
                         <p>—</p>
                     {% endif %}
                 {% elif criterio.tipo == 'texto' %}
-                    <div>{{ valoracion.texto | default:'—'}}</div>
+                    <div>{{ valoracion.texto | default:'—' }}</div>
                 {% endif %}
 
             {% endwith %}

@@ -7,7 +7,7 @@
     <div class="container-blanco">
 
         {% with logo_programa='img/'|concat:proyecto.programa.nombre_corto|concat:'.png' %}
-            <p style='text-align: right;'><img src="{% static logo_programa %}" alt="Logo programa" height="240" /></p>
+            <p style="text-align: right;"><img src="{% static logo_programa %}" alt="Logo programa" height="240" width="240" /></p>
         {% endwith %}
 
         {# DetailView proporciona el objeto de contexto `proyecto` #}
@@ -62,7 +62,7 @@
 
                 <tr>
                     <th scope="row"><strong>{% trans 'Unidad de planificación' %}</strong>:</th>
-                    <td>{{ proyecto.get_unidad_planificacion | default:"—"}}</td>
+                    <td>{{ proyecto.get_unidad_planificacion | default:"—" }}</td>
                 </tr>
 
                 <tr>

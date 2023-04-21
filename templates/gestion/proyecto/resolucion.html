@@ -57,7 +57,7 @@
 
                 <tr>
                     <th scope="row"><strong>{% trans 'Unidad de planificación' %}</strong>:</th>
-                    <td>{{ proyecto.get_unidad_planificacion | default:"—"}}</td>
+                    <td>{{ proyecto.get_unidad_planificacion | default:"—" }}</td>
                 </tr>
 
                 {% if proyecto.coordinador %}
@@ -97,7 +97,6 @@
         </div>
         <br />
 
-
         <h3>{{ proyecto | get_attr_verbose_name:"aceptacion_comision" }}</h3>
         <p>{{ proyecto.aceptacion_comision| yesno:"Sí,No,—" }}</p>
 
@@ -108,10 +107,10 @@
         <p>{{ proyecto.ayuda_definitiva | default_if_none:'—' }}</p>
 
         <h3>{{ proyecto | get_attr_verbose_name:"tipo_gasto" }}</h3>
-        <p>{{ proyecto.tipo_gasto | default:"—" | limpiar | linebreaks}}</p>
+        <p>{{ proyecto.tipo_gasto | default:"—" | limpiar | linebreaks }}</p>
 
         <h3>{{ proyecto | get_attr_verbose_name:'puntuacion' }}</h3>
-        <p>{{ proyecto.puntuacion  | default_if_none:'—' }}</p>
+        <p>{{ proyecto.puntuacion | default_if_none:'—' }}</p>
 
         <h3>{{ proyecto | get_attr_verbose_name:"observaciones" }}</h3>
         <p>{{ proyecto.observaciones | default:"—" | limpiar | linebreaks }}</p>

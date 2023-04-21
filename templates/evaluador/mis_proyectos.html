@@ -5,12 +5,12 @@
 {% block title %}{% trans "Proyectos a evaluar" %}{% endblock title %}
 
 {% block content %}
-    <div class='container-blanco'>
+    <div class="container-blanco">
         <select aria-label="Cambiar de convocatoria" class="form-select" name="convocatoria" onchange="location = this.value;" style="float: right; width: 150px;">
             {% for convocatoria in convocatorias %}
                 <option value="{% url 'proyectos_evaluados_table' convocatoria.id %}"
                         {% if convocatoria.id == anyo %}selected="selected"{% endif %}
-                >{{convocatoria}}</option>
+                >{{ convocatoria }}</option>
             {% endfor %}
         </select>
 
@@ -23,7 +23,7 @@
 
             <span class="fas fa-info-circle"></span>
             {% blocktranslate %}
-                Aquí puede ver los proyectos que se le han asignado para su evaluación en la convocatoria de {{anyo}}.
+                Aquí puede ver los proyectos que se le han asignado para su evaluación en la convocatoria de {{ anyo }}.
             {% endblocktranslate %}
         </div><br />
 

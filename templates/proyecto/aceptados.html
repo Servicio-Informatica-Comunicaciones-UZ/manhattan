@@ -52,12 +52,15 @@
         {% if centro %}
             <p style="text-align: right">
                 {% with logo_centro='img/centros/'|concat:centro.academico_id_nk|concat:'.png' %}
+                    {# djlint:off H006 #}
                     <img
                         src="{% static logo_centro %}"
                         alt="{{ centro.nombre }}"
                         style="margin: 20px; width: 289px"
                         title="{{ centro.nombre }}"
+                        width="289"
                     />
+                    {# djlint:on #}
                 {% endwith %}
             </p>
         {% endif %}

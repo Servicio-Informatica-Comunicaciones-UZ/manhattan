@@ -19,7 +19,7 @@
             {% for convocatoria in convocatorias %}
                 <option value="{% url 'hace_constar' convocatoria.id %}"
                         {% if convocatoria.id == anyo %}selected="selected"{% endif %}
-                >{{convocatoria}}</option>
+                >{{ convocatoria }}</option>
             {% endfor %}
         </select>
 

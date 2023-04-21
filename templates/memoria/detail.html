@@ -28,11 +28,11 @@
         </div>
 
         {% with logo_programa='img/'|concat:proyecto.programa.nombre_corto|concat:'.png' %}
-            <p style='text-align: right;'><img src="{% static logo_programa %}" alt="Logo programa" height="240" /></p>
+            <p style="text-align: right;"><img src="{% static logo_programa %}" alt="Logo programa" height="240" width="240" /></p>
         {% endwith %}
 
         <h1 id="cabecera">{% trans 'Memoria final' %}</h1>
-        <h2><small>{% trans 'Proyectos de Innovación Docente' %} {{proyecto.convocatoria}}</small></h2>
+        <h2><small>{% trans 'Proyectos de Innovación Docente' %} {{ proyecto.convocatoria }}</small></h2>
         <hr />
         <br />
 

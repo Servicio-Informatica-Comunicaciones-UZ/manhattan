@@ -6,12 +6,12 @@
 {% endblock title %}
 
 {% block content %}
-    <div class='container-blanco'>
+    <div class="container-blanco">
         <select aria-label="Cambiar de convocatoria" class="form-select" name="convocatoria" onchange="location = this.value;" style="float: right; width: 150px;">
             {% for convocatoria in convocatorias %}
                 <option value="{% url 'memorias_zaguan' convocatoria.id %}"
                         {% if convocatoria.id == anyo %}selected="selected"{% endif %}
-                >{{convocatoria}}</option>
+                >{{ convocatoria }}</option>
             {% endfor %}
         </select>
 
@@ -25,10 +25,9 @@
             <span class="fas fa-info-circle"></span>
             {% blocktranslate %}
                 Desde esta página puede cargar en el repositorio institucional
-                las memorias de la convocatoria seleccionada ({{anyo}}).
+                las memorias de la convocatoria seleccionada ({{ anyo }}).
             {% endblocktranslate %}
         </div><br />
-
 
         <br style="clear: both;" />
 

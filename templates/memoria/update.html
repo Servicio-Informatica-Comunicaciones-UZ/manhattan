@@ -30,7 +30,7 @@
             {# MemoriaRespuestaForm está definido en forms.py #}
             {{ form.as_p }}
             <br style="clear: both;" />
-            <div class="btn-group" role="group" aria-label="{{_('Botones')}}">
+            <div class="btn-group" role="group" aria-label="{{ _('Botones') }}">
                 <a href="{% url 'memoria_detail' object.proyecto_id %}" class="btn btn-info"
                    title="{% trans 'Cancelar - Se perderán los cambios no guardados' %}">
                     <span class="fas fa-times"></span> {% trans 'Cancelar' %}

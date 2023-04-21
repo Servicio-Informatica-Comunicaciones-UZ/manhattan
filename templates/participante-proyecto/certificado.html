@@ -56,22 +56,20 @@
             <ul>
                 {% for proyecto in proyecto_list %}
                     <li>{{ proyecto.titulo }} (id {{ proyecto.id }},
-                        {% if proyecto.codigo%}
+                        {% if proyecto.codigo %}
                             código {{ proyecto.codigo }},
                         {% elif proyecto.programa.nombre_corto %}
                             programa {{ proyecto.programa.nombre_corto }},
                         {% endif %}
                         curso {{ proyecto.convocatoria }}),
-                        {% if proyecto.coordinador.id == usuario.id or proyecto.coordinador2.id == usuario.id%}
-                            {% if usuario.sexo == "F" %}como Coordinadora{% else %} como Coordinador {% endif %}.</li>
+                        {% if proyecto.coordinador.id == usuario.id or proyecto.coordinador2.id == usuario.id %}
+                            {% if usuario.sexo == "F" %}como Coordinadora{% else %} como Coordinador {% endif %}.
                         {% else %}
-                            proyecto coordinado por {{ proyecto.coordinador.full_name }}.</li>
+                            proyecto coordinado por {{ proyecto.coordinador.full_name }}.
                         {% endif %}
-                        <br>
+                    </li>
                 {% endfor %}
             </ul>
-
-
 
             <p>
                 Y para que conste, se expide el presente a los efectos oportunos y a petición de la persona interesada.

@@ -9,7 +9,7 @@
             {% for convocatoria in convocatorias %}
                 <option value="{% url 'mis_proyectos' convocatoria.id %}"
                         {% if convocatoria.id == anyo %}selected="selected"{% endif %}
-                >{{convocatoria}}</option>
+                >{{ convocatoria }}</option>
             {% endfor %}
         </select>
 
@@ -30,10 +30,10 @@
                     </thead>
                     {% for proyecto in proyectos_coordinados %}
                         <tr>
-                            <td>{{proyecto.programa.nombre_corto}}</td>
-                            <td>{% if proyecto.linea %}{{proyecto.linea.nombre}}{% endif %}</td>
+                            <td>{{ proyecto.programa.nombre_corto }}</td>
+                            <td>{% if proyecto.linea %}{{ proyecto.linea.nombre }}{% endif %}</td>
                             <td><a href="{% url 'proyecto_detail' proyecto.id %}">{{ proyecto.titulo }}</a></td>
-                            <td>{{proyecto.get_estado_display}}</td>
+                            <td>{{ proyecto.get_estado_display }}</td>
                         </tr>
                     {% endfor %}
                 </table>
@@ -67,16 +67,16 @@
 
                     {% for proyecto in proyectos_participados %}
                         <tr>
-                            <td>{{proyecto.programa.nombre_corto}}</td>
-                            <td>{% if proyecto.linea %}{{proyecto.linea.nombre}}{% endif %}</td>
+                            <td>{{ proyecto.programa.nombre_corto }}</td>
+                            <td>{% if proyecto.linea %}{{ proyecto.linea.nombre }}{% endif %}</td>
                             <td><a href="{% url 'proyecto_detail' proyecto.id %}">{{ proyecto.titulo }}</a></td>
-                            <td>{{proyecto.coordinador.full_name}}</td>
-                            <td>{{proyecto.get_estado_display}}</td>
+                            <td>{{ proyecto.coordinador.full_name }}</td>
+                            <td>{{ proyecto.get_estado_display }}</td>
                             <td>
                                 <button
                                     class="btn btn-secondary btn-sm prepararRenunciar"
-                                    data-id="{{proyecto.id}}"
-                                    data-titulo="{{proyecto.titulo}}"
+                                    data-id="{{ proyecto.id }}"
+                                    data-titulo="{{ proyecto.titulo }}"
                                     data-bs-toggle="modal"
                                     data-bs-target="#renunciarModal"
                                     type="button"
@@ -128,11 +128,11 @@
 
                     {% for proyecto in proyectos_invitado %}
                         <tr>
-                            <td>{{proyecto.programa.nombre_corto}}</td>
-                            <td>{% if proyecto.linea %}{{proyecto.linea.nombre}}{% endif %}</td>
+                            <td>{{ proyecto.programa.nombre_corto }}</td>
+                            <td>{% if proyecto.linea %}{{ proyecto.linea.nombre }}{% endif %}</td>
                             <td><a href="{% url 'proyecto_detail' proyecto.id %}">{{ proyecto.titulo }}</a></td>
-                            <td>{{proyecto.coordinador.full_name}}</td>
-                            <td>{{proyecto.get_estado_display}}</td>
+                            <td>{{ proyecto.coordinador.full_name }}</td>
+                            <td>{{ proyecto.get_estado_display }}</td>
                             <td>
                                 {% if fecha_actual > convocatoria.fecha_max_aceptos|date:"Y-m-d" %}
                                     <span title="{% trans 'Fecha límite superada' %}">—</span>
@@ -142,8 +142,8 @@
                                         <div class="btn-group" role="group" aria-label="Botones">
                                             <button
                                                 class="btn btn-secondary btn-sm prepararDeclinar"
-                                                data-id="{{proyecto.id}}"
-                                                data-titulo="{{proyecto.titulo}}"
+                                                data-id="{{ proyecto.id }}"
+                                                data-titulo="{{ proyecto.titulo }}"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#declinarModal"
                                                 id="boton-declinar"
@@ -188,12 +188,12 @@
                     </thead>
                     {% for proyecto in proyectos_centros_dirigidos %}
                         <tr>
-                            <td>{{proyecto.programa.nombre_corto}}</td>
-                            <td>{% if proyecto.linea %}{{proyecto.linea.nombre}}{% endif %}</td>
+                            <td>{{ proyecto.programa.nombre_corto }}</td>
+                            <td>{% if proyecto.linea %}{{ proyecto.linea.nombre }}{% endif %}</td>
                             <td><a href="{% url 'proyecto_detail' proyecto.id %}">{{ proyecto.titulo }}</a></td>
-                            <td>{{proyecto.coordinador.full_name}}</td>
-                            <td>{{proyecto.get_estado_display}}</td>
-                            <td>{{proyecto.visto_bueno_centro | yesno:"Sí,No,—"}}</td>
+                            <td>{{ proyecto.coordinador.full_name }}</td>
+                            <td>{{ proyecto.get_estado_display }}</td>
+                            <td>{{ proyecto.visto_bueno_centro | yesno:"Sí,No,—" }}</td>
                             <td>
                                 {% if proyecto.estado == 'SOLICITADO' %}
                                     <a href="{% url 'proyecto_update_field' proyecto.id 'visto_bueno_centro' %}" class="btn btn-info btn-sm">
@@ -228,12 +228,12 @@
                     </thead>
                     {% for proyecto in proyectos_estudios_coordinados %}
                         <tr>
-                            <td>{{proyecto.programa.nombre_corto}}</td>
-                            <td>{% if proyecto.linea %}{{proyecto.linea.nombre}}{% endif %}</td>
+                            <td>{{ proyecto.programa.nombre_corto }}</td>
+                            <td>{% if proyecto.linea %}{{ proyecto.linea.nombre }}{% endif %}</td>
                             <td><a href="{% url 'proyecto_detail' proyecto.id %}">{{ proyecto.titulo }}</a></td>
-                            <td>{{proyecto.coordinador.full_name}}</td>
-                            <td>{{proyecto.get_estado_display}}</td>
-                            <td>{{proyecto.visto_bueno_estudio | yesno:"Sí,No,—"}}</td>
+                            <td>{{ proyecto.coordinador.full_name }}</td>
+                            <td>{{ proyecto.get_estado_display }}</td>
+                            <td>{{ proyecto.visto_bueno_estudio | yesno:"Sí,No,—" }}</td>
                             <td>
                                 {% if proyecto.estado == 'SOLICITADO' %}
                                     <a href="{% url 'proyecto_update_field' proyecto.id 'visto_bueno_estudio' %}" class="btn btn-info btn-sm">
