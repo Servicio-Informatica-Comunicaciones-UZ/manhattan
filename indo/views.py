@@ -265,14 +265,6 @@ class AyudaView(LoginRequiredMixin, TemplateView):
         return context
 
     def post(self, request, *args, **kwargs):
-        # OTRS
-        payload = {
-            'asunto': request.POST.get('asunto'),
-            'descripcion': request.POST.get('descripcion'),
-            'email': request.user.email,
-        }
-
-        # OsTicket
         payload = {
             'email': request.user.email,
             # Si usáramos un editor enriquecido
@@ -283,14 +275,8 @@ class AyudaView(LoginRequiredMixin, TemplateView):
             'topicId': '53',
         }
 
-        # OTRS
-        # resp = requests.post(get_config('ADD_TICKET_URL'), data=payload)
-        # OsTicket
         resp = requests.post(get_config('ADD_TICKET_URL'), json=payload)
 
-        # OTRS
-        # received_data = json.loads(resp.content.decode('utf-8'))
-        # OsTicket
         received_data = {
             'msg': resp.content.decode('utf-8'),
             'ticket_num': resp.content.decode('utf-8'),
@@ -298,27 +284,16 @@ class AyudaView(LoginRequiredMixin, TemplateView):
 
         if not resp.ok:
             msg = mark_safe(
-                _('ERROR: %(mensaje)s<br />Pruebe a crear el ticket en Ayudica.')
+                _('ERROR: %(mensaje)s<br />Pruebe a crear el ticket en la web del CAU.')
                 % {'mensaje': received_data['msg']}
             )
             messages.error(request, msg)
         else:
-            # OTRS
-            # msg = mark_safe(
-            #     _(
-            #         '''<strong>Solicitud realizada con éxito</strong>.<br />
-            #         <p>Para aportar más información a la solicitud, entre al ticket nº
-            #         <a href='https://ayudica.unizar.es/otrs/customer.pl?Action=CustomerTicketZoom;TicketNumber=%(ticket_num)s'>%(ticket_num)s</a>
-            #         y seleccione la opción «Contestar».</p>'''  # noqa: E501
-            #     )
-            #     % {'ticket_num': received_data['ticket_num']}
-            # )
-            # OsTicket
             msg = mark_safe(
                 _(
                     '''<strong>Solicitud realizada con éxito</strong>.<br />
                     <p>Para aportar más información a la solicitud, entre al ticket nº
-                    <a href="https://caufor.unizar.es/osticket/utils/ticket.php?t=%(ticket_num)s">
+                    <a href="https://cau.unizar.es/osticket/utils/ticket.php?t=%(ticket_num)s">
                     %(ticket_num)s</a> y seleccione la opción «Contestar».</p>'''
                 )
                 % {'ticket_num': received_data['ticket_num']}
