@@ -230,8 +230,9 @@ class InvitacionForm(forms.ModelForm):
                 mark_safe(
                     _(
                         '''Usuario inactivo en el sistema de Gestión de Identidades.<br>
-                        <a href="%(url)s">Solicite en Ayudica</a> que se le asigne
-                        la vinculación «Participantes externos Proyectos Innovación Docente».'''
+                        <a href="%(url)s">Solicite en el Centro de Atención a Usuari@s</a> (CAU)
+                        que se le asigne la vinculación
+                        «Participantes externos Proyectos Innovación Docente».'''
                     )
                     % {'url': reverse('ayuda')}
                 )

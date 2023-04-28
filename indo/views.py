@@ -841,7 +841,7 @@ class EvaluadorProyectoUpdateView(LoginRequiredMixin, PermissionRequiredMixin, C
         # Obtenemos los NIPs de los usuarios con vinculación «Evaluador externo innovacion ACPUA».
         # Las vinculaciones las crea la administrativa del Secretariado de Calidad
         # e Innovación Docente
-        # <https://ayudica.unizar.es/otrs/public.pl?Action=PublicFAQZoom;ItemID=127>
+        # <https://cau.unizar.es/osticket/kb/faq.php?id=283>
         advertencia, nip_evaluadores = User.get_nips_vinculacion(60)
         if advertencia:
             messages.warning(request, advertencia)
@@ -1164,8 +1164,9 @@ class ParticipanteAnyadirView(LoginRequiredMixin, ChecksMixin, TemplateView):
             texto = mark_safe(
                 _(
                     '''Usuario inactivo en el sistema de Gestión de Identidades.<br>
-                    <a href="%(url)s">Solicite en Ayudica</a> que se le asigne
-                    la vinculación «Participantes externos Proyectos Innovación Docente».'''
+                    <a href="%(url)s">Solicite en el Centro de Atención a Usuari@s</a> (CAU)
+                    que se le asigne la vinculación
+                    «Participantes externos Proyectos Innovación Docente».'''
                 )
                 % {'url': reverse('ayuda')}
             )

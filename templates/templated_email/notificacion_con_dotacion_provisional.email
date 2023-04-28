@@ -48,8 +48,8 @@ etc., así como la justificación de los gastos realizados.
 Por otro lado, el plazo para justificar los gastos realizados a la
 Unidad de Planificación correspondiente será el {{proyecto.convocatoria.fecha_max_gastos}}.
 
-Cualquier duda o sugerencia no dudes en hacérnosla llegar a través de
-Ayudica <{{ ayuda_url }}.
+Cualquier duda o sugerencia no dudes en hacérnosla llegar a través del
+Centro de Atención a Usuari@s <{{ ayuda_url }}.
 
 Recibe un cordial saludo,
 {{vicerrector}}
