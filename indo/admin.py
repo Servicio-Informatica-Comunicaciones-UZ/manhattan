@@ -40,10 +40,9 @@ class Opcion(admin.ModelAdmin):
     list_filter = ('criterio__convocatoria',)
     ordering = ('criterio__peso', 'puntuacion')
 
+    @admin.display(description=_('Criterio'))
     def mini_criterio(self, obj):
         return obj.criterio.descripcion[:12]
-
-    mini_criterio.short_description = _('Criterio')
 
 
 @admin.register(Resolucion)

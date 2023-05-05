@@ -52,8 +52,6 @@ TIME_ZONE = os.environ.get('TZ', 'Europe/Madrid')
 LANGUAGE_CODE = 'es-es'
 # https://docs.djangoproject.com/en/dev/ref/settings/#use-i18n
 USE_I18N = True
-# https://docs.djangoproject.com/en/dev/ref/settings/#use-l10n
-USE_L10N = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#use-tz
 USE_TZ = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#locale-paths
@@ -159,7 +157,21 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
 STATICFILES_DIRS = [str(BASE_DIR / 'static')]
 
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
+# https://docs.djangoproject.com/en/4.2/ref/settings/#storages
+STORAGES = {
+    # https://docs.djangoproject.com/en/4.2/topics/files/
+    "default": {
+        # https://docs.djangoproject.com/en/4.2/topics/files/#file-storage
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    # https://docs.djangoproject.com/en/4.2/ref/contrib/staticfiles/
+    "staticfiles": {
+        # https://docs.djangoproject.com/en/4.2/ref/contrib/staticfiles/#staticfilesstorage
+        # "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        # https://docs.djangoproject.com/en/4.2/ref/contrib/staticfiles/#manifeststaticfilesstorage
+        "BACKEND": 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage',
+    },
+}
 
 # MEDIA
 # ------------------------------------------------------------------------------
