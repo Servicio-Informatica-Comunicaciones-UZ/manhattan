@@ -389,7 +389,10 @@ class ProyectosAceptadosTable(tables.Table):
         enlace = reverse('proyecto_ficha', args=[record.proyecto.id])
         return mark_safe(f'<a href="{enlace}">{record.proyecto.titulo}</a>')
 
-    usuario__full_name = tables.Column(verbose_name=_('Coordinador'))
+    usuario__full_name = tables.Column(
+        order_by=('usuario.first_name', 'usuario.last_name', 'usuario.last_name_2'),
+        verbose_name=_('Coordinador'),
+    )
 
     proyecto__descripcion_txt = tables.Column(verbose_name=_('Descripción'), visible=False)
 
