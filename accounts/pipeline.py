@@ -36,7 +36,7 @@ def get_identidad(strategy: BaseStrategy, response, user, *args, **kwargs) -> No
 
     if response.error:
         # La comunicación con el WS fue correcta, pero éste devolvió un error. Finalizamos.
-        raise Exception(response.descripcionResultado)
+        raise Exception('WS Identidad: ' + response.descripcionResultado)
 
     identidad = response.identidad
     user.first_name = identidad.nombre
