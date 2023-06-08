@@ -1169,15 +1169,16 @@ class Valoracion(models.Model):
                       WHEN c.tipo = 'texto' THEN v.texto
                       ELSE NULL
                     END AS valoracion
-                    FROM indo_evaluadorproyecto ep
-                    JOIN indo_proyecto p ON ep.proyecto_id = p.id
-                    JOIN indo_programa prog ON p.programa_id = prog.id
+                    FROM indo_proyecto proy
+                    JOIN indo_evaluadorproyecto ep ON proy.id = ep.proyecto_id
+                    JOIN indo_criterio c ON c.convocatoria_id = proy.convocatoria_id
                     LEFT JOIN indo_valoracion v
-                           ON ep.proyecto_id = v.proyecto_id AND ep.evaluador_id=v.evaluador_id
-                    LEFT JOIN indo_criterio c ON v.criterio_id = c.id
+                      ON proy.id = v.proyecto_id
+                         AND ep.evaluador_id = v.evaluador_id
+                         AND c.id = v.criterio_id
                     LEFT JOIN indo_opcion o ON v.opcion_id = o.id
-                    WHERE prog.convocatoria_id = {anyo}
-                      AND (v.criterio_id = {criterio.id} OR v.criterio_id IS NULL)
+                    WHERE proy.convocatoria_id = {anyo}
+                          AND c.id = {criterio.id}
                     ORDER BY ep.proyecto_id, ep.evaluador_id, c.parte, c.peso;
                     '''
                 )
