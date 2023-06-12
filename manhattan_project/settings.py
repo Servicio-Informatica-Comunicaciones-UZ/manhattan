@@ -349,7 +349,10 @@ if DEBUG:
     INTERNAL_IPS = [ip[: ip.rfind('.')] + '.1' for ip in ips] + ['127.0.0.1', '10.0.2.2']
 
 # SUMMERNOTE
-SUMMERNOTE_THEME = 'bs5'
+# De momento tenemos que usar Bootstrap4 en Summernote 0.8.20
+# https://github.com/summernote/summernote/issues/4464
+# https://github.com/summernote/summernote/issues/4443
+SUMMERNOTE_THEME = 'bs4'
 
 SUMMERNOTE_CONFIG = {
     # Using SummernoteWidget - iframe mode, default
