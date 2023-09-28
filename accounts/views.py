@@ -52,6 +52,9 @@ class LogoutView(LoginRequiredMixin, RedirectView):
     url = reverse_lazy(get_config('LOGOUT_REDIRECT_URL'))
 
     def get(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect(str(self.url))
+
         saml_backend = load_backend(load_strategy(request), 'saml', redirect_uri="{% url 'sls' %}")
         # As of now, this code only handles the first association.
         association = request.user.social_auth.first()
@@ -77,6 +80,9 @@ class SlsView(View):
     url = reverse_lazy(get_config('LOGOUT_REDIRECT_URL'))
 
     def get(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect(str(self.url))
+
         saml_backend = load_backend(load_strategy(request), 'saml', redirect_uri=str(self.url))
         # As of now, this code only handles the first association.
         association = request.user.social_auth.first()
