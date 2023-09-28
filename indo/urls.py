@@ -59,6 +59,7 @@ from .views import (
     ProyectoVerCondicionesView,
     ResolucionListView,
     actualizar_usuarios,
+    teapot,
 )
 
 urlpatterns = [
@@ -267,6 +268,8 @@ urlpatterns = [
         'proyectos/<int:anyo>/mis-proyectos/', ProyectosUsuarioView.as_view(), name='mis_proyectos'
     ),
     path('resoluciones', ResolucionListView.as_view(), name='resoluciones'),
+    path('wp<path:whatever>', teapot),
+    path('<path:whatever>php', teapot),
 ]
 
 if settings.DEBUG:
