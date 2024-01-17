@@ -1,5 +1,5 @@
-# Pull base image
-FROM python:3.11-slim-bullseye
+# Pull base image from <https://hub.docker.com/_/python>
+FROM python:3.12-slim-bookworm
 LABEL maintainer="Enrique Matías Sánchez <quique@unizar.es>"
 
 # Set environment variables

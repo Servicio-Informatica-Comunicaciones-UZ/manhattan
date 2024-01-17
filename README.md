@@ -4,7 +4,7 @@ Proyecto Manhattan
 > First we take Manhattan, then we take Berlin.
 
 Manhattan es una aplicación web para gestionar los proyectos de Innovación Docente.  
-Está desarrollada con [Django](https://www.djangoproject.com/) 4, mucho ♥, bastante ☕
+Está desarrollada con [Django](https://www.djangoproject.com/) 5, mucho ♥, bastante ☕
 y un poco de magia 🧙.
 
 Instalación sobre contenedores Docker
@@ -56,10 +56,10 @@ Instalación sobre hierro
 
 ### Requisitos
 
-1. **Python 3.8 o superior**. En Debian o Ubuntu:
+1. **Python 3.10 o superior**. En Debian o Ubuntu:
 
    ```bash
-    sudo apt-get install python3.9-dev python3-distutils
+    sudo apt-get install python3.11-dev python3-distutils
     ```
 
 2. **[pip](https://pip.pypa.io/en/stable/installing/)**, instalador de paquetes de Python.

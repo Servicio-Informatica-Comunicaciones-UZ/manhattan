@@ -155,7 +155,7 @@ class Criterio(models.Model):
     parte = models.PositiveSmallIntegerField(_('parte'))
     peso = models.PositiveSmallIntegerField(_('peso'))
     descripcion = models.CharField(_('descripción'), max_length=255)
-    tipo = models.CharField(_('tipo'), max_length=15, choices=Tipo.choices)
+    tipo = models.CharField(_('tipo'), max_length=15, choices=Tipo)
 
     class Meta:
         ordering = ('convocatoria', 'parte', 'peso')
@@ -972,7 +972,7 @@ class MemoriaSubapartado(models.Model):
     peso = models.PositiveSmallIntegerField(_('peso'))
     descripcion = models.CharField(_('descripción'), max_length=255)
     ayuda = models.CharField(_('texto de ayuda'), max_length=255)
-    tipo = models.CharField(_('tipo'), max_length=15, choices=Tipo.choices)
+    tipo = models.CharField(_('tipo'), max_length=15, choices=Tipo)
 
     class Meta:
         ordering = ('apartado__numero', 'peso')
