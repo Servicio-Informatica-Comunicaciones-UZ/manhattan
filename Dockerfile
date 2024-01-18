@@ -82,7 +82,7 @@ EXPOSE 8005
 RUN python3 manage.py collectstatic --no-input
 
 ## GUNICORN
-# CMD exec gunicorn manhattan_project.wsgi:application --bind 0.0.0.0:8000 --workers 3
+# CMD exec gunicorn manhattan_project.wsgi:application --bind 0.0.0.0:8005 --workers 3
 
 ## uWSGI
 # Avoid hr_read(): Connection reset by peer [plugins/http/http.c line 918]
@@ -92,7 +92,7 @@ ENV UWSGI_BUFFER_SIZE=16384
 ENV UWSGI_WSGI_FILE=manhattan_project/wsgi.py
 
 # Base uWSGI configuration (use the appropriate UID and GID for your server):
-ENV UWSGI_HTTP=:8000 UWSGI_MASTER=1 UWSGI_HTTP_AUTO_CHUNKED=1 UWSGI_HTTP_KEEPALIVE=1 UWSGI_UID=1000 UWSGI_GID=2000 UWSGI_LAZY_APPS=1 UWSGI_WSGI_ENV_BEHAVIOR=holy
+ENV UWSGI_HTTP=:8005 UWSGI_MASTER=1 UWSGI_HTTP_AUTO_CHUNKED=1 UWSGI_HTTP_KEEPALIVE=1 UWSGI_UID=1000 UWSGI_GID=2000 UWSGI_LAZY_APPS=1 UWSGI_WSGI_ENV_BEHAVIOR=holy
 
 # Number of uWSGI workers and threads per worker (customize as needed):
 ENV UWSGI_WORKERS=4 UWSGI_THREADS=1
@@ -103,7 +103,7 @@ ENV UWSGI_STATIC_MAP2="/media/=/code/" UWSGI_STATIC_EXPIRES_URI="/media/.*/.*/.*
 
 
 # Deny invalid hosts before they get to Django (uncomment and change to your hostname(s)):
-# ENV UWSGI_ROUTE_HOST="^(?!localhost:8000$) break:400"
+# ENV UWSGI_ROUTE_HOST="^(?!localhost:8005$) break:400"
 
 # Uncomment after creating your docker-entrypoint.sh
 ENTRYPOINT ["/code/docker-entrypoint.sh"]

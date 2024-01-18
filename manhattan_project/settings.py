@@ -270,7 +270,7 @@ MANAGERS = ADMINS
 # SOCIAL_AUTH_POSTGRES_JSONFIELD = True
 # Identifier of the SP entity (must be a URI)
 SOCIAL_AUTH_SAML_SP_ENTITY_ID = os.environ.get(
-    'SOCIAL_AUTH_SAML_SP_ENTITY_ID', 'http://localhost:8001/accounts/metadata'
+    'SOCIAL_AUTH_SAML_SP_ENTITY_ID', 'http://localhost:8005/accounts/metadata'
 )
 SOCIAL_AUTH_SAML_SP_PUBLIC_CERT = os.environ.get('SOCIAL_AUTH_SAML_SP_PUBLIC_CERT')
 SOCIAL_AUTH_SAML_SP_PRIVATE_KEY = os.environ.get('SOCIAL_AUTH_SAML_SP_PRIVATE_KEY')
