@@ -73,7 +73,7 @@ WORKDIR /code
 COPY . /code
 
 # The WSGI server will listen on this port
-EXPOSE 8000
+EXPOSE 8005
 
 # Add any static environment variables needed by Django or your settings file here:
 # ENV DJANGO_SETTINGS_MODULE=my_project.settings.deploy
@@ -85,10 +85,13 @@ RUN python3 manage.py collectstatic --no-input
 # CMD exec gunicorn manhattan_project.wsgi:application --bind 0.0.0.0:8000 --workers 3
 
 ## uWSGI
+# Avoid hr_read(): Connection reset by peer [plugins/http/http.c line 918]
+# https://github.com/unbit/uwsgi/issues/1831
+ENV UWSGI_BUFFER_SIZE=16384
 # Tell uWSGI where to find your wsgi file:
 ENV UWSGI_WSGI_FILE=manhattan_project/wsgi.py
 
-# Base uWSGI configuration (you shouldn't need to change these):
+# Base uWSGI configuration (use the appropriate UID and GID for your server):
 ENV UWSGI_HTTP=:8000 UWSGI_MASTER=1 UWSGI_HTTP_AUTO_CHUNKED=1 UWSGI_HTTP_KEEPALIVE=1 UWSGI_UID=1000 UWSGI_GID=2000 UWSGI_LAZY_APPS=1 UWSGI_WSGI_ENV_BEHAVIOR=holy
 
 # Number of uWSGI workers and threads per worker (customize as needed):
