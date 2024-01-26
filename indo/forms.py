@@ -405,29 +405,19 @@ class EvaluadorForm(forms.ModelForm):
 
 
 class MemoriaRespuestaForm(forms.ModelForm):
+    # Render this form as HTML <p>s, without label but with help for this subitem.
+    # template_name_p = 'indo/custom_p.html'  # indo/templates/indo/custom_p.html
+    # As our templates folder is in the project's base directory, in our `settings.py` file
+    # we have to explicitly register `django.forms` in our `INSTALLED_APPS`
+    # and define `FORM_RENDERER = 'django.forms.renderers.TemplatesSetting'`.
+    # <https://docs.djangoproject.com/en/dev/ref/forms/renderers/#django.forms.renderers.TemplatesSetting>
+    template_name_p = 'custom_p.html'  # templates/custom_p.html
     texto = SummernoteTextField()
 
     class Meta:
         fields = ('texto',)
         model = MemoriaRespuesta
         widgets = {'texto': SummernoteWidget()}
-
-    def as_p(self):
-        """
-        Return this form rendered as HTML <p>s, without label but with help for this subitem.
-
-        Overrides `BaseForm.as_p()`.
-        """
-
-        return self._html_output(
-            normal_row='<p%(html_class_attr)s> %(field)s'
-            + self.instance.subapartado.ayuda
-            + '</p>',
-            error_row='%s',
-            row_ender='</p>',
-            help_text_html=' <span class="helptext">%s</span>',
-            errors_on_separate_row=True,
-        )
 
 
 class ProyectosDeUnUsuarioForm(forms.Form):

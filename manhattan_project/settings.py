@@ -94,6 +94,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.forms',
     # Local
     'indo.apps.IndoConfig',
     'accounts.apps.AccountsConfig',
@@ -105,6 +106,8 @@ INSTALLED_APPS = [
     'huey.contrib.djhuey',  # https://github.com/coleifer/huey
     'social_django',  # https://github.com/python-social-auth/social-app-django
 ]
+
+FORM_RENDERER = 'django.forms.renderers.TemplatesSetting'
 
 # AUTHENTICATION
 # ------------------------------------------------------------------------------
@@ -188,7 +191,7 @@ TEMPLATES = [
         # https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-TEMPLATES-BACKEND
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         # https://docs.djangoproject.com/en/dev/ref/settings/#dirs
-        'DIRS': [str(BASE_DIR / 'templates')],
+        'DIRS': [BASE_DIR / 'templates'],
         # https://docs.djangoproject.com/en/dev/ref/settings/#app-dirs
         'APP_DIRS': True,
         'OPTIONS': {
