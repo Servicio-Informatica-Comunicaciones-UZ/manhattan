@@ -117,7 +117,7 @@ def actualizar_usuarios(request, anyo):
 
 def teapot(request, whatever):
     """Pasarle a Django direcciones PHP es como pedirle a una tetera que haga café."""
-    return HttpResponse('I\'m a teapot', status=418)
+    return HttpResponse("I'm a teapot", status=418)
 
 
 class ChecksMixin(UserPassesTestMixin):
@@ -296,10 +296,10 @@ class AyudaView(LoginRequiredMixin, TemplateView):
         else:
             msg = mark_safe(
                 _(
-                    '''<strong>Solicitud realizada con éxito</strong>.<br />
+                    """<strong>Solicitud realizada con éxito</strong>.<br />
                     <p>Para aportar más información a la solicitud, entre al ticket nº
                     <a href="https://cau.unizar.es/osticket/utils/ticket.php?t=%(ticket_num)s">
-                    %(ticket_num)s</a> y seleccione la opción «Contestar».</p>'''
+                    %(ticket_num)s</a> y seleccione la opción «Contestar».</p>"""
                 )
                 % {'ticket_num': received_data['ticket_num']}
             )
@@ -1046,8 +1046,8 @@ class InvitacionView(LoginRequiredMixin, ChecksMixin, CreateView):
             return False
         if date.today() > fecha_limite:
             self.permission_denied_message = _(
-                '''Se ha superado la fecha límite (%(fecha_limite)s)
-                para que los invitados puedan aceptar participar en el proyecto.'''
+                """Se ha superado la fecha límite (%(fecha_limite)s)
+                para que los invitados puedan aceptar participar en el proyecto."""
                 % {'fecha_limite': localize(fecha_limite)}
             )
             return False
@@ -1075,10 +1075,10 @@ class ParticipanteAceptarView(LoginRequiredMixin, RedirectView):
             messages.error(
                 request,
                 _(
-                    '''No puede aceptar esta invitación porque ya forma parte del número
+                    """No puede aceptar esta invitación porque ya forma parte del número
                     máximo de equipos de trabajo permitido (%(num_max_equipos)s).
                     Para poder aceptar esta invitación, antes debería renunciar a participar
-                    en algún otro proyecto.'''
+                    en algún otro proyecto."""
                 )
                 % {'num_max_equipos': num_max_equipos},
             )
@@ -1088,8 +1088,8 @@ class ParticipanteAceptarView(LoginRequiredMixin, RedirectView):
             messages.error(
                 request,
                 _(
-                    '''El estado actual del proyecto (%(estado)s)
-                    no permite aceptar invitaciones a participar en él.'''
+                    """El estado actual del proyecto (%(estado)s)
+                    no permite aceptar invitaciones a participar en él."""
                 )
                 % {'estado': proyecto.get_estado_display()},
             )
@@ -1106,8 +1106,8 @@ class ParticipanteAceptarView(LoginRequiredMixin, RedirectView):
             messages.error(
                 request,
                 _(
-                    '''Se ha superado la fecha límite (%(fecha_limite)s)
-                    para que los invitados puedan aceptar participar en el proyecto.'''
+                    """Se ha superado la fecha límite (%(fecha_limite)s)
+                    para que los invitados puedan aceptar participar en el proyecto."""
                     % {'fecha_limite': localize(fecha_limite)}
                 ),
             )
@@ -1168,10 +1168,10 @@ class ParticipanteAnyadirView(LoginRequiredMixin, ChecksMixin, TemplateView):
         if not usuario.is_active:
             texto = mark_safe(
                 _(
-                    '''Usuario inactivo en el sistema de Gestión de Identidades.<br>
+                    """Usuario inactivo en el sistema de Gestión de Identidades.<br>
                     <a href="%(url)s">Solicite en el Centro de Atención a Usuari@s</a> (CAU)
                     que se le asigne la vinculación
-                    «Participantes externos Proyectos Innovación Docente».'''
+                    «Participantes externos Proyectos Innovación Docente»."""
                 )
                 % {'url': reverse('ayuda')}
             )
@@ -1185,8 +1185,8 @@ class ParticipanteAnyadirView(LoginRequiredMixin, ChecksMixin, TemplateView):
             messages.error(
                 request,
                 _(
-                    '''No puede añadir este usuario porque ya forma parte
-                    del número máximo de equipos de trabajo permitido (%(num_max_equipos)s).'''
+                    """No puede añadir este usuario porque ya forma parte
+                    del número máximo de equipos de trabajo permitido (%(num_max_equipos)s)."""
                 )
                 % {'num_max_equipos': num_max_equipos},
             )
@@ -1220,13 +1220,10 @@ class ParticipanteAnyadirView(LoginRequiredMixin, ChecksMixin, TemplateView):
             )
             return False
         if date.today() > fecha_limite:
-            self.permission_denied_message = (
-                _(
-                    '''Se ha superado la fecha límite (%(fecha_limite)s) para
-                    las modificaciones excepcionales del equipo de trabajo de un proyecto.'''
-                )
-                % {'fecha_limite': localize(fecha_limite)}
-            )
+            self.permission_denied_message = _(
+                """Se ha superado la fecha límite (%(fecha_limite)s) para
+                    las modificaciones excepcionales del equipo de trabajo de un proyecto."""
+            ) % {'fecha_limite': localize(fecha_limite)}
             return False
 
         return self.request.user.has_perm('indo.editar_proyecto')
@@ -2214,10 +2211,10 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
             messages.error(
                 request,
                 _(
-                    '''No puede presentar esta solicitud porque ya forma parte
+                    """No puede presentar esta solicitud porque ya forma parte
                     del número máximo de equipos de trabajo permitido (%(num_max_equipos)s).
                     Para poder presentar esta solicitud de proyecto, antes debería renunciar
-                    a participar en algún otro proyecto.'''
+                    a participar en algún otro proyecto."""
                 )
                 % {'num_max_equipos': num_max_equipos},
             )
@@ -2396,7 +2393,7 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
             return False
         if date.today() < fecha_minima:
             self.permission_denied_message = _(
-                '''El plazo de solicitudes se abrirá el %(fecha_minima)s.'''
+                """El plazo de solicitudes se abrirá el %(fecha_minima)s."""
             ) % {'fecha_minima': localize(fecha_minima)}
             return False
 
@@ -2430,7 +2427,7 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
         # Si se edita la descripción, actualizamos también la descripción en texto plano.
         # Se usa al pasar las memorias a Zaguán, y al enviar mensajes de correo electrónico.
         if 'descripcion' in form.fields:
-            proyecto.descripcion_txt = " ".join(
+            proyecto.descripcion_txt = ' '.join(
                 pypandoc.convert_text(
                     form.cleaned_data['descripcion'], 'plain', format='html'
                 ).splitlines()
@@ -2509,25 +2506,8 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
             formulario = modelform_factory(
                 Proyecto, fields=(campo,), widgets={campo: SummernoteWidget()}
             )
-
-            def as_p(self):
-                """
-                Return this form rendered as HTML <p>s,
-                with the helptext over the textarea.
-                """
-                return self._html_output(
-                    normal_row='''<p%(html_class_attr)s>
-                    %(label)s
-                    %(help_text)s
-                    %(field)s
-                    </p>''',
-                    error_row='%s',
-                    row_ender='</p>',
-                    help_text_html='<span class="helptext">%s</span>',
-                    errors_on_separate_row=True,
-                )
-
-            formulario.as_p = as_p
+            # Return this form rendered as HTML <p>s, with the helptext over the textarea.
+            formulario.template_name_p = 'custom_p_help_over_field.html'
 
             def clean(self):
                 cleaned_data = super(formulario, self).clean()

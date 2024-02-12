@@ -43,3 +43,30 @@ max-line-length = "99"
 
 [tool.ruff]
 line-length = 99
+
+[tool.ruff.format]
+# Use single quotes for non-triple-quoted strings.
+quote-style = "single"
+
+[tool.ruff.lint]
+# <https://flakes.orsinium.dev/>
+ignore = [
+    "A003", # Allow shadowing class attribute: django uses id.
+    "B904", # Allow unchained exceptions: it's fine to raise 404 in django.
+    "E712", # Allow using if x == False, as it's not always equivalent to if x.
+    # "E501", # line-too-long
+    # "W191", # tab-indentation
+]
+select = [
+    "A",  # prevent using keywords that clobber python builtins
+    "B",  # flake8-bugbear: security warnings
+    "C",  # flake8-coding, flake8-comprehensions, flake8-commas
+    "E",  # pycodestyle - Error
+    "F",  # Pyflakes
+    "I",  # isort
+    "W",  # pycodestyle - Warning
+    "UP", # pyupgrade
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
