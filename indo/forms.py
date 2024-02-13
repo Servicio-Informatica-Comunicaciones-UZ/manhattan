@@ -266,7 +266,7 @@ class InvitacionForm(forms.ModelForm):
                 if vinculado.get_colectivo_principal() == 'EST'
             ]
             if len(estudiantes) >= self.proyecto.programa.max_estudiantes:
-                nombres_estudiantes = ', '.join(list(map(lambda e: e.full_name, estudiantes)))
+                nombres_estudiantes = ', '.join([e.full_name for e in estudiantes])
                 raise forms.ValidationError(
                     _(
                         'Ya se ha alcanzado el máximo de participación de'
@@ -365,7 +365,7 @@ class ProyectoForm(forms.ModelForm):
             .values_list('id', 'nombre')
             .all()
         )
-        centros_del_usuario = list((c.id, str(c)) for c in self.user.centros)
+        centros_del_usuario = [(c.id, str(c)) for c in self.user.centros]
         self.fields['centro'].widget.choices = (
             BLANK_CHOICE_DASH + centros_del_usuario
             if len(centros_del_usuario) > 1

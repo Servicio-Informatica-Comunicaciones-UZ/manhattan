@@ -131,7 +131,7 @@ class ChecksMixin(UserPassesTestMixin):
         coordinadores_participantes = proyecto.participantes.filter(
             tipo_participacion__in=['coordinador', 'coordinador_2']
         ).all()
-        usuarios_coordinadores = list(map(lambda p: p.usuario, coordinadores_participantes))
+        usuarios_coordinadores = [p.usuario for p in coordinadores_participantes]
 
         return usuario_actual in usuarios_coordinadores
 
@@ -1046,9 +1046,8 @@ class InvitacionView(LoginRequiredMixin, ChecksMixin, CreateView):
             return False
         if date.today() > fecha_limite:
             self.permission_denied_message = _(
-                """Se ha superado la fecha límite (%(fecha_limite)s)
-                para que los invitados puedan aceptar participar en el proyecto."""
-                % {'fecha_limite': localize(fecha_limite)}
+                """Se ha superado la fecha límite ({fecha_limite}) para que los invitados puedan
+                aceptar participar en el proyecto.""".format(fecha_limite=localize(fecha_limite))
             )
             return False
 
@@ -1106,9 +1105,10 @@ class ParticipanteAceptarView(LoginRequiredMixin, RedirectView):
             messages.error(
                 request,
                 _(
-                    """Se ha superado la fecha límite (%(fecha_limite)s)
-                    para que los invitados puedan aceptar participar en el proyecto."""
-                    % {'fecha_limite': localize(fecha_limite)}
+                    """Se ha superado la fecha límite ({fecha_limite}) para que los invitados
+                    puedan aceptar participar en el proyecto.""".format(
+                        fecha_limite=localize(fecha_limite)
+                    )
                 ),
             )
             return super().post(request, *args, **kwargs)

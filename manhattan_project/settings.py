@@ -40,7 +40,7 @@ SECRET_KEY = os.environ.get(
     'DJANGO_SECRET_KEY', 'xk6ujnt_zj7xlnt@c&$jc9f_=u3io5e!87imbqz4)=li*$tu%w'
 )
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = [h for h in os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',')]
+ALLOWED_HOSTS = list(os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(','))
 
 # Internationalization - https://docs.djangoproject.com/en/4.0/topics/i18n/
 # Local time zone. Choices are
@@ -163,16 +163,16 @@ STATICFILES_DIRS = [str(BASE_DIR / 'static')]
 # https://docs.djangoproject.com/en/4.2/ref/settings/#storages
 STORAGES = {
     # https://docs.djangoproject.com/en/4.2/topics/files/
-    "default": {
+    'default': {
         # https://docs.djangoproject.com/en/4.2/topics/files/#file-storage
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
     },
     # https://docs.djangoproject.com/en/4.2/ref/contrib/staticfiles/
-    "staticfiles": {
+    'staticfiles': {
         # https://docs.djangoproject.com/en/4.2/ref/contrib/staticfiles/#staticfilesstorage
         # "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
         # https://docs.djangoproject.com/en/4.2/ref/contrib/staticfiles/#manifeststaticfilesstorage
-        "BACKEND": 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage',
+        'BACKEND': 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage',
     },
 }
 
@@ -210,8 +210,8 @@ TEMPLATES = [
 ]
 
 # http://django-crispy-forms.readthedocs.io/en/latest/install.html#template-packs
-CRISPY_TEMPLATE_PACK = "bootstrap5"
-CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = 'bootstrap5'
+CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap5'
 CRISPY_CLASS_CONVERTERS = {'select': 'form-select'}
 
 # SECURITY
@@ -255,8 +255,8 @@ EMAIL_USE_TLS = True
 # When `DEBUG=False` and `AdminEmailHandler` is configured in `LOGGING` (done by default),
 # Django emails these people the details of exceptions raised in the request/response cycle.
 # See <https://docs.djangoproject.com/en/3.2/howto/error-reporting/>
-ADMIN_NAMES = [n for n in os.environ.get('ADMIN_NAMES', '').split(',')]
-ADMIN_MAILS = [m for m in os.environ.get('ADMIN_MAILS', '').split(',')]
+ADMIN_NAMES = list(os.environ.get('ADMIN_NAMES', '').split(','))
+ADMIN_MAILS = list(os.environ.get('ADMIN_MAILS', '').split(','))
 ADMINS = list(zip(ADMIN_NAMES, ADMIN_MAILS))
 # A list that specifies who should get broken link notifications
 # when `BrokenLinkEmailsMiddleware` is enabled.

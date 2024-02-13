@@ -59,7 +59,7 @@ class Centro(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['academico_id_nk', 'rrhh_id_nk'], name="centro-unique-academico-rrhh"
+                fields=['academico_id_nk', 'rrhh_id_nk'], name='centro-unique-academico-rrhh'
             )
         ]
         ordering = ['nombre']
@@ -147,9 +147,9 @@ class Criterio(models.Model):
         _('programas en los que aplicar este criterio'),
         default=list,
         help_text=_(
-            '''Nombre de los programas entrecomillados, separados por comas,
+            """Nombre de los programas entrecomillados, separados por comas,
             y todos ellos entre corchetes.<br>
-            Ejemplo: <span style="font-family: monospace;">["PIIDUZ", "PIET"]</span>'''
+            Ejemplo: <span style="font-family: monospace;">["PIIDUZ", "PIET"]</span>"""
         ),
     )
     parte = models.PositiveSmallIntegerField(_('parte'))
@@ -185,7 +185,7 @@ class Departamento(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['academico_id_nk', 'rrhh_id_nk'], name="departamento-unique-academico-rrhh"
+                fields=['academico_id_nk', 'rrhh_id_nk'], name='departamento-unique-academico-rrhh'
             )
         ]
 
@@ -236,7 +236,7 @@ class EvaluadorProyecto(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['evaluador_id', 'proyecto_id'], name="unique-evaluador-proyecto"
+                fields=['evaluador_id', 'proyecto_id'], name='unique-evaluador-proyecto'
             )
         ]
 
@@ -401,9 +401,9 @@ class Proyecto(models.Model):
         blank=True,
         null=True,
         help_text=_(
-            '''Otros proyectos de innovación relacionados con el propuesto, conocimiento que
+            """Otros proyectos de innovación relacionados con el propuesto, conocimiento que
             se genera y marco epistemológico o teórico que lo avala y descripción del equipo de
-            trabajo para la realización del proyecto.'''
+            trabajo para la realización del proyecto."""
         ),
     )
     objetivos = models.TextField(
@@ -503,8 +503,8 @@ class Proyecto(models.Model):
         blank=True,
         null=True,
         help_text=_(
-            '''Indicar el idioma de publicación y, si además, se publicará la traducción del curso
-            completo o parcial a otros idiomas'''
+            """Indicar el idioma de publicación y, si además, se publicará la traducción del curso
+            completo o parcial a otros idiomas"""
         ),
     )
     ramas = models.CharField(
@@ -589,8 +589,8 @@ class Proyecto(models.Model):
         blank=True,
         null=True,
         help_text=_(
-            '''Descripción específica y cantidad aproximada de los recursos multimedia que incluirá
-            el curso en formato video que precisen del uso de un estudio de grabación'''
+            """Descripción específica y cantidad aproximada de los recursos multimedia que incluirá
+            el curso en formato video que precisen del uso de un estudio de grabación"""
         ),
     )
     indicadores = models.TextField(
@@ -752,7 +752,7 @@ class Proyecto(models.Model):
 
         with connection.cursor() as cursor:
             cursor.execute(
-                f'''
+                f"""
                 SELECT prog.nombre_corto AS 'programa', l.nombre AS 'línea',
                     p.id, p.titulo,
                     u1.first_name AS 'nombre coordinador',
@@ -811,7 +811,7 @@ class Proyecto(models.Model):
                          p.esta_evaluado, p.ayuda, p.aceptacion_comision,
                          p.ayuda_provisional, p.ayuda_definitiva, p.aceptacion_coordinador
                 ORDER BY p.programa_id, p.linea_id, p.titulo;
-                '''
+                """
             )
             rows = cursor.fetchall()
 
@@ -916,7 +916,7 @@ class Proyecto(models.Model):
         Devuelve una lista de todos los usuarios vinculados al proyecto
         (invitados, participantes, etc).
         """
-        return list(map(lambda p: p.usuario, self.participantes.all()))
+        return [p.usuario for p in self.participantes.all()]
 
     @property
     def numero_participantes(self):
@@ -1009,7 +1009,7 @@ class MemoriaRespuesta(models.Model):
         ordering = ('-proyecto__id', 'subapartado')
         constraints = [
             models.UniqueConstraint(
-                fields=['proyecto_id', 'subapartado_id'], name="unique-proyecto-subapartado"
+                fields=['proyecto_id', 'subapartado_id'], name='unique-proyecto-subapartado'
             )
         ]
         verbose_name = _('respuesta de la memoria')
@@ -1141,7 +1141,7 @@ class Valoracion(models.Model):
         with connection.cursor() as cursor:
             # Columnas procedentes de la solicitud de proyecto
             cursor.execute(
-                f'''
+                f"""
                 SELECT prog.nombre_corto, l.nombre,
                   p.id, p.titulo, c.nombre, p.ayuda, p.financiacion_txt
                 FROM indo_evaluadorproyecto ep
@@ -1151,7 +1151,7 @@ class Valoracion(models.Model):
                 LEFT JOIN indo_centro c ON p.centro_id = c.id
                 WHERE prog.convocatoria_id = {anyo}
                 ORDER BY ep.proyecto_id, ep.evaluador_id;
-                '''
+                """
             )
             rows = cursor.fetchall()
             # Podríamos añadir las columnas de la evaluación a este array bidimensional
@@ -1163,7 +1163,7 @@ class Valoracion(models.Model):
             # Columnas procedentes de la evaluación del proyecto
             for criterio in criterios:
                 cursor.execute(
-                    f'''
+                    f"""
                     SELECT CASE
                       WHEN c.tipo = 'opcion' THEN o.puntuacion
                       WHEN c.tipo = 'texto' THEN v.texto
@@ -1180,7 +1180,7 @@ class Valoracion(models.Model):
                     WHERE proy.convocatoria_id = {anyo}
                           AND c.id = {criterio.id}
                     ORDER BY ep.proyecto_id, ep.evaluador_id, c.parte, c.peso;
-                    '''
+                    """
                 )
                 rows = cursor.fetchall()
                 fila_del_criterio = [row[0] for row in rows]

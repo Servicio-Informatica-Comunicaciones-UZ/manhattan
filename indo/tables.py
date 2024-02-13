@@ -20,7 +20,7 @@ class CorrectoresTable(tables.Table):
 
     def render_eliminar(self, record):
         return mark_safe(
-            f'''<button
+            f"""<button
                     class="btn prepararCesar"
                     data-id="{record.id}"
                     data-nombre="{record.full_name}"
@@ -33,7 +33,7 @@ class CorrectoresTable(tables.Table):
                         aria-label="{_('Cesar al corrector')}"
                     ></span>
                 </button>
-            '''
+            """
         )
 
     class Meta:
@@ -57,10 +57,10 @@ class ProyectoCorrectorTable(tables.Table):
     def render_editar(self, record):
         enlace = reverse('corrector_update', args=[record.id])
         return mark_safe(
-            f'''<a href="{enlace}" title="{_('Editar el corrector')}"
+            f"""<a href="{enlace}" title="{_('Editar el corrector')}"
                 aria-label="{_('Editar el corrector')}">
                   <span class="fas fa-pencil-alt"></span>
-                </a>'''
+                </a>"""
         )
 
     class Meta:
@@ -89,11 +89,11 @@ class EvaluadoresTable(tables.Table):
             return '—'
 
         return mark_safe(
-            f'''<span class="text-success" title="{_('Aceptado')}">✔</span>'''
+            f"""<span class="text-success" title="{_('Aceptado')}">✔</span>"""
             if record.visto_bueno_centro is True
-            else f'''<span class="text-danger" title="{_('Rechazado')}">✘</span>'''
+            else f"""<span class="text-danger" title="{_('Rechazado')}">✘</span>"""
             if record.visto_bueno_centro is False
-            else f'''<span class="text-secondary" title="{_('Pendiente')}">⁇</span>'''
+            else f"""<span class="text-secondary" title="{_('Pendiente')}">⁇</span>"""
         )
 
     def render_visto_bueno_estudio(self, record):
@@ -101,19 +101,19 @@ class EvaluadoresTable(tables.Table):
             return '—'
 
         return mark_safe(
-            f'''<span class="text-success" title="{_('Aceptado')}">✔</span>'''
+            f"""<span class="text-success" title="{_('Aceptado')}">✔</span>"""
             if record.visto_bueno_estudio is True
-            else f'''<span class="text-danger" title="{_('Rechazado')}">✘</span>'''
+            else f"""<span class="text-danger" title="{_('Rechazado')}">✘</span>"""
             if record.visto_bueno_estudio is False
-            else f'''<span class="text-secondary" title="{_('Pendiente')}">⁇</span>'''
+            else f"""<span class="text-secondary" title="{_('Pendiente')}">⁇</span>"""
         )
 
     def render_numero_participantes(self, record):
         if record.numero_participantes == 0:
             return mark_safe(
-                f'''<span style="font-weight: bold;" class="text-danger">
+                f"""<span style="font-weight: bold;" class="text-danger">
                   {record.numero_participantes}
-                </span>'''
+                </span>"""
             )
         return record.numero_participantes
 
@@ -123,10 +123,10 @@ class EvaluadoresTable(tables.Table):
     def render_editar(self, record):
         enlace = reverse('evaluadores_update', args=[record.id])
         return mark_safe(
-            f'''<a href="{enlace}" title="{_('Editar los evaluadores')}"
+            f"""<a href="{enlace}" title="{_('Editar los evaluadores')}"
                 aria-label="{_('Editar los evaluadores')}">
                   <span class="fas fa-pencil-alt"></span>
-                </a>'''
+                </a>"""
         )
 
     # Ver <https://django-tables2.readthedocs.io/en/latest/pages/ordering.html>
@@ -175,31 +175,31 @@ class EvaluacionProyectosTable(tables.Table):
         asignaciones = record.evaluadores_proyectos.all()
         for asignacion in asignaciones:
             if asignacion.ha_evaluado:
-                enlaces += f'''<a href="{reverse('ver_evaluacion', args=[asignacion.id])}"
+                enlaces += f"""<a href="{reverse('ver_evaluacion', args=[asignacion.id])}"
                   title="{_('Ver evaluación')}"
                   aria-label="{_('Ver evaluación')}"
-                ><span class="far fa-eye"></span></a> '''
+                ><span class="far fa-eye"></span></a> """
         return mark_safe(enlaces) if enlaces else '—'
 
     def render_resolucion(self, record):
         enlace_ver = reverse('ver_resolucion', args=[record.id])
         enlace_editar = reverse('resolucion_update', args=[record.id])
         aceptacion = (
-            f'''<span class="fas fa-eye text-success" title="{_('Aceptado')}"></span>'''
+            f"""<span class="fas fa-eye text-success" title="{_('Aceptado')}"></span>"""
             if record.aceptacion_comision is True
-            else f'''<span class="fas fa-eye text-danger" title="{_('Denegado')}">
-                 </span>'''
+            else f"""<span class="fas fa-eye text-danger" title="{_('Denegado')}">
+                 </span>"""
             if record.aceptacion_comision is False
             else ''
         )
         return mark_safe(
-            f'''<a href="{enlace_ver}" title="{_('Ver la resolución de la Comisión Evaluadora')}"
+            f"""<a href="{enlace_ver}" title="{_('Ver la resolución de la Comisión Evaluadora')}"
                 aria-label="{_('Ver la resolución')}">{aceptacion}</a>
 
                 <a href="{enlace_editar}" title="{_('Editar la resolución de la Comisión')}"
                 aria-label="{_('Editar la resolución')}">
                   <span class="fas fa-pencil-alt"></span>
-                </a>'''
+                </a>"""
             if record.valoraciones.first()
             else '—'
         )
@@ -229,28 +229,28 @@ class MemoriasAsignadasTable(tables.Table):
     def render_memoria(self, record):
         enlace = reverse('memoria_detail', args=[record.id])
         return mark_safe(
-            f'''<a href="{enlace}" title="{_('Ver la memoria del proyecto')}"
+            f"""<a href="{enlace}" title="{_('Ver la memoria del proyecto')}"
                 aria-label="{_('Ver la memoria del proyecto')}">
                   <span class="far fa-eye"></span>
-                </a>'''
+                </a>"""
         )
 
     def render_aceptacion_corrector(self, record):
         return mark_safe(
-            f'''<span class="fas fa-check-circle text-success" title="{_('Admitida')}"></span>'''
+            f"""<span class="fas fa-check-circle text-success" title="{_('Admitida')}"></span>"""
             if record.aceptacion_corrector is True
-            else f'''<span class="fas fa-times-circle text-danger" title="{_('No admitida')}">
-                 </span>'''
+            else f"""<span class="fas fa-times-circle text-danger" title="{_('No admitida')}">
+                 </span>"""
             if record.aceptacion_corrector is False
             else '—'
         )
 
     def render_es_publicable(self, record):
         return mark_safe(
-            f'''<span class="fas fa-check-circle text-success" title="{_('Publicable')}"></span>'''
+            f"""<span class="fas fa-check-circle text-success" title="{_('Publicable')}"></span>"""
             if record.es_publicable is True
-            else f'''<span class="fas fa-times-circle text-danger" title="{_('No publicable')}">
-                 </span>'''
+            else f"""<span class="fas fa-times-circle text-danger" title="{_('No publicable')}">
+                 </span>"""
             if record.es_publicable is False
             else '—'
         )
@@ -258,10 +258,10 @@ class MemoriasAsignadasTable(tables.Table):
     def render_valoracion(self, record):
         enlace = reverse('ver_correccion', args=[record.id])
         return mark_safe(
-            f'''<a href="{enlace}" title="{_('Ver la valoración del corrector de la memoria')}"
+            f"""<a href="{enlace}" title="{_('Ver la valoración del corrector de la memoria')}"
                 aria-label="{_('Ver la valoración del corrector de la memoria')}">
                   <span class="far fa-eye"></span>
-                </a>'''
+                </a>"""
             if record.aceptacion_corrector is not None
             else '—'
         )
@@ -272,11 +272,11 @@ class MemoriasAsignadasTable(tables.Table):
 
         enlace = reverse('corregir', args=[record.id])
         return mark_safe(
-            f'''<a href="{enlace}" title="{_('Valorar la memoria')}"
+            f"""<a href="{enlace}" title="{_('Valorar la memoria')}"
           aria-label="{_('Valorar la memoria')}" class="btn btn-info btn-sm">
             <span class="fas fa-balance-scale" aria-hidden="true" style="display: inline;"></span>
             &nbsp;{_('Valorar')}
-          </a>'''
+          </a>"""
         )
 
     class Meta:
@@ -308,16 +308,16 @@ class MemoriaProyectosTable(tables.Table):
         enlace = reverse('memoria_detail', args=[record.id])
         if record.estado in ('ACEPTADO', 'MEM_RECHAZADA'):
             return mark_safe(
-                f'''<a href="{enlace}" title="{_('Ver la memoria del proyecto')}"
+                f"""<a href="{enlace}" title="{_('Ver la memoria del proyecto')}"
                     aria-label="{_('Ver la memoria del proyecto')}">
                     <span class="far fa-eye"></span>
-                    </a>'''
+                    </a>"""
             )
         return mark_safe(
-            f'''<a href="{enlace}" title="{_('Ver la memoria del proyecto')}"
+            f"""<a href="{enlace}" title="{_('Ver la memoria del proyecto')}"
                 aria-label="{_('Ver la memoria del proyecto')}">
                 <span class="far fa-eye text-success"></span>
-                </a>'''
+                </a>"""
         )
 
     memoria = tables.Column(empty_values=(), orderable=False, verbose_name=_('Memoria'))
@@ -327,20 +327,20 @@ class MemoriaProyectosTable(tables.Table):
 
     def render_aceptacion_corrector(self, record):
         return mark_safe(
-            f'''<span class="fas fa-check-circle text-success" title="{_('Admitida')}"></span>'''
+            f"""<span class="fas fa-check-circle text-success" title="{_('Admitida')}"></span>"""
             if record.aceptacion_corrector is True
-            else f'''<span class="fas fa-times-circle text-danger" title="{_('No admitida')}">
-                 </span>'''
+            else f"""<span class="fas fa-times-circle text-danger" title="{_('No admitida')}">
+                 </span>"""
             if record.aceptacion_corrector is False
             else '—'
         )
 
     def render_es_publicable(self, record):
         return mark_safe(
-            f'''<span class="fas fa-check-circle text-success" title="{_('Publicable')}"></span>'''
+            f"""<span class="fas fa-check-circle text-success" title="{_('Publicable')}"></span>"""
             if record.es_publicable is True
-            else f'''<span class="fas fa-times-circle text-danger" title="{_('No publicable')}">
-                 </span>'''
+            else f"""<span class="fas fa-times-circle text-danger" title="{_('No publicable')}">
+                 </span>"""
             if record.es_publicable is False
             else '—'
         )
@@ -348,10 +348,10 @@ class MemoriaProyectosTable(tables.Table):
     def render_valoracion(self, record):
         enlace = reverse('ver_correccion', args=[record.id])
         return mark_safe(
-            f'''<a href="{enlace}" title="{_('Ver la valoración del corrector de la memoria')}"
+            f"""<a href="{enlace}" title="{_('Ver la valoración del corrector de la memoria')}"
                 aria-label="{_('Ver la valoración del corrector de la memoria')}">
                   <span class="far fa-eye"></span>
-                </a>'''
+                </a>"""
             if record.aceptacion_corrector is not None
             else '—'
         )
@@ -425,10 +425,10 @@ class ProyectosCierreEconomicoTable(tables.Table):
 
     def render_aceptacion_corrector(self, record):
         return mark_safe(
-            f'''<span class="fas fa-check-circle text-success" title="{_('Admitida')}"></span>'''
+            f"""<span class="fas fa-check-circle text-success" title="{_('Admitida')}"></span>"""
             if record.aceptacion_corrector is True
-            else f'''<span class="fas fa-times-circle text-danger" title="{_('No admitida')}">
-                 </span>'''
+            else f"""<span class="fas fa-times-circle text-danger" title="{_('No admitida')}">
+                 </span>"""
             if record.aceptacion_corrector is False
             else '—'
         )
@@ -440,18 +440,18 @@ class ProyectosCierreEconomicoTable(tables.Table):
 
         if record.aceptacion_economico:
             return mark_safe(
-                f'''<span class="fas fa-check-circle text-success" title="{_('Cerrado')}">
-                </span>'''
+                f"""<span class="fas fa-check-circle text-success" title="{_('Cerrado')}">
+                </span>"""
             )
 
         enlace = reverse(
             'proyecto_update_field', kwargs={'pk': record.id, 'campo': 'aceptacion_economico'}
         )
         return mark_safe(
-            f'''<a href="{enlace}" title="{_('Cerrar económicamente')}"
+            f"""<a href="{enlace}" title="{_('Cerrar económicamente')}"
                 aria-label="{_('Cerrar económicamente')}">
                 <span class="fas fa-pencil-alt"></span>
-            </a>'''
+            </a>"""
         )
 
     class Meta:
@@ -484,11 +484,11 @@ class ProyectosEvaluadosTable(tables.Table):
     def render_boton_evaluar(self, record):
         enlace = reverse('evaluacion', args=[record.proyecto_id])
         return mark_safe(
-            f'''<a href="{enlace}" title="{_('Evaluar el proyecto')}"
+            f"""<a href="{enlace}" title="{_('Evaluar el proyecto')}"
           aria-label="{_('Evaluar el proyecto')}" class="btn btn-info btn-sm">
             <span class="fas fa-balance-scale" aria-hidden="true" style="display: inline;"></span>
             &nbsp;{_('Evaluar')}
-          </a>'''
+          </a>"""
         )
 
     ha_evaluado = tables.BooleanColumn(verbose_name=_('Evaluado'))
@@ -561,10 +561,10 @@ class ProyectoUPTable(tables.Table):
     def render_editar_id_uxxi(self, record):
         enlace = reverse('proyecto_update_field', kwargs={'pk': record.id, 'campo': 'id_uxxi'})
         return mark_safe(
-            f'''<a href="{enlace}" title="{_('Editar el número de proyecto Universitas XXI')}"
+            f"""<a href="{enlace}" title="{_('Editar el número de proyecto Universitas XXI')}"
                 aria-label="{_('Editar el número de proyecto Universitas XXI')}">
                   <span class="fas fa-pencil-alt"></span>
-                </a>'''
+                </a>"""
         )
 
     class Meta:
