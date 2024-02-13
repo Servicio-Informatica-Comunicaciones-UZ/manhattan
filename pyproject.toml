@@ -1,7 +1,7 @@
 [tool.black]
 skip-string-normalization = true
 line-length = 99
-target-version = ['py310']
+target-version = ['py312']
 include = '\.pyi?$'
 exclude = '''
 
@@ -24,8 +24,10 @@ exclude = '''
 '''
 
 [tool.djlint]
-ignore="H021,T002"
-profile="django"
+# H021 - Inline styles should be avoided.
+# T002 - Double quotes should be used in tags. Ex {% extends "this.html" %}
+ignore = "H021,T002"
+profile = "django"
 
 [tool.isort]
 multi_line_output = 3
