@@ -186,7 +186,7 @@ class InvitacionForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
     def _crear_usuario(self, nip):
-        '''Crea un registro de usuario con el nip indicado y los datos de G.I.'''
+        """Crea un registro de usuario con el nip indicado y los datos de G.I."""
 
         usuario = CustomUser.objects.create_user(username=nip)
         try:
@@ -229,10 +229,10 @@ class InvitacionForm(forms.ModelForm):
             raise forms.ValidationError(
                 mark_safe(
                     _(
-                        '''Usuario inactivo en el sistema de Gestión de Identidades.<br>
+                        """Usuario inactivo en el sistema de Gestión de Identidades.<br>
                         <a href="%(url)s">Solicite en el Centro de Atención a Usuari@s</a> (CAU)
                         que se le asigne la vinculación
-                        «Participantes externos Proyectos Innovación Docente».'''
+                        «Participantes externos Proyectos Innovación Docente»."""
                     )
                     % {'url': reverse('ayuda')}
                 )
@@ -387,7 +387,7 @@ class EvaluadorForm(forms.ModelForm):
         # Content of the dropdown
         self.fields['evaluador'].widget.choices = BLANK_CHOICE_DASH + [
             (u.id, u.full_name)
-            for u in Group.objects.get(name="Evaluadores")
+            for u in Group.objects.get(name='Evaluadores')
             .user_set.order_by('first_name', 'last_name', 'last_name_2')
             .all()
         ]
