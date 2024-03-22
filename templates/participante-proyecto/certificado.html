@@ -62,7 +62,7 @@
                             programa {{ proyecto.programa.nombre_corto }},
                         {% endif %}
                         curso {{ proyecto.convocatoria }}),
-                        {% if proyecto.coordinador.id == usuario.id or proyecto.coordinador2.id == usuario.id %}
+                        {% if proyecto.coordinador.id == usuario.id or proyecto.coordinador_2.id == usuario.id %}
                             {% if usuario.sexo == "F" %}como Coordinadora{% else %} como Coordinador {% endif %}.
                         {% else %}
                             proyecto coordinado por {{ proyecto.coordinador.full_name }}.
