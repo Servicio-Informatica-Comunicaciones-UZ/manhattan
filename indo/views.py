@@ -1237,7 +1237,18 @@ class ParticipanteDeclinarView(LoginRequiredMixin, RedirectView):
         return reverse_lazy('mis_proyectos', kwargs={'anyo': proyecto.convocatoria_id})
 
     def post(self, request, *args, **kwargs):
+        anyo = request.POST.get('anyo')
         proyecto_id = request.POST.get('proyecto_id')
+        if not proyecto_id:
+            messages.error(
+                request,
+                _(
+                    'No se ha recibido el ID del proyecto que quiere declinar.'
+                    ' ¿Tal vez haya desactivado Javascript en su navegador?'
+                ),
+            )
+            return redirect('mis_proyectos', anyo)
+
         proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
         usuario_actual = self.request.user
         pp = get_object_or_404(

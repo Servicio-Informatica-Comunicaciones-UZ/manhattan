@@ -263,14 +263,15 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ _('Cerrar') }}"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="advertencia" id="advertencia-declinar"></div>
+                    <div class="advertencia" id="advertencia-declinar"></div> {# Div rellenado por Javascript #}
                     <p>{% trans "Esta acción es irreversible." %}</p>
                     <p>{% trans "Una vez haya declinado la invitación, ya no podrá echarse atrás y aceptarla." %}</p>
                 </div>
                 <div class="modal-footer">
                     <form action="{% url 'participante_declinar' %}" id="declinar-form" method="post">
                         {% csrf_token %}
-                        <div class="campo-oculto" id="campo-oculto-declinar"></div>
+                        <div class="campo-oculto" id="campo-oculto-declinar"></div> {# Div rellenado por Javascript #}
+                        <input type="hidden" id="anyo" name="anyo" value="{{ anyo }}">
                         <button type="button" class="btn btn-info" data-bs-dismiss="modal">
                             <span class="fas fa-times"></span> {% trans 'Cancelar' %}
                         </button>
