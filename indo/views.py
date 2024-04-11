@@ -1265,7 +1265,18 @@ class ParticipanteRenunciarView(LoginRequiredMixin, RedirectView):
         return reverse_lazy('mis_proyectos', kwargs={'anyo': proyecto.convocatoria_id})
 
     def post(self, request, *args, **kwargs):
+        anyo = request.POST.get('anyo')
         proyecto_id = request.POST.get('proyecto_id')
+        if not proyecto_id:
+            messages.error(
+                request,
+                _(
+                    'No se ha recibido el ID del proyecto al que quiere renunciar.'
+                    ' ¿Tal vez haya desactivado Javascript en su navegador?'
+                ),
+            )
+            return redirect('mis_proyectos', anyo)
+
         proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
         usuario_actual = self.request.user
         pp = get_object_or_404(
@@ -1474,9 +1485,9 @@ class ParticipanteCertificadoView(LoginRequiredMixin, PermissionRequiredMixin, T
             base_url=request.build_absolute_uri(),
         )
         response = HttpResponse(content_type='application/pdf')
-        response[
-            'Content-Disposition'
-        ] = f'attachment; filename="certificado_{usuario.username}.pdf"'
+        response['Content-Disposition'] = (
+            f'attachment; filename="certificado_{usuario.username}.pdf"'
+        )
         documento_html.write_pdf(response)
         return response
 
