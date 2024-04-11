@@ -1239,7 +1239,7 @@ class ParticipanteDeclinarView(LoginRequiredMixin, RedirectView):
     def post(self, request, *args, **kwargs):
         anyo = request.POST.get('anyo')
         proyecto_id = request.POST.get('proyecto_id')
-        if not proyecto_id:
+        if not proyecto_id or proyecto_id == 'null':
             messages.error(
                 request,
                 _(
@@ -1278,7 +1278,7 @@ class ParticipanteRenunciarView(LoginRequiredMixin, RedirectView):
     def post(self, request, *args, **kwargs):
         anyo = request.POST.get('anyo')
         proyecto_id = request.POST.get('proyecto_id')
-        if not proyecto_id:
+        if not proyecto_id or proyecto_id == 'null':
             messages.error(
                 request,
                 _(
