@@ -1,4 +1,6 @@
 .git
 .gitignore
+docker-compose.yml
 Dockerfile
+media
 staticfiles
