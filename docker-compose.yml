@@ -1,6 +1,3 @@
----
-version: "3.7"
-
 services:
     web:
         build:
@@ -9,7 +6,7 @@ services:
         # Beside running uWSGI, enable the stats server on the specified address
         # and prefix stats server json output with http headers
         command: uwsgi --stats :1717 --stats-http
-        container_name: indo_web
+        container_name: manhattan_web
         env_file: .env
         ports:
             - protocol: tcp
@@ -24,8 +21,8 @@ services:
     # uWSGI metrics exporter for prometheus.io
     # See <https://apsl.tech/en/blog/using-prometheus-monitoring-django-applications-kubernetes/>
     exporter:
-        command: --stats.uri="http://indo_web:1717"
-        container_name: indo_uwsgi_exporter
+        command: --stats.uri="http://manhattan_web:1717"
+        container_name: manhattan_uwsgi_exporter
         image: timonwong/uwsgi-exporter
         ports:
             - "9117:9117"
