@@ -1806,11 +1806,13 @@ class MemoriaPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
 
         messages.success(
             request,
-            _('La memoria de su proyecto ha sido presentada para su corrección.')
-            + '<br /><br />'
-            + _(
-                'Puede descargar el modelo de infografía para rellenarla y enviarla por email'
-                ' a innova.docen@unizar.es (opcional).'
+            mark_safe(
+                _('La memoria de su proyecto ha sido presentada para su corrección.')
+                + '<br /><br />'
+                + _(
+                    'Puede descargar el modelo de infografía para rellenarla y enviarla por email'
+                    ' a innova.docen@unizar.es (opcional).'
+                )
             ),
         )
         registrar_evento(
