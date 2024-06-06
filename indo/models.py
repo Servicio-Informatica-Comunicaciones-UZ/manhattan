@@ -663,7 +663,13 @@ class Proyecto(models.Model):
     puntuacion = models.DecimalField(
         verbose_name=_('Puntuación obtenida'), max_digits=3, decimal_places=1, null=True
     )
-    observaciones = models.TextField(_('Observaciones internas'), null=True)
+    observaciones = models.TextField(
+        _('Observaciones internas'),
+        help_text=_(
+            'Sólo visibles para los gestores de esta aplicación, no por los coordinadores.'
+        ),
+        null=True,
+    )
     # Aceptación por el coordinador de las condiciones decididas por la Comisión
     aceptacion_coordinador = models.BooleanField(_('Aceptación por el coordinador'), null=True)
     # Corrector/consultor de las memorias
