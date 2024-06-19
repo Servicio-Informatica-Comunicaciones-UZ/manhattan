@@ -2078,7 +2078,13 @@ class ProyectoMemoriasTableView(LoginRequiredMixin, PermissionRequiredMixin, Sin
 
 
 class ProyectosNotificarView(LoginRequiredMixin, PermissionRequiredMixin, RedirectView):
-    """Envía a los coordinadores de los proyectos la resolución de la Comisión de Evaluación"""
+    """
+    Envía a los coordinadores de los proyectos la resolución de la Comisión de Evaluación
+
+    Se notifica solamente a los coordinadores de los proyectos aprobados.
+    A los coordinadores de los proyectos rechazados se les comunica la resolución manualmente
+    por correo electrónico.
+    """
 
     permission_required = 'indo.listar_evaluaciones'
     permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
