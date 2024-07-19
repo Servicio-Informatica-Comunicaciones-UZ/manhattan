@@ -40,6 +40,7 @@ social-auth-core = {extras = ["saml"],version = "*"}
 tablib = "*"
 weasyprint = "*"  # 53+ requires pango 1.44
 zeep = "*"
+pydyf = "==0.10.0"  # pydyf 0.11.0 rompe weasyprint 61. 62+ funcionará bien y se podrá eliminar esta línea.
 
 [requires]
 python_version = "3"
