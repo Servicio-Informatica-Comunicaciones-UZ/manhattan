@@ -2,9 +2,11 @@
 
 import urllib.parse
 
-import bleach
+import nh3
+
+# import bleach
+# from bleach.css_sanitizer import CSSSanitizer
 from annoying.functions import get_config
-from bleach.css_sanitizer import CSSSanitizer
 from django import template
 from django.urls import reverse
 from django.utils.safestring import mark_safe
@@ -76,6 +78,7 @@ def has_group(user, group_name):
 
 
 # See <https://bleach.readthedocs.io/en/latest/clean.html>
+"""
 cleaner = bleach.Cleaner(
     tags=bleach.sanitizer.ALLOWED_TAGS.union(get_config('ADDITIONAL_ALLOWED_TAGS')),
     attributes=get_config('ALLOWED_ATTRIBUTES'),
@@ -91,6 +94,22 @@ def limpiar(text):
     if text is None:
         return ''
     return mark_safe(cleaner.clean(text))
+"""
+
+
+@register.filter
+def limpiar(text):
+    if text is None:
+        return ''
+    return mark_safe(
+        nh3.clean(
+            text,
+            tags=nh3.ALLOWED_TAGS,
+            attributes=nh3.ALLOWED_ATTRIBUTES,
+            strip_comments=True,
+            url_schemes=get_config('ALLOWED_URL_SCHEMES'),
+        )
+    )
 
 
 @register.filter

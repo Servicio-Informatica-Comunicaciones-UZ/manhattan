@@ -6,11 +6,11 @@ from datetime import date
 from time import sleep
 from typing import Any
 
-import bleach
+# import bleach
+import nh3
 import pypandoc
 import requests
 from annoying.functions import get_config, get_object_or_None
-from bleach.css_sanitizer import CSSSanitizer
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -431,7 +431,7 @@ class CorrectorAnyadirView(LoginRequiredMixin, PermissionRequiredMixin, View):
             try:
                 usuario = User.crear_usuario(request, nip)
             except Exception as ex:
-                messages.error(request, 'ERROR: %s' % ex.args[0])
+                messages.error(request, 'ERROR: {e}'.format(e=ex.args[0]))
                 return redirect('correctores_table')
 
         grupo_correctores = Group.objects.get(name='Correctores')
@@ -862,7 +862,7 @@ class EvaluadorProyectoUpdateView(LoginRequiredMixin, PermissionRequiredMixin, C
                 try:
                     usuario = User.crear_usuario(request, nip)
                 except Exception as ex:
-                    messages.error(request, 'ERROR: %s' % ex.args[0])
+                    messages.error(request, 'ERROR: {e}'.format(e=ex.args[0]))
                     return redirect('evaluadores_update')
             # Añadimos los usuarios al grupo Evaluadores.
             evaluadores.user_set.add(usuario)  # or usuario.groups.add(evaluadores)
@@ -1153,7 +1153,7 @@ class ParticipanteAnyadirView(LoginRequiredMixin, ChecksMixin, TemplateView):
             try:
                 usuario = User.crear_usuario(request, nip)
             except Exception as ex:
-                messages.error(request, 'ERROR: %s' % ex.args[0])
+                messages.error(request, 'ERROR: {e}'.format(e=ex.args[0]))
                 return redirect('participante_anyadir', proyecto.id)
         else:
             # El usuario existe. Actualizamos sus datos con los de Gestión de Identidades.
@@ -2541,14 +2541,28 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
 
             def clean(self):
                 cleaned_data = super(formulario, self).clean()
-                texto = cleaned_data.get(campo)
-
-                # Si se excede la longitud del campo, `cleaned_data` es `{}`, y `texto` es `None`,
-                # lo que provoca una excepción al llamar a `bleach.clean(texto)`.
-                if texto is None:
-                    texto = ''
+                # Si se excede la longitud del campo, `cleaned_data` es `{}` y `texto` sería `None`
+                # lo que provocaría una excepción al llamar a `bleach.clean(texto)`.
+                # Para evitarlo ponemos una cadena vacía como valor por omisión.
+                texto = cleaned_data.get(campo, '')
 
                 # See <https://bleach.readthedocs.io/en/latest/clean.html>
+                """
+                bleach.santizer.ALLOWED_TAGS = frozenset({
+                    'a',
+                    'abbr',
+                    'acronym',
+                    'b',
+                    'blockquote',
+                    'code',
+                    'em',
+                    'i',
+                    'li',
+                    'ol',
+                    'strong',
+                    'ul',
+                })
+
                 cleaned_data[campo] = mark_safe(
                     bleach.clean(
                         texto,
@@ -2563,6 +2577,123 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
                         strip=True,
                     )
                 )
+                """
+
+                # Bleach dejó de actualizarse porque dependía de html5lib.
+                # Ver <https://github.com/mozilla/bleach/issues/698>.
+                # Como alternativa, pasamos a usar nh3, basado en ammonia que usa html5ever,
+                # aunque no sanea CSS, sólo HTML.
+
+                # See <https://nh3.readthedocs.io/en/latest/#nh3.clean>
+                """
+                nh3.ALLOWED_TAGS = {
+                    'aside',
+                    'caption',
+                    'rtc',
+                    'sub',
+                    'footer',
+                    'em',
+                    'article',
+                    'summary',
+                    'del',
+                    'header',
+                    'bdo',
+                    'sup',
+                    'center',
+                    'strong',
+                    'colgroup',
+                    'strike',
+                    'h6',
+                    'i',
+                    'b',
+                    'h3',
+                    'bdi',
+                    'h1',
+                    'ins',
+                    'img',
+                    'code',
+                    's',
+                    'dl',
+                    'th',
+                    'cite',
+                    'li',
+                    'dfn',
+                    'br',
+                    'h2',
+                    'td',
+                    'var',
+                    'figure',
+                    'pre',
+                    'u',
+                    'span',
+                    'abbr',
+                    'h4',
+                    'figcaption',
+                    'div',
+                    'hgroup',
+                    'rp',
+                    'q',
+                    'details',
+                    'dt',
+                    'blockquote',
+                    'data',
+                    'col',
+                    'ul',
+                    'ruby',
+                    'mark',
+                    'h5',
+                    'dd',
+                    'nav',
+                    'a',
+                    'tbody',
+                    'tr',
+                    'thead',
+                    'ol',
+                    'samp',
+                    'p',
+                    'wbr',
+                    'time',
+                    'kbd',
+                    'small',
+                    'hr',
+                    'rt',
+                    'area',
+                    'table',
+                    'tt',
+                    'acronym',
+                    'map',
+                }
+                nh3.ALLOWED_ATTRIBUTES = {
+                    'tbody': {'align', 'char', 'charoff'},
+                    'ins': {'datetime', 'cite'},
+                    'tr': {'align', 'char', 'charoff'},
+                    'del': {'datetime', 'cite'},
+                    'img': {'align', 'width', 'alt', 'height', 'src'},
+                    'th': {'align', 'rowspan', 'charoff', 'colspan', 'scope', 'char', 'headers'},
+                    'thead': {'align', 'char', 'charoff'},
+                    'a': {'hreflang', 'href'},
+                    'bdo': {'dir'},
+                    'blockquote': {'cite'},
+                    'colgroup': {'align', 'char', 'span', 'charoff'},
+                    'ol': {'start'},
+                    'q': {'cite'},
+                    'col': {'align', 'char', 'span', 'charoff'},
+                    'hr': {'align', 'width', 'size'},
+                    'tfoot': {'align', 'char', 'charoff'},
+                    'td': {'align', 'rowspan', 'colspan', 'charoff', 'char', 'headers'},
+                    'table': {'align', 'char', 'summary', 'charoff'},
+                }
+                """
+                cleaned_data[campo] = mark_safe(
+                    nh3.clean(
+                        texto,
+                        tags=nh3.ALLOWED_TAGS,
+                        attributes=nh3.ALLOWED_ATTRIBUTES,
+                        strip_comments=True,
+                        url_schemes=get_config('ALLOWED_URL_SCHEMES'),
+                    )
+                )
+
                 return cleaned_data
 
             formulario.clean = clean

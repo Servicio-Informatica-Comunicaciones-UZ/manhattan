@@ -443,6 +443,7 @@ SUMMERNOTE_CONFIG = {
 }
 
 # BLEACH
+"""
 ADDITIONAL_ALLOWED_TAGS = {
     'br',
     'del',
@@ -483,6 +484,9 @@ ALLOWED_ATTRIBUTES = {
 }
 ALLOWED_CSS_PROPERTIES = {'background-color', 'color', 'text-align', 'width'}
 ALLOWED_PROTOCOLS = {'data', 'http', 'https', 'mailto'}
+"""
+# nh3 (ammonia)
+ALLOWED_URL_SCHEMES = {'http', 'https', 'mailto'}
 
 # WEB SERVICE de GESTIÓN DE IDENTIDADES
 WSDL_IDENTIDAD = os.environ.get('WSDL_IDENTIDAD')
