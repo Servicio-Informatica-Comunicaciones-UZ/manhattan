@@ -1,3 +1,30 @@
+[project]
+name = "manhattan"
+version = "2024.11.21"
+description = "Gestión de proyectos de Innovación Docente"
+requires-python = ">=3.10.15"
+dependencies = [
+    "crispy-bootstrap5",
+    "django~=5.1",
+    "django-annoying",
+    "django-crispy-forms",
+    "django-filter",
+    "django-summernote",
+    "django-tables2",
+    "django-templated-email",
+    "huey",
+    "mysqlclient",
+    "nh3",
+    "pypandoc",
+    "python-magic",
+    "python3-saml",
+    "social-auth-app-django",
+    "social-auth-core[saml]",
+    "tablib",
+    "weasyprint",
+    "zeep",
+]
+
 [tool.black]
 skip-string-normalization = true
 line-length = 99
@@ -74,3 +101,26 @@ select = [
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
+
+[tool.uv]
+dev-dependencies = [
+    "black",
+    "coverage",
+    "django-debug-toolbar",
+    "django-fastdev",
+    "django-stubs",
+    "django-upgrade",
+    "djhtml",
+    "isort",
+    "mypy",
+    "pre-commit",
+    "pylint",
+    "pyupgrade",
+    "rope",
+    "types-requests",
+]
+[[tool.uv.index]]
+name = "pypi"
+url = "https://pypi.org/simple"
+
+[tool.uv.sources]
