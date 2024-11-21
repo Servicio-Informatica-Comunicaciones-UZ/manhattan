@@ -7,6 +7,8 @@ Manhattan es una aplicación web para gestionar los proyectos de Innovación Doc
 Está desarrollada con [Django](https://www.djangoproject.com/) 5, mucho ♥, bastante ☕
 y un poco de magia 🧙.
 
+Hay una réplica pública del repositorio en <https://github.com/Servicio-Informatica-Comunicaciones-UZ/manhattan>.
+
 Instalación sobre contenedores Docker
 -------------------------------------
 

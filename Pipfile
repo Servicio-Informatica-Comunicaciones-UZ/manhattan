@@ -17,7 +17,7 @@ pre-commit = "*"
 pylint = "*"
 pyupgrade = "*"
 rope = "*"
-types-bleach = "*"
+# types-bleach = "*"
 types-requests = "*"
 
 [packages]
