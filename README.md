@@ -53,24 +53,25 @@ Instalación sobre contenedores Docker
 9. Activar a los usuarios gestores el atributo `is_staff` para que puedan acceder
    a la interfaz de administración.
 
-Instalación sobre hierro
-------------------------
+Instalación para desarrollo
+---------------------------
 
 ### Requisitos
 
 1. **Python 3.10 o superior**. En Debian o Ubuntu:
 
    ```bash
-    sudo apt-get install python3.11-dev python3-distutils
+    sudo apt-get install python3-dev python3-distutils
     ```
 
-2. **[pip](https://pip.pypa.io/en/stable/installing/)**, instalador de paquetes de Python.
-   (Puede venir con la instalación de Python).
-3. **[pipenv](https://github.com/pypa/pipenv)** para crear un entorno virtual para Python y facilitar el trabajo.
+2. **[uv](https://github.com/astral-sh/uv)**, gestor de paquetes y entornos virtuales de Python.
 
-   Se puede instalar con `sudo -H pip3 install pipenv`.
-4. Paquetes `fonts-texgyre`, `libxmlsec1-dev`, `pandoc` y `pkg-config`.
-5. **Un servidor de bases de datos** aceptado por Django (vg PostgreSQL o MariaDB).
+   ```sh
+   curl -LsSf https://astral.sh/uv/install.sh | sh
+   ```
+
+3. Paquetes `fonts-texgyre`, `libxmlsec1-dev`, `pandoc` y `pkg-config`.
+4. **Un servidor de bases de datos** aceptado por Django (vg PostgreSQL o MariaDB).
 
    En Debian/Ubuntu:  
    `apt install postgresql`  
@@ -91,9 +92,9 @@ Instalación sobre hierro
 ### Instalación
 
 ```shell
-git clone https://gitlab.unizar.es/InnovacionDocente/manhattan.git
+git clone https://github.com/Servicio-Informatica-Comunicaciones-UZ/manhattan.git
 cd manhattan
-pipenv install [--dev]
+uv sync
 ```
 
 ### Configuración inicial
@@ -117,14 +118,16 @@ pipenv install [--dev]
    los _web services_ de Gestión de Identidades, etc.  
    Si se está detrás de un proxy o balanceador, habilitar la opción `USE_X_FORWARDED_PORT`.  
    Si se usa SSL, habilitar las opciones `SESSION_COOKIE_SECURE` y `CSRF_COOKIE_SECURE`.
-4. Ejecutar
+4. Si ya disponemos de un volcado de una base de datos de una instalación anterior, simplemente lo importamos,
+   con lo que finaliza la configuración.
+
+   En caso contrario, seguimos con los siguientes pasos.
 
     ```shell
-    source .env
-    pipenv shell
-    ./manage.py migrate
-    ./manage.py createsuperuser
-    ./manage.py loaddata seed
+    export UV_ENV_FILE=".env"
+    uv run ./manage.py migrate
+    uv run ./manage.py createsuperuser
+    uv run ./manage.py loaddata seed
     ```
 
 5. Abrir la URL con el navegador web, autenticarse como superusuario y,
@@ -136,10 +139,9 @@ pipenv install [--dev]
 ### Servidor web para desarrollo
 
 ```shell
-source .env
-pipenv shell
-nohup ./manage.py run_huey &
-./manage.py runserver [<IP>[:<puerto>]]
+export UV_ENV_FILE=".env"
+nohup uv run ./manage.py run_huey &
+uv run ./manage.py runserver [<IP>[:<puerto>]]
 ```
 
 Podemos indicar que el superusuario pertenece al colectivo PAS, para que pueda crear proyectos:
