@@ -152,6 +152,9 @@ SET colectivos = '["PAS"]'
 WHERE is_superuser = 1;
 ```
 
+Para generar el fichero `requirements.txt`:  
+`uv export --format requirements-txt --no-dev > requirements.txt`
+
 Nueva convocatoria
 ------------------
 
