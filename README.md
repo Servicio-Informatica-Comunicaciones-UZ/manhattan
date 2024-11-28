@@ -92,10 +92,13 @@ Instalación para desarrollo
 ### Instalación
 
 ```shell
-git clone https://github.com/Servicio-Informatica-Comunicaciones-UZ/manhattan.git
+git clone https://github.com/Servicio-Informatica-Comunicaciones-UZ/manhattan.git  # Usar la dirección git@gitlab... interna
 cd manhattan
 uv sync
 ```
+
+Si nuestro sistema usa `gcc` y se produce un error de que no encuentra `clang`, ejecutar antes  
+`export CC=gcc; export CXX=g++`
 
 ### Configuración inicial
 
