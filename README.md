@@ -147,7 +147,8 @@ nohup uv run ./manage.py run_huey &
 uv run ./manage.py runserver [<IP>[:<puerto>]]
 ```
 
-Podemos indicar que el superusuario pertenece al colectivo PAS, para que pueda crear proyectos:
+Podemos indicar que el superusuario pertenece al colectivo PAS, para que pueda crear proyectos. 
+* Puede dar error si no al acceder a Mis Proyectos en la carga inicial, verificar campos numero_documento, first_name, last_name:
 
 ```sql
 UPDATE accounts_customuser
