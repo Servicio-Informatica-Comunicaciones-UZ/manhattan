@@ -415,3 +415,57 @@ h2>small {
 .false {
     color: #dc3545 !important;
 }
+
+
+/* Oculta la caja de texto del campo financiacion */
+#id_financiacion {
+    display: none !important;
+}
+
+/* Estilos para mejorar la apariencia de los checkboxes */
+.opciones-financiacion {
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* Espacio entre opciones */
+}
+
+.opciones-financiacion label {
+    display: flex;
+    line-height: 1.5;
+    /* align-items: center; */
+    gap: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 5px;
+    border-radius: 5px;
+    transition: background 0.3s ease;
+
+}
+
+.opciones-financiacion input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;  /* Evita que el checkbox se reduzca */
+
+}
+
+/* Estilo cuando el checkbox está seleccionado */
+.opciones-financiacion input[type="checkbox"]:checked + label {
+    background-color: #062d57;
+    color: white;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+label[for="id_financiacion"],
+#id_financiacion,
+#id_financiacion ~ .help_text {
+    display: none !important;
+}
+
+/* .checkbox-group input[type="checkbox"] {
+    width: 20px !important;
+    height: 20px !important;
+    margin-right: 8px !important;
+    vertical-align: middle !important;
+} */

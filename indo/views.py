@@ -11,6 +11,12 @@ import nh3
 import pypandoc
 import requests
 from annoying.functions import get_config, get_object_or_None
+
+
+from django import forms
+from django.utils.safestring import mark_safe
+from django.forms import ModelForm, MultipleChoiceField, CheckboxSelectMultiple
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -2443,6 +2449,63 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
         return self.es_coordinador(self.kwargs['pk'])
 
 
+
+# class HiddenLabelWidget(forms.CheckboxSelectMultiple):
+#     def label_tag(self, contents=None, attrs=None, label_suffix=None):
+#         return ''  # No renderiza el label
+
+# """ Clase para gestionar el Formulario Múltiple de Financiación """
+
+
+
+class FinanciacionForm(ModelForm):
+    OPCIONES_FINANCIACION = [
+        ('Congresos y Jornadas', 'Asistencia a congresos y jornadas de innovación docente con el fin de presentar una comunicación, una ponencia, un póster o equivalente, sobre el contenido del proyecto de innovación docente correspondiente. En dichos gastos se pueden incluir los conceptos de inscripción, alojamiento, dietas, transporte e impresión de pósteres desde un servicio de UNIZAR.'),
+        ('Charlas y Ponencias', 'Impartición de charlas y ponencias que deberán estar autorizadas por la Comisión que resolverá la convocatoria. Además, sólo podrán impartirse por profesionales externos a UNIZAR y que no formen parte del equipo. En dicho pago se incluirá el alojamiento, las dietas y/o el transporte y, en todos los casos, se deberá especificar el perceptor de la cuantía.'),
+        ('Material Audiovisual', 'Material audiovisual necesario para la realización del proyecto, se deberá incluir en la propuesta los datos del presupuesto facilitado por alguno de los servicios de medios audiovisuales de UNIZAR.'),
+        ('Licencias Software', 'Licencias de software, en el caso de que el desarrollo del proyecto requiera la adquisición y mantenimiento de dichas licencias. Únicamente se financiarán licencias con funcionalidades claramente diferentes a las del software ofrecido por UNIZAR. En la memoria presupuestaria deberá justificarse claramente que el software ofrecido por UNIZAR no es suficiente para el desarrollo del proyecto. En ningún caso, las licencias de software adquiridas para el desarrollo del proyecto podrán generar gasto más allá de la finalización del mismo.'),
+        ('Material No Inventariable','Material no inventariable específico para la realización del proyecto, siempre que sea justificado y detallado debidamente.')
+    ]
+
+    opciones_financiacion = MultipleChoiceField(
+        choices=OPCIONES_FINANCIACION,
+        widget=CheckboxSelectMultiple(attrs={'class': 'opciones-financiacion'}), # Estilo CSS en fichero base.css
+        required=False,
+        label="Seleccione las opciones de Financiación",
+        # help_text=None
+
+    )
+
+    class Meta:
+        model = Proyecto
+        fields = ['financiacion']
+        widgets = {
+            'financiacion': forms.Select(attrs={'style': 'display: none;'}),  # Ocultar desplegable con CSS
+        }
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['financiacion'].help_text = None  # Eliminar el help_text
+        if self.instance and self.instance.financiacion:
+            # Cargar opciones seleccionadas desde el texto almacenado
+            self.initial['opciones_financiacion'] = [
+                opcion.strip()
+                for opcion in self.instance.financiacion.split(',')
+                if opcion.strip() in dict(self.OPCIONES_FINANCIACION)
+            ]
+
+    def clean(self):
+        cleaned_data = super().clean()
+        opciones_seleccionadas = cleaned_data.get('opciones_financiacion', [])
+
+        # Validar al menos una selección si el campo es requerido
+        # if not opciones_seleccionadas:
+        #     raise ValidationError("Debe seleccionar al menos una opción de financiación")
+
+        # Guardar como cadena separada por comas
+        cleaned_data['financiacion'] = ', '.join(opciones_seleccionadas)
+        return cleaned_data
+
+
 class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
     """Actualiza un campo de una solicitud de proyecto."""
 
@@ -2515,7 +2578,11 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
         return context
 
     def get_form_class(self, **kwargs):
+
         campo = self.kwargs['campo']
+
+        if campo == 'financiacion':
+            return FinanciacionForm
         if campo in ('centro', 'codigo', 'convocatoria', 'estado', 'estudio', 'linea', 'programa'):
             raise Http404(gettext('No puede editar ese campo.'))
 
@@ -2530,7 +2597,8 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
             'id_uxxi',  # Caja de texto simple
             'prauz_titulo',  # Caja de texto simple
             'prauz_tipo',  # Desplegable de opciones
-            'ramas',  # Desplegable de opciones
+            'ramas',
+            'financiacion',  # Desplegable de opciones
         ):
             # Salvo para los campos anteriores, usamos una caja de texto enriquecido
             formulario = modelform_factory(
