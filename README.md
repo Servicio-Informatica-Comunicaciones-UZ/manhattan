@@ -92,10 +92,13 @@ Instalación para desarrollo
 ### Instalación
 
 ```shell
-git clone https://github.com/Servicio-Informatica-Comunicaciones-UZ/manhattan.git
+git clone https://github.com/Servicio-Informatica-Comunicaciones-UZ/manhattan.git  # Usar la dirección git@gitlab... interna
 cd manhattan
 uv sync
 ```
+
+Si nuestro sistema usa `gcc` y se produce un error de que no encuentra `clang`, ejecutar antes  
+`export CC=gcc; export CXX=g++`
 
 ### Configuración inicial
 
@@ -144,7 +147,8 @@ nohup uv run ./manage.py run_huey &
 uv run ./manage.py runserver [<IP>[:<puerto>]]
 ```
 
-Podemos indicar que el superusuario pertenece al colectivo PAS, para que pueda crear proyectos:
+Podemos indicar que el superusuario pertenece al colectivo PAS, para que pueda crear proyectos. 
+* Puede dar error si no al acceder a Mis Proyectos en la carga inicial, verificar campos numero_documento, first_name, last_name:
 
 ```sql
 UPDATE accounts_customuser
