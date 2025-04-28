@@ -1489,9 +1489,13 @@ class ParticipanteCertificadoView(LoginRequiredMixin, PermissionRequiredMixin, T
 
         contexto = {
             'secretario': get_config('SECRETARIO').strip('"'),
+            'secretario_sexo': get_config('SECRETARIO_SEXO'),
             'usuario': usuario,
             'proyecto_list': proyectos_participados,
+
         }
+        print(get_config('SECRETARIO_SEXO'))
+
 
         documento_html = HTML(
             string=render_to_string(

@@ -23,11 +23,11 @@
         <link rel="stylesheet" href="{% static 'css/iconos.css' %}" />
         <style>
             @page {
-                @bottom-left {
-                    content: "Firmado electrónicamente y con autenticidad contrastable según el artículo 27.3 c) de la Ley 39/2015, por {{ secretario }}, Secretaria General de la Universidad de Zaragoza.";
-                    font-size: 9pt;
-                    font-family: sans-serif;
-                }
+            @bottom-left {
+                content: "Firmado electrónicamente y con autenticidad contrastable según el artículo 27.3 c) de la Ley 39/2015, por {% if secretario_sexo == 'M' %}D. {{ secretario }}, Secretario {% else %} Dª. {{ secretario }}, Secretaria {% endif %} General de la Universidad de Zaragoza";
+                font-size: 9pt;
+                font-family: sans-serif;
+            }
             }
         </style>
 
@@ -44,7 +44,12 @@
         <div class="container-blanco" style="text-align:justify">
             <p style="font-size: 400%; color: #223d71"><span class="icon-logoUZ"></span></p>
 
-            <p><strong>Dª. {{ secretario }}, Secretaria General de la Universidad de Zaragoza</strong></p>
+
+            {% if secretario_sexo == "M" %}
+                <p><strong>D. {{ secretario }}, Secretario General de la Universidad de Zaragoza</strong></p>
+            {% else %}
+                <p><strong>Dª. {{ secretario }}, Secretaria General de la Universidad de Zaragoza</strong></p>
+            {% endif %}
 
             <p><strong>CERTIFICA</strong></p>
 

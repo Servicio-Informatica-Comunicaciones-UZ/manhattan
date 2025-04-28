@@ -502,6 +502,8 @@ PASS_VINCULACIONES = os.environ.get('PASS_VINCULACIONES')
 VICERRECTOR = os.environ.get('VICERRECTOR')
 # Titular actual de Secretaría General
 SECRETARIO = os.environ.get('SECRETARIO')
+SECRETARIO_SEXO = os.environ.get('SECRETARIO_SEXO')
+
 
 # Tareas en segundo plano
 # pool = ConnectionPool(host='localhost', port=6379, max_connections=20)
