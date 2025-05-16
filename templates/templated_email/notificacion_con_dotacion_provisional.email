@@ -18,13 +18,13 @@ Se pueden consultar tanto la convocatoria como la resolución provisional en <ht
 
 La ayuda económica concedida al proyecto es de {{proyecto.ayuda_provisional}} euros.
 
-Te recordamos que dicha ayuda económica deberá destinarse
-exclusivamente a los siguientes conceptos:
+La financiación aprobada deberá destinarse exclusivamente a los fines especificados en el apartado de "tipo de gasto",
+no admitiéndose ningún otro tipo de gasto.
 
 {{proyecto.tipo_gasto}}
 
 
-Realizados los gastos y una vez finalizado el proyecto, este
+Realizados los gastos y una vez finalizado y aprobado el proyecto, este
 Vicerrectorado transferirá la cantidad justificada a la Unidad de
 Planificación vinculada con el proyecto.
 
@@ -49,7 +49,7 @@ Por otro lado, el plazo para justificar los gastos realizados a la
 Unidad de Planificación correspondiente será el {{proyecto.convocatoria.fecha_max_gastos}}.
 
 Cualquier duda o sugerencia no dudes en hacérnosla llegar a través del
-Centro de Atención a Usuari@s <{{ ayuda_url }}.
+Centro de Atención a Usuari@s <{{ ayuda_url }} o a través de la cuenta de correo de innova.docen@unizar.es.
 
 Recibe un cordial saludo,
 {{vicerrector}}
