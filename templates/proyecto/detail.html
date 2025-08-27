@@ -124,7 +124,16 @@
 
                 <tr>
                     <th scope="row"><strong>{% trans 'Estado' %}</strong>:</th>
-                    <td>{{ proyecto.get_estado_display }}</td>
+                    <td>{{ proyecto.get_estado_display }}
+                        {% if es_gestor and proyecto.estado == "APROBADO" or es_gestor and proyecto.estado == "MEM_PRESENTADA" %}
+                            <a href="{% url 'proyecto_update_field' proyecto.id 'estado' %}" class="btn btn-info btn-sm">
+                                <span class="fas fa-pencil-alt" aria-hidden="true"></span>&nbsp; {% trans 'Modificar' %}
+                            </a>
+                        {% endif %}
+                    </td>
+
+
+
                 </tr>
 
                 {% if proyecto.programa.requiere_visto_bueno_centro %}

@@ -81,6 +81,11 @@
                 </tr>
 
                 <tr>
+                    <th scope="row"><strong>{% trans 'Estado' %}</strong>:</th>
+                    <td>{{ proyecto.get_estado_display | default:"—" }}</td>
+                </tr>
+
+                <tr>
                     <th scope="row"><strong>{% trans 'Coordinador' %}</strong>:</th>
                     <td>{{ proyecto.coordinador.full_name }}</td>
                 </tr>

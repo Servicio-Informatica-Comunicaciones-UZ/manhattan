@@ -2543,6 +2543,14 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
         if 'aceptacion_economico' in form.fields and form.cleaned_data['aceptacion_economico']:
             self._enviar_notificaciones(self.request, proyecto)
 
+        # Al tener ese estado la aceptacion_coordinador debe ser True
+        if 'estado' in form.fields:
+            if form.cleaned_data['estado'] == 'ACEPTADO':
+                proyecto.aceptacion_coordinador = True
+                proyecto.save(update_fields=['aceptacion_coordinador'])
+
+
+
         return super().form_valid(form)
 
     def _enviar_notificaciones(self, request: HttpRequest, proyecto: Proyecto) -> Any:
@@ -2587,8 +2595,20 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
 
         if campo == 'financiacion':
             return FinanciacionForm
-        if campo in ('centro', 'codigo', 'convocatoria', 'estado', 'estudio', 'linea', 'programa'):
+        if campo in ('centro', 'codigo', 'convocatoria', 'estudio', 'linea', 'programa'):
             raise Http404(gettext('No puede editar ese campo.'))
+
+        if campo == 'estado':
+            from django import forms
+            class EstadoForm(forms.ModelForm):
+                class Meta:
+                    model = Proyecto
+                    fields = ['estado']
+
+                def __init__(self, *args, **kwargs):
+                    super().__init__(*args, **kwargs)
+                    self.fields['estado'].choices = [('MEM_PRESENTADA', 'Memoria presentada'), ('ACEPTADO', 'Aceptada por el Coordinador')]
+            return EstadoForm
 
         if campo not in (
             'titulo',  # Caja de texto simple
@@ -2603,6 +2623,7 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
             'prauz_tipo',  # Desplegable de opciones
             'ramas',
             'financiacion',  # Desplegable de opciones
+            'estado', # Desplegable de opciones
         ):
             # Salvo para los campos anteriores, usamos una caja de texto enriquecido
             formulario = modelform_factory(
