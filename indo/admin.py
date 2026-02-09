@@ -1,10 +1,23 @@
 from django.contrib import admin
+from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from .models import Convocatoria, Criterio, MemoriaApartado, MemoriaSubapartado, Opcion, Resolucion
 
 # Register your models here.
-admin.site.register(Convocatoria)
+# Register your models here.
+class ConvocatoriaForm(forms.ModelForm):
+    class Meta:
+        model = Convocatoria
+        fields = '__all__'
+        widgets = {
+            'num_max_participantes': forms.NumberInput(attrs={'autocomplete': 'off'}),
+        }
+
+
+@admin.register(Convocatoria)
+class ConvocatoriaAdmin(admin.ModelAdmin):
+    form = ConvocatoriaForm
 
 
 @admin.register(Criterio)

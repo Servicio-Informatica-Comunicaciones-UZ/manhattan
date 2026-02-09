@@ -75,6 +75,12 @@ class Convocatoria(models.Model):
     num_max_equipos = models.PositiveSmallIntegerField(
         _('número máximo de equipos en que puede participar una persona'), default=4
     )
+    num_max_coordinaciones = models.PositiveSmallIntegerField(
+        _('número máximo de proyectos que puede coordinar una persona'), null=True
+    )
+    num_max_participantes = models.PositiveSmallIntegerField(
+        _('Número máximo de participantes por proyecto'), null=True
+    )
     fecha_min_solicitudes = models.DateField(
         _('fecha en que se empiezan a aceptar solicitudes'), blank=True, null=True
     )
@@ -333,6 +339,7 @@ class Programa(models.Model):
     max_estudiantes = models.PositiveSmallIntegerField(
         _('Número máximo de estudiantes por programa'), null=True
     )
+
     # Para que el coordinador de un proyecto pueda editar un campo,
     # éste debe estar incluido en la tupla `permitidos_coordinador` de views.py.
     campos = models.TextField(

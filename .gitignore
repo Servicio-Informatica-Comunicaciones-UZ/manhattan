@@ -58,6 +58,8 @@ sonar-project.properties
 *.mo
 *.pot
 
+cola/huey.db*
+
 # Django stuff:
 *.log
 local_settings.py

@@ -13,6 +13,20 @@
             {% endfor %}
         </select>
 
+        <div class="alert alert-info fade show noprint" style="overflow: hidden;">
+            <span class="fas fa-info-circle"></span>&nbsp; <strong>{% trans 'Estado de participación' %}</strong>
+            <div class="row" style="margin-top: 5px;">
+                <div class="col-md-auto">
+                    {% trans 'Proyectos coordinados' %}: <br>
+                    {% trans 'Participación en equipos' %}:
+                </div>
+                <div class="col-md-auto">
+                    <strong>{{ num_coordinaciones_presentadas }}</strong> / {{ convocatoria.num_max_coordinaciones|default:"∞" }} <small class="text-muted">({% trans 'solicitados/máx' %})</small><br>
+                    <strong>{{ num_equipos_participados }}</strong> / {{ convocatoria.num_max_equipos|default:"∞" }} <small class="text-muted">({% trans 'total/máx' %})</small>
+                </div>
+            </div>
+        </div>
+
         <h1 id="coordinados">{% trans "Proyectos coordinados" %} <small>{{ anyo }}</small></h1>
         <hr />
         <br />
@@ -44,6 +58,13 @@
 
         {% if permitir_solicitar %}
             <p><a href="{% url 'proyecto_new' %}" class="btn btn-info">{% trans "Solicitar nuevo proyecto" %}</a></p>
+        {% elif limite_coordinaciones_alcanzado %}
+            <div class="alert alert-warning alert-dismissible fade show noprint">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ _('Cerrar') }}"></button>
+                <span class="fas fa-exclamation-triangle"></span>
+                {% trans 'Ha alcanzado el número máximo de proyectos que puede coordinar.' %}
+            </div>
+            <p><button class="btn btn-info" disabled>{% trans "Solicitar nuevo proyecto" %}</button></p>
         {% endif %}
         <br /><br />
 

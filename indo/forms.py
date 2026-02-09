@@ -25,6 +25,7 @@ from .models import (
     Programa,
     Proyecto,
     TipoParticipacion,
+    Convocatoria,
 )
 
 
@@ -278,6 +279,20 @@ class InvitacionForm(forms.ModelForm):
                     }
                 )
 
+        # Comprobamos el número máximo de participantes por proyecto
+        max_participantes = self.proyecto.convocatoria.num_max_participantes
+        num_participantes = (
+            self.proyecto.participantes.exclude(
+                tipo_participacion__in=['coordinador', 'coordinador_2', 'invitacion_rehusada']
+            ).count()
+        )
+        # Sumamos 1 porque estamos invitando a uno nuevo
+        if max_participantes and (num_participantes + 1) > max_participantes:
+            raise forms.ValidationError(
+                _('Ya se ha alcanzado el máximo de %(max)s participantes por proyecto.')
+                % {'max': max_participantes}
+            )
+
         return cleaned_data
 
     def save(self, commit=True):
@@ -342,12 +357,40 @@ class ProyectoForm(forms.ModelForm):
                 self.add_error('centro', _('El centro carece de coordinador del POU.'))
             elif self.instance.user.username not in centro.nips_coord_pou:
                 self.add_error(
-                    'programa',
                     _(
                         'En los proyectos PIPOUZ el coordinador deberá ser '
                         'el coordinador del POU del centro.'
                     ),
                 )
+
+        # Comprobamos que el usuario no exceda el número máximo de coordinaciones
+        convocatoria = Programa.objects.get(id=programa.id).convocatoria
+        num_coordinaciones = (
+            Proyecto.objects.filter(convocatoria=convocatoria)
+            .filter(participantes__usuario=self.user)
+            .filter(participantes__tipo_participacion__nombre__in=['coordinador', 'coordinador_2'])
+            .exclude(estado__in=['BORRADOR', 'ANULADO', 'DENEGADO', 'RECHAZADO'])
+            .count()
+        )
+        # Si estamos editando un proyecto existente, restamos 1 al conteo porque ya estamos contados
+        if self.instance.pk:
+            es_coordinador = (
+                self.instance.participantes.filter(usuario=self.user)
+                .filter(tipo_participacion__nombre='coordinador')
+                .exists()
+            )
+            if es_coordinador:
+                num_coordinaciones -= 1
+
+        if num_coordinaciones >= convocatoria.num_max_coordinaciones:
+            self.add_error(
+                None,
+                _(
+                    'No puede crear más proyectos como coordinador. '
+                    'Ha alcanzado el límite de %(max)s proyectos.'
+                )
+                % {'max': convocatoria.num_max_coordinaciones},
+            )
 
         # In Django < 1.7, `form.clean()` was required to return a dictionary of `cleaned_data`.
         # This method may still return a dictionary of data to be used, but it's no longer required
@@ -355,13 +398,14 @@ class ProyectoForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
+        ultima_convocatoria = Convocatoria.get_ultima()
         self.fields['programa'].widget.choices = BLANK_CHOICE_DASH + list(
-            Programa.objects.filter(convocatoria_id=date.today().year)
+            Programa.objects.filter(convocatoria_id=ultima_convocatoria.id)
             .values_list('id', 'nombre_corto')
             .all()
         )
         self.fields['linea'].widget.choices = BLANK_CHOICE_DASH + list(
-            Linea.objects.filter(programa__convocatoria_id=date.today().year)
+            Linea.objects.filter(programa__convocatoria_id=ultima_convocatoria.id)
             .values_list('id', 'nombre')
             .all()
         )

@@ -1934,6 +1934,35 @@ class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
             and date.today() <= self.get_object().convocatoria.fecha_max_aceptos
         )
 
+        # Comprobamos si se ha alcanzado el límite de participantes
+        num_max_participantes = self.get_object().convocatoria.num_max_participantes
+        
+        # Calculamos participantes efectivos e invitaciones pendientes
+        # Excluimos coordinadores y rehusadas
+        num_participantes_efectivos = (
+            self.get_object()
+            .participantes.filter(tipo_participacion='participante')
+            .count()
+        )
+        num_invitaciones_pendientes = (
+            self.get_object()
+            .participantes.filter(tipo_participacion='invitado')
+            .count()
+        )
+        # El total ocupado es la suma de los que ya son participantes y los invitados pendientes
+        total_ocupado = num_participantes_efectivos + num_invitaciones_pendientes
+
+        context['num_participantes_efectivos'] = num_participantes_efectivos
+        context['num_invitaciones_pendientes'] = num_invitaciones_pendientes
+        context['total_ocupado'] = total_ocupado
+
+        if num_max_participantes:
+            context['limite_participantes_alcanzado'] = total_ocupado >= num_max_participantes
+            if context['limite_participantes_alcanzado']:
+                context['permitir_invitar'] = False
+        else:
+            context['limite_participantes_alcanzado'] = False
+
         context['permitir_anyadir_sin_invitacion'] = self.request.user.has_perm(
             'indo.editar_proyecto'
         ) and (
@@ -1958,6 +1987,36 @@ class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
         context['es_coordinador'] = self.es_coordinador(self.object.id)
 
         context['es_gestor'] = self.request.user.has_perm('indo.editar_proyecto')
+
+        context['es_gestor'] = self.request.user.has_perm('indo.editar_proyecto')
+
+        # Comprobamos límites para la presentación
+        num_coordinaciones_presentadas = (
+            Proyecto.objects.filter(convocatoria=self.get_object().convocatoria)
+            .filter(participantes__usuario=self.request.user)
+            .filter(participantes__tipo_participacion__nombre__in=['coordinador', 'coordinador_2'])
+            .exclude(estado__in=['BORRADOR', 'ANULADO', 'DENEGADO', 'RECHAZADO'])
+            .exclude(pk=self.get_object().pk)
+            .count()
+        )
+        context['limite_coordinaciones_alcanzado'] = (
+            self.get_object().convocatoria.num_max_coordinaciones is not None
+            and num_coordinaciones_presentadas
+            >= self.get_object().convocatoria.num_max_coordinaciones
+        )
+
+        num_equipos = self.request.user.get_num_equipos(self.get_object().convocatoria.id)
+        # Restamos 1 porque get_num_equipos cuenta el proyecto actual si ya estamos vinculados (que lo estamos como coord)
+        # y queremos saber si PODEMOS presentar este.
+        # Pero get_num_equipos cuenta "proyectos en los que participa".
+        # Si es coordinador de ESTE borrador, ya cuenta como 1.
+        # Al presentar, seguirá siendo 1.
+        # La validación en PresentarView mira: num_equipos >= num_max_equipos.
+        # Si num_equipos (incluyendo este) ya es >= max, no deja.
+        # Entonces aquí usamos la misma lógica sin restar, porque get_num_equipos ya incluye este proyecto.
+        context['limite_equipos_alcanzado'] = (
+            num_equipos >= self.get_object().convocatoria.num_max_equipos
+        )
 
         context['url_anterior'] = self.request.headers.get('Referer', reverse('home'))
 
@@ -2247,6 +2306,27 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
 
         num_equipos = self.request.user.get_num_equipos(proyecto.convocatoria_id)
         num_max_equipos = proyecto.convocatoria.num_max_equipos
+
+        # Comprobamos si, al presentar este proyecto, se excede el número máximo de coordinaciones
+        num_coordinaciones_presentadas = (
+            Proyecto.objects.filter(convocatoria=proyecto.convocatoria)
+            .filter(participantes__usuario=self.request.user)
+            .filter(participantes__tipo_participacion__nombre__in=['coordinador', 'coordinador_2'])
+            .exclude(estado__in=['BORRADOR', 'ANULADO', 'DENEGADO', 'RECHAZADO'])
+            .exclude(pk=proyecto.pk)  # Excluimos este mismo proyecto
+            .count()
+        )
+        if (
+            proyecto.convocatoria.num_max_coordinaciones is not None
+            and num_coordinaciones_presentadas
+            >= proyecto.convocatoria.num_max_coordinaciones
+        ):
+            messages.error(
+                request,
+                _('No puede presentar esta solicitud porque ya ha alcanzado el número máximo de proyectos coordinados.'),
+            )
+            return super().post(request, *args, **kwargs)
+
         if num_equipos >= num_max_equipos:
             messages.error(
                 request,
@@ -3061,6 +3141,24 @@ class ProyectosUsuarioView(LoginRequiredMixin, ChecksMixin, TemplateView):
             self.es_pas_o_pdi() and date.today() <= convocatoria.fecha_max_solicitudes
         )
 
+        # Comprobamos si el usuario ha alcanzado el número máximo de proyectos coordinados
+        num_coordinaciones_presentadas = (
+            Proyecto.objects.filter(convocatoria=convocatoria)
+            .filter(participantes__usuario=usuario)
+            .filter(participantes__tipo_participacion__nombre__in=['coordinador', 'coordinador_2'])
+            .exclude(estado__in=['BORRADOR', 'ANULADO', 'DENEGADO', 'RECHAZADO'])
+            .count()
+        )
+        context['limite_coordinaciones_alcanzado'] = (
+            convocatoria.num_max_coordinaciones is not None
+            and num_coordinaciones_presentadas >= convocatoria.num_max_coordinaciones
+        )
+        context['num_coordinaciones_presentadas'] = num_coordinaciones_presentadas
+        context['num_equipos_participados'] = usuario.get_num_equipos(convocatoria.id)
+
+        if context['limite_coordinaciones_alcanzado']:
+            context['permitir_solicitar'] = False
+
         try:
             nip_usuario = int(usuario.username)
         except ValueError:
@@ -3149,11 +3247,25 @@ class ProyectosDeUnUsuarioView(LoginRequiredMixin, PermissionRequiredMixin, Temp
 
         User = get_user_model()
         usuario = get_object_or_404(User, id=self.kwargs.get('usuario_id'))
+        convocatoria = get_object_or_404(Convocatoria, pk=self.kwargs.get('anyo'))
+
         context['convocatorias'] = Convocatoria.objects.order_by('-id').all()[:5]
+        context['convocatoria'] = convocatoria
         context['usuario'] = usuario
         context['vinculaciones'] = usuario.vinculaciones.filter(
-            proyecto__convocatoria_id=self.kwargs.get('anyo')
+            proyecto__convocatoria=convocatoria
         )
+
+        # Estadísticas de participación
+        context['num_coordinaciones_presentadas'] = (
+            Proyecto.objects.filter(convocatoria=convocatoria)
+            .filter(participantes__usuario=usuario)
+            .filter(participantes__tipo_participacion__nombre__in=['coordinador', 'coordinador_2'])
+            .exclude(estado__in=['BORRADOR', 'ANULADO', 'DENEGADO', 'RECHAZADO'])
+            .count()
+        )
+        context['num_equipos_participados'] = usuario.get_num_equipos(convocatoria.id)
+
         return context
 
 

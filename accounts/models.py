@@ -166,13 +166,13 @@ class CustomUser(AbstractUser):
             self.vinculaciones.filter(
                 tipo_participacion='participante', proyecto__convocatoria_id=anyo
             )
-            .exclude(proyecto__estado='ANULADO')
+            .exclude(proyecto__estado__in=['BORRADOR','ANULADO', 'DENEGADO', 'RECHAZADO'])
             .count()
         )
         num_como_coordinador = self.vinculaciones.filter(
             tipo_participacion__in=['coordinador', 'coordinador_principal'],
             proyecto__convocatoria_id=anyo,
-            proyecto__estado='SOLICITADO',
+            proyecto__estado__in=['SOLICITADO', 'APROBADO', 'ACEPTADO', 'MEM_PRESENTADA', 'MEM_NO_ADMITIDA', 'MEM_ADMITIDA', 'FINALIZADO_SIN_MEMORIA']
         ).count()
         num_equipos = num_como_participante + num_como_coordinador
         return num_equipos

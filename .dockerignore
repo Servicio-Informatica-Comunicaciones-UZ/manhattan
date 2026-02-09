@@ -4,3 +4,9 @@ docker-compose.yml
 Dockerfile
 media
 staticfiles
+.env
+.venv
+__pycache__
+*.pyc
+*.pyo
+cola/huey.db*

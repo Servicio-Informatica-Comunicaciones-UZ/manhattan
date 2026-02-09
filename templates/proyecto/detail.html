@@ -267,14 +267,44 @@
             <p>{% trans 'Aquí aparecerán las personas a las que invite a participar en este proyecto.' %}</p>
         {% endif %}
 
+        {% if limite_participantes_alcanzado and permitir_edicion %}
+            <div class="alert alert-warning alert-dismissible fade show noprint">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ _('Cerrar') }}"></button>
+                <span class="fas fa-exclamation-triangle"></span>
+                {% trans 'Se ha alcanzado el número máximo de participantes permitidos para este proyecto.' %}
+            </div>
+        {% endif %}
+
         {% if permitir_invitar %}
             <p>
                 <a href="{% url 'participante_invitar' proyecto.id %}" class="btn btn-info btn-sm">
                     <span class="fas fa-plus" aria-hidden="true"></span>&nbsp; {% trans 'Añadir' %}
                 </a>
             </p>
+        {% elif limite_participantes_alcanzado and permitir_edicion %}
+            <p>
+                <button class="btn btn-info btn-sm" disabled>
+                    <span class="fas fa-plus" aria-hidden="true"></span>&nbsp; {% trans 'Añadir' %}
+                </button>
+            </p>
         {% endif %}
         <br />
+
+        <div class="alert alert-info fade show noprint" style="overflow: hidden;">
+            <span class="fas fa-info-circle"></span>&nbsp; <strong>{% trans 'Desglose de ocupación' %}</strong>
+            <div class="row" style="margin-top: 5px;">
+                <div class="col-md-auto">
+                    {% trans 'Participantes' %}: <br>
+                    {% trans 'Invitaciones pendientes' %}: <br>
+                    <strong>{% trans 'Total ocupado' %}:</strong>
+                </div>
+                <div class="col-md-auto">
+                    {{ num_participantes_efectivos }}<br>
+                    {{ num_invitaciones_pendientes }}<br>
+                    <strong>{{ total_ocupado }}</strong> / {{ proyecto.convocatoria.num_max_participantes|default:"∞" }}
+                </div>
+            </div>
+        </div>
 
         <!-- Usuarios participantes -->
         <h3 id="participantes">{% trans 'Participantes' %}</h3>
@@ -383,6 +413,21 @@
 
         <!-- Botones -->
         <br style="clear: both;" />
+
+        {% if es_coordinador and proyecto.en_borrador %}
+            {% if limite_coordinaciones_alcanzado or limite_equipos_alcanzado %}
+                 <div class="alert alert-warning alert-dismissible fade show noprint">
+                    <span class="fas fa-exclamation-triangle"></span>
+                    {% if limite_coordinaciones_alcanzado %}
+                        {% trans 'Ha alcanzado el número máximo de proyectos que puede coordinar.' %}
+                    {% else %}
+                        {% trans 'Ha alcanzado el número máximo de equipos en los que puede participar.' %}
+                    {% endif %}
+                    {% trans 'No puede presentar esta solicitud.' %}
+                </div>
+            {% endif %}
+        {% endif %}
+
         <div class="btn-group" role="group" aria-label="Botones">
             <a href="{{ url_anterior }}" class="btn btn-info">
                 <span class="fas fa-step-backward"></span> {% trans 'Retroceder' %}
@@ -394,9 +439,15 @@
                 </button>
             {% endif %}
             {% if es_coordinador and proyecto.en_borrador %}
-                <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#presentarModal" type="button">
-                    <span class="fas fa-check"></span> {% trans 'Presentar' %}
-                </button>
+                {% if limite_coordinaciones_alcanzado or limite_equipos_alcanzado %}
+                    <button class="btn btn-warning" type="button" disabled>
+                        <span class="fas fa-check"></span> {% trans 'Presentar' %}
+                    </button>
+                {% else %}
+                    <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#presentarModal" type="button">
+                        <span class="fas fa-check"></span> {% trans 'Presentar' %}
+                    </button>
+                {% endif %}
             {% endif %}
         </div>
     </div>

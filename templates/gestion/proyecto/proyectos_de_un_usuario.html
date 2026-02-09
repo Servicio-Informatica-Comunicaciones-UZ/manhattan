@@ -21,6 +21,20 @@
             {% endfor %}
         </select>
 
+        <div class="alert alert-info fade show noprint" style="overflow: hidden;">
+            <span class="fas fa-info-circle"></span>&nbsp; <strong>{% trans 'Estado de participación' %}</strong>
+            <div class="row" style="margin-top: 5px;">
+                <div class="col-md-auto">
+                    {% trans 'Proyectos coordinados' %}: <br>
+                    {% trans 'Participación en equipos' %}:
+                </div>
+                <div class="col-md-auto">
+                    <strong>{{ num_coordinaciones_presentadas }}</strong> / {{ convocatoria.num_max_coordinaciones|default:"∞" }} <small class="text-muted">({% trans 'solicitados/máx' %})</small><br>
+                    <strong>{{ num_equipos_participados }}</strong> / {{ convocatoria.num_max_equipos|default:"∞" }} <small class="text-muted">({% trans 'total/máx' %})</small>
+                </div>
+            </div>
+        </div>
+
         <h1 id="vinculados">{% trans "Proyectos de un usuario" %} <small>{{ anyo }}</small></h1>
         <hr />
         <br />
