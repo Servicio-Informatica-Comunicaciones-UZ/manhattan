@@ -365,19 +365,26 @@ class ProyectoForm(forms.ModelForm):
 
         # Comprobamos que el usuario no exceda el número máximo de coordinaciones
         convocatoria = Programa.objects.get(id=programa.id).convocatoria
+
         num_coordinaciones = (
-            Proyecto.objects.filter(convocatoria=convocatoria)
-            .filter(participantes__usuario=self.user)
-            .filter(participantes__tipo_participacion__nombre__in=['coordinador', 'coordinador_2'])
-            .exclude(estado__in=['BORRADOR', 'ANULADO', 'DENEGADO', 'RECHAZADO'])
+            ParticipanteProyecto.objects.filter(
+                usuario=self.user,
+                tipo_participacion__nombre__in=['coordinador', 'coordinador_2'],
+                proyecto__convocatoria=convocatoria,
+            )
+            .exclude(proyecto__estado__in=['BORRADOR', 'ANULADO', 'DENEGADO', 'RECHAZADO'])
             .count()
         )
-        # Si estamos editando un proyecto existente, restamos 1 al conteo porque ya estamos contados
+
+        # Si estamos editando un proyecto existente, restamos 1 al conteo si somos nosotros
+        # quien lo estamos editando y somos coordinador/coordinador_2
         if self.instance.pk:
             es_coordinador = (
-                self.instance.participantes.filter(usuario=self.user)
-                .filter(tipo_participacion__nombre='coordinador')
-                .exists()
+                ParticipanteProyecto.objects.filter(
+                    usuario=self.user,
+                    proyecto=self.instance,
+                    tipo_participacion__nombre__in=['coordinador', 'coordinador_2'],
+                ).exists()
             )
             if es_coordinador:
                 num_coordinaciones -= 1

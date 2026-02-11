@@ -3258,10 +3258,12 @@ class ProyectosDeUnUsuarioView(LoginRequiredMixin, PermissionRequiredMixin, Temp
 
         # Estadísticas de participación
         context['num_coordinaciones_presentadas'] = (
-            Proyecto.objects.filter(convocatoria=convocatoria)
-            .filter(participantes__usuario=usuario)
-            .filter(participantes__tipo_participacion__nombre__in=['coordinador', 'coordinador_2'])
-            .exclude(estado__in=['BORRADOR', 'ANULADO', 'DENEGADO', 'RECHAZADO'])
+            ParticipanteProyecto.objects.filter(
+                usuario=usuario,
+                tipo_participacion__nombre__in=['coordinador', 'coordinador_2'],
+                proyecto__convocatoria=convocatoria,
+            )
+            .exclude(proyecto__estado__in=['BORRADOR', 'ANULADO', 'DENEGADO', 'RECHAZADO'])
             .count()
         )
         context['num_equipos_participados'] = usuario.get_num_equipos(convocatoria.id)
