@@ -162,11 +162,14 @@ class CustomUser(AbstractUser):
 
     def get_num_equipos(self, anyo):
         """Devuelve el número de equipos de trabajo en los que participa el usuario."""
+        # Avoiding circular import
+        from indo.models import ParticipanteProyecto
+
         num_como_participante = (
             self.vinculaciones.filter(
                 tipo_participacion='participante', proyecto__convocatoria_id=anyo
             )
-            .exclude(proyecto__estado__in=['BORRADOR','ANULADO', 'DENEGADO', 'RECHAZADO'])
+            .exclude(proyecto__estado__in=['BORRADOR', 'ANULADO', 'DENEGADO', 'RECHAZADO'])
             .count()
         )
         num_como_coordinador = (
