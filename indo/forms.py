@@ -364,40 +364,43 @@ class ProyectoForm(forms.ModelForm):
                 )
 
         # Comprobamos que el usuario no exceda el número máximo de coordinaciones
-        convocatoria = Programa.objects.get(id=programa.id).convocatoria
+        # IMPORTANTE: Los proyectos del programa PIPOUZ no computan para el límite
+        if programa.nombre_corto != 'PIPOUZ':
+            convocatoria = Programa.objects.get(id=programa.id).convocatoria
 
-        num_coordinaciones = (
-            ParticipanteProyecto.objects.filter(
-                usuario=self.user,
-                tipo_participacion__nombre__in=['coordinador', 'coordinador_2'],
-                proyecto__convocatoria=convocatoria,
-            )
-            .exclude(proyecto__estado__in=['BORRADOR', 'ANULADO', 'DENEGADO', 'RECHAZADO'])
-            .count()
-        )
-
-        # Si estamos editando un proyecto existente, restamos 1 al conteo si somos nosotros
-        # quien lo estamos editando y somos coordinador/coordinador_2
-        if self.instance.pk:
-            es_coordinador = (
+            num_coordinaciones = (
                 ParticipanteProyecto.objects.filter(
                     usuario=self.user,
-                    proyecto=self.instance,
                     tipo_participacion__nombre__in=['coordinador', 'coordinador_2'],
-                ).exists()
-            )
-            if es_coordinador:
-                num_coordinaciones -= 1
-
-        if num_coordinaciones >= convocatoria.num_max_coordinaciones:
-            self.add_error(
-                None,
-                _(
-                    'No puede crear más proyectos como coordinador. '
-                    'Ha alcanzado el límite de %(max)s proyectos.'
+                    proyecto__convocatoria=convocatoria,
                 )
-                % {'max': convocatoria.num_max_coordinaciones},
+                .exclude(proyecto__estado__in=['BORRADOR', 'ANULADO', 'DENEGADO', 'RECHAZADO'])
+                .exclude(proyecto__programa__nombre_corto='PIPOUZ')
+                .count()
             )
+
+            # Si estamos editando un proyecto existente, restamos 1 al conteo si somos nosotros
+            # quien lo estamos editando y somos coordinador/coordinador_2
+            if self.instance.pk:
+                es_coordinador = (
+                    ParticipanteProyecto.objects.filter(
+                        usuario=self.user,
+                        proyecto=self.instance,
+                        tipo_participacion__nombre__in=['coordinador', 'coordinador_2'],
+                    ).exists()
+                )
+                if es_coordinador:
+                    num_coordinaciones -= 1
+
+            if num_coordinaciones >= convocatoria.num_max_coordinaciones:
+                self.add_error(
+                    None,
+                    _(
+                        'No puede crear más proyectos como coordinador. '
+                        'Ha alcanzado el límite de %(max)s proyectos.'
+                    )
+                    % {'max': convocatoria.num_max_coordinaciones},
+                )
 
         # In Django < 1.7, `form.clean()` was required to return a dictionary of `cleaned_data`.
         # This method may still return a dictionary of data to be used, but it's no longer required

@@ -186,7 +186,9 @@ class CustomUser(AbstractUser):
                     'MEM_ADMITIDA',
                     'FINALIZADO_SIN_MEMORIA',
                 ],
-            ).count()
+            )
+            .exclude(proyecto__programa__nombre_corto='PIPOUZ')
+            .count()
         )
         num_equipos = num_como_participante + num_como_coordinador
         return num_equipos

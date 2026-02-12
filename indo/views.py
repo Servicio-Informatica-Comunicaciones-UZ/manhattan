@@ -3149,6 +3149,7 @@ class ProyectosUsuarioView(LoginRequiredMixin, ChecksMixin, TemplateView):
                 proyecto__convocatoria=convocatoria,
             )
             .exclude(proyecto__estado__in=['BORRADOR', 'ANULADO', 'DENEGADO', 'RECHAZADO'])
+            .exclude(proyecto__programa__nombre_corto='PIPOUZ')
             .count()
         )
         context['limite_coordinaciones_alcanzado'] = (
