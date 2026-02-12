@@ -3143,10 +3143,12 @@ class ProyectosUsuarioView(LoginRequiredMixin, ChecksMixin, TemplateView):
 
         # Comprobamos si el usuario ha alcanzado el número máximo de proyectos coordinados
         num_coordinaciones_presentadas = (
-            Proyecto.objects.filter(convocatoria=convocatoria)
-            .filter(participantes__usuario=usuario)
-            .filter(participantes__tipo_participacion__nombre__in=['coordinador', 'coordinador_2'])
-            .exclude(estado__in=['BORRADOR', 'ANULADO', 'DENEGADO', 'RECHAZADO'])
+            ParticipanteProyecto.objects.filter(
+                usuario=usuario,
+                tipo_participacion__nombre__in=['coordinador', 'coordinador_2'],
+                proyecto__convocatoria=convocatoria,
+            )
+            .exclude(proyecto__estado__in=['BORRADOR', 'ANULADO', 'DENEGADO', 'RECHAZADO'])
             .count()
         )
         context['limite_coordinaciones_alcanzado'] = (
