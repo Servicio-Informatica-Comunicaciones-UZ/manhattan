@@ -50,7 +50,7 @@
     </head>
 
     <body>
-        <nav class="navbar fixed-top navbar-expand-md navbar-dark bg-azul mb-4">
+        <nav class="navbar fixed-top navbar-expand-md navbar-dark bg-azul mb-4" style="{% if ENTORNO == 'LOCAL' %}background-color: #28a745 !important;{% elif ENTORNO == 'FORMACION' %}background-color: #e83e8c !important;{% endif %}">
             <a class="navbar-brand" href="https://www.unizar.es">
                 <span class="icon-logoUZ"></span> <span class="screen-reader">{% trans "Universidad de Zaragoza" %}</span>
             </a>

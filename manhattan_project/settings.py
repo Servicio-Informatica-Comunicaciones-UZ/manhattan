@@ -34,6 +34,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # https://docs.djangoproject.com/en/dev/ref/settings/#debug
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', False) == 'True'
+ENTORNO = os.environ.get('ENTORNO', 'PRODUCCION')
 # https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get(
@@ -204,6 +205,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'social_django.context_processors.backends',
                 'social_django.context_processors.login_redirect',
+                'manhattan_project.context_processors.entorno',
             ]
         },
     }
