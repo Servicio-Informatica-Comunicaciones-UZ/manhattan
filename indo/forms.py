@@ -355,8 +355,9 @@ class ProyectoForm(forms.ModelForm):
         if programa.nombre_corto == 'PIPOUZ' and centro:
             if not centro.nips_coord_pou:
                 self.add_error('centro', _('El centro carece de coordinador del POU.'))
-            elif self.instance.user.username not in centro.nips_coord_pou:
+            elif self.user.username not in centro.nips_coord_pou:
                 self.add_error(
+                    None,
                     _(
                         'En los proyectos PIPOUZ el coordinador deberá ser '
                         'el coordinador del POU del centro.'
