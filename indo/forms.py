@@ -130,6 +130,17 @@ class CertificadoForm(forms.Form):
         required=False,
     )
 
+    tipo_certificado = forms.ChoiceField(
+        label=_('Tipo de certificado'),
+        choices=(
+            ('estandar', _('Estándar')),
+            ('con_ayuda', _('Con ayuda económica')),
+        ),
+        initial='estandar',
+        required=True,
+        widget=forms.RadioSelect,
+    )
+
 
 class CorrectorForm(forms.Form):
     nip = forms.IntegerField(
@@ -428,8 +439,16 @@ class ProyectoForm(forms.ModelForm):
         )
         # Las opciones de `estudio` están limitadas con `limit_choices_to` en el modelo `Proyecto`
 
+
     class Meta:
-        fields = ['titulo', 'descripcion', 'programa', 'linea', 'centro', 'estudio']
+        fields = [
+            'titulo',
+            'descripcion',
+            'programa',
+            'linea',
+            'centro',
+            'estudio',
+        ]
         model = Proyecto
 
 

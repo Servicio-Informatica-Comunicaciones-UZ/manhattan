@@ -476,6 +476,24 @@ class Proyecto(models.Model):
     aplicacion = models.TextField(
         _('Posible aplicación a otros centros/áreas de conocimiento'), blank=True, null=True
     )
+    participantes_iberus = models.BooleanField(
+        _('Incluye participantes de otras universidades del Campus Iberus'),
+        null=True,
+        blank=True,
+    )
+    participantes_unita = models.BooleanField(
+        _(
+            'Incluye participantes de otras universidades de la Alianza Unita Montium '
+            'no incluidas en el campus Iberus'
+        ),
+        null=True,
+        blank=True,
+    )
+    miembro_cifice = models.BooleanField(
+        _('Ser miembro de un grupo de innovación reconocido por CIFICE'),
+        null=True,
+        blank=True,
+    )
     proyectos_anteriores = models.TextField(
         _('Proyectos anteriores'),
         blank=True,

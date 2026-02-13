@@ -1487,12 +1487,14 @@ class ParticipanteCertificadoView(LoginRequiredMixin, PermissionRequiredMixin, T
             .all()
         )
 
+        tipo_certificado = request.POST.get('tipo_certificado', 'estandar')
+
         contexto = {
             'secretario': get_config('SECRETARIO').strip('"'),
             'secretario_sexo': get_config('SECRETARIO_SEXO'),
             'usuario': usuario,
             'proyecto_list': proyectos_participados,
-
+            'mostrar_ayuda': tipo_certificado == 'con_ayuda',
         }
         print(get_config('SECRETARIO_SEXO'))
 
@@ -1997,10 +1999,12 @@ class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
             .filter(participantes__tipo_participacion__nombre__in=['coordinador', 'coordinador_2'])
             .exclude(estado__in=['BORRADOR', 'ANULADO', 'DENEGADO', 'RECHAZADO'])
             .exclude(pk=self.get_object().pk)
+            .exclude(programa__nombre_corto='PIPOUZ')
             .count()
         )
         context['limite_coordinaciones_alcanzado'] = (
             self.get_object().convocatoria.num_max_coordinaciones is not None
+            and self.get_object().programa.nombre_corto != 'PIPOUZ'
             and num_coordinaciones_presentadas
             >= self.get_object().convocatoria.num_max_coordinaciones
         )
@@ -2314,10 +2318,12 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
             .filter(participantes__tipo_participacion__nombre__in=['coordinador', 'coordinador_2'])
             .exclude(estado__in=['BORRADOR', 'ANULADO', 'DENEGADO', 'RECHAZADO'])
             .exclude(pk=proyecto.pk)  # Excluimos este mismo proyecto
+            .exclude(programa__nombre_corto='PIPOUZ')  # Los PIPOUZ no computan
             .count()
         )
         if (
             proyecto.convocatoria.num_max_coordinaciones is not None
+            and proyecto.programa.nombre_corto != 'PIPOUZ'  # Los PIPOUZ no tienen límite de coordinación
             and num_coordinaciones_presentadas
             >= proyecto.convocatoria.num_max_coordinaciones
         ):
@@ -2633,6 +2639,7 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
 
         return super().form_valid(form)
 
+
     def _enviar_notificaciones(self, request: HttpRequest, proyecto: Proyecto) -> Any:
         """Envía un mensaje a cada participante del proyecto, y a su coordinador."""
         destinatarios = proyecto.usuarios_participantes
@@ -2680,6 +2687,7 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
 
         if campo == 'estado':
             from django import forms
+
             class EstadoForm(forms.ModelForm):
                 class Meta:
                     model = Proyecto
@@ -2687,8 +2695,34 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
 
                 def __init__(self, *args, **kwargs):
                     super().__init__(*args, **kwargs)
-                    self.fields['estado'].choices = [('MEM_PRESENTADA', 'Memoria presentada'), ('ACEPTADO', 'Aceptada por el Coordinador')]
+                    self.fields['estado'].choices = [
+                        ('MEM_PRESENTADA', 'Memoria presentada'),
+                        ('ACEPTADO', 'Aceptada por el Coordinador'),
+                    ]
+
             return EstadoForm
+
+        if campo in ('participantes_iberus', 'participantes_unita', 'miembro_cifice'):
+            from django import forms
+
+            class BooleanRadioForm(forms.ModelForm):
+                class Meta:
+                    model = Proyecto
+                    fields = [campo]
+
+                def __init__(self, *args, **kwargs):
+                    super().__init__(*args, **kwargs)
+                    self.field_name = campo
+                    label = self.fields[self.field_name].label
+                    self.fields[self.field_name] = forms.TypedChoiceField(
+                        label=label,
+                        coerce=lambda x: x == 'True',
+                        choices=((True, _('Sí')), (False, _('No'))),
+                        widget=forms.RadioSelect,
+                        required=True,
+                    )
+
+            return BooleanRadioForm
 
         if campo not in (
             'titulo',  # Caja de texto simple
@@ -2703,7 +2737,10 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
             'prauz_tipo',  # Desplegable de opciones
             'ramas',
             'financiacion',  # Desplegable de opciones
-            'estado', # Desplegable de opciones
+            'estado',  # Desplegable de opciones
+            'participantes_iberus',
+            'participantes_unita',
+            'miembro_cifice',
         ):
             # Salvo para los campos anteriores, usamos una caja de texto enriquecido
             formulario = modelform_factory(
@@ -2976,6 +3013,10 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
                 'prauz_titulo',
                 'prauz_tipo',
                 'prauz_contenido',
+                'prauz_contenido',
+                'participantes_iberus',
+                'participantes_unita',
+                'miembro_cifice',
             )
             if self.kwargs['campo'] not in permitidos_coordinador:
                 self.permission_denied_message = _('No puede modificar este campo.')

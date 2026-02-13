@@ -73,6 +73,9 @@
                         {% else %}
                             proyecto coordinado por {{ proyecto.coordinador.full_name }}.
                         {% endif %}
+                        {% if mostrar_ayuda and proyecto.ayuda_definitiva %}
+                            (Dotación: {{ proyecto.ayuda_definitiva }} €).
+                        {% endif %}
                     </li>
                 {% endfor %}
             </ul>

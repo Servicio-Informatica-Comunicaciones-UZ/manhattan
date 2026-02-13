@@ -1,7 +1,15 @@
 {% extends 'base.html' %}
 {% load custom_tags i18n static %}
 
-{% block title %}{% trans 'Solicitud de proyecto' %}: {{ proyecto.titulo }}{% endblock title %}
+{% block extracss %}
+<style>
+    html {
+        scroll-padding-top: 140px;
+    }
+</style>
+{% endblock extracss %}
+
+{% block title %}{{ proyecto.titulo }}{% endblock title %}
 
 {% block content %}
     <div class="container-blanco">
@@ -378,8 +386,13 @@
         {% endif %}
 
         {% for campo in campos %}
-            <h3>{{ proyecto | get_attr_verbose_name:campo }}</h3>
-            <p>{{ proyecto | get_obj_attr:campo | default:"" | limpiar }}</p>
+            <h3 id="{{ campo }}" style="scroll-margin-top: 100px;">{{ proyecto | get_attr_verbose_name:campo }}</h3>
+            {% if campo in "participantes_iberus,participantes_unita,miembro_cifice" %}
+                <p>{{ proyecto | get_obj_attr:campo | yesno:"Sí,No,—" }}</p>
+            {% else %}
+                <p>{{ proyecto | get_obj_attr:campo | default:"" | limpiar }}</p>
+            {% endif %}
+
             {% if permitir_edicion %}
                 <p>
                     <a href="{% url 'proyecto_update_field' proyecto.id campo %}" class="btn btn-info btn-sm">
@@ -521,3 +534,5 @@
     </div>
 
 {% endblock content %}
+
+
