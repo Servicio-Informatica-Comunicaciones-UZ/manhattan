@@ -1994,12 +1994,14 @@ class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
 
         # Comprobamos límites para la presentación
         num_coordinaciones_presentadas = (
-            Proyecto.objects.filter(convocatoria=self.get_object().convocatoria)
-            .filter(participantes__usuario=self.request.user)
-            .filter(participantes__tipo_participacion__nombre__in=['coordinador', 'coordinador_2'])
-            .exclude(estado__in=['BORRADOR', 'ANULADO', 'DENEGADO', 'RECHAZADO'])
-            .exclude(pk=self.get_object().pk)
-            .exclude(programa__nombre_corto='PIPOUZ')
+            ParticipanteProyecto.objects.filter(
+                usuario=self.request.user,
+                tipo_participacion__nombre__in=['coordinador', 'coordinador_2'],
+                proyecto__convocatoria=self.get_object().convocatoria,
+            )
+            .exclude(proyecto__estado__in=['BORRADOR', 'ANULADO', 'DENEGADO', 'RECHAZADO'])
+            .exclude(proyecto__pk=self.get_object().pk)
+            .exclude(proyecto__programa__nombre_corto='PIPOUZ')
             .count()
         )
         context['limite_coordinaciones_alcanzado'] = (
@@ -2313,12 +2315,14 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
 
         # Comprobamos si, al presentar este proyecto, se excede el número máximo de coordinaciones
         num_coordinaciones_presentadas = (
-            Proyecto.objects.filter(convocatoria=proyecto.convocatoria)
-            .filter(participantes__usuario=self.request.user)
-            .filter(participantes__tipo_participacion__nombre__in=['coordinador', 'coordinador_2'])
-            .exclude(estado__in=['BORRADOR', 'ANULADO', 'DENEGADO', 'RECHAZADO'])
-            .exclude(pk=proyecto.pk)  # Excluimos este mismo proyecto
-            .exclude(programa__nombre_corto='PIPOUZ')  # Los PIPOUZ no computan
+            ParticipanteProyecto.objects.filter(
+                usuario=self.request.user,
+                tipo_participacion__nombre__in=['coordinador', 'coordinador_2'],
+                proyecto__convocatoria=proyecto.convocatoria,
+            )
+            .exclude(proyecto__estado__in=['BORRADOR', 'ANULADO', 'DENEGADO', 'RECHAZADO'])
+            .exclude(proyecto__pk=proyecto.pk)  # Excluimos este mismo proyecto
+            .exclude(proyecto__programa__nombre_corto='PIPOUZ')  # Los PIPOUZ no computan
             .count()
         )
         if (
