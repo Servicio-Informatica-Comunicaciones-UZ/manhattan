@@ -490,7 +490,7 @@ class Proyecto(models.Model):
         blank=True,
     )
     miembro_cifice = models.BooleanField(
-        _('Ser miembro de un grupo de innovación reconocido por CIFICE'),
+        _('Es miembro de un grupo de innovación reconocido por CIFICE'),
         null=True,
         blank=True,
     )
@@ -637,6 +637,11 @@ class Proyecto(models.Model):
         ),
     )
     financiacion_txt = models.TextField(_('Financiación en texto plano'), null=True)
+    observaciones_financiacion = models.TextField(
+        _('Observaciones financiación'),
+        blank=True,
+        null=True,
+    )
     ayuda = models.PositiveIntegerField(
         _('Ayuda económica solicitada'),
         help_text=_(

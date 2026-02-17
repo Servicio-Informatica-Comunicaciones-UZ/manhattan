@@ -2746,6 +2746,7 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
             'participantes_unita',
             'miembro_cifice',
         ):
+        
             # Salvo para los campos anteriores, usamos una caja de texto enriquecido
             formulario = modelform_factory(
                 Proyecto, fields=(campo,), widgets={campo: SummernoteWidget()}
@@ -3021,6 +3022,7 @@ class ProyectoUpdateFieldView(LoginRequiredMixin, ChecksMixin, UpdateView):
                 'participantes_iberus',
                 'participantes_unita',
                 'miembro_cifice',
+                'observaciones_financiacion',
             )
             if self.kwargs['campo'] not in permitidos_coordinador:
                 self.permission_denied_message = _('No puede modificar este campo.')
