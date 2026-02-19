@@ -638,7 +638,7 @@ class Proyecto(models.Model):
     )
     financiacion_txt = models.TextField(_('Financiación en texto plano'), null=True)
     observaciones_financiacion = models.TextField(
-        _('Observaciones financiación'),
+        _('Relación detallada, si procede, de todos los gastos justificables para la realización del proyecto'),
         blank=True,
         null=True,
     )

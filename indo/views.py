@@ -2307,6 +2307,10 @@ class ProyectoPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
         return reverse_lazy('proyecto_detail', args=[kwargs.get('pk')])
 
     def post(self, request, *args, **kwargs):
+        if not request.POST.get('declaracion_veracidad'):
+            messages.error(request, _('Debe declarar la veracidad de la información indicada para presentar la solicitud.'))
+            return super().post(request, *args, **kwargs)
+
         proyecto_id = kwargs.get('pk')
         proyecto = Proyecto.objects.get(pk=proyecto_id)
 

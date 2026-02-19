@@ -514,6 +514,7 @@
                     <h5 class="modal-title" id="presentarModalLabel">{% trans "¿Seguro que desea presentar la solicitud?" %}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ _('Cerrar') }}"></button>
                 </div>
+
                 <div class="modal-body">
                     <p>{% trans "Una vez presentada ya no podrá hacer <strong>ningún cambio</strong> (ni siquiera invitar a más personas)." %}</p>
                     <p>
@@ -528,6 +529,13 @@
                         {% blocktrans %}Al presentar la solicitud, usted se compromete, en caso de concesión, a cumplir con las
                             obligaciones establecidas en las bases de la convocatoria.{% endblocktrans %}
                     </p>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="1" id="declaracion_veracidad" name="declaracion_veracidad" form="presentar-form" required>
+                        <label class="form-check-label" for="declaracion_veracidad">
+                            {% trans "Declaro la veracidad de la información indicada" %}
+                        </label>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <form action="{% url 'proyecto_presentar' pk=proyecto.id %}" id="presentar-form" method="post">
