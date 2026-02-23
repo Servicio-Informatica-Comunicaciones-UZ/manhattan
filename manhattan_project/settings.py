@@ -157,7 +157,22 @@ MIDDLEWARE = [
 # https://docs.djangoproject.com/en/dev/ref/settings/#static-root
 STATIC_ROOT = str(BASE_DIR / 'staticfiles')
 # https://docs.djangoproject.com/en/dev/ref/settings/#static-url
-STATIC_URL = '/static/'
+# Check if STATIC_URL is defined in the environment (e.g. in production)
+if 'STATIC_URL' in os.environ:
+    STATIC_URL = os.environ['STATIC_URL']
+else:
+    STATIC_URL = '/static/' # Default value if not in environment
+
+# Fix for potential misconfiguration in production where a leading slash is added to an absolute URL
+if STATIC_URL.startswith('/http'):
+    STATIC_URL = STATIC_URL.lstrip('/')
+
+# Fix missing slashes in protocol (e.g. https:/domain)
+if STATIC_URL.startswith('http:/') and not STATIC_URL.startswith('http://'):
+    STATIC_URL = STATIC_URL.replace('http:/', 'http://', 1)
+if STATIC_URL.startswith('https:/') and not STATIC_URL.startswith('https://'):
+    STATIC_URL = STATIC_URL.replace('https:/', 'https://', 1)
+    
 # https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
 STATICFILES_DIRS = [str(BASE_DIR / 'static')]
 
@@ -323,11 +338,11 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_user',
     'social_core.pipeline.user.get_username',
     'social_core.pipeline.user.create_user',
-    # Actualizar con los datos de Gestión de Identidades
-    'accounts.pipeline.get_identidad',
     'social_core.pipeline.social_auth.associate_user',
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
+    # Actualizar con los datos exactos de Gestión de Identidades al final para que no se sobreescriban
+    'accounts.pipeline.get_identidad',
 )
 
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
