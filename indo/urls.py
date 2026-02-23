@@ -51,6 +51,7 @@ from .views import (
     ProyectosDeUnUsuarioView,
     ProyectosEvaluadosTableView,
     ProyectosNotificarView,
+    ProyectosNotificarPreviewView,
     ProyectosUpCsvView,
     ProyectosUsuarioView,
     ProyectoTableView,
@@ -141,6 +142,11 @@ urlpatterns = [
         'gestion/proyectos/<int:anyo>/notificar/',
         ProyectosNotificarView.as_view(),
         name='notificar_proyectos',
+    ),
+    path(
+        'gestion/proyectos/<int:anyo>/notificar-preview/',
+        ProyectosNotificarPreviewView.as_view(),
+        name='notificar_proyectos_preview',
     ),
     path(
         'gestion/proyectos/<int:anyo>/unidades-planificacion/',

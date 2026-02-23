@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Previsualización de Notificaciones" %}{% endblock title %}
+
+{% block content %}
+    <div class="container-blanco">
+        <h1>{% trans "Previsualización de Notificaciones" %} <small>{{ anyo }}</small></h1>
+        <hr />
+        <br />
+
+        <div class="alert alert-info alert-dismissible fade show">
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ _('Cerrar') }}"></button>
+            <span class="fas fa-info-circle"></span>
+            <p>{% trans 'Desde esta página puede previsualizar los correos que se van a enviar:' %}</p>
+            <ul>
+                <li>Total de correos a enviar: <strong>{{ total_a_notificar }}</strong></li>
+                <li>Proyectos con dotación económica: <strong>{{ num_con_dotacion }}</strong></li>
+                <li>Proyectos sin dotación económica: <strong>{{ num_sin_dotacion }}</strong></li>
+            </ul>
+        </div>
+
+        {% if mail_con_dotacion %}
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">{% trans "Ejemplo: Proyecto con dotación económica" %}</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>{% trans "Asunto:" %}</strong> {{ mail_con_dotacion.subject }}</p>
+                <hr>
+                <div class="bg-light p-3 border mb-3" style="white-space: pre-wrap; font-family: monospace;">{{ mail_con_dotacion.body }}</div>
+                
+                <h6 class="mt-4"><strong>{% trans "Destinatarios (" %}{{ num_con_dotacion }}{% trans "):" %}</strong></h6>
+                <div class="border p-2 bg-light" style="max-height: 150px; overflow-y: auto;">
+                    {% for email in destinatarios_con_dotacion %}
+                        <span class="badge bg-secondary mb-1" style="font-size: 0.9em;">{{ email }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if mail_sin_dotacion %}
+        <div class="card mb-4">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0">{% trans "Ejemplo: Proyecto sin dotación económica" %}</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>{% trans "Asunto:" %}</strong> {{ mail_sin_dotacion.subject }}</p>
+                <hr>
+                <div class="bg-light p-3 border mb-3" style="white-space: pre-wrap; font-family: monospace;">{{ mail_sin_dotacion.body }}</div>
+                
+                <h6 class="mt-4"><strong>{% trans "Destinatarios (" %}{{ num_sin_dotacion }}{% trans "):" %}</strong></h6>
+                <div class="border p-2 bg-light" style="max-height: 150px; overflow-y: auto;">
+                    {% for email in destinatarios_sin_dotacion %}
+                        <span class="badge bg-secondary mb-1" style="font-size: 0.9em;">{{ email }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <br style="clear: both;" />
+        
+        <div class="d-flex justify-content-between">
+            <a href="{% url 'evaluaciones_table' anyo %}" class="btn btn-secondary">
+                <span class="fas fa-arrow-left"></span>&nbsp; {% trans "Volver a Evaluaciones" %}
+            </a>
+
+            {% if not convocatoria.notificada_resolucion_provisional or not convocatoria.notificada_resolucion_definitiva %}
+                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#enviarModal" type="button">
+                    <span class="fas fa-paper-plane"></span>&nbsp;
+                    {% if not convocatoria.notificada_resolucion_provisional %}
+                        {% trans 'Confirmar y Notificar resolución provisional' %}
+                    {% else %}
+                        {% trans 'Confirmar y Notificar resolución definitiva' %}
+                    {% endif %}
+                </button>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="modal fade" id="enviarModal" tabindex="-1" role="dialog" aria-labelledby="enviarModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="enviarModalLabel">{% trans "¿Seguro que desea enviar las notificaciones?" %}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ _('Cerrar') }}"></button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        {% blocktrans %}Se enviarán notificaciones a los coordinadores de <strong>todos</strong> los proyectos
+                            <strong>aprobados</strong> por la Comisión.<br><br>
+                            Esta acción no se puede deshacer.
+                        {% endblocktrans %}
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <form action="{% url 'notificar_proyectos' anyo=anyo %}" id="notificar-form" method="post">
+                        {% csrf_token %}
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <span class="fas fa-times"></span> {% trans "Cancelar" %}
+                        </button>
+                        <button type="submit" class="btn btn-danger">
+                            <span class="fas fa-paper-plane"></span> {% trans "Enviar" %}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}

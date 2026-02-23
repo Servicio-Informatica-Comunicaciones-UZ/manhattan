@@ -3336,3 +3336,106 @@ class ResolucionListView(ListView):
         context = super().get_context_data(**kwargs)
         context['anyo'] = Convocatoria.get_ultima().id
         return context
+from django.views.generic import TemplateView
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.urls import reverse
+from django.template.loader import render_to_string
+from .models import Convocatoria, Proyecto
+import logging
+
+logger = logging.getLogger(__name__)
+
+def get_config(key):
+    # Dummy mock for now, we will copy the real one or just integrate it directly in views.py
+    from django.conf import settings
+    return getattr(settings, key, '')
+
+class ProyectosNotificarPreviewView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
+    template_name = 'gestion/proyecto/notificar_preview.html'
+    permission_required = 'indo.listar_evaluaciones'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        anyo = self.kwargs.get('anyo')
+        convocatoria = get_object_or_404(Convocatoria, pk=anyo)
+        context['anyo'] = anyo
+        context['convocatoria'] = convocatoria
+
+        if not convocatoria.notificada_resolucion_provisional:
+            variante = '_provisional'
+            proyectos_aprobados = Proyecto.objects.filter(convocatoria__id=anyo, aceptacion_comision=True)
+            proyectos_con_dotacion = proyectos_aprobados.filter(ayuda_provisional__gt=0)
+            proyectos_sin_dotacion = proyectos_aprobados.filter(ayuda_provisional=0)
+        else:
+            variante = '_definitiva'
+            proyectos_aprobados = Proyecto.objects.filter(convocatoria__id=anyo, aceptacion_comision=True)
+            proyectos_con_dotacion = proyectos_aprobados.filter(ayuda_definitiva__gt=0)
+            proyectos_sin_dotacion = proyectos_aprobados.filter(ayuda_definitiva=0)
+
+        context['num_con_dotacion'] = proyectos_con_dotacion.count()
+        context['num_sin_dotacion'] = proyectos_sin_dotacion.count()
+        context['total_a_notificar'] = proyectos_con_dotacion.count() + proyectos_sin_dotacion.count()
+
+        # Recipient lists
+        context['destinatarios_con_dotacion'] = [p.coordinador.email for p in proyectos_con_dotacion]
+        context['destinatarios_sin_dotacion'] = [p.coordinador.email for p in proyectos_sin_dotacion]
+
+        # Generate a preview email for Dotacion
+        mail_con_dotacion = None
+        if proyectos_con_dotacion.exists():
+            p_con = proyectos_con_dotacion.first()
+            try:
+                from indo.views import get_config
+                # We render the template blocks manually as get_templated_mail hangs in this context
+                rendered = render_to_string('templated_email/notificacion_con_dotacion' + variante + '.email', {
+                    'proyecto': p_con,
+                    'coordinador': p_con.coordinador,
+                    'site_url': get_config('SITE_URL'),
+                    'ayuda_url': get_config('SITE_URL') + reverse('ayuda'),
+                    'vicerrector': get_config('VICERRECTOR').strip('"'),
+                })
+                
+                # Extract block subject and plain using simple splits
+                subject = rendered.split('{% block subject %}')[1].split('{% endblock %}')[0].strip() if '{% block subject %}' in rendered else ''
+                body = rendered.split('{% block plain %}')[1].split('{% endblock %}')[0].strip() if '{% block plain %}' in rendered else ''
+                
+                if not subject and not body:
+                    # Alternative parser if it was rendered evaluated
+                    # The django-templated-email uses its own block parser
+                    subject = "Resolución provisional" if variante == "_provisional" else "Resolución definitiva"
+                    body = rendered
+                    
+                mail_con_dotacion = {'subject': subject, 'body': body}
+            except Exception as e:
+                logger.error(f"Error rendering dotacion preview: {e}")
+
+        # Generate a preview email for Sin Dotacion
+        mail_sin_dotacion = None
+        if proyectos_sin_dotacion.exists():
+            p_sin = proyectos_sin_dotacion.first()
+            try:
+                from indo.views import get_config
+                rendered = render_to_string('templated_email/notificacion_sin_dotacion' + variante + '.email', {
+                    'proyecto': p_sin,
+                    'coordinador': p_sin.coordinador,
+                    'site_url': get_config('SITE_URL'),
+                    'ayuda_url': get_config('SITE_URL') + reverse('ayuda'),
+                    'vicerrector': get_config('VICERRECTOR').strip('"'),
+                })
+                
+                subject = rendered.split('{% block subject %}')[1].split('{% endblock %}')[0].strip() if '{% block subject %}' in rendered else ''
+                body = rendered.split('{% block plain %}')[1].split('{% endblock %}')[0].strip() if '{% block plain %}' in rendered else ''
+                
+                if not subject and not body:
+                    subject = "Resolución provisional" if variante == "_provisional" else "Resolución definitiva"
+                    body = rendered
+
+                mail_sin_dotacion = {'subject': subject, 'body': body}
+            except Exception as e:
+                logger.error(f"Error rendering sin dotacion preview: {e}")
+
+        context['mail_con_dotacion'] = mail_con_dotacion
+        context['mail_sin_dotacion'] = mail_sin_dotacion
+
+        return context
