@@ -352,6 +352,58 @@
         {% endif %}
         <br />
 
+        <!-- Usuarios colaboradores -->
+        <h3 id="colaboradores">{% trans 'Colaboradores' %}</h3>
+        {% if colaboradores %}
+            <div class="table-responsive">
+                <table class="table table-hover table-striped table-sm cabecera-azul" aria-label="colaboradores">
+                    <thead>
+                        <tr>
+                            <th scope="col">{% trans "Usuario" %}</th>
+                            {% if es_coordinador or permitir_edicion or permitir_anyadir_colaborador %}
+                                <th scope="col">{% trans 'E-mail' %}</th>
+                            {% endif %}
+                            {% if permitir_anyadir_colaborador %}
+                                <th scope="col">{% trans "Acción" %}</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    {% for colaborador in colaboradores %}
+                        <tr>
+                            <td>{{ colaborador.usuario.full_name }}</td>
+                            {% if es_coordinador or permitir_edicion or permitir_anyadir_colaborador %}
+                                <td>{{ colaborador.usuario.email }}</td>
+                            {% endif %}
+                            {% if permitir_anyadir_colaborador %}
+                                <td>
+                                    <a href="{% url 'colaborador_delete' colaborador.id %}" aria-label="{% trans 'Eliminar' %}">
+                                        <span aria-hidden="true" class="fas fa-trash-alt" title="{% trans 'Eliminar' %}"></span>
+                                    </a>
+                                </td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        {% else %}
+            <p>{% trans 'Este proyecto no cuenta con colaboradores.' %}</p>
+        {% endif %}
+        
+        {% if permitir_anyadir_colaborador %}
+            <p>
+                <a href="{% url 'colaborador_anyadir' proyecto.id %}" class="btn btn-warning btn-sm">
+                    <span class="fas fa-plus" aria-hidden="true"></span>&nbsp; {% trans 'Añadir colaborador' %}
+                </a>
+            </p>
+        {% elif es_coordinador or es_gestor %}
+            <div class="alert alert-warning alert-dismissible fade show noprint mt-3">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ _('Cerrar') }}"></button>
+                <span class="fas fa-exclamation-triangle"></span>
+                {% trans 'No es posible añadir o eliminar colaboradores en el estado actual del proyecto.' %}
+            </div>
+        {% endif %}
+        <br />
+
         <!-- Añadir participante con carácter excepcional -->
         {% if permitir_anyadir_sin_invitacion %}
             <h4 id="anyadir-participante">{% trans 'Añadir participante de forma excepcional' %}</h4>

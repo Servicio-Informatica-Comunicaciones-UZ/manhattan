@@ -114,6 +114,8 @@
         {% endif %}
         <br /><br />
 
+
+
         <h1 id="invitaciones">{% trans "Invitaciones a proyectos" %} <small>{{ anyo }}</small></h1>
         <hr />
         <br />
@@ -186,6 +188,39 @@
         {% else %}
             <p>{% trans 'No está invitado a ningún proyecto.' %}<br>
                 {% trans 'Las invitaciones no son efectivas hasta que el coordinador <strong>presenta</strong> su solicitud de proyecto.' %}</p>
+        {% endif %}
+        <br /><br />
+
+        <h1 id="colaboraciones">{% trans "Proyectos en los que colaboro" %} <small>{{ anyo }}</small></h1>
+        <hr />
+        <br />
+
+        {% if proyectos_colaborados %}
+            <div class="table-responsive">
+                <table class="table table-hover table-striped table-sm cabecera-azul" aria-describedby="colaboraciones">
+                    <thead>
+                        <tr>
+                            <th scope="col">{% trans 'Programa' %}</th>
+                            <th scope="col">{% trans 'Línea' %}</th>
+                            <th scope="col">{% trans 'Título' %}</th>
+                            <th scope="col">{% trans 'Coordinador' %}</th>
+                            <th scope="col">{% trans 'Estado' %}</th>
+                        </tr>
+                    </thead>
+
+                    {% for proyecto in proyectos_colaborados %}
+                        <tr>
+                            <td>{{ proyecto.programa.nombre_corto }}</td>
+                            <td>{% if proyecto.linea %}{{ proyecto.linea.nombre }}{% endif %}</td>
+                            <td><a href="{% url 'proyecto_detail' proyecto.id %}">{{ proyecto.titulo }}</a></td>
+                            <td>{{ proyecto.coordinador.full_name }}</td>
+                            <td>{{ proyecto.get_estado_display }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        {% else %}
+            <p>{% trans 'No colabora en ningún proyecto.' %}</p>
         {% endif %}
         <br /><br />
 

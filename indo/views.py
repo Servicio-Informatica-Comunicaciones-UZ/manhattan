@@ -1313,6 +1313,127 @@ class ParticipanteRenunciarView(LoginRequiredMixin, RedirectView):
         return super().post(request, *args, **kwargs)
 
 
+class ColaboradorAnyadirView(LoginRequiredMixin, ChecksMixin, TemplateView):
+    """Muestra un formulario para añadir un colaborador a un proyecto."""
+
+    template_name = 'participante-proyecto/colaborador_anyadir.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        proyecto = get_object_or_404(Proyecto, pk=kwargs['proyecto_id'])
+        context.update({'anyo': proyecto.convocatoria.id, 'proyecto': proyecto})
+        return context
+
+    def post(self, request, *args, **kwargs):
+        proyecto = get_object_or_404(Proyecto, pk=kwargs['proyecto_id'])
+
+        # Comprobamos permisos para añadir colaborador
+        permitir = proyecto.aceptacion_coordinador and (
+            self.request.user.has_perm('indo.editar_proyecto') or (
+                self.es_coordinador(proyecto.id) and proyecto.estado not in ('MEM_PRESENTADA', 'MEM_ADMITIDA', 'FINALIZADO_SIN_MEMORIA')
+            )
+        )
+        if not permitir:
+            messages.error(request, _('No está permitido añadir colaboradores en el estado actual del proyecto.'))
+            return redirect('proyecto_detail', proyecto.id)
+
+        # Obtenemos el usuario (si ya existe en el sistema).
+        nip = request.POST.get('nip')
+        User = get_user_model()
+        usuario = get_object_or_None(User, username=nip)
+
+        if not usuario:
+            # El usuario no existe previamente. Lo creamos con los datos de Gestión de Identidades.
+            try:
+                usuario = User.crear_usuario(request, nip)
+            except Exception as ex:
+                messages.error(request, 'ERROR: {e}'.format(e=ex.args[0]))
+                return redirect('colaborador_anyadir', proyecto.id)
+        else:
+            # El usuario existe. Actualizamos sus datos con los de Gestión de Identidades.
+            try:
+                usuario.actualizar(self.request)
+            except Exception as ex:
+                # Si Identidades devuelve un error, finalizamos mostrando el mensaje de error.
+                messages.error(request, f'ERROR: {ex}')
+                return redirect('colaborador_anyadir', proyecto.id)
+
+        # Si el usuario no está activo, finalizamos explicando esta circunstancia.
+        if not usuario.is_active:
+            texto = mark_safe(
+                _(
+                    """Usuario inactivo en el sistema de Gestión de Identidades.<br>
+                    <a href="%(url)s">Solicite en el Centro de Atención a Usuari@s</a> (CAU)
+                    que se le asigne la vinculación
+                    «Participantes externos Proyectos Innovación Docente»."""
+                )
+                % {'url': reverse('ayuda')}
+            )
+            messages.error(request, f'ERROR: {texto}')
+            return redirect('colaborador_anyadir', proyecto.id)
+
+        # Añadimos al usuario como colaborador del proyecto.
+        participacion = proyecto.participantes.filter(usuario=usuario).first()
+        if participacion:
+            if participacion.tipo_participacion.nombre == 'colaborador':
+                messages.warning(request, _('Este usuario ya figura como colaborador en el proyecto.'))
+            else:
+                messages.error(request, _('Este usuario ya participa en el proyecto con un rol distinto.'))
+            return redirect('proyecto_detail', proyecto.id)
+
+        participante = ParticipanteProyecto(
+            proyecto=proyecto,
+            tipo_participacion=TipoParticipacion('colaborador'),
+            usuario=usuario,
+        )
+        participante.save()
+
+        messages.success(request, _('Se ha añadido al usuario como colaborador del proyecto.'))
+        return redirect('proyecto_detail', proyecto.id)
+
+    def test_func(self):
+        proyecto = get_object_or_404(Proyecto, pk=self.kwargs['proyecto_id'])
+        permitir = proyecto.aceptacion_coordinador and (
+            self.request.user.has_perm('indo.editar_proyecto') or (
+                self.es_coordinador(proyecto.id) and proyecto.estado not in ('MEM_PRESENTADA', 'MEM_ADMITIDA', 'FINALIZADO_SIN_MEMORIA')
+            )
+        )
+        if not permitir:
+            self.permission_denied_message = _('No está permitido modificar colaboradores en el estado actual del proyecto.')
+            return False
+        return True
+
+
+class ColaboradorDeleteView(LoginRequiredMixin, ChecksMixin, DeleteView):
+    """Borra un registro de ParticipanteProyecto de tipo colaborador"""
+
+    model = ParticipanteProyecto
+    template_name = 'participante-proyecto/colaborador_confirm_delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['anyo'] = self.object.proyecto.convocatoria.id
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy('proyecto_detail', args=[self.object.proyecto.id])
+
+    def test_func(self):
+        proyecto = self.get_object().proyecto
+        permitir = proyecto.aceptacion_coordinador and (
+            self.request.user.has_perm('indo.editar_proyecto') or (
+                self.es_coordinador(proyecto.id) and proyecto.estado not in ('MEM_PRESENTADA', 'MEM_ADMITIDA', 'FINALIZADO_SIN_MEMORIA')
+            )
+        )
+        if not permitir:
+            self.permission_denied_message = _('No está permitido modificar colaboradores en el estado actual del proyecto.')
+            return False
+        if self.get_object().tipo_participacion_id != 'colaborador':
+            self.permission_denied_message = _('No puede borrar a un participante que no sea colaborador desde esta vista.')
+            return False
+        return True
+
+
 class ParticipanteDeleteView(LoginRequiredMixin, ChecksMixin, DeleteView):
     """Borra un registro de ParticipanteProyecto"""
 
@@ -1925,6 +2046,13 @@ class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
             .all()
         )
 
+        context['colaboradores'] = (
+            self.get_object()
+            .participantes.filter(tipo_participacion='colaborador')
+            .order_by('usuario__first_name', 'usuario__last_name')
+            .all()
+        )
+
         context['campos'] = json.loads(self.get_object().programa.campos)
 
         context['permitir_edicion'] = (
@@ -1990,7 +2118,11 @@ class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
 
         context['es_gestor'] = self.request.user.has_perm('indo.editar_proyecto')
 
-        context['es_gestor'] = self.request.user.has_perm('indo.editar_proyecto')
+        context['permitir_anyadir_colaborador'] = self.object.aceptacion_coordinador and (
+            self.request.user.has_perm('indo.editar_proyecto') or (
+                self.es_coordinador(self.object.id) and self.object.estado not in ('MEM_PRESENTADA', 'MEM_ADMITIDA', 'FINALIZADO_SIN_MEMORIA')
+            )
+        )
 
         # Comprobamos límites para la presentación
         num_coordinaciones_presentadas = (
@@ -3169,6 +3301,16 @@ class ProyectosUsuarioView(LoginRequiredMixin, ChecksMixin, TemplateView):
             .order_by('programa__nombre_corto', 'linea__nombre', 'titulo')
             .all()
         )
+        proyectos_colaborados = (
+            Proyecto.objects.filter(
+                convocatoria__id=anyo,
+                participantes__usuario=usuario,
+                participantes__tipo_participacion_id='colaborador',
+            )
+            .exclude(estado__in=['BORRADOR', 'ANULADO'])
+            .order_by('programa__nombre_corto', 'linea__nombre', 'titulo')
+            .all()
+        )
 
         # No mostrar si la Comisión ha aprobado o no el proyecto
         # hasta que se publique la resolución.
@@ -3182,11 +3324,13 @@ class ProyectosUsuarioView(LoginRequiredMixin, ChecksMixin, TemplateView):
             proyectos_coordinados = [enmascara_estado(p) for p in proyectos_coordinados]
             proyectos_participados = [enmascara_estado(p) for p in proyectos_participados]
             proyectos_invitado = [enmascara_estado(p) for p in proyectos_invitado]
+            proyectos_colaborados = [enmascara_estado(p) for p in proyectos_colaborados]
 
         context['convocatoria'] = convocatoria
         context['proyectos_coordinados'] = proyectos_coordinados
         context['proyectos_participados'] = proyectos_participados
         context['proyectos_invitado'] = proyectos_invitado
+        context['proyectos_colaborados'] = proyectos_colaborados
 
         context['permitir_solicitar'] = (
             self.es_pas_o_pdi() and date.today() <= convocatoria.fecha_max_solicitudes

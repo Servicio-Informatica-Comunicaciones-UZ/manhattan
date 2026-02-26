@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load i18n crispy_forms_tags %}
+
+{% block title %}{% trans "Confirmar borrado" %}{% endblock title %}
+
+{% block content %}
+
+    <div class="container-blanco">
+        <h1>{% trans 'Eliminar colaborador' %}</h1>
+
+        <form method="post">{% csrf_token %}
+            <p>{% blocktranslate with nombre=object.usuario.full_name %}
+                ¿Está seguro de que quiere borrar al colaborador {{ nombre }}?
+            {% endblocktranslate %}</p>
+            <a href="{% url 'proyecto_detail' object.proyecto.id %}" class="btn btn-secondary">
+                <span class="fas fa-undo"></span> {% trans 'Cancelar' %}
+            </a>
+            <button type="submit" class="btn btn-danger">
+                <span class="fas fa-trash-alt"></span> {% trans 'Borrar' %}
+            </button>
+        </form>
+    </div>
+
+{% endblock content %}

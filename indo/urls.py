@@ -14,6 +14,8 @@ from .views import (
     EvaluadorProyectoUpdateView,
     HomePageView,
     InvitacionView,
+    ColaboradorAnyadirView,
+    ColaboradorDeleteView,
     MemoriaCorreccionUpdateView,
     MemoriaDetailView,
     MemoriaMarcxmlView,
@@ -207,6 +209,16 @@ urlpatterns = [
     ),
     path('memorias/<int:anyo>/zaguan/', MemoriasZaguanView.as_view(), name='memorias_zaguan'),
     # Participante en proyecto
+    path(
+        'participante-proyecto/colaborador-anyadir/<int:proyecto_id>/',
+        ColaboradorAnyadirView.as_view(),
+        name='colaborador_anyadir',
+    ),
+    path(
+        'participante-proyecto/colaborador-delete/<int:pk>/',
+        ColaboradorDeleteView.as_view(),
+        name='colaborador_delete',
+    ),
     path(
         'participante-proyecto/anyadir/<int:proyecto_id>/',
         ParticipanteAnyadirView.as_view(),
