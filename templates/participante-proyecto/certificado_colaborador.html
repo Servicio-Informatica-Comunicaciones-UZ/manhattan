@@ -1,0 +1,80 @@
+{% load custom_tags i18n static %}<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+        <!-- Bootstrap CSS -->
+        <link
+            rel="stylesheet"
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+            integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+            crossorigin="anonymous"
+        />
+        {# SubResource Integrity: openssl dgst -sha384 -binary FICHERO | openssl base64 #}
+        <link
+            rel="stylesheet"
+            href="https://use.fontawesome.com/releases/v5.11.2/css/all.css"
+            integrity="sha384-KA6wR/X5RY4zFAHpv/CnoG2UW1uogYfdnP67Uv7eULvTveboZJg0qUpmJZb5VqzN"
+            crossorigin="anonymous"
+        />
+        <link rel="stylesheet" href="{% static 'css/base.css' %}" />
+        <link rel="stylesheet" href="{% static 'css/iconos.css' %}" />
+        <style>
+            @page {
+            @bottom-left {
+                content: "Firmado electrónicamente y con autenticidad contrastable según el artículo 27.3 c) de la Ley 39/2015,\Apor {% if coordinador.sexo == 'M' %}D. {{ coordinador.full_name }}, Coordinador {% else %} Dª. {{ coordinador.full_name }}, Coordinadora {% endif %} del Proyecto de Innovación Docente";
+                font-size: 9pt;
+                font-family: sans-serif;
+                white-space: pre-wrap;
+            }
+            }
+        </style>
+
+        <title>{% trans "Hago Constar" %}</title>
+
+        <meta name="description" content="{% trans 'Hago Constar de colaboración en Proyecto de Innovación Docente' %}" />
+        <meta
+            name="author"
+            content="Área de Aplicaciones. Servicio de Informática y Comunicaciones de la Universidad de Zaragoza."
+        />
+    </head>
+
+    <body>
+        <div class="container-blanco" style="text-align:justify">
+            <p style="font-size: 400%; color: #223d71"><span class="icon-logoUZ"></span></p>
+
+            {% if coordinador.sexo == "M" %}
+                <p><strong>D. {{ coordinador.full_name }}, Coordinador del Proyecto de Innovación Docente</strong></p>
+            {% else %}
+                <p><strong>Dª. {{ coordinador.full_name }}, Coordinadora del Proyecto de Innovación Docente</strong></p>
+            {% endif %}
+
+            <p><strong>HACE CONSTAR</strong></p>
+
+            <p>
+                Que, {% if colaborador.sexo == "F" %} Dª.{% else %} D. {% endif %} {{ colaborador.full_name }} con número de documento {{ colaborador.numero_documento }} ha colaborado activamente en el
+                Proyecto de Innovación Docente de la Universidad de Zaragoza titulado:
+            </p>
+
+            <p style="text-align: center; font-style: italic; margin: 2em 0;">
+                "{{ proyecto.titulo }}"
+            </p>
+
+            <p>
+                Este proyecto (id {{ proyecto.id }},
+                {% if proyecto.codigo %}código {{ proyecto.codigo }},{% endif %}
+                curso {{ proyecto.convocatoria.id }})
+                fue desarrollado de acuerdo con las bases de la convocatoria correspondiente y su memoria de resultados ha sido evaluada y admitida positivamente.
+            </p>
+
+            <p>
+                Y para que conste, se expide el presente a los efectos oportunos y a petición de la persona interesada.
+            </p>
+
+            <p>En Zaragoza, a fecha de la firma,</p>
+
+        </div>
+    </body>
+</html>

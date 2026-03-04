@@ -30,6 +30,7 @@ from .views import (
     ParticipanteDeclinarView,
     ParticipanteDeleteView,
     ParticipanteHaceConstarView,
+    ColaboradorHaceConstarView,
     ParticipanteRenunciarView,
     ProyectoAceptarView,
     ProyectoAnularView,
@@ -218,6 +219,11 @@ urlpatterns = [
         'participante-proyecto/colaborador-delete/<int:pk>/',
         ColaboradorDeleteView.as_view(),
         name='colaborador_delete',
+    ),
+    path(
+        'participante-proyecto/colaborador-hace-constar/<int:pk>/',
+        ColaboradorHaceConstarView.as_view(),
+        name='colaborador_hace_constar',
     ),
     path(
         'participante-proyecto/anyadir/<int:proyecto_id>/',

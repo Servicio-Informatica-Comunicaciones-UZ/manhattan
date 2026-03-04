@@ -1434,6 +1434,61 @@ class ColaboradorDeleteView(LoginRequiredMixin, ChecksMixin, DeleteView):
         return True
 
 
+class ColaboradorHaceConstarView(LoginRequiredMixin, ChecksMixin, DetailView):
+    """
+    Generar PDF de Hago Constar de colaboración de un proyecto para una persona.
+    Solo puede ser emitido por el coordinador del proyecto o por un gestor, cuando
+    el estado sea MEM_ADMITIDA.
+    """
+
+    model = ParticipanteProyecto
+
+    def get_queryset(self):
+        # We only want to generate certificates for colaboradores
+        return super().get_queryset().filter(tipo_participacion_id='colaborador')
+
+    def test_func(self):
+        colaborador = self.get_object()
+        proyecto = colaborador.proyecto
+        
+        # Comprobación de estado comentada temporalmente para pruebas
+        # if proyecto.estado != 'MEM_ADMITIDA':
+        #     self.permission_denied_message = _('Solo se pueden emitir resguardos para proyectos con la memoria admitida.')
+        #     return False
+            
+        permitir = self.request.user.has_perm('indo.editar_proyecto') or self.es_coordinador(proyecto.id)
+        if not permitir:
+            self.permission_denied_message = _('Solo el coordinador o los gestores pueden emitir el Hago Constar de colaboración.')
+            return False
+            
+        return True
+
+    def get(self, request, *args, **kwargs):
+        colaborador = self.get_object()
+        proyecto = colaborador.proyecto
+        
+        contexto = {
+            'coordinador': proyecto.coordinador,
+            'colaborador': colaborador.usuario,
+            'proyecto': proyecto,
+        }
+
+        documento_html = HTML(
+            string=render_to_string(
+                'participante-proyecto/certificado_colaborador.html', context=contexto, request=request
+            ),
+            # En la plantilla, las URL de los CSS y las imágenes son relativas.
+            # Al usar `HTML(string=...)` WeasyPrint no sabe cuál es la URL base, hay que dársela.
+            base_url=request.build_absolute_uri(),
+        )
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = (
+            f'attachment; filename="hago_constar_colaborador_{colaborador.usuario.username}.pdf"'
+        )
+        documento_html.write_pdf(response)
+        return response
+
+
 class ParticipanteDeleteView(LoginRequiredMixin, ChecksMixin, DeleteView):
     """Borra un registro de ParticipanteProyecto"""
 

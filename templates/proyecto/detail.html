@@ -363,7 +363,7 @@
                             {% if es_coordinador or permitir_edicion or permitir_anyadir_colaborador %}
                                 <th scope="col">{% trans 'E-mail' %}</th>
                             {% endif %}
-                            {% if permitir_anyadir_colaborador %}
+                            {% if permitir_anyadir_colaborador or es_coordinador or es_gestor %}
                                 <th scope="col">{% trans "Acción" %}</th>
                             {% endif %}
                         </tr>
@@ -374,11 +374,18 @@
                             {% if es_coordinador or permitir_edicion or permitir_anyadir_colaborador %}
                                 <td>{{ colaborador.usuario.email }}</td>
                             {% endif %}
-                            {% if permitir_anyadir_colaborador %}
+                            {% if permitir_anyadir_colaborador or es_coordinador or es_gestor %}
                                 <td>
-                                    <a href="{% url 'colaborador_delete' colaborador.id %}" aria-label="{% trans 'Eliminar' %}">
-                                        <span aria-hidden="true" class="fas fa-trash-alt" title="{% trans 'Eliminar' %}"></span>
-                                    </a>
+                                    {% if permitir_anyadir_colaborador %}
+                                        <a href="{% url 'colaborador_delete' colaborador.id %}" aria-label="{% trans 'Eliminar' %}">
+                                            <span aria-hidden="true" class="fas fa-trash-alt" title="{% trans 'Eliminar' %}"></span>
+                                        </a>
+                                    {% endif %}
+                                    {% if es_coordinador or es_gestor %}
+                                        <a href="{% url 'colaborador_hace_constar' colaborador.id %}" aria-label="{% trans 'Generar Hago Constar' %}" class="ml-4" style="margin-left: 1.5rem;">
+                                            <span aria-hidden="true" class="fas fa-file-pdf" title="{% trans 'Generar Hago Constar' %}" style="color: #dc3545;"></span>
+                                        </a>
+                                    {% endif %}
                                 </td>
                             {% endif %}
                         </tr>
