@@ -233,6 +233,10 @@
                                 <span class="fas fa-user"></span>&nbsp; {{ user.username }}
                             </a>
                             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                                {% if user|has_group:"Gestores" and APP_VERSION %}
+                                    <span class="dropdown-item-text text-muted small"><span class="fas fa-code-branch"></span> {% trans "Versión" %}: {{ APP_VERSION }}</span>
+                                    <div class="dropdown-divider"></div>
+                                {% endif %}
                                 {% if not user.social_auth.get %}
                                     <a class="dropdown-item" href="{% url 'password_change' %}">
                                         <span class="fas fa-key"></span> {% trans "Cambiar contraseña" %}
