@@ -1388,6 +1388,34 @@ class ColaboradorAnyadirView(LoginRequiredMixin, ChecksMixin, TemplateView):
         )
         participante.save()
 
+        try:
+            from templated_email import send_templated_mail
+            import smtplib
+            send_templated_mail(
+                template_name='colaborador_incluido',
+                from_email=None,
+                recipient_list=[usuario.email],
+                context={
+                    'nombre_coordinador': request.user.full_name,
+                    'nombre_colaborador': usuario.full_name,
+                    'sexo_colaborador': usuario.sexo,
+                    'titulo_proyecto': proyecto.titulo,
+                    'programa_proyecto': f'{proyecto.programa.nombre_corto} '
+                    + f'({proyecto.programa.nombre_largo})',
+                    'descripcion_proyecto': proyecto.descripcion_txt,
+                    'site_url': settings.SITE_URL,
+                },
+            )
+        except Exception as err:
+            messages.warning(
+                request,
+                _(
+                    'El usuario ha sido añadido como colaborador, pero no se le pudo enviar el correo de aviso:'
+                    ' %(err)s'
+                )
+                % {'err': err},
+            )
+
         messages.success(request, _('Se ha añadido al usuario como colaborador del proyecto.'))
         return redirect('proyecto_detail', proyecto.id)
 
