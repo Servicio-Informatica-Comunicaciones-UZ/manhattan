@@ -12,11 +12,17 @@ def get_app_version():
         
     try:
         # Intenta obtener la versión desde git
-        _APP_VERSION_CACHE = subprocess.check_output(
+        version_tag = subprocess.check_output(
             ['git', 'describe', '--tags', '--always'], 
             stderr=subprocess.DEVNULL,
             text=True
         ).strip()
+        commit_info = subprocess.check_output(
+            ['git', 'log', '-1', '--format=%cd - %s', '--date=short'], 
+            stderr=subprocess.DEVNULL,
+            text=True
+        ).strip()
+        _APP_VERSION_CACHE = f"{version_tag} ({commit_info})"
     except Exception:
         # Si git falla (ej: dentro del Docker), intenta leer el archivo APP_VERSION.txt
         version_file = os.path.join(settings.BASE_DIR, 'APP_VERSION.txt')

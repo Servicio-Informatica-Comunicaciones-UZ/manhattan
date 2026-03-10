@@ -3,7 +3,9 @@
 
 # Extraemos la versión de git en el archivo (se ignorará en el nuevo commit)
 echo "Generando archivo APP_VERSION.txt..."
-git describe --tags --always > APP_VERSION.txt
+git_version=$(git describe --tags --always)
+git_info=$(git log -1 --format="%cd - %s" --date=short)
+echo "${git_version} (${git_info})" > APP_VERSION.txt
 
 echo "Versión inyectada:"
 cat APP_VERSION.txt
