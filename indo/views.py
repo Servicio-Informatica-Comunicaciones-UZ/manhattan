@@ -2000,15 +2000,7 @@ class MemoriaPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
         proyecto.es_publicable = None
         proyecto.save()
 
-        contexto = self.create_context(proyecto)
-        # base_url = request.build_absolute_uri().removesuffix('presentar/')  # Requiere Python 3.9
         base_url = request.build_absolute_uri()[: -len('presentar/')]
-        documento_html = HTML(
-            string=render_to_string('memoria/detail.html', context=contexto, request=request),
-            # En la plantilla, las URL de los CSS y las imágenes son relativas.
-            # Al usar `HTML(string=...)` WeasyPrint no sabe cuál es la URL base, hay que dársela.
-            base_url=base_url,
-        )
 
         # Generar ruta tipo `BASE_DIR/media/memoria/2021/PIIDUZ_42.pdf`
         pdf_destino = os.path.join(
@@ -2018,7 +2010,7 @@ class MemoriaPresentarView(LoginRequiredMixin, ChecksMixin, RedirectView):
             f'{proyecto.programa.nombre_corto}_{proyecto_id}.pdf',
         )
 
-        generar_pdf(documento_html, pdf_destino)  # Proceso lento, lo ejecutamos en segundo plano.
+        generar_pdf(proyecto_id, base_url, pdf_destino)  # Proceso lento, lo ejecutamos en segundo plano.
 
         messages.success(
             request,
