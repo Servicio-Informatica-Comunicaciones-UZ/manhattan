@@ -1,4 +1,5 @@
 {% block subject %}Inclusión como colaborador en el proyecto «{{titulo_proyecto}}»{% endblock %}
+
 {% block plain %}
 {% if sexo_colaborador == 'F' %}
 Estimada {{nombre_colaborador}}:
@@ -20,4 +21,31 @@ Puede ver los detalles accediendo a <{{site_url}}> con su NIP y contraseña admi
 
 Atentamente,
     Vicerrectorado de Política Académica
+{% endblock %}
+
+{% block html %}
+<p>
+  {% if sexo_colaborador == 'F' %}
+  Estimada <strong>{{nombre_colaborador}}</strong>:
+  {% elif sexo_colaborador == 'M' %}
+  Estimado <strong>{{nombre_colaborador}}</strong>:
+  {% else %}
+  Estimad@ <strong>{{nombre_colaborador}}</strong>:
+  {% endif %}
+</p>
+
+<p><strong>{{nombre_coordinador}}</strong> le ha incluido como colaborador en el siguiente <strong>Proyecto de Innovación Docente</strong>:</p>
+
+<ul>
+  <li><strong>Título:</strong> {{titulo_proyecto}}</li>
+  <li><strong>Programa:</strong> {{programa_proyecto}}</li>
+  <li><strong>Descripción:</strong> {{ descripcion_proyecto | striptags }}</li>
+</ul>
+
+<p>Como colaborador, usted forma parte del proyecto desde este momento y no necesita realizar ninguna acción para aceptar esta inclusión.</p>
+
+<p>Puede ver los detalles accediendo a <a href="{{site_url}}">{{site_url}}</a> con su NIP y contraseña administrativa en la sección <strong>"Mis colaboraciones"</strong>.</p>
+
+<p>Atentamente,<br>
+Vicerrectorado de Política Académica</p>
 {% endblock %}
