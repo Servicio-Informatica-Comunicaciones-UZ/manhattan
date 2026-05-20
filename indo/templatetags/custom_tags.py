@@ -32,13 +32,19 @@ MESSAGE_STYLES = {
 
 
 @register.simple_tag
-def alert_icon(tag):
-    return mark_safe(MESSAGE_ICONS[tag])
+def alert_icon(tags):
+    for t in tags.split():
+        if t in MESSAGE_ICONS:
+            return mark_safe(MESSAGE_ICONS[t])
+    return ""
 
 
 @register.simple_tag
-def alert_style(tag):
-    return MESSAGE_STYLES[tag]
+def alert_style(tags):
+    for t in tags.split():
+        if t in MESSAGE_STYLES:
+            return MESSAGE_STYLES[t]
+    return ""
 
 
 @register.simple_tag

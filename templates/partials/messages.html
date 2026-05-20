@@ -5,7 +5,11 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ _('Cerrar') }}"></button>
 
             {% alert_icon message.tags %}
-            {{ message }}
+            {% if 'safe' in message.tags %}
+                {{ message|safe }}
+            {% else %}
+                {{ message }}
+            {% endif %}
         </div>
     {% endfor %}
 {% endif %}

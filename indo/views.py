@@ -1181,7 +1181,7 @@ class ParticipanteAnyadirView(LoginRequiredMixin, ChecksMixin, TemplateView):
                 )
                 % {'url': reverse('ayuda')}
             )
-            messages.error(request, f'ERROR: {texto}')
+            messages.error(request, f'ERROR: {texto}', extra_tags='safe')
             return redirect('participante_anyadir', proyecto.id)
 
         # Comprobamos que el usuario no esté ya en el número máximo de equipos permitido.
@@ -1369,7 +1369,7 @@ class ColaboradorAnyadirView(LoginRequiredMixin, ChecksMixin, TemplateView):
                 )
                 % {'url': reverse('ayuda')}
             )
-            messages.error(request, f'ERROR: {texto}')
+            messages.error(request, f'ERROR: {texto}', extra_tags='safe')
             return redirect('colaborador_anyadir', proyecto.id)
 
         # Añadimos al usuario como colaborador del proyecto.
@@ -1479,10 +1479,10 @@ class ColaboradorHaceConstarView(LoginRequiredMixin, ChecksMixin, DetailView):
         colaborador = self.get_object()
         proyecto = colaborador.proyecto
         
-        # Comprobación de estado comentada temporalmente para pruebas
-        # if proyecto.estado != 'MEM_ADMITIDA':
-        #     self.permission_denied_message = _('Solo se pueden emitir resguardos para proyectos con la memoria admitida.')
-        #     return False
+        # Comprobación de estado (activa)
+        if proyecto.estado != 'MEM_ADMITIDA':
+            self.permission_denied_message = _('Solo se pueden emitir el Hago Constar para proyectos con la memoria admitida.')
+            return False
             
         permitir = self.request.user.has_perm('indo.editar_proyecto') or self.es_coordinador(proyecto.id)
         if not permitir:
