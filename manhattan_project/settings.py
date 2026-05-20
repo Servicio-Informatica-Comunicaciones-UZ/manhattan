@@ -323,9 +323,9 @@ SOCIAL_AUTH_SAML_ENABLED_IDPS = {
         'slo_url': f'{IDP}/saml2/idp/SingleLogoutService.php',
         'x509cert': os.environ.get('X509CERT'),
         'attr_user_permanent_id': 'urn:oid:0.9.2342.19200300.100.1.1',  # 'uid',
-        'attr_full_name': 'urn:oid:2.5.4.3'
-        'attr_first_name': 'urn:oid:2.5.4.42'
-        'attr_last_name': 'urn:oid:2.5.4.4'
+        'attr_full_name': 'urn:oid:2.5.4.3',
+        'attr_first_name': 'urn:oid:2.5.4.42',
+        'attr_last_name': 'urn:oid:2.5.4.4',
         'attr_username': 'urn:oid:0.9.2342.19200300.100.1.1',  # 'uid',
         # 'attr_email': 'email',  # 'urn:oid:0.9.2342.19200300.100.1.3'
     }
