@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load i18n crispy_forms_tags %}
+
+{% block title %}{% trans 'Cambiar Coordinador' %}{% endblock title %}
+
+{% block content %}
+<div class="container-blanco">
+    <h1>{% trans 'Cambiar Coordinador del Proyecto' %}</h1>
+    <hr />
+    
+    <div class="alert alert-warning">
+        <span class="fas fa-exclamation-triangle"></span> 
+        <strong>{% trans 'Atención' %}:</strong> {% trans 'Al realizar este cambio, el coordinador actual' %} (<strong>{{ proyecto.coordinador.full_name }}</strong>) {% trans 'pasará a ser un participante normal del proyecto, y la persona indicada asumirá la coordinación.' %}
+    </div>
+
+    <h3>{% trans 'Proyecto' %}: {{ proyecto.titulo }}</h3>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <form method="post">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <div class="mt-3">
+                    <a href="{% url 'proyecto_detail' proyecto.id %}" class="btn btn-secondary">{% trans 'Cancelar' %}</a>
+                    <button type="submit" class="btn btn-warning">{% trans 'Cambiar Coordinador' %}</button>
+                </div>
+            </form>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <strong>{% trans 'Participantes Actuales' %}</strong>
+                </div>
+                <div class="card-body">
+                    <p class="small text-muted">{% trans 'Haga clic en un NIP para seleccionarlo rápidamente.' %}</p>
+                    <ul class="list-group">
+                        {% for participante in participantes %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ participante.usuario.full_name }}
+                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="document.getElementById('id_nip_nuevo_coordinador').value='{{ participante.usuario.username }}'">
+                                    NIP: {{ participante.usuario.username }}
+                                </button>
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item">{% trans 'No hay otros participantes en el proyecto.' %}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

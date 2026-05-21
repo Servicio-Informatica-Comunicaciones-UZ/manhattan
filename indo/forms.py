@@ -526,3 +526,23 @@ class ResolucionForm(forms.ModelForm):
             'observaciones',
         )
         model = Proyecto
+
+class CambiarCoordinadorForm(forms.Form):
+    nip_nuevo_coordinador = forms.CharField(
+        label=_("NIP del nuevo coordinador"),
+        max_length=150,
+        required=True,
+        help_text=_("Introduce el NIP del participante existente o del nuevo usuario.")
+    )
+
+    def clean_nip_nuevo_coordinador(self):
+        nip = self.cleaned_data['nip_nuevo_coordinador']
+        try:
+            usuario = CustomUser.objects.get(username=nip)
+        except CustomUser.DoesNotExist:
+            raise forms.ValidationError(_("No existe ningún usuario con este NIP."))
+        
+        if not usuario.is_active:
+            raise forms.ValidationError(_("El usuario indicado no está activo."))
+            
+        return nip

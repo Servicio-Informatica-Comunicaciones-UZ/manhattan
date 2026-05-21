@@ -120,7 +120,14 @@
 
                 <tr>
                     <th scope="row"><strong>{% trans 'Coordinador' %}</strong>:</th>
-                    <td>{{ proyecto.coordinador.full_name }}</td>
+                    <td>
+                        {{ proyecto.coordinador.full_name }}
+                        {% if es_gestor %}
+                            <a href="{% url 'proyecto_cambiar_coordinador' proyecto.id %}" class="btn btn-warning btn-sm float-end noprint">
+                                <span class="fas fa-exchange-alt" aria-hidden="true"></span>&nbsp; {% trans 'Modificar' %}
+                            </a>
+                        {% endif %}
+                    </td>
                 </tr>
 
                 {% if proyecto.coordinador_2 %}

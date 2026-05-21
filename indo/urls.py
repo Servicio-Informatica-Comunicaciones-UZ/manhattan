@@ -62,6 +62,7 @@ from .views import (
     ProyectoUPTableView,
     ProyectoVerCondicionesView,
     ResolucionListView,
+    CambiarCoordinadorView,
     actualizar_usuarios,
     teapot,
 )
@@ -258,6 +259,11 @@ urlpatterns = [
     # Proyecto
     path('proyecto/new/', ProyectoCreateView.as_view(), name='proyecto_new'),
     path('proyecto/<int:pk>/', ProyectoDetailView.as_view(), name='proyecto_detail'),
+    path(
+        'proyecto/<int:pk>/cambiar-coordinador/',
+        CambiarCoordinadorView.as_view(),
+        name='proyecto_cambiar_coordinador',
+    ),
     path(
         'proyecto/<int:pk>/aceptar-condiciones/',
         ProyectoAceptarView.as_view(),

@@ -41,7 +41,7 @@ from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.generic import DetailView, ListView, RedirectView, TemplateView
-from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.views.generic.edit import CreateView, DeleteView, UpdateView, FormView
 from django_summernote.widgets import SummernoteWidget
 from django_tables2.export.views import ExportMixin
 from django_tables2.views import SingleTableView
@@ -67,6 +67,7 @@ from .forms import (
     ProyectoForm,
     ProyectosDeUnUsuarioForm,
     ResolucionForm,
+    CambiarCoordinadorForm,
 )
 from .models import (
     Centro,
@@ -3658,3 +3659,88 @@ class ProyectosNotificarPreviewView(LoginRequiredMixin, PermissionRequiredMixin,
         context['mail_sin_dotacion'] = mail_sin_dotacion
 
         return context
+
+
+class CambiarCoordinadorView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
+    template_name = 'gestion/proyecto/cambiar_coordinador.html'
+    form_class = CambiarCoordinadorForm
+    permission_required = 'indo.editar_proyecto'  # Sólo Gestores
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        proyecto = get_object_or_404(Proyecto, pk=self.kwargs['pk'])
+        context['proyecto'] = proyecto
+        context['participantes'] = proyecto.participantes.filter(
+            tipo_participacion__nombre='participante'
+        ).order_by('usuario__first_name')
+        return context
+
+    def form_valid(self, form):
+        from django.db import transaction
+        proyecto = get_object_or_404(Proyecto, pk=self.kwargs['pk'])
+        nip = form.cleaned_data['nip_nuevo_coordinador']
+        nuevo_usuario = CustomUser.objects.get(username=nip)
+        
+        # Validar que no sea ya el coordinador
+        if proyecto.coordinador == nuevo_usuario:
+            form.add_error('nip_nuevo_coordinador', _('Este usuario ya es el coordinador del proyecto.'))
+            return self.form_invalid(form)
+
+        convocatoria = proyecto.convocatoria
+        
+        # 1. Comprobar si el nuevo usuario ya está en el proyecto
+        vinculacion_existente = proyecto.participantes.filter(usuario=nuevo_usuario).first()
+        
+        # 2. Validaciones de límites
+        # Límite de coordinaciones
+        if convocatoria.num_max_coordinaciones and proyecto.programa.nombre_corto != 'PIPOUZ':
+            num_coordinaciones = ParticipanteProyecto.objects.filter(
+                usuario=nuevo_usuario,
+                tipo_participacion__nombre__in=['coordinador', 'coordinador_2'],
+                proyecto__convocatoria=convocatoria
+            ).exclude(proyecto__estado__in=['BORRADOR', 'ANULADO', 'DENEGADO', 'RECHAZADO']).count()
+            
+            if num_coordinaciones >= convocatoria.num_max_coordinaciones:
+                form.add_error('nip_nuevo_coordinador', _('El usuario ha alcanzado el límite máximo de coordinaciones permitidas.'))
+                return self.form_invalid(form)
+                
+        # Límite de equipos (sólo si no estaba ya en el proyecto)
+        if not vinculacion_existente:
+            num_equipos = nuevo_usuario.get_num_equipos(convocatoria.id)
+            if num_equipos >= convocatoria.num_max_equipos:
+                form.add_error('nip_nuevo_coordinador', _('El usuario ha alcanzado el máximo de proyectos en los que puede participar.'))
+                return self.form_invalid(form)
+
+            # Límite de participantes del proyecto
+            num_efectivos = proyecto.participantes.filter(tipo_participacion='participante').count()
+            num_invitados = proyecto.participantes.filter(tipo_participacion='invitado').count()
+            total_ocupado = num_efectivos + num_invitados
+            
+            if convocatoria.num_max_participantes and total_ocupado >= convocatoria.num_max_participantes:
+                form.add_error(None, _('El proyecto ha alcanzado el límite máximo de participantes, no se puede añadir a un usuario externo como coordinador.'))
+                return self.form_invalid(form)
+
+        # 3. Aplicar el cambio transaccionalmente
+        with transaction.atomic():
+            tipo_coordinador = TipoParticipacion.objects.get(nombre='coordinador')
+            tipo_participante = TipoParticipacion.objects.get(nombre='participante')
+            
+            # Pasar al coordinador antiguo a participante
+            vinculacion_antigua = proyecto.get_pp_coordinador_or_none('coordinador')
+            if vinculacion_antigua:
+                vinculacion_antigua.tipo_participacion = tipo_participante
+                vinculacion_antigua.save()
+            
+            # Poner al nuevo como coordinador
+            if vinculacion_existente:
+                vinculacion_existente.tipo_participacion = tipo_coordinador
+                vinculacion_existente.save()
+            else:
+                ParticipanteProyecto.objects.create(
+                    proyecto=proyecto,
+                    tipo_participacion=tipo_coordinador,
+                    usuario=nuevo_usuario
+                )
+                
+        messages.success(self.request, _('Coordinador modificado correctamente. El nuevo coordinador es ') + nuevo_usuario.full_name + '.')
+        return redirect('proyecto_detail', pk=proyecto.id)
