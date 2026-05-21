@@ -3744,3 +3744,124 @@ class CambiarCoordinadorView(LoginRequiredMixin, PermissionRequiredMixin, FormVi
                 
         messages.success(self.request, _('Coordinador modificado correctamente. El nuevo coordinador es ') + nuevo_usuario.full_name + '.')
         return redirect('proyecto_detail', pk=proyecto.id)
+
+
+class CoordinadoresPouView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
+    template_name = 'gestion/centro/coordinadores_pou.html'
+    permission_required = 'indo.editar_proyecto'
+
+    def _parse_field(self, field_val):
+        if not field_val:
+            return []
+        import ast
+        field_val = field_val.strip()
+        
+        # Si ya es un array tipo Python: ['123', '456']
+        if field_val.startswith('[') and field_val.endswith(']'):
+            try:
+                parsed = ast.literal_eval(field_val)
+                if isinstance(parsed, list):
+                    return [str(x) for x in parsed]
+            except Exception:
+                pass
+                
+        # Fallback para formato antiguo: ['123'], [456]
+        items = [n.strip("[] '\"") for n in field_val.split(',')]
+        return [n for n in items if n]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['centros'] = Centro.objects.filter(esta_activo=True).order_by('nombre')
+        
+        centro_id = self.request.GET.get('centro')
+        if centro_id:
+            centro = get_object_or_404(Centro, id=centro_id)
+            context['centro_seleccionado'] = centro
+            
+            nips = self._parse_field(centro.nips_coord_pou)
+            nombres = self._parse_field(centro.nombres_coords_pou)
+            emails = self._parse_field(centro.emails_coords_pou)
+            
+            # Clean empties
+            nips = [n for n in nips if n]
+            nombres = [n for n in nombres if n]
+            emails = [e for e in emails if e]
+            
+            coordinadores = []
+            for i, nip in enumerate(nips):
+                nombre = nombres[i] if i < len(nombres) else 'Desconocido'
+                email = emails[i] if i < len(emails) else 'Sin email'
+                coordinadores.append({'nip': nip, 'nombre': nombre, 'email': email})
+                
+            context['coordinadores'] = coordinadores
+            
+        return context
+
+    def post(self, request, *args, **kwargs):
+        centro_id = request.POST.get('centro_id')
+        action = request.POST.get('action')
+        nip = request.POST.get('nip', '').strip()
+        
+        if not centro_id:
+            messages.error(request, _("No se ha seleccionado ningún centro."))
+            return redirect('coordinadores_pou')
+            
+        centro = get_object_or_404(Centro, id=centro_id)
+        
+        nips = self._parse_field(centro.nips_coord_pou)
+        nombres = self._parse_field(centro.nombres_coords_pou)
+        emails = self._parse_field(centro.emails_coords_pou)
+        
+        if action == 'add' and nip:
+            usuario = CustomUser.objects.get_or_none(username=nip)
+            is_new = False
+            if not usuario:
+                usuario = CustomUser.objects.create_user(username=nip)
+                is_new = True
+                
+            try:
+                from accounts.pipeline import get_identidad
+                from social_django.utils import load_strategy
+                get_identidad(load_strategy(request), None, usuario)
+                
+                if is_new:
+                    from social_django.models import UserSocialAuth
+                    usuario_social = UserSocialAuth(
+                        uid=f'sir:{usuario.username}', provider='saml', user=usuario
+                    )
+                    usuario_social.save()
+            except Exception as ex:
+                if is_new:
+                    usuario.delete()
+                messages.error(request, _("Error al obtener los datos de Identidades: ") + str(ex))
+                return redirect(f"{reverse('coordinadores_pou')}?centro={centro_id}")
+
+            if not usuario.is_active:
+                messages.error(request, _("El usuario indicado no está activo en Identidades."))
+                return redirect(f"{reverse('coordinadores_pou')}?centro={centro_id}")
+                
+            if nip not in nips:
+                nips.append(usuario.username)
+                nombres.append(usuario.full_name)
+                emails.append(usuario.email)
+                messages.success(request, _("Añadido ") + usuario.full_name + _(" como coordinador POUZ."))
+            else:
+                messages.warning(request, _("Este usuario ya es coordinador POUZ del centro."))
+                
+        elif action == 'remove' and nip:
+            if nip in nips:
+                idx = nips.index(nip)
+                nips.pop(idx)
+                if idx < len(nombres):
+                    nombres.pop(idx)
+                if idx < len(emails):
+                    emails.pop(idx)
+                messages.success(request, _("Coordinador POUZ eliminado correctamente."))
+        
+        # Save back in Python list format (e.g. ['123', '456'])
+        centro.nips_coord_pou = str(nips) if nips else None
+        centro.nombres_coords_pou = str(nombres) if nombres else None
+        centro.emails_coords_pou = str(emails) if emails else None
+        centro.save()
+        
+        return redirect(f"{reverse('coordinadores_pou')}?centro={centro_id}")

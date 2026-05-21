@@ -63,6 +63,7 @@ from .views import (
     ProyectoVerCondicionesView,
     ResolucionListView,
     CambiarCoordinadorView,
+    CoordinadoresPouView,
     actualizar_usuarios,
     teapot,
 )
@@ -156,6 +157,11 @@ urlpatterns = [
         'gestion/proyectos/<int:anyo>/unidades-planificacion/',
         ProyectoUPTableView.as_view(),
         name='up_table',
+    ),
+    path(
+        'gestion/coordinadores-pou/',
+        CoordinadoresPouView.as_view(),
+        name='coordinadores_pou',
     ),
     path(
         'gestion/proyectos/<int:anyo>/usuario',
