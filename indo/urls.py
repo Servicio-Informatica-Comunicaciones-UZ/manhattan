@@ -66,6 +66,8 @@ from .views import (
     CoordinadoresPouView,
     actualizar_usuarios,
     teapot,
+    ImpersonateUserView,
+    StopImpersonatingView,
 )
 
 urlpatterns = [
@@ -289,6 +291,16 @@ urlpatterns = [
         'proyecto/<int:pk>/ver-condiciones/',
         ProyectoVerCondicionesView.as_view(),
         name='proyecto_ver_condiciones',
+    ),
+    path(
+        'gestion/entrar-como/',
+        ImpersonateUserView.as_view(),
+        name='impersonate',
+    ),
+    path(
+        'gestion/salir-suplantacion/',
+        StopImpersonatingView.as_view(),
+        name='stop_impersonate',
     ),
     path(
         'proyectos/<int:anyo>/aceptados/',

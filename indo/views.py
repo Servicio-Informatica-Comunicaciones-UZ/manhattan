@@ -539,6 +539,14 @@ class EvaluacionView(LoginRequiredMixin, ChecksMixin, TemplateView):
         asignacion.ha_evaluado = ha_evaluado
         asignacion.save()
 
+        from indo.utils import registrar_evento
+        registrar_evento(
+            request, 
+            'evaluacion_completada', 
+            'Evaluación completada' if ha_evaluado else 'Evaluación guardada (incompleta)', 
+            proyecto
+        )
+
         # Ponemos `esta_evaluado` a True cuando hayan evaluado todos los evaluadores del proyecto.
         if not proyecto.esta_evaluado:
             proyecto.esta_evaluado = True
@@ -1129,6 +1137,14 @@ class ParticipanteAceptarView(LoginRequiredMixin, RedirectView):
         pp.tipo_participacion_id = 'participante'
         pp.save()
 
+        from indo.utils import registrar_evento
+        registrar_evento(
+            request, 
+            'aceptacion_invitacion', 
+            'Aceptación de la invitación al proyecto', 
+            proyecto
+        )
+
         messages.success(
             request,
             _('Ha pasado a ser participante del proyecto «%(titulo)s».')
@@ -1267,6 +1283,14 @@ class ParticipanteDeclinarView(LoginRequiredMixin, RedirectView):
         pp.tipo_participacion_id = 'invitacion_rehusada'
         pp.save()
 
+        from indo.utils import registrar_evento
+        registrar_evento(
+            request, 
+            'rechazo_invitacion', 
+            'Rechazo de la invitación al proyecto', 
+            proyecto
+        )
+
         messages.success(
             request,
             _('Ha rehusado ser participante del proyecto «%(titulo)s».')
@@ -1305,6 +1329,14 @@ class ParticipanteRenunciarView(LoginRequiredMixin, RedirectView):
         )
         pp.tipo_participacion_id = 'invitacion_rehusada'
         pp.save()
+
+        from indo.utils import registrar_evento
+        registrar_evento(
+            request, 
+            'renuncia_participacion', 
+            'Renuncia a la participación en el proyecto', 
+            proyecto
+        )
 
         messages.success(
             request,
@@ -1389,6 +1421,14 @@ class ColaboradorAnyadirView(LoginRequiredMixin, ChecksMixin, TemplateView):
         )
         participante.save()
 
+        from indo.utils import registrar_evento
+        registrar_evento(
+            request,
+            'alta_colaborador',
+            f'Alta del colaborador: {usuario.username}',
+            proyecto
+        )
+
         try:
             from templated_email import send_templated_mail
             import smtplib
@@ -1461,6 +1501,20 @@ class ColaboradorDeleteView(LoginRequiredMixin, ChecksMixin, DeleteView):
             self.permission_denied_message = _('No puede borrar a un participante que no sea colaborador desde esta vista.')
             return False
         return True
+
+    def form_valid(self, form):
+        from indo.utils import registrar_evento
+        self.object = self.get_object()
+        proyecto = self.object.proyecto
+        usuario_colaborador = self.object.usuario.username
+        response = super().form_valid(form)
+        registrar_evento(
+            self.request,
+            'baja_colaborador',
+            f'Baja del colaborador: {usuario_colaborador}',
+            proyecto
+        )
+        return response
 
 
 class ColaboradorHaceConstarView(LoginRequiredMixin, ChecksMixin, DetailView):
@@ -3742,6 +3796,14 @@ class CambiarCoordinadorView(LoginRequiredMixin, PermissionRequiredMixin, FormVi
                     usuario=nuevo_usuario
                 )
                 
+        from indo.utils import registrar_evento
+        registrar_evento(
+            self.request, 
+            'cambio_coordinador', 
+            f'Coordinador cambiado a: {nuevo_usuario.username}', 
+            proyecto
+        )
+                
         messages.success(self.request, _('Coordinador modificado correctamente. El nuevo coordinador es ') + nuevo_usuario.full_name + '.')
         return redirect('proyecto_detail', pk=proyecto.id)
 
@@ -3865,3 +3927,26 @@ class CoordinadoresPouView(LoginRequiredMixin, PermissionRequiredMixin, Template
         centro.save()
         
         return redirect(f"{reverse('coordinadores_pou')}?centro={centro_id}")
+
+class ImpersonateUserView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
+    template_name = 'gestion/impersonate.html'
+    permission_required = 'indo.editar_proyecto'
+    
+    def post(self, request, *args, **kwargs):
+        nip = request.POST.get('nip', '').strip()
+        if nip:
+            usuario = CustomUser.objects.get_or_none(username=nip)
+            if usuario:
+                request.session['impersonate_id'] = usuario.id
+                messages.success(request, f"Has empezado a suplantar al usuario {usuario.full_name}.")
+                return redirect('home')
+            else:
+                messages.error(request, "El usuario con ese NIP no existe en la base de datos de la aplicación.")
+        return redirect('impersonate')
+
+class StopImpersonatingView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        if 'impersonate_id' in request.session:
+            del request.session['impersonate_id']
+            messages.success(request, "Has vuelto a tu cuenta real.")
+        return redirect('home')

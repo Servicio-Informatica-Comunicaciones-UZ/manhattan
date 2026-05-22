@@ -37,8 +37,11 @@ def get_client_ip(request):
 def registrar_evento(
     request: HttpRequest, nombre_evento: str, descripcion: str, proyecto: Proyecto
 ) -> None:
-    evento = Evento.objects.get(nombre=nombre_evento)
+    evento, _ = Evento.objects.get_or_create(nombre=nombre_evento)
     ip_address = get_client_ip(request)
+
+    if getattr(request, 'is_impersonating', False) and hasattr(request, 'real_user'):
+        descripcion = f"{descripcion} [Suplantado por Gestor: {request.real_user.username}]"
 
     registro = Registro(
         descripcion=descripcion,
