@@ -3930,13 +3930,16 @@ class CoordinadoresPouView(LoginRequiredMixin, PermissionRequiredMixin, Template
 
 class ImpersonateUserView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
     template_name = 'gestion/impersonate.html'
-    permission_required = 'indo.editar_proyecto'
+    permission_required = 'indo.suplantar_usuario'
     
     def post(self, request, *args, **kwargs):
         nip = request.POST.get('nip', '').strip()
         if nip:
             usuario = CustomUser.objects.get_or_none(username=nip)
             if usuario:
+                if usuario.is_superuser or usuario.has_perm('indo.suplantar_usuario'):
+                    messages.error(request, "No está permitido suplantar a un administrador o a un usuario con privilegios de suplantación.")
+                    return redirect('impersonate')
                 request.session['impersonate_id'] = usuario.id
                 messages.success(request, f"Has empezado a suplantar al usuario {usuario.full_name}.")
                 return redirect('home')

@@ -736,6 +736,7 @@ class Proyecto(models.Model):
             ('ver_up', _('Puede ver el listado de UP y gastos de los proyectos.')),
             ('ver_economico', _('Puede ver/editar el cierre económico de los proyectos.')),
             ('zaguan', _('Puede enviar memorias al repositorio institucional.')),
+            ('suplantar_usuario', _('Puede suplantar a otros usuarios en la aplicación.')),
         ]
 
     def __str__(self):

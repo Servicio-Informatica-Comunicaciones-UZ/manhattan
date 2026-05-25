@@ -95,7 +95,7 @@
                 <ul class="navbar-nav ms-auto">
                     {% if user.is_authenticated %}
                         {# ============================== GESTIÓN ============================== #}
-                        {% if user|has_group:"Gestores" %}
+                        {% if user|has_group:"Gestores" or perms.indo.suplantar_usuario %}
                             <li class="nav-item dropdown">
                                 <a
                                     class="nav-link dropdown-toggle"
@@ -160,10 +160,12 @@
                                     <a class="dropdown-item" href="{% url 'coordinadores_pou' %}">
                                         <span class="fas fa-user-tie"></span>&nbsp; {% trans "Gestión Coordinadores POUZ" %}
                                     </a>
+                                    {% if perms.indo.suplantar_usuario %}
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="{% url 'impersonate' %}">
                                         <span class="fas fa-user-secret"></span>&nbsp; {% trans "Entrar como otro usuario" %}
                                     </a>
+                                    {% endif %}
                                     <div class="dropdown-divider"></div>
                                     <!-- ========================= -->
                                     <a class="dropdown-item" href="{% url 'cierre_economico_table' anyo %}">

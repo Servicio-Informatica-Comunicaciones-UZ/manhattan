@@ -8,8 +8,8 @@ class ImpersonateMiddleware(MiddlewareMixin):
         
         impersonate_id = request.session.get('impersonate_id')
         
-        # Solo los gestores pueden suplantar. Comprobamos los permisos del usuario real (el que inició sesión).
-        if impersonate_id and request.user.is_authenticated and request.user.has_perm('indo.editar_proyecto'):
+        # Solo los administradores de suplantación pueden suplantar. Comprobamos los permisos del usuario real (el que inició sesión).
+        if impersonate_id and request.user.is_authenticated and request.user.has_perm('indo.suplantar_usuario'):
             User = get_user_model()
             try:
                 impersonated_user = User.objects.get(pk=impersonate_id)
