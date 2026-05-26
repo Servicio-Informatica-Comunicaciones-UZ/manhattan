@@ -691,7 +691,7 @@ class Proyecto(models.Model):
         null=True,
     )
     puntuacion = models.DecimalField(
-        verbose_name=_('Puntuación obtenida'), max_digits=3, decimal_places=1, null=True
+        verbose_name=_('Puntuación obtenida'), max_digits=4, decimal_places=2, null=True
     )
     observaciones = models.TextField(
         _('Observaciones internas'),

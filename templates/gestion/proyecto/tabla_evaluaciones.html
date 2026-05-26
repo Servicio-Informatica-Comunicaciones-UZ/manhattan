@@ -37,9 +37,14 @@
         {% render_table table %}
 
         <div class="d-flex justify-content-between">
-            <a href="{% url 'csv_evaluaciones' anyo %}" class="btn btn-info">
-                <span class="fas fa-file-csv"></span>&nbsp; {% trans "Descargar evaluaciones" %}
-            </a>
+            <div>
+                <a href="{% url 'csv_evaluaciones' anyo %}" class="btn btn-info">
+                    <span class="fas fa-file-csv"></span>&nbsp; {% trans "Descargar evaluaciones" %}
+                </a>
+                <button type="button" class="btn btn-warning ms-2" data-bs-toggle="modal" data-bs-target="#autocompletarModal">
+                    <span class="fas fa-magic"></span>&nbsp; {% trans "Autocompletar tipos de gasto" %}
+                </button>
+            </div>
 
             {% if not convocatoria.notificada_resolucion_provisional or not convocatoria.notificada_resolucion_definitiva %}
                 <a class="btn btn-danger" href="{% url 'notificar_proyectos_preview' anyo=anyo %}">
@@ -54,6 +59,34 @@
 
         </div>
 
+    </div>
+
+    <!-- Modal de confirmación para autocompletar -->
+    <div class="modal fade" id="autocompletarModal" tabindex="-1" aria-labelledby="autocompletarModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="autocompletarModalLabel">{% trans "Confirmar autocompletado masivo" %}</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>{% trans "¿Estás seguro de que deseas autocompletar masivamente los tipos de gasto para todos los proyectos de esta convocatoria?" %}</p>
+            <div class="alert alert-warning">
+              <span class="fas fa-exclamation-triangle"></span> 
+              <strong>{% trans "Atención:" %}</strong> {% trans "Esto sobrescribirá cualquier texto que ya existiese en el campo de 'Tipo de gasto posible' con las descripciones largas de la financiación seleccionada por el coordinador." %}
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancelar" %}</button>
+            <form method="post" action="{% url 'autocompletar_tipo_gasto' anyo %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-warning">
+                    <span class="fas fa-magic"></span>&nbsp; {% trans "Proceder con el autocompletado" %}
+                </button>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
 
 {% endblock content %}

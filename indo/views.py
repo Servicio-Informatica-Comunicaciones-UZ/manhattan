@@ -2364,6 +2364,35 @@ class ProyectoEvaluacionesTableView(LoginRequiredMixin, PermissionRequiredMixin,
         )
 
 
+class ProyectosAutocompletarTipoGastoView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    """Autocompleta masivamente el campo tipo_gasto para todos los proyectos de una convocatoria."""
+
+    permission_required = 'indo.editar_resolucion'
+
+    def post(self, request, *args, **kwargs):
+        anyo = kwargs.get('anyo')
+        proyectos = Proyecto.objects.filter(convocatoria_id=anyo)
+        opciones_dict = dict(FinanciacionForm.OPCIONES_FINANCIACION)
+
+        actualizados = 0
+        for proyecto in proyectos:
+            # Sobrescribimos el tipo_gasto siempre (decisión del usuario)
+            if proyecto.financiacion:
+                textos = []
+                for opcion in proyecto.financiacion.split(','):
+                    opcion = opcion.strip()
+                    if opcion in opciones_dict:
+                        textos.append(f"• {opciones_dict[opcion]}")
+
+                if textos:
+                    proyecto.tipo_gasto = '\n\n'.join(textos)
+                    proyecto.save(update_fields=['tipo_gasto'])
+                    actualizados += 1
+
+        messages.success(request, f"Se han autocompletado los tipos de gasto de {actualizados} proyectos.")
+        return redirect('evaluaciones_table', anyo=anyo)
+
+
 class ProyectoFichaView(DetailView):
     """Muestra una ficha con la información básica del proyecto."""
 

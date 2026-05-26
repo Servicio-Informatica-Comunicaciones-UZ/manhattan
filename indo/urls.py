@@ -55,6 +55,7 @@ from .views import (
     ProyectosEvaluadosTableView,
     ProyectosNotificarView,
     ProyectosNotificarPreviewView,
+    ProyectosAutocompletarTipoGastoView,
     ProyectosUpCsvView,
     ProyectosUsuarioView,
     ProyectoTableView,
@@ -134,6 +135,11 @@ urlpatterns = [
         'gestion/proyectos/<int:anyo>/evaluaciones/',
         ProyectoEvaluacionesTableView.as_view(),
         name='evaluaciones_table',
+    ),
+    path(
+        'gestion/proyectos/<int:anyo>/autocompletar-tipo-gasto/',
+        ProyectosAutocompletarTipoGastoView.as_view(),
+        name='autocompletar_tipo_gasto',
     ),
     path(
         'gestion/proyectos/<int:anyo>/evaluadores/',

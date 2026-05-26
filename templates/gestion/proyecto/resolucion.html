@@ -110,7 +110,7 @@
         <p>{{ proyecto.tipo_gasto | default:"—" | limpiar | linebreaks }}</p>
 
         <h3>{{ proyecto | get_attr_verbose_name:'puntuacion' }}</h3>
-        <p>{{ proyecto.puntuacion | default_if_none:'—' }}</p>
+        <p>{{ proyecto.puntuacion | floatformat | default_if_none:'—' }}</p>
 
         <h3>{{ proyecto | get_attr_verbose_name:"observaciones" }}</h3>
         <p>{{ proyecto.observaciones | default:"—" | limpiar | linebreaks }}</p>
