@@ -41,6 +41,9 @@
                 <a href="{% url 'csv_evaluaciones' anyo %}" class="btn btn-info">
                     <span class="fas fa-file-csv"></span>&nbsp; {% trans "Descargar evaluaciones" %}
                 </a>
+                <a href="{% url 'importar_csv' anyo %}" class="btn btn-primary ms-2">
+                    <span class="fas fa-upload"></span>&nbsp; {% trans "Importar resoluciones (CSV)" %}
+                </a>
                 <button type="button" class="btn btn-warning ms-2" data-bs-toggle="modal" data-bs-target="#autocompletarModal">
                     <span class="fas fa-magic"></span>&nbsp; {% trans "Autocompletar tipos de gasto" %}
                 </button>

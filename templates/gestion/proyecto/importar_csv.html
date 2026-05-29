@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Importar resoluciones" %}{% endblock title %}
+
+{% block content %}
+<div class="container-blanco">
+    <h1>{% trans "Importar resoluciones desde CSV" %} <small>{{ anyo }}</small></h1>
+    <hr />
+
+    <div class="alert alert-info">
+        <span class="fas fa-info-circle"></span>
+        <strong>{% trans "Instrucciones:" %}</strong>
+        <ul>
+            <li>El archivo debe estar en formato texto (CSV/TSV) y <strong>separado por tabuladores</strong>.</li>
+            <li>Debe contener una primera fila de cabeceras con al menos: <code>id</code>, <code>aceptacion_comision</code> (1 o 0), <code>puntuacion</code> (ej: 10,5) y <code>ayuda_concedida</code>.</li>
+        </ul>
+    </div>
+
+    {% if not preview_data %}
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="csv_file" class="form-label">{% trans "Selecciona el archivo (separado por tabuladores):" %}</label>
+                <input class="form-control" type="file" id="csv_file" name="csv_file" accept=".csv,.txt,.tsv" required>
+            </div>
+            <button type="submit" class="btn btn-primary" name="action" value="preview">
+                <span class="fas fa-eye"></span> {% trans "Previsualizar cambios" %}
+            </button>
+            <a href="{% url 'evaluaciones_table' anyo %}" class="btn btn-secondary">{% trans "Cancelar" %}</a>
+        </form>
+    {% else %}
+        <h3>{% trans "Previsualización de los cambios" %}</h3>
+        <p>{% trans "Revisa los valores actuales frente a los nuevos valores a importar. Los registros que no existen o tienen errores no se actualizarán." %}</p>
+        
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Proyecto</th>
+                        <th>Aceptación Comisión</th>
+                        <th>Puntuación</th>
+                        <th>Ayuda Provisional</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in preview_data %}
+                    <tr {% if row.error %}class="table-danger"{% endif %}>
+                        <td>{{ row.id }}</td>
+                        <td>
+                            {% if row.error %}
+                                <span class="text-danger">{{ row.error }}</span>
+                            {% else %}
+                                {{ row.titulo|truncatechars:50 }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            <del class="text-muted">{{ row.old_aceptacion|yesno:"Sí,No,—" }}</del> 
+                            <br> <strong class="text-success">{{ row.new_aceptacion|yesno:"Sí,No,—" }}</strong>
+                        </td>
+                        <td>
+                            <del class="text-muted">{{ row.old_puntuacion|default_if_none:"—" }}</del> 
+                            <br> <strong class="text-success">{{ row.new_puntuacion|default_if_none:"—" }}</strong>
+                        </td>
+                        <td>
+                            <del class="text-muted">{{ row.old_ayuda|default_if_none:"—" }}</del> 
+                            <br> <strong class="text-success">{{ row.new_ayuda|default_if_none:"—" }}</strong>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <form method="post" class="mt-4">
+            {% csrf_token %}
+            <input type="hidden" name="csv_data" value="{{ csv_data_json }}">
+            <button type="submit" class="btn btn-warning" name="action" value="confirm">
+                <span class="fas fa-save"></span> {% trans "Confirmar y Actualizar" %}
+            </button>
+            <a href="{% url 'importar_csv' anyo %}" class="btn btn-secondary">{% trans "Cancelar" %}</a>
+        </form>
+    {% endif %}
+</div>
+{% endblock content %}

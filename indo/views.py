@@ -32,7 +32,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.forms.models import modelform_factory
 from django.http import Http404, HttpRequest, HttpResponse
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
 from django.utils.formats import localize
@@ -2391,6 +2391,153 @@ class ProyectosAutocompletarTipoGastoView(LoginRequiredMixin, PermissionRequired
 
         messages.success(request, f"Se han autocompletado los tipos de gasto de {actualizados} proyectos.")
         return redirect('evaluaciones_table', anyo=anyo)
+
+
+class ProyectosImportarCSVView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    """Importa resoluciones masivamente desde un archivo CSV."""
+
+    permission_required = 'indo.editar_resolucion'
+    template_name = 'gestion/proyecto/importar_csv.html'
+
+    def get(self, request, *args, **kwargs):
+        anyo = kwargs.get('anyo')
+        return render(request, self.template_name, {'anyo': anyo})
+
+    def post(self, request, *args, **kwargs):
+        anyo = kwargs.get('anyo')
+        action = request.POST.get('action')
+
+        if action == 'preview':
+            csv_file = request.FILES.get('csv_file')
+            if not csv_file:
+                messages.error(request, _("Debes seleccionar un archivo."))
+                return redirect('importar_csv', anyo=anyo)
+
+            try:
+                decoded_file = csv_file.read().decode('utf-8-sig').splitlines()
+                reader = list(csv.DictReader(decoded_file, delimiter='\t'))
+                
+                preview_data = []
+                data_to_serialize = []
+                
+                # Pre-cargar proyectos para evitar múltiples queries individuales a la BD
+                proyecto_ids = []
+                for row in reader:
+                    row_clean = {k.strip().lower(): v.strip() for k, v in row.items() if k}
+                    if row_clean.get('id') and row_clean['id'].isdigit():
+                        proyecto_ids.append(int(row_clean['id']))
+                
+                proyectos_dict = Proyecto.objects.filter(id__in=proyecto_ids, convocatoria_id=anyo).in_bulk()
+                
+                for row in reader:
+                    row_clean = {k.strip().lower(): v.strip() for k, v in row.items() if k}
+                    
+                    if not row_clean.get('id'):
+                        continue
+                        
+                    try:
+                        proyecto_id = int(row_clean['id'])
+                    except ValueError:
+                        continue # ID inválido
+                        
+                    proyecto = proyectos_dict.get(proyecto_id)
+                    if not proyecto:
+                        preview_data.append({
+                            'id': row_clean['id'],
+                            'error': _("Proyecto no encontrado en esta convocatoria.")
+                        })
+                        continue
+                        
+                    # Parse aceptacion
+                    new_aceptacion_str = row_clean.get('aceptacion_comisio') or row_clean.get('aceptacion_comision', '')
+                    new_aceptacion = new_aceptacion_str == '1' if new_aceptacion_str else False
+                    
+                    # Parse puntuacion
+                    new_puntuacion_str = row_clean.get('puntuacion', '')
+                    new_puntuacion_str = new_puntuacion_str.replace(',', '.')
+                    try:
+                        new_puntuacion = float(new_puntuacion_str) if new_puntuacion_str else None
+                    except ValueError:
+                        new_puntuacion = None
+                        
+                    # Parse ayuda
+                    new_ayuda_str = row_clean.get('ayuda_concedida', '') or row_clean.get('ayuda_provisional', '')
+                    try:
+                        new_ayuda = int(float(new_ayuda_str)) if new_ayuda_str else None
+                    except ValueError:
+                        new_ayuda = None
+                        
+                    preview_data.append({
+                        'id': proyecto.id,
+                        'titulo': proyecto.titulo,
+                        'old_aceptacion': proyecto.aceptacion_comision,
+                        'new_aceptacion': new_aceptacion,
+                        'old_puntuacion': proyecto.puntuacion,
+                        'new_puntuacion': new_puntuacion,
+                        'old_ayuda': proyecto.ayuda_provisional,
+                        'new_ayuda': new_ayuda,
+                    })
+                    
+                    data_to_serialize.append({
+                        'id': proyecto.id,
+                        'new_aceptacion': new_aceptacion,
+                        'new_puntuacion': new_puntuacion_str, 
+                        'new_ayuda': new_ayuda,
+                    })
+                    
+                context = {
+                    'anyo': anyo,
+                    'preview_data': preview_data,
+                    'csv_data_json': json.dumps(data_to_serialize)
+                }
+                return render(request, self.template_name, context)
+                
+            except Exception as e:
+                messages.error(request, f"Error procesando archivo: {str(e)}")
+                return redirect('importar_csv', anyo=anyo)
+
+        elif action == 'confirm':
+            csv_data_json = request.POST.get('csv_data')
+            if not csv_data_json:
+                messages.error(request, _("No hay datos para confirmar."))
+                return redirect('evaluaciones_table', anyo=anyo)
+                
+            try:
+                data = json.loads(csv_data_json)
+                
+                # Pre-cargar proyectos para bulk_update
+                proyecto_ids = [item['id'] for item in data]
+                proyectos_dict = Proyecto.objects.filter(id__in=proyecto_ids, convocatoria_id=anyo).in_bulk()
+                
+                proyectos_to_update = []
+                actualizados = 0
+                
+                for item in data:
+                    proyecto = proyectos_dict.get(item['id'])
+                    if not proyecto:
+                        continue
+                        
+                    proyecto.aceptacion_comision = item['new_aceptacion']
+                    
+                    if item['new_puntuacion']:
+                        proyecto.puntuacion = float(item['new_puntuacion'])
+                    else:
+                        proyecto.puntuacion = None
+                        
+                    proyecto.ayuda_provisional = item['new_ayuda']
+                    
+                    proyectos_to_update.append(proyecto)
+                    actualizados += 1
+                
+                # Actualización masiva en 1 sola consulta
+                if proyectos_to_update:
+                    Proyecto.objects.bulk_update(proyectos_to_update, ['aceptacion_comision', 'puntuacion', 'ayuda_provisional'])
+                        
+                messages.success(request, f"Se han importado/actualizado correctamente {actualizados} proyectos.")
+                return redirect('evaluaciones_table', anyo=anyo)
+            except Exception as e:
+                messages.error(request, f"Error al guardar los datos: {str(e)}")
+                return redirect('evaluaciones_table', anyo=anyo)
 
 
 class ProyectoFichaView(DetailView):
