@@ -2450,7 +2450,12 @@ class ProyectosImportarCSVView(LoginRequiredMixin, PermissionRequiredMixin, View
                         
                     # Parse aceptacion
                     new_aceptacion_str = row_clean.get('aceptacion_comisio') or row_clean.get('aceptacion_comision', '')
-                    new_aceptacion = new_aceptacion_str == '1' if new_aceptacion_str else False
+                    if new_aceptacion_str == '1' or new_aceptacion_str.lower() == 'true':
+                        new_aceptacion = True
+                    elif new_aceptacion_str == '0' or new_aceptacion_str.lower() == 'false':
+                        new_aceptacion = False
+                    else:
+                        new_aceptacion = None
                     
                     # Parse puntuacion
                     new_puntuacion_str = row_clean.get('puntuacion', '')
