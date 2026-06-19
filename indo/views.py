@@ -2418,7 +2418,13 @@ class ProyectosImportarCSVView(LoginRequiredMixin, PermissionRequiredMixin, View
                 try:
                     decoded_file = file_bytes.decode('utf-8-sig').splitlines()
                 except UnicodeDecodeError:
-                    decoded_file = file_bytes.decode('cp1252').splitlines()
+                    try:
+                        decoded_file = file_bytes.decode('utf-16').splitlines()
+                    except UnicodeDecodeError:
+                        try:
+                            decoded_file = file_bytes.decode('cp1252').splitlines()
+                        except UnicodeDecodeError:
+                            decoded_file = file_bytes.decode('cp1252', errors='replace').splitlines()
                 reader = list(csv.DictReader(decoded_file, delimiter='\t'))
                 
                 preview_data = []
