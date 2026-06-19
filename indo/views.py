@@ -3947,7 +3947,7 @@ class ProyectosNotificarPreviewView(LoginRequiredMixin, PermissionRequiredMixin,
                     if not subject and not body:
                         subject = "Resolución provisional" if variante == "_provisional" else "Resolución definitiva"
                         body = rendered
-                    mail_con_dotacion = {'subject': subject, 'body': body}
+                    mail_con_dotacion = {'subject': str(subject), 'body': str(body)}
                 except Exception as e:
                     logger.error(f"Error rendering dotacion preview: {e}")
 
@@ -3968,7 +3968,7 @@ class ProyectosNotificarPreviewView(LoginRequiredMixin, PermissionRequiredMixin,
                     if not subject and not body:
                         subject = "Resolución provisional" if variante == "_provisional" else "Resolución definitiva"
                         body = rendered
-                    mail_sin_dotacion = {'subject': subject, 'body': body}
+                    mail_sin_dotacion = {'subject': str(subject), 'body': str(body)}
                 except Exception as e:
                     logger.error(f"Error rendering sin dotacion preview: {e}")
 
@@ -4003,8 +4003,8 @@ class ProyectosNotificarPreviewView(LoginRequiredMixin, PermissionRequiredMixin,
                         'proyecto_id': p_den.id,
                         'proyecto_titulo': p_den.titulo,
                         'destinatario': p_den.coordinador.email,
-                        'subject': subject,
-                        'body': body
+                        'subject': str(subject),
+                        'body': str(body)
                     })
                 except Exception as e:
                     logger.error(f"Error rendering denegado preview for project {p_den.id}: {e}")
