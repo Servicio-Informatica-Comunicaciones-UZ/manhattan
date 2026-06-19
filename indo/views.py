@@ -2472,6 +2472,29 @@ class ProyectosImportarCSVView(LoginRequiredMixin, PermissionRequiredMixin, View
                     except ValueError:
                         new_ayuda = None
                         
+                    # Parse observaciones (checking numbered columns first)
+                    obs_parts = []
+                    for i in range(1, 4):
+                        val = row_clean.get(f'observacion_interna_{i}')
+                        if val:
+                            val_stripped = val.strip()
+                            if val_stripped:
+                                obs_parts.append(val_stripped)
+                    
+                    if obs_parts:
+                        new_observaciones = '\n------------\n'.join(obs_parts)
+                    else:
+                        new_observaciones = row_clean.get('observacion_interna')
+                        if new_observaciones is None:
+                            new_observaciones = row_clean.get('observacion_internas')
+                        if new_observaciones is None:
+                            new_observaciones = row_clean.get('observaciones')
+                        
+                        if new_observaciones is None:
+                            new_observaciones = proyecto.observaciones or ''
+                        else:
+                            new_observaciones = new_observaciones.strip()
+
                     preview_data.append({
                         'id': proyecto.id,
                         'titulo': proyecto.titulo,
@@ -2481,6 +2504,8 @@ class ProyectosImportarCSVView(LoginRequiredMixin, PermissionRequiredMixin, View
                         'new_puntuacion': new_puntuacion,
                         'old_ayuda': proyecto.ayuda_provisional,
                         'new_ayuda': new_ayuda,
+                        'old_observaciones': proyecto.observaciones,
+                        'new_observaciones': new_observaciones,
                     })
                     
                     data_to_serialize.append({
@@ -2488,6 +2513,7 @@ class ProyectosImportarCSVView(LoginRequiredMixin, PermissionRequiredMixin, View
                         'new_aceptacion': new_aceptacion,
                         'new_puntuacion': new_puntuacion_str, 
                         'new_ayuda': new_ayuda,
+                        'new_observaciones': new_observaciones,
                     })
                     
                 context = {
@@ -2530,13 +2556,14 @@ class ProyectosImportarCSVView(LoginRequiredMixin, PermissionRequiredMixin, View
                         proyecto.puntuacion = None
                         
                     proyecto.ayuda_provisional = item['new_ayuda']
+                    proyecto.observaciones = item.get('new_observaciones')
                     
                     proyectos_to_update.append(proyecto)
                     actualizados += 1
                 
                 # Actualización masiva en 1 sola consulta
                 if proyectos_to_update:
-                    Proyecto.objects.bulk_update(proyectos_to_update, ['aceptacion_comision', 'puntuacion', 'ayuda_provisional'])
+                    Proyecto.objects.bulk_update(proyectos_to_update, ['aceptacion_comision', 'puntuacion', 'ayuda_provisional', 'observaciones'])
                         
                 messages.success(request, f"Se han importado/actualizado correctamente {actualizados} proyectos.")
                 return redirect('evaluaciones_table', anyo=anyo)
@@ -2598,10 +2625,6 @@ class ProyectoMemoriasTableView(LoginRequiredMixin, PermissionRequiredMixin, Sin
 class ProyectosNotificarView(LoginRequiredMixin, PermissionRequiredMixin, RedirectView):
     """
     Envía a los coordinadores de los proyectos la resolución de la Comisión de Evaluación
-
-    Se notifica solamente a los coordinadores de los proyectos aprobados.
-    A los coordinadores de los proyectos rechazados se les comunica la resolución manualmente
-    por correo electrónico.
     """
 
     permission_required = 'indo.listar_evaluaciones'
@@ -2612,67 +2635,105 @@ class ProyectosNotificarView(LoginRequiredMixin, PermissionRequiredMixin, Redire
 
     def post(self, request, *args, **kwargs):
         convocatoria = Convocatoria.objects.get(id=self.kwargs.get('anyo'))
+        notificar_aceptados = request.POST.get('notificar_aceptados') == '1'
+        notificar_denegados = request.POST.get('notificar_denegados') == '1'
+
+        if not notificar_aceptados and not notificar_denegados:
+            messages.error(request, _('Debe seleccionar al menos un grupo de destinatarios (Aprobados o Denegados).'))
+            return redirect('notificar_proyectos_preview', anyo=self.kwargs.get('anyo'))
+
         if not convocatoria.notificada_resolucion_provisional:
-            proyectos_con_dotacion = (
-                Proyecto.objects.filter(convocatoria__id=self.kwargs['anyo'])
-                .filter(aceptacion_comision=True, ayuda_provisional__gt=0)
-                .all()
-            )
-            proyectos_sin_dotacion = (
-                Proyecto.objects.filter(convocatoria__id=self.kwargs['anyo'])
-                .filter(aceptacion_comision=True, ayuda_provisional=0)
-                .all()
-            )
             variante = '_provisional'
         else:
-            proyectos_con_dotacion = (
-                Proyecto.objects.filter(convocatoria__id=self.kwargs['anyo'])
-                .filter(aceptacion_comision=True, ayuda_definitiva__gt=0)
-                .all()
-            )
-            proyectos_sin_dotacion = (
-                Proyecto.objects.filter(convocatoria__id=self.kwargs['anyo'])
-                .filter(aceptacion_comision=True, ayuda_definitiva=0)
-                .all()
-            )
             variante = '_definitiva'
 
-        try:
-            for proyecto in proyectos_con_dotacion:
-                self._enviar_notificaciones(proyecto, 'notificacion_con_dotacion' + variante)
-                sleep(0.1)  # El servidor SMTP tiene un control de flujo de 600 mensajes por minuto
-        except Exception as err:  # smtplib.SMTPAuthenticationError etc
-            messages.warning(
-                request,
-                _(
-                    'No se enviaron por correo las notificaciones de la resolución'
-                    ' a los proyectos con dotación: %(err)s'
+        if notificar_aceptados:
+            if variante == '_provisional':
+                proyectos_con_dotacion = (
+                    Proyecto.objects.filter(convocatoria__id=self.kwargs['anyo'])
+                    .filter(aceptacion_comision=True, ayuda_provisional__gt=0)
+                    .all()
                 )
-                % {'err': err},
-            )
-
-        try:
-            for proyecto in proyectos_sin_dotacion:
-                self._enviar_notificaciones(proyecto, 'notificacion_sin_dotacion' + variante)
-                sleep(0.1)  # El servidor SMTP tiene un control de flujo de 600 mensajes por minuto
-        except Exception as err:  # smtplib.SMTPAuthenticationError etc
-            messages.warning(
-                request,
-                _(
-                    'No se enviaron por correo las notificaciones de la resolución'
-                    ' a los proyectos sin dotación: %(err)s'
+                proyectos_sin_dotacion = (
+                    Proyecto.objects.filter(convocatoria__id=self.kwargs['anyo'])
+                    .filter(aceptacion_comision=True, ayuda_provisional=0)
+                    .all()
                 )
-                % {'err': err},
+            else:
+                proyectos_con_dotacion = (
+                    Proyecto.objects.filter(convocatoria__id=self.kwargs['anyo'])
+                    .filter(aceptacion_comision=True, ayuda_definitiva__gt=0)
+                    .all()
+                )
+                proyectos_sin_dotacion = (
+                    Proyecto.objects.filter(convocatoria__id=self.kwargs['anyo'])
+                    .filter(aceptacion_comision=True, ayuda_definitiva=0)
+                    .all()
+                )
+
+            try:
+                for proyecto in proyectos_con_dotacion:
+                    self._enviar_notificaciones(proyecto, 'notificacion_con_dotacion' + variante)
+                    sleep(0.1)  # El servidor SMTP tiene un control de flujo de 600 mensajes por minuto
+            except Exception as err:  # smtplib.SMTPAuthenticationError etc
+                messages.warning(
+                    request,
+                    _(
+                        'No se enviaron por correo las notificaciones de la resolución'
+                        ' a los proyectos con dotación: %(err)s'
+                    )
+                    % {'err': err},
+                )
+
+            try:
+                for proyecto in proyectos_sin_dotacion:
+                    self._enviar_notificaciones(proyecto, 'notificacion_sin_dotacion' + variante)
+                    sleep(0.1)  # El servidor SMTP tiene un control de flujo de 600 mensajes por minuto
+            except Exception as err:  # smtplib.SMTPAuthenticationError etc
+                messages.warning(
+                    request,
+                    _(
+                        'No se enviaron por correo las notificaciones de la resolución'
+                        ' a los proyectos sin dotación: %(err)s'
+                    )
+                    % {'err': err},
+                )
+
+        if notificar_denegados:
+            proyectos_denegados = (
+                Proyecto.objects.filter(convocatoria__id=self.kwargs['anyo'])
+                .filter(aceptacion_comision=False)
+                .all()
             )
+            try:
+                for proyecto in proyectos_denegados:
+                    prefix = 'notificacion_negativa_prauz' if proyecto.programa.nombre_corto == 'PRAUZ' else 'notificacion_negativa'
+                    self._enviar_notificaciones(proyecto, prefix + variante)
+                    sleep(0.1)  # El servidor SMTP tiene un control de flujo de 600 mensajes por minuto
+            except Exception as err:  # smtplib.SMTPAuthenticationError etc
+                messages.warning(
+                    request,
+                    _(
+                        'No se enviaron por correo las notificaciones de la resolución'
+                        ' a los proyectos denegados: %(err)s'
+                    )
+                    % {'err': err},
+                )
 
-        if variante == '_provisional':
-            convocatoria.notificada_resolucion_provisional = True
-        else:
-            convocatoria.notificada_resolucion_definitiva = True
-        convocatoria.save()
+        if notificar_aceptados:
+            if variante == '_provisional':
+                convocatoria.notificada_resolucion_provisional = True
+            else:
+                convocatoria.notificada_resolucion_definitiva = True
+            convocatoria.save()
 
-        messages.success(request, _('Se han enviado las notificaciones.'))
-        return super().post(request, *args, **kwargs)
+        grupos_enviados = []
+        if notificar_aceptados:
+            grupos_enviados.append(str(_('proyectos aprobados')))
+        if notificar_denegados:
+            grupos_enviados.append(str(_('proyectos denegados')))
+        messages.success(request, _('Se han enviado las notificaciones a los %s.') % ' y '.join(grupos_enviados))
+        return redirect('evaluaciones_table', anyo=self.kwargs.get('anyo'))
 
     def _enviar_notificaciones(self, proyecto, plantilla):
         # emails_coordinadores = [c.email for c in proyecto.get_coordinadores()]
@@ -3817,81 +3878,139 @@ class ProyectosNotificarPreviewView(LoginRequiredMixin, PermissionRequiredMixin,
         context['anyo'] = anyo
         context['convocatoria'] = convocatoria
 
+        # Read selection from previous page
+        grupo_aceptados = self.request.GET.get('grupo_aceptados') == '1'
+        grupo_denegados = self.request.GET.get('grupo_denegados') == '1'
+        
+        # Default behavior if navigated directly
+        if 'grupo_aceptados' not in self.request.GET and 'grupo_denegados' not in self.request.GET:
+            grupo_aceptados = True
+            grupo_denegados = False
+
+        context['grupo_aceptados'] = grupo_aceptados
+        context['grupo_denegados'] = grupo_denegados
+
         if not convocatoria.notificada_resolucion_provisional:
             variante = '_provisional'
-            proyectos_aprobados = Proyecto.objects.filter(convocatoria__id=anyo, aceptacion_comision=True)
-            proyectos_con_dotacion = proyectos_aprobados.filter(ayuda_provisional__gt=0)
-            proyectos_sin_dotacion = proyectos_aprobados.filter(ayuda_provisional=0)
         else:
             variante = '_definitiva'
-            proyectos_aprobados = Proyecto.objects.filter(convocatoria__id=anyo, aceptacion_comision=True)
-            proyectos_con_dotacion = proyectos_aprobados.filter(ayuda_definitiva__gt=0)
-            proyectos_sin_dotacion = proyectos_aprobados.filter(ayuda_definitiva=0)
 
-        context['num_con_dotacion'] = proyectos_con_dotacion.count()
-        context['num_sin_dotacion'] = proyectos_sin_dotacion.count()
-        context['total_a_notificar'] = proyectos_con_dotacion.count() + proyectos_sin_dotacion.count()
-
-        # Recipient lists
-        context['destinatarios_con_dotacion'] = [p.coordinador.email for p in proyectos_con_dotacion]
-        context['destinatarios_sin_dotacion'] = [p.coordinador.email for p in proyectos_sin_dotacion]
-
-        # Generate a preview email for Dotacion
+        # Fetch Aprobados only if selected
+        num_con_dotacion = 0
+        num_sin_dotacion = 0
+        total_a_notificar = 0
+        destinatarios_con_dotacion = []
+        destinatarios_sin_dotacion = []
         mail_con_dotacion = None
-        if proyectos_con_dotacion.exists():
-            p_con = proyectos_con_dotacion.first()
-            try:
-                from indo.views import get_config
-                # We render the template blocks manually as get_templated_mail hangs in this context
-                rendered = render_to_string('templated_email/notificacion_con_dotacion' + variante + '.email', {
-                    'proyecto': p_con,
-                    'coordinador': p_con.coordinador,
-                    'site_url': get_config('SITE_URL'),
-                    'ayuda_url': get_config('SITE_URL') + reverse('ayuda'),
-                    'vicerrector': get_config('VICERRECTOR').strip('"'),
-                })
-                
-                # Extract block subject and plain using simple splits
-                subject = rendered.split('{% block subject %}')[1].split('{% endblock %}')[0].strip() if '{% block subject %}' in rendered else ''
-                body = rendered.split('{% block plain %}')[1].split('{% endblock %}')[0].strip() if '{% block plain %}' in rendered else ''
-                
-                if not subject and not body:
-                    # Alternative parser if it was rendered evaluated
-                    # The django-templated-email uses its own block parser
-                    subject = "Resolución provisional" if variante == "_provisional" else "Resolución definitiva"
-                    body = rendered
-                    
-                mail_con_dotacion = {'subject': subject, 'body': body}
-            except Exception as e:
-                logger.error(f"Error rendering dotacion preview: {e}")
-
-        # Generate a preview email for Sin Dotacion
         mail_sin_dotacion = None
-        if proyectos_sin_dotacion.exists():
-            p_sin = proyectos_sin_dotacion.first()
-            try:
-                from indo.views import get_config
-                rendered = render_to_string('templated_email/notificacion_sin_dotacion' + variante + '.email', {
-                    'proyecto': p_sin,
-                    'coordinador': p_sin.coordinador,
-                    'site_url': get_config('SITE_URL'),
-                    'ayuda_url': get_config('SITE_URL') + reverse('ayuda'),
-                    'vicerrector': get_config('VICERRECTOR').strip('"'),
-                })
-                
-                subject = rendered.split('{% block subject %}')[1].split('{% endblock %}')[0].strip() if '{% block subject %}' in rendered else ''
-                body = rendered.split('{% block plain %}')[1].split('{% endblock %}')[0].strip() if '{% block plain %}' in rendered else ''
-                
-                if not subject and not body:
-                    subject = "Resolución provisional" if variante == "_provisional" else "Resolución definitiva"
-                    body = rendered
 
-                mail_sin_dotacion = {'subject': subject, 'body': body}
-            except Exception as e:
-                logger.error(f"Error rendering sin dotacion preview: {e}")
+        if grupo_aceptados:
+            if variante == '_provisional':
+                proyectos_aprobados = Proyecto.objects.filter(convocatoria__id=anyo, aceptacion_comision=True)
+                proyectos_con_dotacion = proyectos_aprobados.filter(ayuda_provisional__gt=0)
+                proyectos_sin_dotacion = proyectos_aprobados.filter(ayuda_provisional=0)
+            else:
+                proyectos_aprobados = Proyecto.objects.filter(convocatoria__id=anyo, aceptacion_comision=True)
+                proyectos_con_dotacion = proyectos_aprobados.filter(ayuda_definitiva__gt=0)
+                proyectos_sin_dotacion = proyectos_aprobados.filter(ayuda_definitiva=0)
+
+            num_con_dotacion = proyectos_con_dotacion.count()
+            num_sin_dotacion = proyectos_sin_dotacion.count()
+            total_a_notificar = num_con_dotacion + num_sin_dotacion
+            destinatarios_con_dotacion = [p.coordinador.email for p in proyectos_con_dotacion]
+            destinatarios_sin_dotacion = [p.coordinador.email for p in proyectos_sin_dotacion]
+
+            # Generate a preview email for Dotacion
+            if proyectos_con_dotacion.exists():
+                p_con = proyectos_con_dotacion.first()
+                try:
+                    from indo.views import get_config
+                    rendered = render_to_string('templated_email/notificacion_con_dotacion' + variante + '.email', {
+                        'proyecto': p_con,
+                        'coordinador': p_con.coordinador,
+                        'site_url': get_config('SITE_URL'),
+                        'ayuda_url': get_config('SITE_URL') + reverse('ayuda'),
+                        'vicerrector': get_config('VICERRECTOR').strip('"'),
+                    })
+                    subject = rendered.split('{% block subject %}')[1].split('{% endblock %}')[0].strip() if '{% block subject %}' in rendered else ''
+                    body = rendered.split('{% block plain %}')[1].split('{% endblock %}')[0].strip() if '{% block plain %}' in rendered else ''
+                    if not subject and not body:
+                        subject = "Resolución provisional" if variante == "_provisional" else "Resolución definitiva"
+                        body = rendered
+                    mail_con_dotacion = {'subject': subject, 'body': body}
+                except Exception as e:
+                    logger.error(f"Error rendering dotacion preview: {e}")
+
+            # Generate a preview email for Sin Dotacion
+            if proyectos_sin_dotacion.exists():
+                p_sin = proyectos_sin_dotacion.first()
+                try:
+                    from indo.views import get_config
+                    rendered = render_to_string('templated_email/notificacion_sin_dotacion' + variante + '.email', {
+                        'proyecto': p_sin,
+                        'coordinador': p_sin.coordinador,
+                        'site_url': get_config('SITE_URL'),
+                        'ayuda_url': get_config('SITE_URL') + reverse('ayuda'),
+                        'vicerrector': get_config('VICERRECTOR').strip('"'),
+                    })
+                    subject = rendered.split('{% block subject %}')[1].split('{% endblock %}')[0].strip() if '{% block subject %}' in rendered else ''
+                    body = rendered.split('{% block plain %}')[1].split('{% endblock %}')[0].strip() if '{% block plain %}' in rendered else ''
+                    if not subject and not body:
+                        subject = "Resolución provisional" if variante == "_provisional" else "Resolución definitiva"
+                        body = rendered
+                    mail_sin_dotacion = {'subject': subject, 'body': body}
+                except Exception as e:
+                    logger.error(f"Error rendering sin dotacion preview: {e}")
+
+        # Fetch Denegados only if selected
+        num_denegados = 0
+        destinatarios_denegados = []
+        mails_denegados = []
+
+        if grupo_denegados:
+            proyectos_denegados = Proyecto.objects.filter(convocatoria__id=anyo, aceptacion_comision=False)
+            num_denegados = proyectos_denegados.count()
+            destinatarios_denegados = [p.coordinador.email for p in proyectos_denegados]
+
+            # Generate preview emails for all Denegados
+            from indo.views import get_config
+            for p_den in proyectos_denegados:
+                try:
+                    prefix = 'notificacion_negativa_prauz' if p_den.programa.nombre_corto == 'PRAUZ' else 'notificacion_negativa'
+                    rendered = render_to_string('templated_email/' + prefix + variante + '.email', {
+                        'proyecto': p_den,
+                        'coordinador': p_den.coordinador,
+                        'site_url': get_config('SITE_URL'),
+                        'ayuda_url': get_config('SITE_URL') + reverse('ayuda'),
+                        'vicerrector': get_config('VICERRECTOR').strip('"'),
+                    })
+                    subject = rendered.split('{% block subject %}')[1].split('{% endblock %}')[0].strip() if '{% block subject %}' in rendered else ''
+                    body = rendered.split('{% block plain %}')[1].split('{% endblock %}')[0].strip() if '{% block plain %}' in rendered else ''
+                    if not subject and not body:
+                        subject = "Resolución provisional" if variante == "_provisional" else "Resolución definitiva"
+                        body = rendered
+                    mails_denegados.append({
+                        'proyecto_id': p_den.id,
+                        'proyecto_titulo': p_den.titulo,
+                        'destinatario': p_den.coordinador.email,
+                        'subject': subject,
+                        'body': body
+                    })
+                except Exception as e:
+                    logger.error(f"Error rendering denegado preview for project {p_den.id}: {e}")
+
+        context['num_con_dotacion'] = num_con_dotacion
+        context['num_sin_dotacion'] = num_sin_dotacion
+        context['total_a_notificar'] = total_a_notificar
+        context['num_denegados'] = num_denegados
+
+        context['destinatarios_con_dotacion'] = destinatarios_con_dotacion
+        context['destinatarios_sin_dotacion'] = destinatarios_sin_dotacion
+        context['destinatarios_denegados'] = destinatarios_denegados
 
         context['mail_con_dotacion'] = mail_con_dotacion
         context['mail_sin_dotacion'] = mail_sin_dotacion
+        context['mails_denegados'] = mails_denegados
 
         return context
 

@@ -13,7 +13,7 @@
         <strong>{% trans "Instrucciones:" %}</strong>
         <ul>
             <li>El archivo debe estar en formato texto (CSV/TSV) y <strong>separado por tabuladores</strong>.</li>
-            <li>Debe contener una primera fila de cabeceras con al menos: <code>id</code>, <code>aceptacion_comision</code> (1 o 0), <code>puntuacion</code> (ej: 10,5) y <code>ayuda_concedida</code>.</li>
+            <li>Debe contener una primera fila de cabeceras con al menos: <code>id</code>, <code>aceptacion_comision</code> (1 o 0), <code>puntuacion</code> (ej: 10,5), <code>ayuda_concedida</code> y, opcionalmente, <code>observacion_interna</code> o la combinación de <code>observacion_interna_1</code>, <code>observacion_interna_2</code> y <code>observacion_interna_3</code> (que se unirán automáticamente).</li>
         </ul>
     </div>
 
@@ -42,6 +42,7 @@
                         <th>Aceptación Comisión</th>
                         <th>Puntuación</th>
                         <th>Ayuda Provisional</th>
+                        <th>{% trans "Observación interna" %}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -66,6 +67,10 @@
                         <td>
                             <del class="text-muted">{{ row.old_ayuda|default_if_none:"—" }}</del> 
                             <br> <strong class="text-success">{{ row.new_ayuda|default_if_none:"—" }}</strong>
+                        </td>
+                        <td>
+                            <del class="text-muted">{{ row.old_observaciones|default:"—" }}</del> 
+                            <br> <strong class="text-success">{{ row.new_observaciones|default:"—" }}</strong>
                         </td>
                     </tr>
                     {% endfor %}

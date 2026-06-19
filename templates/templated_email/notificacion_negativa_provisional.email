@@ -1,0 +1,36 @@
+{% block subject %}Resolución provisional sobre el proyecto {{proyecto.id}} - «{{proyecto.titulo}}»{% endblock %}
+{% block plain %}
+Resolución Provisional Convocatoria de Innovación Docente {{proyecto.convocatoria.id}}/{{proyecto.convocatoria.id|add:1}} de la Universidad de Zaragoza
+---------------------------------------------------------------------
+
+{% if coordinador.sexo == 'F' %}Estimada {{coordinador.full_name}}:
+{% elif coordinador.sexo == 'M' %}Estimado {{coordinador.full_name}}:
+{% else %}Estimad@ {{coordinador.full_name}}:{% endif %}
+Enviamos este mensaje para informar que se ha publicado la resolución provisional de los Proyectos de Innovación Docente correspondientes al curso {{proyecto.convocatoria.id}}/{{proyecto.convocatoria.id|add:1}}.  Lamento comunicarte que el proyecto «{{proyecto.titulo}}» (id {{proyecto.id}}), en el que constas como figura coordinadora, ha sido valorado desfavorablemente atendiendo a los criterios indicados en dicha convocatoria y a la nota de corte establecida por la Comisión para la concesión de proyectos. 
+
+La puntuación obtenida es de {{proyecto.puntuacion|default_if_none:"—"}} sobre un total de 25 y se consideran, como expone la Convocatoria, los siguientes aspectos: 
+1. Adecuación del proyecto al programa en el que se solicita.
+2. Claridad de la propuesta en todos los campos de la aplicación informática.
+3. Relevancia e impacto previsto de la propuesta en el proceso de enseñanza/aprendizaje.
+4. Definición y justificación de los métodos y técnicas que se utilizarán para desarrollar la innovación.
+5. Procedimiento/instrumentos propuestos para la evaluación del propio proceso de innovación.
+6. Transferibilidad a otros entornos de enseñanza/aprendizaje.
+7. Sostenibilidad (incluidos ODS). 
+8. Pertenencia a un grupo de innovación docente universitaria reconocido por el CIFICE.
+9. Plantea cuestiones éticas de la investigación para valorar el impacto del proyecto.
+10. Colaboración con otras universidades de UNITA o del Campus Iberus
+
+Para tu consideración y a los efectos oportunos, se te hacen llegar también las observaciones de la evaluación externa de los dos evaluadores (evaluadores Agencia de Calidad y Prospectiva Universitaria de Aragón): 
+
+{{proyecto.observaciones|default:"—"}}
+
+El plazo para formular alegaciones a esta resolución provisional finaliza el próximo día 3 de julio y se presentarán a través del registro electrónico en <https://regtel.unizar.es> e irán dirigidas al Sr. Vicerrector de Política Académica. 
+
+Desde el Vicerrectorado de Política Académica y en nombre de la Comisión que resuelve la presente convocatoria querríamos agradecerte muy sinceramente tu participación en esta convocatoria de Proyectos de Innovación Docente estando en el convencimiento de que en la siguiente ocasión se podrán mejorar los aspectos señalados por los evaluadores de la ACPUA y con este fin quedamos a disposición de las personas responsables de este proyecto para poder colaborar en ello. 
+
+
+Recibe un cordial saludo,
+{{vicerrector}}
+Vicerrector de Política Académica
+Universidad de Zaragoza
+{% endblock %}

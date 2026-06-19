@@ -50,14 +50,66 @@
             </div>
 
             {% if not convocatoria.notificada_resolucion_provisional or not convocatoria.notificada_resolucion_definitiva %}
-                <a class="btn btn-danger" href="{% url 'notificar_proyectos_preview' anyo=anyo %}">
+                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#notificarSeleccionModal" type="button">
                     <span class="fas fa-eye"></span>&nbsp;
                     {% if not convocatoria.notificada_resolucion_provisional %}
                         {% trans 'Previsualizar y notificar resolución provisional' %}
                     {% else %}
                         {% trans 'Previsualizar y notificar resolución definitiva' %}
                     {% endif %}
-                </a>
+                </button>
+
+                <!-- Modal de selección para notificar -->
+                <div class="modal fade" id="notificarSeleccionModal" tabindex="-1" aria-labelledby="notificarSeleccionModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="notificarSeleccionModalLabel">
+                            {% if not convocatoria.notificada_resolucion_provisional %}
+                                {% trans "Notificar resolución provisional" %}
+                            {% else %}
+                                {% trans "Notificar resolución definitiva" %}
+                            {% endif %}
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <form action="{% url 'notificar_proyectos_preview' anyo=anyo %}" method="get" id="notificar-preview-form">
+                          <div class="modal-body text-start">
+                            <p>{% trans "Selecciona los grupos de destinatarios que deseas incluir en esta notificación:" %}</p>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" name="grupo_aceptados" id="grupo_aceptados" value="1" checked>
+                                <label class="form-check-label" for="grupo_aceptados">
+                                    <strong>{% trans "Proyectos aprobados" %}</strong>
+                                </label>
+                            </div>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" name="grupo_denegados" id="grupo_denegados" value="1">
+                                <label class="form-check-label" for="grupo_denegados">
+                                    <strong>{% trans "Proyectos denegados" %}</strong>
+                                </label>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancelar" %}</button>
+                            <button type="submit" class="btn btn-danger">
+                                <span class="fas fa-eye"></span>&nbsp;{% trans "Continuar a la Previsualización" %}
+                            </button>
+                          </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+
+                <script>
+                    document.getElementById('notificar-preview-form').addEventListener('submit', function(e) {
+                        var aceptados = document.getElementById('grupo_aceptados').checked;
+                        var denegados = document.getElementById('grupo_denegados').checked;
+                        if (!aceptados && !denegados) {
+                            e.preventDefault();
+                            alert("{% trans 'Debe seleccionar al menos un grupo de destinatarios (Aprobados o Denegados).' %}");
+                        }
+                    });
+                </script>
             {% endif %}
 
         </div>
