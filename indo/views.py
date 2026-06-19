@@ -2414,7 +2414,11 @@ class ProyectosImportarCSVView(LoginRequiredMixin, PermissionRequiredMixin, View
                 return redirect('importar_csv', anyo=anyo)
 
             try:
-                decoded_file = csv_file.read().decode('utf-8-sig').splitlines()
+                file_bytes = csv_file.read()
+                try:
+                    decoded_file = file_bytes.decode('utf-8-sig').splitlines()
+                except UnicodeDecodeError:
+                    decoded_file = file_bytes.decode('cp1252').splitlines()
                 reader = list(csv.DictReader(decoded_file, delimiter='\t'))
                 
                 preview_data = []
