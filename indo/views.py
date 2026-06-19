@@ -2684,6 +2684,9 @@ class ProyectosNotificarView(LoginRequiredMixin, PermissionRequiredMixin, Redire
             try:
                 for proyecto in proyectos_con_dotacion:
                     self._enviar_notificaciones(proyecto, 'notificacion_con_dotacion' + variante)
+                    if variante == '_provisional':
+                        proyecto.estado = 'APROBADO'
+                        proyecto.save(update_fields=['estado'])
                     sleep(0.1)  # El servidor SMTP tiene un control de flujo de 600 mensajes por minuto
             except Exception as err:  # smtplib.SMTPAuthenticationError etc
                 messages.warning(
@@ -2698,6 +2701,9 @@ class ProyectosNotificarView(LoginRequiredMixin, PermissionRequiredMixin, Redire
             try:
                 for proyecto in proyectos_sin_dotacion:
                     self._enviar_notificaciones(proyecto, 'notificacion_sin_dotacion' + variante)
+                    if variante == '_provisional':
+                        proyecto.estado = 'APROBADO'
+                        proyecto.save(update_fields=['estado'])
                     sleep(0.1)  # El servidor SMTP tiene un control de flujo de 600 mensajes por minuto
             except Exception as err:  # smtplib.SMTPAuthenticationError etc
                 messages.warning(
@@ -2719,6 +2725,9 @@ class ProyectosNotificarView(LoginRequiredMixin, PermissionRequiredMixin, Redire
                 for proyecto in proyectos_denegados:
                     prefix = 'notificacion_negativa_prauz' if proyecto.programa.nombre_corto == 'PRAUZ' else 'notificacion_negativa'
                     self._enviar_notificaciones(proyecto, prefix + variante)
+                    if variante == '_provisional':
+                        proyecto.estado = 'DENEGADO'
+                        proyecto.save(update_fields=['estado'])
                     sleep(0.1)  # El servidor SMTP tiene un control de flujo de 600 mensajes por minuto
             except Exception as err:  # smtplib.SMTPAuthenticationError etc
                 messages.warning(
