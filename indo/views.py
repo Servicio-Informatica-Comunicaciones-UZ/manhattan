@@ -3947,7 +3947,8 @@ class ProyectosNotificarPreviewView(LoginRequiredMixin, PermissionRequiredMixin,
                     if not subject and not body:
                         subject = "Resolución provisional" if variante == "_provisional" else "Resolución definitiva"
                         body = rendered
-                    mail_con_dotacion = {'subject': str(subject), 'body': str(body)}
+                    from django.utils.html import escape
+                    mail_con_dotacion = {'subject': escape(subject), 'body': escape(body)}
                 except Exception as e:
                     logger.error(f"Error rendering dotacion preview: {e}")
 
@@ -3968,7 +3969,8 @@ class ProyectosNotificarPreviewView(LoginRequiredMixin, PermissionRequiredMixin,
                     if not subject and not body:
                         subject = "Resolución provisional" if variante == "_provisional" else "Resolución definitiva"
                         body = rendered
-                    mail_sin_dotacion = {'subject': str(subject), 'body': str(body)}
+                    from django.utils.html import escape
+                    mail_sin_dotacion = {'subject': escape(subject), 'body': escape(body)}
                 except Exception as e:
                     logger.error(f"Error rendering sin dotacion preview: {e}")
 
@@ -3999,12 +4001,13 @@ class ProyectosNotificarPreviewView(LoginRequiredMixin, PermissionRequiredMixin,
                     if not subject and not body:
                         subject = "Resolución provisional" if variante == "_provisional" else "Resolución definitiva"
                         body = rendered
+                    from django.utils.html import escape
                     mails_denegados.append({
                         'proyecto_id': p_den.id,
                         'proyecto_titulo': p_den.titulo,
                         'destinatario': p_den.coordinador.email,
-                        'subject': str(subject),
-                        'body': str(body)
+                        'subject': escape(subject),
+                        'body': escape(body)
                     })
                 except Exception as e:
                     logger.error(f"Error rendering denegado preview for project {p_den.id}: {e}")
