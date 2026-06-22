@@ -1361,13 +1361,13 @@ class ColaboradorAnyadirView(LoginRequiredMixin, ChecksMixin, TemplateView):
         proyecto = get_object_or_404(Proyecto, pk=kwargs['proyecto_id'])
 
         # Comprobamos permisos para añadir colaborador
-        permitir = proyecto.aceptacion_coordinador and (
+        permitir = proyecto.convocatoria.permite_colaboradores and proyecto.aceptacion_coordinador and (
             self.request.user.has_perm('indo.editar_proyecto') or (
                 self.es_coordinador(proyecto.id) and proyecto.estado not in ('MEM_PRESENTADA', 'MEM_ADMITIDA', 'FINALIZADO_SIN_MEMORIA')
             )
         )
         if not permitir:
-            messages.error(request, _('No está permitido añadir colaboradores en el estado actual del proyecto.'))
+            messages.error(request, _('No está permitido añadir colaboradores en esta convocatoria o en el estado actual del proyecto.'))
             return redirect('proyecto_detail', proyecto.id)
 
         # Obtenemos el usuario (si ya existe en el sistema).
@@ -1462,6 +1462,9 @@ class ColaboradorAnyadirView(LoginRequiredMixin, ChecksMixin, TemplateView):
 
     def test_func(self):
         proyecto = get_object_or_404(Proyecto, pk=self.kwargs['proyecto_id'])
+        if not proyecto.convocatoria.permite_colaboradores:
+            self.permission_denied_message = _('Esta convocatoria no permite colaboradores.')
+            return False
         permitir = proyecto.aceptacion_coordinador and (
             self.request.user.has_perm('indo.editar_proyecto') or (
                 self.es_coordinador(proyecto.id) and proyecto.estado not in ('MEM_PRESENTADA', 'MEM_ADMITIDA', 'FINALIZADO_SIN_MEMORIA')
@@ -1489,6 +1492,9 @@ class ColaboradorDeleteView(LoginRequiredMixin, ChecksMixin, DeleteView):
 
     def test_func(self):
         proyecto = self.get_object().proyecto
+        if not proyecto.convocatoria.permite_colaboradores:
+            self.permission_denied_message = _('Esta convocatoria no permite colaboradores.')
+            return False
         permitir = proyecto.aceptacion_coordinador and (
             self.request.user.has_perm('indo.editar_proyecto') or (
                 self.es_coordinador(proyecto.id) and proyecto.estado not in ('MEM_PRESENTADA', 'MEM_ADMITIDA', 'FINALIZADO_SIN_MEMORIA')
@@ -1533,6 +1539,9 @@ class ColaboradorHaceConstarView(LoginRequiredMixin, ChecksMixin, DetailView):
     def test_func(self):
         colaborador = self.get_object()
         proyecto = colaborador.proyecto
+        if not proyecto.convocatoria.permite_colaboradores:
+            self.permission_denied_message = _('Esta convocatoria no permite colaboradores.')
+            return False
         
         # Comprobación de estado (activa)
         if proyecto.estado != 'MEM_ADMITIDA':
@@ -2176,12 +2185,15 @@ class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
             .all()
         )
 
-        context['colaboradores'] = (
-            self.get_object()
-            .participantes.filter(tipo_participacion='colaborador')
-            .order_by('usuario__first_name', 'usuario__last_name')
-            .all()
-        )
+        if self.get_object().convocatoria.permite_colaboradores:
+            context['colaboradores'] = (
+                self.get_object()
+                .participantes.filter(tipo_participacion='colaborador')
+                .order_by('usuario__first_name', 'usuario__last_name')
+                .all()
+            )
+        else:
+            context['colaboradores'] = None
 
         context['campos'] = json.loads(self.get_object().programa.campos)
 
@@ -2248,7 +2260,7 @@ class ProyectoDetailView(LoginRequiredMixin, ChecksMixin, DetailView):
 
         context['es_gestor'] = self.request.user.has_perm('indo.editar_proyecto')
 
-        context['permitir_anyadir_colaborador'] = self.object.aceptacion_coordinador and (
+        context['permitir_anyadir_colaborador'] = self.object.convocatoria.permite_colaboradores and self.object.aceptacion_coordinador and (
             self.request.user.has_perm('indo.editar_proyecto') or (
                 self.es_coordinador(self.object.id) and self.object.estado not in ('MEM_PRESENTADA', 'MEM_ADMITIDA', 'FINALIZADO_SIN_MEMORIA')
             )

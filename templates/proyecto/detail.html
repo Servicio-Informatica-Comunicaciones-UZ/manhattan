@@ -359,6 +359,7 @@
         {% endif %}
         <br />
 
+        {% if proyecto.convocatoria.permite_colaboradores %}
         <!-- Usuarios colaboradores -->
         <h3 id="colaboradores">{% trans 'Colaboradores' %}</h3>
         {% if colaboradores %}
@@ -417,6 +418,7 @@
             </div>
         {% endif %}
         <br />
+        {% endif %}
 
         <!-- Añadir participante con carácter excepcional -->
         {% if permitir_anyadir_sin_invitacion %}

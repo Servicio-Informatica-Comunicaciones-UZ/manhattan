@@ -116,6 +116,7 @@ class Convocatoria(models.Model):
     )
     notificada_resolucion_provisional = models.BooleanField(default=False)
     notificada_resolucion_definitiva = models.BooleanField(default=False)
+    permite_colaboradores = models.BooleanField(_('¿Permite colaboradores?'), default=False)
 
     class Meta:
         ordering = ('-id',)
@@ -323,6 +324,8 @@ class ParticipanteProyecto(models.Model):
             return _('Invitación declinada')
         if self.tipo_participacion_id == 'invitado':
             return ('Invitada') if self.usuario.sexo == 'F' else _('Invitado')
+        if self.tipo_participacion_id == 'colaborador':
+            return _('Colaboradora') if self.usuario.sexo == 'F' else _('Colaborador')
         return _('Participante')
 
 

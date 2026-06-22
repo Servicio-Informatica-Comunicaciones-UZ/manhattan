@@ -191,6 +191,7 @@
         {% endif %}
         <br /><br />
 
+        {% if convocatoria.permite_colaboradores %}
         <h1 id="colaboraciones">{% trans "Proyectos en los que colaboro" %} <small>{{ anyo }}</small></h1>
         <hr />
         <br />
@@ -223,6 +224,7 @@
             <p>{% trans 'No colabora en ningún proyecto.' %}</p>
         {% endif %}
         <br /><br />
+        {% endif %}
 
         {% if proyectos_centros_dirigidos %}
             <h1 id="del-centro">{% trans "Proyectos impulsados por mi centro" %} <small>{{ anyo }}</small></h1>
