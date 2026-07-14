@@ -3636,7 +3636,12 @@ class ProyectosAceptadosTableView(ExportMixin, PagedFilteredTableView):
                 academico_id_nk = int(academico_id_nk)
             except ValueError:
                 raise Http404(gettext('El centro indicado no existe.'))
-            context['centro'] = get_object_or_404(Centro, academico_id_nk=academico_id_nk)
+            centro = Centro.objects.filter(academico_id_nk=academico_id_nk, esta_activo=True).first()
+            if not centro:
+                centro = Centro.objects.filter(academico_id_nk=academico_id_nk).first()
+            if not centro:
+                raise Http404(gettext('El centro indicado no existe.'))
+            context['centro'] = centro
         return context
 
     def get_queryset(self):
