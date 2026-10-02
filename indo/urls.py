@@ -70,6 +70,7 @@ from .views import (
     teapot,
     ImpersonateUserView,
     StopImpersonatingView,
+    RegenerarMemoriasView,
 )
 
 urlpatterns = [
@@ -94,6 +95,7 @@ urlpatterns = [
     path('gestion/corrector/', CorrectorTableView.as_view(), name='correctores_table'),
     path('gestion/corrector/anyadir/', CorrectorAnyadirView.as_view(), name='corrector_anyadir'),
     path('gestion/corrector/cesar/', CorrectorCesarView.as_view(), name='corrector_cesar'),
+    path('gestion/regenerar-memorias/', RegenerarMemoriasView.as_view(), name='regenerar_memorias'),
     # Participantes
     path(
         'gestion/participante-proyecto/<int:anyo>/hace-constar/',

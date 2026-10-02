@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load i18n crispy_forms_tags %}
+
+{% block title %}Regenerar Memorias - {{ block.super }}{% endblock title %}
+
+{% block content %}
+    <div class="container-blanco">
+        <h1>Regenerar PDFs de Memorias</h1>
+        <hr />
+        <br />
+
+        <p>
+            Este proceso encolará la regeneración de los documentos PDF de todas las memorias que estén en estado "Presentada", "Admitida" o "No admitida" para la convocatoria seleccionada.
+        </p>
+        <br />
+
+        <form method="post">
+            {% csrf_token %}
+            {{ form|crispy }}
+
+            <br />
+            <div class="btn-group" role="group" aria-label="{% trans 'Botones' %}">
+                <button type="submit" class="btn btn-success">
+                    <span class="fas fa-file-pdf"></span>&nbsp; Iniciar regeneración
+                </button>
+            </div>
+        </form>
+    </div>
+{% endblock content %}

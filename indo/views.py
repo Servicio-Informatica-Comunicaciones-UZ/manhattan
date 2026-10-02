@@ -4292,3 +4292,28 @@ class StopImpersonatingView(LoginRequiredMixin, View):
             del request.session['impersonate_id']
             messages.success(request, "Has vuelto a tu cuenta real.")
         return redirect('home')
+
+from django.core.management import call_command
+from .forms import RegenerarMemoriasForm
+
+class RegenerarMemoriasView(UserPassesTestMixin, FormView):
+    template_name = 'gestion/regenerar_memorias.html'
+    form_class = RegenerarMemoriasForm
+    success_url = reverse_lazy('proyectos')
+    permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
+    
+    def test_func(self):
+        return self.request.user.groups.filter(name='Gestores').exists() or self.request.user.is_superuser
+
+    def form_valid(self, form):
+        convocatoria = form.cleaned_data['convocatoria']
+        forzar = form.cleaned_data['forzar']
+        base_url = self.request.build_absolute_uri('/')
+        
+        try:
+            call_command('regenerar_memorias', anyo=convocatoria.id, base_url=base_url, forzar=forzar)
+            messages.success(self.request, _('Se ha iniciado la regeneración de las memorias en segundo plano.'))
+        except Exception as e:
+            messages.error(self.request, f"Error al encolar la regeneración: {e}")
+            
+        return super().form_valid(form)

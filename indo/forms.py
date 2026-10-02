@@ -546,3 +546,16 @@ class CambiarCoordinadorForm(forms.Form):
             raise forms.ValidationError(_("El usuario indicado no está activo."))
             
         return nip
+
+class RegenerarMemoriasForm(forms.Form):
+    convocatoria = forms.ModelChoiceField(
+        queryset=Convocatoria.objects.order_by('-id'),
+        label=_('Convocatoria'),
+        required=True,
+        empty_label=None
+    )
+    forzar = forms.BooleanField(
+        label=_('Forzar regeneración'),
+        help_text=_('Si se marca, se volverán a generar todos los PDFs incluso si ya existen.'),
+        required=False
+    )
