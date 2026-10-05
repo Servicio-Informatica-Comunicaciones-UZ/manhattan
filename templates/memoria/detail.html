@@ -212,6 +212,13 @@
                 </a>
             {% endwith %}
 
+            {% if proyecto.pdf_memoria_existe %}
+                <a href="{{ proyecto.get_pdf_url }}" target="_blank" class="btn btn-danger"
+                   title="{% trans 'Descargar memoria en PDF' %}">
+                    <span class="fas fa-file-pdf"></span> {% trans 'Descargar PDF' %}
+                </a>
+            {% endif %}
+
             {% if permitir_edicion %}
                 <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#presentarModal"
                         type="button">

@@ -2,8 +2,10 @@
 from __future__ import annotations
 
 import datetime
+import os
 
 # Django
+from django.conf import settings
 from django.core.validators import FileExtensionValidator
 from django.db import connection, models
 from django.urls import reverse
@@ -750,6 +752,24 @@ class Proyecto(models.Model):
 
     def en_borrador(self):
         return self.estado == 'BORRADOR'
+
+    def get_pdf_path(self) -> str:
+        """Devuelve la ruta absoluta en disco del PDF de la memoria."""
+        return os.path.join(
+            settings.MEDIA_ROOT,
+            'memoria',
+            str(self.convocatoria_id),
+            f'{self.programa.nombre_corto}_{self.id}.pdf',
+        )
+
+    def get_pdf_url(self) -> str:
+        """Devuelve la URL pública del PDF de la memoria."""
+        return f"{settings.MEDIA_URL}memoria/{self.convocatoria_id}/{self.programa.nombre_corto}_{self.id}.pdf"
+
+    @property
+    def pdf_memoria_existe(self) -> bool:
+        """Indica si el fichero PDF de la memoria existe físicamente."""
+        return os.path.exists(self.get_pdf_path())
 
     def get_pp_coordinador_or_none(self, tipo) -> ParticipanteProyecto | None:
         """
