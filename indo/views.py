@@ -4299,7 +4299,6 @@ from .forms import RegenerarMemoriasForm
 class RegenerarMemoriasView(UserPassesTestMixin, FormView):
     template_name = 'gestion/regenerar_memorias.html'
     form_class = RegenerarMemoriasForm
-    success_url = reverse_lazy('proyectos')
     permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
     
     def test_func(self):
@@ -4307,6 +4306,7 @@ class RegenerarMemoriasView(UserPassesTestMixin, FormView):
 
     def form_valid(self, form):
         convocatoria = form.cleaned_data['convocatoria']
+        self.convocatoria_id = convocatoria.id
         forzar = form.cleaned_data['forzar']
         base_url = self.request.build_absolute_uri('/')
         
@@ -4317,3 +4317,8 @@ class RegenerarMemoriasView(UserPassesTestMixin, FormView):
             messages.error(self.request, f"Error al encolar la regeneración: {e}")
             
         return super().form_valid(form)
+
+    def get_success_url(self):
+        if hasattr(self, 'convocatoria_id'):
+            return reverse('memorias_table', kwargs={'anyo': self.convocatoria_id})
+        return reverse('regenerar_memorias')
