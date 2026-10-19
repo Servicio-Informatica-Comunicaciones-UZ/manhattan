@@ -534,3 +534,44 @@ ADD_TICKET_URL = os.environ.get('ADD_TICKET_URL')
 # Repositorio institucional de documentos
 REPO_WSURL = os.environ.get('REPO_WSURL')
 REPO_EMAIL = os.environ.get('REPO_EMAIL')
+
+# LOGGING
+# ------------------------------------------------------------------------------
+# Emite logs de autenticación a stdout para que sean visibles en `docker logs`.
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        # Pipeline de autenticación propio
+        'accounts.pipeline': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        # Logs internos de python-social-auth
+        'social': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        # Errores de Django (siempre)
+        'django': {
+            'handlers': ['console'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+    },
+}
+

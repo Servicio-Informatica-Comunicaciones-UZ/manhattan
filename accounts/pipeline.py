@@ -1,4 +1,5 @@
 import json
+import logging
 
 import zeep
 from annoying.functions import get_config
@@ -11,9 +12,25 @@ from requests.auth import HTTPBasicAuth
 from requests.exceptions import ConnectionError as RequestConnectionError
 from social_core.strategy import BaseStrategy
 
+logger = logging.getLogger(__name__)
+
 
 def get_identidad(strategy: BaseStrategy, response, user, *args, **kwargs) -> None:
     """Actualiza el usuario con los datos obtenidos de Gestión de Identidades."""
+
+    logger.info('[get_identidad] Iniciando para NIP=%s', user.username)
+
+    try:
+        _get_identidad(strategy, response, user, *args, **kwargs)
+    except Exception as exc:
+        logger.exception(
+            '[get_identidad] EXCEPCIÓN para NIP=%s: %s', user.username, exc
+        )
+        raise
+
+
+def _get_identidad(strategy: BaseStrategy, response, user, *args, **kwargs) -> None:
+    """Lógica interna de actualización del usuario."""
 
     wsdl = get_config('WSDL_IDENTIDAD')
     session = Session()
@@ -30,6 +47,15 @@ def get_identidad(strategy: BaseStrategy, response, user, *args, **kwargs) -> No
         raise e
 
     response = client.service.obtenIdentidad(user.username)
+    logger.info(
+        '[get_identidad] NIP=%s | activo=%s | perfiles=%s | vinculaciones=%s | email=%s',
+        user.username,
+        getattr(response.identidad, 'activo', '?'),
+        getattr(response.identidad, 'perfiles', '?'),
+        getattr(response.identidad, 'vinculaciones', '?'),
+        getattr(response.identidad, 'correoPrincipal', '?'),
+    )
+
     if response.aviso:
         # El WS produjo una advertencia. La mostramos y seguimos.
         messages.warning(strategy.request, response.descripcionAviso)
@@ -67,6 +93,11 @@ def get_identidad(strategy: BaseStrategy, response, user, *args, **kwargs) -> No
     user.colectivos = json.dumps(list(set(colectivos)))
     user.cuerpo_pod = identidad.cuerpoPod
     user.orcid = identidad.orcid if identidad.orcid != '-' else None
+
+    logger.info(
+        '[get_identidad] NIP=%s guardado. colectivos=%s is_active=%s',
+        user.username, user.colectivos, user.is_active,
+    )
 
     # user.save()
     strategy.storage.user.changed(user)
