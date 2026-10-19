@@ -10,18 +10,19 @@ from lxml.etree import XMLSyntaxError
 from requests import Session
 from requests.auth import HTTPBasicAuth
 from requests.exceptions import ConnectionError as RequestConnectionError
+from social_core.exceptions import AuthForbidden
 from social_core.strategy import BaseStrategy
 
 logger = logging.getLogger(__name__)
 
 
-def get_identidad(strategy: BaseStrategy, response, user, *args, **kwargs) -> None:
+def get_identidad(strategy: BaseStrategy, backend, response, user, *args, **kwargs) -> None:
     """Actualiza el usuario con los datos obtenidos de Gestión de Identidades."""
 
     logger.info('[get_identidad] Iniciando para NIP=%s', user.username)
 
     try:
-        _get_identidad(strategy, response, user, *args, **kwargs)
+        _get_identidad(strategy, backend, response, user, *args, **kwargs)
     except Exception as exc:
         logger.exception(
             '[get_identidad] EXCEPCIÓN para NIP=%s: %s', user.username, exc
@@ -29,7 +30,7 @@ def get_identidad(strategy: BaseStrategy, response, user, *args, **kwargs) -> No
         raise
 
 
-def _get_identidad(strategy: BaseStrategy, response, user, *args, **kwargs) -> None:
+def _get_identidad(strategy: BaseStrategy, backend, response, user, *args, **kwargs) -> None:
     """Lógica interna de actualización del usuario."""
 
     wsdl = get_config('WSDL_IDENTIDAD')
@@ -73,8 +74,7 @@ def _get_identidad(strategy: BaseStrategy, response, user, *args, **kwargs) -> N
             '[get_identidad] NIP=%s marcado como activo=N en Identidades. Login denegado.',
             user.username,
         )
-        from social_core.exceptions import AuthForbidden
-        raise AuthForbidden(strategy.backend)
+        raise AuthForbidden(backend)
 
     user.first_name = identidad.nombre
     user.last_name = identidad.primerApellido
