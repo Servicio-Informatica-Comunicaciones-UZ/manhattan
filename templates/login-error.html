@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load i18n static %}
+{% block title %}{% trans "Acceso denegado" %}{% endblock title %}
+{% block description %}{% trans "Error en la autenticación" %}{% endblock description %}
+
+{% block content %}
+    <div class="container-blanco">
+        <h1>{% trans "Acceso denegado" %}</h1>
+        <hr />
+        <br />
+
+        <div style="text-align: center;">
+            <p><img src="{% static 'img/star_wars_lego_storm_trooper_parade.jpg' %}" alt="Tropas imperiales" width="600" height="310" /></p>
+
+            <div class="alert alert-danger" role="alert">
+                <p>
+                    {% blocktrans trimmed %}
+                        Su cuenta no está activa en el sistema de <strong>Gestión de Identidades</strong>
+                        de la Universidad y no ha podido completarse el acceso a la aplicación.
+                    {% endblocktrans %}
+                </p>
+                <p>
+                    {% blocktrans trimmed %}
+                        Si cree que se trata de un error, póngase en contacto con la administración
+                        o inténtelo de nuevo más tarde.
+                    {% endblocktrans %}
+                </p>
+            </div>
+
+            <a href="/" class="btn btn-primary">{% trans "Volver al inicio" %}</a>
+        </div>
+    </div>
+{% endblock content %}

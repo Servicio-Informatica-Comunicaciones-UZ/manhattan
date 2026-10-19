@@ -123,6 +123,9 @@ AUTH_USER_MODEL = 'accounts.CustomUser'
 LOGIN_REDIRECT_URL = reverse_lazy('mis_proyectos', args=[date.today().year])
 # https://docs.djangoproject.com/en/dev/ref/settings/#login-url
 LOGIN_URL = f'{SITE_URL}/login/saml/?idp=sir'
+# URL a la que redirige social-auth cuando el login falla (p.e. usuario inactivo en Identidades).
+# Sin este parámetro redirige a LOGIN_URL y se genera un bucle SAML.
+SOCIAL_AUTH_LOGIN_ERROR_URL = '/login-error/'
 LOGOUT_REDIRECT_URL = 'home'
 
 # PASSWORDS

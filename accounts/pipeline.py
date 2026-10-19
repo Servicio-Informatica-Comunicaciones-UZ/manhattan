@@ -65,6 +65,17 @@ def _get_identidad(strategy: BaseStrategy, response, user, *args, **kwargs) -> N
         raise Exception('WS Identidad: ' + response.descripcionResultado)
 
     identidad = response.identidad
+
+    if identidad.activo == 'N':
+        # El usuario existe en Identidades pero está marcado como inactivo.
+        # Interrumpimos el pipeline limpiamente para evitar un bucle SAML.
+        logger.warning(
+            '[get_identidad] NIP=%s marcado como activo=N en Identidades. Login denegado.',
+            user.username,
+        )
+        from social_core.exceptions import AuthForbidden
+        raise AuthForbidden(strategy.backend)
+
     user.first_name = identidad.nombre
     user.last_name = identidad.primerApellido
     user.last_name_2 = identidad.segundoApellido

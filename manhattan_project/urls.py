@@ -42,6 +42,11 @@ urlpatterns = [
         name='robots_file',
     ),
     path('', include('social_django.urls', namespace='social')),
+    path(
+        'login-error/',
+        TemplateView.as_view(template_name='login-error.html'),
+        name='login_error',
+    ),
     path('', include('indo.urls')),
 ]
 
